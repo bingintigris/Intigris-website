@@ -1,0 +1,13 @@
+# Netlify config for the Intigris Admin Portal (separate site).
+# In Netlify: set the site's "Base directory" to  admin
+# so these settings and the build run from this folder.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# SPA fallback: every route serves index.html so React Router handles it.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
