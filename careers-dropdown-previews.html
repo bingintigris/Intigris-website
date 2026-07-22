@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Careers dropdown — 3 options</title>
+  <link rel="stylesheet" href="design-system/colors_and_type.css">
+  <link rel="icon" href="assets/logo-coral.png">
+  <style>
+    body { margin: 0; background: var(--intigris-off-white-200); color: var(--intigris-dark-brown); }
+    .wrap { max-width: 1360px; margin: 0 auto; padding: 48px clamp(20px,4vw,64px) 96px; }
+    .page-eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; color: var(--intigris-coral); }
+    .page-title { font-size: clamp(30px,4vw,46px); font-weight: 500; letter-spacing: -0.022em; line-height: 1.04; margin: 10px 0 6px; }
+    .page-sub { font-size: 16px; font-weight: 400; color: var(--fg-muted); max-width: 640px; }
+    .opt { margin-top: 56px; }
+    .opt-label {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+      color: var(--intigris-dark-brown); margin-bottom: 4px;
+    }
+    .opt-badge { background: var(--intigris-coral); color: #fff; border-radius: 999px; padding: 3px 11px; font-size: 12px; font-weight: 600; }
+    .opt-note { font-size: 14px; color: var(--fg-muted); margin: 0 0 20px; }
+
+    /* Mock coral header bar for context */
+    .bar {
+      background: var(--intigris-coral); border-radius: 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 66px; margin-bottom: 14px;
+      box-shadow: var(--shadow-2);
+    }
+    .bar img { height: 34px; }
+    .bar nav { display: flex; align-items: center; gap: 26px; font-size: 15px; font-weight: 600; color: var(--intigris-off-white); }
+    .bar nav .active { position: relative; }
+    .bar nav .active::after { content: "▾"; font-size: 11px; margin-left: 4px; opacity: 0.8; }
+    .bar .pill { background: var(--intigris-off-white); color: var(--intigris-dark-brown); border-radius: 999px; padding: 8px 8px 8px 16px; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 10px; }
+    .bar .pill i { width: 26px; height: 26px; border-radius: 999px; background: var(--intigris-coral); color: #fff; display: grid; place-items: center; font-style: normal; }
+
+    /* ===== shared mega card ===== */
+    .mega { width: 100%; }
+    .mega-card {
+      border-radius: 24px; padding: 28px;
+      box-shadow: 0 30px 80px -30px rgba(64,35,1,0.5), 0 8px 22px -12px rgba(64,35,1,0.35);
+    }
+    .mega-dark { background: var(--intigris-dark-brown); color: var(--intigris-off-white); border: 1px solid rgba(252,247,235,0.08); }
+    .mega-cream { background: var(--intigris-off-white); color: var(--intigris-dark-brown); border: 1px solid var(--border); }
+    .mega-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+    .mega-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; font-weight: 600; color: var(--intigris-coral); margin-bottom: 8px; }
+    .mega-title { font-size: 24px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.05; }
+    .mega-all {
+      display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+      font-size: 14px; font-weight: 500; padding: 9px 18px; border-radius: 999px; cursor: pointer;
+      text-decoration: none;
+    }
+    .mega-dark .mega-all { color: var(--intigris-off-white); border: 1.5px solid rgba(252,247,235,0.4); }
+    .mega-cream .mega-all { background: var(--intigris-coral); color: #fff; border: 1.5px solid transparent; }
+
+    /* ---- Option A: icon grid ---- */
+    .a-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+    .a-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px; border-radius: 14px; border: 1px solid transparent; cursor: pointer; transition: background .18s, border-color .18s, transform .22s; }
+    .a-item:hover { background: rgba(252,247,235,0.07); border-color: rgba(252,247,235,0.16); transform: translateY(-3px); }
+    .a-ico { flex-shrink: 0; width: 44px; height: 44px; border-radius: 11px; display: grid; place-items: center; background: rgba(252,247,235,0.08); color: var(--intigris-off-white); }
+    .a-item:hover .a-ico { background: var(--intigris-coral); color: var(--intigris-dark-brown); }
+    .a-name { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 500; letter-spacing: -0.014em; }
+    .a-name .arw { color: var(--intigris-coral); font-size: 14px; }
+    .a-desc { margin-top: 5px; font-size: 12.5px; font-weight: 400; line-height: 1.4; color: rgba(252,247,235,0.78); }
+    .a-item:hover .a-name { color: var(--intigris-coral); }
+
+    /* ---- Option B: feature split ---- */
+    .b-split { display: grid; grid-template-columns: 1fr 1.15fr; gap: 22px; }
+    .b-promo { position: relative; overflow: hidden; border-radius: 18px; background: var(--intigris-coral); color: var(--intigris-dark-brown); padding: 26px; display: flex; flex-direction: column; justify-content: space-between; min-height: 230px; }
+    .b-promo .tag { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; }
+    .b-promo h4 { font-size: 30px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.02; margin: 12px 0 0; }
+    .b-promo p { font-size: 14px; font-weight: 400; margin: 10px 0 0; max-width: 260px; }
+    .b-promo .go { align-self: flex-start; margin-top: 18px; background: var(--intigris-dark-brown); color: var(--intigris-off-white); border-radius: 999px; padding: 10px 18px; font-size: 14px; font-weight: 500; display: inline-flex; gap: 10px; align-items: center; }
+    .b-list { display: flex; flex-direction: column; }
+    .b-row { display: flex; align-items: center; gap: 14px; padding: 14px 12px; border-radius: 12px; cursor: pointer; border: 1px solid transparent; transition: background .18s; }
+    .b-row:hover { background: rgba(252,247,235,0.07); }
+    .b-row .ic { flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: rgba(252,247,235,0.08); }
+    .b-row:hover .ic { background: var(--intigris-coral); color: var(--intigris-dark-brown); }
+    .b-row .nm { font-size: 15.5px; font-weight: 500; }
+    .b-row .ds { font-size: 12.5px; color: rgba(252,247,235,0.78); margin-top: 2px; }
+    .b-row .arw { margin-left: auto; color: var(--intigris-coral); }
+
+    /* ---- Option C: editorial cream list ---- */
+    .c-split { display: grid; grid-template-columns: 0.9fr 1.3fr; gap: 48px; }
+    .c-intro h4 { font-size: 30px; font-weight: 500; letter-spacing: -0.022em; line-height: 1.04; margin: 8px 0 0; }
+    .c-intro p { font-size: 15px; font-weight: 400; color: var(--fg-muted); margin: 14px 0 0; max-width: 300px; }
+    .c-cta { margin-top: 22px; background: var(--intigris-coral); color: #fff; border-radius: 999px; padding: 11px 20px; font-size: 14px; font-weight: 500; display: inline-flex; gap: 10px; align-items: center; }
+    .c-list { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 32px; }
+    .c-link { display: flex; align-items: baseline; gap: 10px; padding: 15px 0; border-top: 1px solid var(--border); cursor: pointer; }
+    .c-link .nm { font-size: 16px; font-weight: 500; color: var(--intigris-dark-brown); min-width: 128px; }
+    .c-link .ds { font-size: 13px; color: var(--fg-muted); }
+    .c-link .arw { margin-left: auto; color: var(--intigris-coral); opacity: 0; transition: opacity .16s, transform .22s; }
+    .c-link:hover .nm { color: var(--intigris-coral); }
+    .c-link:hover .arw { opacity: 1; transform: translateX(3px); }
+
+    @media (max-width: 860px) {
+      .a-grid { grid-template-columns: repeat(2,1fr); }
+      .b-split, .c-split { grid-template-columns: 1fr; }
+      .c-list { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="page-eyebrow">CAREERS DROPDOWN · CONCEPTS</div>
+    <div class="page-title">Three options for the Careers menu</div>
+    <p class="page-sub">Same six sections — Overview, Vacancies, Our culture, Benefits, ISA, Application procedure — in three layouts. Pick the one you like and I'll build it into the header (with EN/NL and working links).</p>
+
+    <!-- ========== OPTION A ========== -->
+    <section class="opt">
+      <div class="opt-label"><span class="opt-badge">A</span> Icon grid — matches the Services menu</div>
+      <p class="opt-note">Dark card, six equal tiles with icons and one-line descriptions. Consistent with the existing Services dropdown.</p>
+      <div class="bar">
+        <img src="assets/logo-off-white-tight.png" alt="intigris">
+        <nav><span>Services</span><span>Industries</span><span class="active">Careers</span><span>About</span><span class="pill">Let's talk <i>→</i></span></nav>
+      </div>
+      <div class="mega">
+        <div class="mega-card mega-dark">
+          <div class="mega-head">
+            <div>
+              <div class="mega-eyebrow">JOIN INTIGRIS</div>
+              <div class="mega-title">Grow your impact.</div>
+            </div>
+            <a class="mega-all">All careers <span>→</span></a>
+          </div>
+          <div class="a-grid">
+            <div class="a-item"><div class="a-ico">◎</div><div><div class="a-name">Overview <span class="arw">→</span></div><div class="a-desc">The big picture on life at Intigris.</div></div></div>
+            <div class="a-item"><div class="a-ico">▤</div><div><div class="a-name">Vacancies <span class="arw">→</span></div><div class="a-desc">Explore open roles and apply.</div></div></div>
+            <div class="a-item"><div class="a-ico">♥</div><div><div class="a-name">Our culture <span class="arw">→</span></div><div class="a-desc">Feel at home from day one.</div></div></div>
+            <div class="a-item"><div class="a-ico">✦</div><div><div class="a-name">Benefits <span class="arw">→</span></div><div class="a-desc">What makes working here worthwhile.</div></div></div>
+            <div class="a-item"><div class="a-ico">✎</div><div><div class="a-name">ISA <span class="arw">→</span></div><div class="a-desc">Our academy — start with zero SF experience.</div></div></div>
+            <div class="a-item"><div class="a-ico">☰</div><div><div class="a-name">Application procedure <span class="arw">→</span></div><div class="a-desc">What to expect, step by step.</div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== OPTION B ========== -->
+    <section class="opt">
+      <div class="opt-label"><span class="opt-badge">B</span> Feature split — hiring promo + list</div>
+      <p class="opt-note">A coral promo panel pulls attention to open roles; the remaining sections sit in a tidy list beside it.</p>
+      <div class="bar">
+        <img src="assets/logo-off-white-tight.png" alt="intigris">
+        <nav><span>Services</span><span>Industries</span><span class="active">Careers</span><span>About</span><span class="pill">Let's talk <i>→</i></span></nav>
+      </div>
+      <div class="mega">
+        <div class="mega-card mega-dark">
+          <div class="mega-head">
+            <div>
+              <div class="mega-eyebrow">CAREERS AT INTIGRIS</div>
+              <div class="mega-title">Master your skills, grow your impact.</div>
+            </div>
+            <a class="mega-all">All careers <span>→</span></a>
+          </div>
+          <div class="b-split">
+            <div class="b-promo">
+              <div>
+                <div class="tag">WE'RE HIRING</div>
+                <h4>Open roles right now.</h4>
+                <p>Join the friendliest, brightest minds in Salesforce.</p>
+              </div>
+              <span class="go">See vacancies →</span>
+            </div>
+            <div class="b-list">
+              <div class="b-row"><span class="ic">◎</span><div><div class="nm">Overview</div><div class="ds">The big picture on life at Intigris.</div></div><span class="arw">→</span></div>
+              <div class="b-row"><span class="ic">♥</span><div><div class="nm">Our culture</div><div class="ds">Feel at home from day one.</div></div><span class="arw">→</span></div>
+              <div class="b-row"><span class="ic">✦</span><div><div class="nm">Benefits</div><div class="ds">What makes working here worthwhile.</div></div><span class="arw">→</span></div>
+              <div class="b-row"><span class="ic">✎</span><div><div class="nm">ISA — Intigris Salesforce Academy</div><div class="ds">Start with little or no SF experience.</div></div><span class="arw">→</span></div>
+              <div class="b-row"><span class="ic">☰</span><div><div class="nm">Application procedure</div><div class="ds">What to expect, step by step.</div></div><span class="arw">→</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== OPTION C ========== -->
+    <section class="opt">
+      <div class="opt-label"><span class="opt-badge">C</span> Editorial — light card, clean list</div>
+      <p class="opt-note">An off-white card with an intro on the left and a refined two-column link list on the right. Lighter, more editorial.</p>
+      <div class="bar">
+        <img src="assets/logo-off-white-tight.png" alt="intigris">
+        <nav><span>Services</span><span>Industries</span><span class="active">Careers</span><span>About</span><span class="pill">Let's talk <i>→</i></span></nav>
+      </div>
+      <div class="mega">
+        <div class="mega-card mega-cream">
+          <div class="c-split">
+            <div class="c-intro">
+              <div class="mega-eyebrow">CAREERS AT INTIGRIS</div>
+              <h4>Master your skills, grow your impact.</h4>
+              <p>Collaborate with the friendliest and brightest minds in the field.</p>
+              <span class="c-cta">Check our vacancies →</span>
+            </div>
+            <div class="c-list">
+              <div class="c-link"><span class="nm">Overview</span><span class="ds">Life at Intigris.</span><span class="arw">→</span></div>
+              <div class="c-link"><span class="nm">Vacancies</span><span class="ds">Open roles.</span><span class="arw">→</span></div>
+              <div class="c-link"><span class="nm">Our culture</span><span class="ds">Feel at home.</span><span class="arw">→</span></div>
+              <div class="c-link"><span class="nm">Benefits</span><span class="ds">Why it's worthwhile.</span><span class="arw">→</span></div>
+              <div class="c-link"><span class="nm">ISA</span><span class="ds">Our academy.</span><span class="arw">→</span></div>
+              <div class="c-link"><span class="nm">Application</span><span class="ds">Step by step.</span><span class="arw">→</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
