@@ -4,7 +4,7 @@ import UserMenu from './UserMenu';
 export default function Topbar({ title }) {
   return (
     <header className="h-16 shrink-0 bg-cream border-b border-line flex items-center gap-4 px-5">
-      <h1 className="text-lg font-medium text-ink">{title}</h1>
+      <h1 className="text-lg font-medium text-coral">{title}</h1>
 
       <div className="ml-auto flex items-center gap-2">
         <div className="hidden md:flex items-center gap-2 bg-white border border-line rounded-full px-3.5 h-10 w-64">

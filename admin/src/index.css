@@ -10,7 +10,7 @@ html, body, #root { height: 100%; }
 
 body {
   margin: 0;
-  background: #f4ecd8;
+  background: #fcf7eb;
   color: #402301;
   font-family: "Inter Tight", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;

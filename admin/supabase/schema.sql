@@ -147,6 +147,22 @@ create policy activity_read on public.activity_log for select to authenticated u
 drop policy if exists activity_insert on public.activity_log;
 create policy activity_insert on public.activity_log for insert to authenticated with check (true);
 
+-- ---------- Inquiry notes (internal notes on an inquiry) ----------
+create table if not exists public.inquiry_notes (
+  id          uuid primary key default gen_random_uuid(),
+  inquiry_id  uuid not null references public.inquiries(id) on delete cascade,
+  author_id   uuid references public.profiles(id),
+  body        text not null,
+  created_at  timestamptz not null default now()
+);
+create index if not exists inquiry_notes_inquiry_idx on public.inquiry_notes(inquiry_id);
+
+alter table public.inquiry_notes enable row level security;
+drop policy if exists inquiry_notes_rw on public.inquiry_notes;
+create policy inquiry_notes_rw on public.inquiry_notes for all to authenticated
+  using (public.current_role() in ('admin','support_lead'))
+  with check (public.current_role() in ('admin','support_lead'));
+
 -- =====================================================================
 --  AFTER RUNNING: create your first admin.
 --  1) Authentication -> Users -> Add user (email + password).

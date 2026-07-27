@@ -16,7 +16,8 @@ export const MODULE_ACCESS = {
   inquiries: ['admin', 'support_lead'],
   newsletter: ['admin', 'content_editor'],
   blog: ['admin', 'content_editor'],
-  hr: ['admin', 'hr_manager'],
+  recruitment: ['admin', 'hr_manager'],
+  team: ['admin', 'hr_manager'],
   settings: ['admin'],
 };
 

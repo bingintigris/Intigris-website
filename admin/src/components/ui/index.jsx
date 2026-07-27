@@ -52,3 +52,48 @@ export function Spinner({ className = '' }) {
     <span className={`inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent ${className}`} aria-hidden />
   );
 }
+
+export function Select({ label, className = '', children, ...props }) {
+  return (
+    <label className="block">
+      {label && <span className="block text-xs font-medium uppercase tracking-wide text-muted mb-1.5">{label}</span>}
+      <select
+        className={`w-full h-10 rounded-xl border border-line bg-cream-paper px-3 text-sm text-ink focus:border-coral focus:outline-none ${className}`}
+        {...props}
+      >
+        {children}
+      </select>
+    </label>
+  );
+}
+
+export function Textarea({ label, className = '', ...props }) {
+  return (
+    <label className="block">
+      {label && <span className="block text-xs font-medium uppercase tracking-wide text-muted mb-1.5">{label}</span>}
+      <textarea
+        className={`w-full rounded-xl border border-line bg-cream-paper px-3.5 py-2.5 text-[15px] text-ink placeholder:text-muted/60 focus:border-coral focus:outline-none resize-y ${className}`}
+        {...props}
+      />
+    </label>
+  );
+}
+
+// Slide-over panel from the right. Renders nothing when `open` is false.
+export function Drawer({ open, onClose, title, children, footer }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true">
+      <div className="absolute inset-0 bg-brown/40 backdrop-blur-[2px]" onClick={onClose} />
+      <div className="relative w-full max-w-lg h-full bg-cream shadow-pop flex flex-col animate-[slidein_.22s_ease]">
+        <div className="h-16 shrink-0 flex items-center justify-between px-5 border-b border-line">
+          <h2 className="text-base font-medium text-ink truncate pr-4">{title}</h2>
+          <button onClick={onClose} className="h-9 w-9 grid place-items-center rounded-full hover:bg-cream-100 text-muted" aria-label="Close">✕</button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-5">{children}</div>
+        {footer && <div className="shrink-0 border-t border-line p-4 bg-cream">{footer}</div>}
+      </div>
+      <style>{`@keyframes slidein{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}`}</style>
+    </div>
+  );
+}

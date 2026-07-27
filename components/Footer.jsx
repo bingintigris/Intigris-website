@@ -110,22 +110,31 @@ function SiteFooter() {
         <span style={{ color: 'var(--intigris-dark-brown)' }}>{title}</span>
       </div>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {items.map((it, i) => (
-          <li key={i}>
-            <a style={{
-              color: 'var(--intigris-dark-brown)',
-              textDecoration: 'none',
-              fontSize: 14, fontWeight: 400,
-              cursor: 'pointer',
-              transition: 'color 140ms var(--ease-out)',
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--intigris-coral)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'var(--intigris-dark-brown)'}
-            >
-              {it}
-            </a>
-          </li>
-        ))}
+        {items.map((it, i) => {
+          const label = typeof it === 'string' ? it : it.label;
+          const href = typeof it === 'string' ? undefined : it.href;
+          const external = href && /^https?:/.test(href);
+          return (
+            <li key={i}>
+              <a
+                href={href}
+                target={external ? '_blank' : undefined}
+                rel={external ? 'noopener noreferrer' : undefined}
+                style={{
+                  color: 'var(--intigris-dark-brown)',
+                  textDecoration: 'none',
+                  fontSize: 14, fontWeight: 400,
+                  cursor: 'pointer',
+                  transition: 'color 140ms var(--ease-out)',
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = 'var(--intigris-coral)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--intigris-dark-brown)'}
+              >
+                {label}
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
@@ -175,7 +184,7 @@ function SiteFooter() {
 
           {COL(tx('SERVICES', 'DIENSTEN'), ['Sales Cloud', 'Field Service', 'Service Cloud', 'Integrations', 'Agentforce', 'Data 360', 'FieldBuddy', 'Experience Cloud'])}
           {COL(tx('SOLUTIONS', 'OPLOSSINGEN'), ['Salesforce Consulting', 'Integration Development', 'Field Service Consulting', tx('Salesforce Quickstarts', 'Salesforce Quickstarts'), 'ISA Academy'])}
-          {COL(tx('COMPANY', 'BEDRIJF'), [tx('About', 'Over ons'), 'Blog', tx('Careers', 'Werken bij'), tx('Contact', 'Contact'), 'LinkedIn', tx('Admin', 'Admin')])}
+          {COL(tx('COMPANY', 'BEDRIJF'), [tx('About', 'Over ons'), 'Blog', tx('Careers', 'Werken bij'), tx('Contact', 'Contact'), 'LinkedIn', { label: tx('Admin', 'Admin'), href: 'https://intigris-admin.netlify.app' }])}
         </div>
 
         <div style={{

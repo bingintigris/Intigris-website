@@ -37,7 +37,9 @@ export default function Dashboard() {
     <div className="max-w-6xl mx-auto space-y-6">
       <div>
         <h2 className="text-2xl font-medium text-ink">
-          {firstName ? `Good to see you, ${firstName}.` : 'Executive dashboard'}
+          {firstName
+            ? <>Good to see you, <span className="text-coral">{firstName}</span>.</>
+            : 'Executive dashboard'}
         </h2>
         <p className="text-sm text-muted mt-1">
           Here’s what’s happening across the business today.

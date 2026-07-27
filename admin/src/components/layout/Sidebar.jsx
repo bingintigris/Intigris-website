@@ -12,13 +12,14 @@ export default function Sidebar({ collapsed, onToggle }) {
     <aside
       className={`shrink-0 bg-brown text-cream flex flex-col transition-[width] duration-200 ${collapsed ? 'w-[72px]' : 'w-64'}`}
     >
-      <div className="h-16 flex items-center gap-3 px-4 border-b border-white/10">
-        <div className="h-9 w-9 rounded-lg bg-coral grid place-items-center font-semibold text-white shrink-0">i</div>
-        {!collapsed && (
-          <div className="leading-tight">
-            <div className="text-sm font-medium">Intigris</div>
-            <div className="text-[11px] text-cream/60">Admin Portal</div>
-          </div>
+      <div className={`flex ${collapsed ? 'h-16 items-center justify-center' : 'flex-col justify-center px-4 pt-7 pb-4'}`}>
+        {collapsed ? (
+          <div className="h-9 w-9 rounded-lg bg-coral grid place-items-center font-semibold text-white">i</div>
+        ) : (
+          <>
+            <img src="/logo-off-white-tight.png" alt="Intigris" className="h-12 w-auto self-start" />
+            <div className="text-base font-semibold text-cream mt-2">Admin Portal</div>
+          </>
         )}
       </div>
 
@@ -29,7 +30,7 @@ export default function Sidebar({ collapsed, onToggle }) {
             to={to}
             title={collapsed ? label : undefined}
             className={({ isActive }) =>
-              `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
+              `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive ? 'bg-coral text-white' : 'text-cream/80 hover:bg-white/10 hover:text-white'
               } ${collapsed ? 'justify-center' : ''}`
             }
