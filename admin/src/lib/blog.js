@@ -21,8 +21,8 @@ export async function listPosts() {
     .from('blog_posts')
     .select('id, title, slug, excerpt, status, category, author_name, views, read_minutes, published_at, created_at')
     .order('created_at', { ascending: false });
-  if (error || !data || data.length === 0) return { rows: SAMPLE, sample: true };
-  return { rows: data, sample: false };
+  if (error) { console.error(error.message); return { rows: [], sample: false, error: error.message }; }
+  return { rows: data || [], sample: false };
 }
 
 export async function getPost(id) {

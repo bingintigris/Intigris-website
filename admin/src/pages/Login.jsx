@@ -39,16 +39,15 @@ export default function Login() {
     <div className="min-h-full grid lg:grid-cols-2">
       {/* Left: brand panel */}
       <div className="hidden lg:flex flex-col justify-between bg-brown text-cream p-12">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-coral grid place-items-center font-semibold text-white">i</div>
-          <span className="text-lg font-medium">Intigris</span>
+        <div className="flex items-center">
+          <img src="/logo-off-white-tight.png" alt="Intigris" className="h-9 w-auto" />
         </div>
         <div>
-          <div className="text-xs uppercase tracking-[0.18em] text-coral mb-4">Admin Portal</div>
-          <h2 className="text-4xl font-medium leading-[1.05] tracking-tight">
+          <div className="text-sm uppercase tracking-[0.18em] text-coral mb-4">Admin Portal</div>
+          <h2 className="text-5xl font-medium leading-[1.05] tracking-tight">
             Smarten up<br />your business.
           </h2>
-          <p className="mt-4 text-cream/70 max-w-sm">
+          <p className="mt-5 text-lg text-cream/70 max-w-md">
             One place for inquiries, subscribers, content, and your team.
           </p>
         </div>

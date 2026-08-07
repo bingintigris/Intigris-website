@@ -1,4 +1,4 @@
-// ISA.jsx — Salesforce Academy / careers teaser.
+// ISA.jsx, Salesforce Academy / careers teaser.
 // Exposes: window.SiteISA
 
 function SiteISA() {
@@ -21,7 +21,7 @@ function SiteISA() {
           overflow: 'hidden',
           minHeight: 480,
         }}>
-          {/* Left — photo */}
+          {/* Left, photo */}
           <div className="photo photo--meadow" style={{
             borderRadius: 0,
             minHeight: 480,
@@ -74,7 +74,7 @@ function SiteISA() {
             </div>
           </div>
 
-          {/* Right — copy */}
+          {/* Right, copy */}
           <div style={{ padding: 'clamp(32px, 4vw, 56px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
             <div className="eyebrow">ISA · CAREERS</div>
             <h2 className="display-sm" style={{ color: 'var(--intigris-dark-brown)' }}>
@@ -82,8 +82,8 @@ function SiteISA() {
               Salesforce career<br/>
               with the <span style={{ color: 'var(--intigris-coral)' }}>Intigrants.</span>
             </h2>
-            <p style={{ fontSize: 17, lineHeight: 1.55, fontWeight: 300, color: 'var(--fg-muted)', maxWidth: 480 }}>
-              The Intigris Salesforce Academy is our in-house traineeship — six months
+            <p style={{ fontSize: 17, lineHeight: 1.55, fontWeight: 400, color: 'var(--fg-muted)', maxWidth: 480 }}>
+              The Intigris Salesforce Academy is our in-house traineeship, six months
               of immersive Salesforce training, real client work, and senior mentorship.
               You finish certified. We finish with a new Intigrant.
             </p>

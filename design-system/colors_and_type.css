@@ -74,7 +74,7 @@
                Menlo, Consolas, "Liberation Mono", monospace;
 
   /* Weights — the brandbook calls out Light (300), Medium (500), Bold (700) */
-  --w-light: 300;
+  --w-light: 400;
   --w-regular: 400;
   --w-medium: 500;
   --w-semibold: 600;

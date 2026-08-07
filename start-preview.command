@@ -19,4 +19,27 @@ echo "Keep this window open while previewing. Press Ctrl+C to stop."
 # Open the browser shortly after the server starts.
 ( sleep 1; open "http://localhost:$PORT/" ) &
 
-python3 -m http.server "$PORT"
+# Serve with caching switched off, so you always get the newest version of a
+# page without needing a hard refresh.
+python3 - "$PORT" <<'PY'
+import sys, functools, http.server, socketserver
+
+class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
+        super().end_headers()
+
+    def send_response(self, *args, **kwargs):
+        # Never answer "304 Not Modified" from the browser cache.
+        super().send_response(*args, **kwargs)
+
+port = int(sys.argv[1])
+socketserver.TCPServer.allow_reuse_address = True
+with socketserver.TCPServer(("", port), NoCacheHandler) as httpd:
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\nPreview stopped.")
+PY

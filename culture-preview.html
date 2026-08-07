@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Our culture | Intigris (preview)</title>
+  <link rel="stylesheet" href="design-system/site.css?v=1785331277000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = 'en';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+    window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="text/babel" src="components/Services.jsx?v=1785331277000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1785331277000"></script>
+  <script type="text/babel" src="components/Newsletter.jsx?v=1785331277000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1785331277000"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const PILLARS = [
+      { en: 'Ownership', nl: 'Eigenaarschap',
+        dEn: 'At Intigris you gain swift responsibility for projects and clients. We believe you’re capable of more than you think, and taking the lead fosters rapid learning. Colleagues are there to assist, but embrace responsibility, hold high standards, and always seek improvement.',
+        dNl: 'Bij Intigris krijg je snel verantwoordelijkheid voor projecten en klanten. We geloven dat je meer kunt dan je denkt, en het voortouw nemen zorgt voor snelle groei. Collega’s helpen je, maar neem verantwoordelijkheid, hanteer hoge standaarden en blijf verbeteren.',
+        qEn: 'Bring forth new ideas and be proactive in your approach.', qNl: 'Kom met nieuwe ideeën en wees proactief.' },
+      { en: 'Craftsmanship', nl: 'Vakmanschap',
+        dEn: 'We love our profession, finding joy in software and complex challenges. You’ll collaborate with smart, dedicated colleagues that make work fulfilling. Though not mandatory, we expect you to master your craft, continuously developing your skills.',
+        dNl: 'We houden van ons vak en vinden plezier in software en complexe uitdagingen. Je werkt samen met slimme, toegewijde collega’s die werk waardevol maken. Het is niet verplicht, maar we verwachten dat je je vak beheerst en jezelf blijft ontwikkelen.',
+        qEn: 'Stay curious and keep striving for improvements.', qNl: 'Blijf nieuwsgierig en streef naar verbetering.' },
+      { en: 'Autonomy', nl: 'Autonomie',
+        dEn: 'For us Intigrants, autonomy is vital. Value your own space and standing within the organization. Embrace unique qualities, forming and expressing opinions. Learn from diverse people and involve clients in your vision, guiding them towards progress.',
+        dNl: 'Voor ons Intigranten is autonomie essentieel. Waardeer je eigen ruimte en positie binnen de organisatie. Omarm unieke kwaliteiten, vorm en uit meningen. Leer van verschillende mensen en betrek klanten bij je visie richting vooruitgang.',
+        qEn: 'Trust in your vision and take others along with you.', qNl: 'Vertrouw op je visie en neem anderen mee.' },
+    ];
+
+    const BELIEFS = [
+      { en: 'Help each other', nl: 'Help elkaar', dEn: 'Don’t just do your own job, also make sure you help your colleagues do theirs.', dNl: 'Doe niet alleen je eigen werk, maar help ook je collega’s met dat van hen.' },
+      { en: 'Professional with a sense of humor', nl: 'Professioneel met humor', dEn: 'Take both your job and having fun seriously.', dNl: 'Neem zowel je werk als plezier serieus.' },
+      { en: 'Raise the bar', nl: 'Leg de lat hoog', dEn: 'Always try to exceed our clients’ expectations, happy customers drive our success.', dNl: 'Overtref altijd de verwachtingen van klanten, tevreden klanten bepalen ons succes.' },
+      { en: 'Embrace feedback', nl: 'Omarm feedback', dEn: 'Be open to feedback and share yours, as it helps us grow in our job.', dNl: 'Sta open voor feedback en geef die ook, want het helpt ons groeien.' },
+      { en: 'Take ownership', nl: 'Neem eigenaarschap', dEn: 'Manage your projects, be pro-active and don’t wait for others to instruct you.', dNl: 'Beheer je projecten, wees proactief en wacht niet op instructies.' },
+      { en: 'Stay hungry', nl: 'Blijf honger houden', dEn: 'Always be curious and keep looking for new ways to improve your skills.', dNl: 'Blijf nieuwsgierig en zoek steeds naar manieren om te verbeteren.' },
+      { en: 'Speak your mind', nl: 'Spreek je uit', dEn: 'Develop your own vision and be brave enough to share it at any time.', dNl: 'Ontwikkel je eigen visie en durf die altijd te delen.' },
+      { en: 'A deal is a deal', nl: 'Afspraak is afspraak', dEn: 'We are trustworthy, do what we promise, and expect others to do the same.', dNl: 'We zijn betrouwbaar, doen wat we beloven en verwachten dat van anderen.' },
+    ];
+
+    const EXPLORE = [
+      { id: 'benefits',  href: '#',             en: 'Benefits', nl: 'Arbeidsvoorwaarden', dEn: 'What makes working at Intigris worthwhile.', dNl: 'Wat werken bij Intigris de moeite waard maakt.' },
+      { id: 'vacancies', href: 'Vacancies.html', en: 'Vacancies', nl: 'Vacatures', dEn: 'Explore open roles and apply to join our team.', dNl: 'Bekijk openstaande functies en solliciteer.' },
+      { id: 'isa',       href: '#',             en: 'ISA', nl: 'ISA', dEn: 'Join as a consultant with little or no Salesforce experience.', dNl: 'Start als consultant met weinig of geen Salesforce-ervaring.' },
+    ];
+
+    function Culture() {
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+
+          {/* HERO */}
+          <section className="container-wide" style={{ paddingTop: 128, paddingBottom: 'clamp(48px, 6vw, 80px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('OUR WORK & CULTURE', 'ONS WERK & ONZE CULTUUR')}</div>
+            <h1 style={{ fontSize: 'clamp(38px,5vw,68px)', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 1.03, margin: '14px 0 0', maxWidth: 980 }}>
+              {tx('Embracing ', 'Met ')}
+              <span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('Ownership, Craftsmanship & Autonomy.', 'Eigenaarschap, Vakmanschap & Autonomie.')}</span>
+            </h1>
+            <p style={{ marginTop: 22, fontSize: 18, fontWeight: 400, lineHeight: 1.6, color: 'var(--intigris-dark-brown)', maxWidth: 760 }}>
+              {tx(
+                'Every organization has its own culture, and we are no exception. It either resonates with you or it doesn’t. As you step into our place, you’ll notice everyone is extremely friendly and helpful; you’ll feel at home immediately, without needing to adjust. But that’s just part of who we are. We define our identity through three pillars that reflect how we work and what we expect from one another.',
+                'Elke organisatie heeft haar eigen cultuur, en wij vormen daarop geen uitzondering. Het past bij je of niet. Zodra je binnenstapt, merk je dat iedereen enorm vriendelijk en behulpzaam is; je voelt je meteen thuis, zonder je te hoeven aanpassen. Maar dat is slechts een deel van wie we zijn. We definiëren onze identiteit met drie pijlers die weergeven hoe we werken en wat we van elkaar verwachten.'
+              )}
+            </p>
+          </section>
+
+          {/* THREE PILLARS */}
+          <section className="container-wide" style={{ paddingBottom: 'clamp(56px, 7vw, 96px)' }}>
+            <div className="cul-pillars" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+              {PILLARS.map((p, i) => (
+                <div key={i} style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 20, padding: '30px 28px', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--intigris-coral-700)' }}>{String(i + 1).padStart(2, '0')}</div>
+                  <h3 style={{ fontSize: 26, fontWeight: 500, letterSpacing: '-0.018em', margin: '10px 0 12px' }}>{tx(p.en, p.nl)}</h3>
+                  <p style={{ margin: 0, fontSize: 15.5, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', flex: 1 }}>{tx(p.dEn, p.dNl)}</p>
+                  <blockquote style={{ margin: '20px 0 0', paddingLeft: 16, borderLeft: '3px solid var(--intigris-coral)', fontSize: 16, fontWeight: 500, fontStyle: 'italic', lineHeight: 1.4, color: 'var(--intigris-dark-brown)' }}>
+                    “{tx(p.qEn, p.qNl)}”
+                  </blockquote>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* INTIGRIS FORMULA */}
+          <section style={{ background: 'var(--intigris-chocolate)', color: 'var(--intigris-off-white)', paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(64px, 8vw, 104px)' }}>
+            <div className="container-wide">
+              <div className="eyebrow" style={{ color: 'rgba(252,247,235,0.7)' }}>{tx('THE INTIGRIS FORMULA', 'DE INTIGRIS-FORMULE')}</div>
+              <h2 style={{ fontSize: 'clamp(32px,4vw,52px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.03, margin: '12px 0 0', color: 'var(--intigris-off-white)' }}>
+                {tx('Our ', 'Onze ')}<span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('concrete beliefs.', 'concrete overtuigingen.')}</span>
+              </h2>
+              <p style={{ marginTop: 16, fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'rgba(252,247,235,0.85)', maxWidth: 640 }}>
+                {tx(
+                  'We’ve captured our culture in a set of concrete beliefs, the Intigris formula. It’s in English, our primary language.',
+                  'We hebben onze cultuur vastgelegd in een set concrete overtuigingen, de Intigris-formule. Deze is in het Engels, onze voertaal.'
+                )}
+              </p>
+              <div className="cul-beliefs" style={{ marginTop: 40, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 18 }}>
+                {BELIEFS.map((b, i) => (
+                  <div key={i} style={{ borderTop: '1px solid rgba(252,247,235,0.22)', paddingTop: 16 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.12em', color: 'var(--intigris-coral)' }}>{String(i + 1).padStart(2, '0')}</div>
+                    <div style={{ marginTop: 10, fontSize: 17, fontWeight: 500, letterSpacing: '-0.012em', color: 'var(--intigris-off-white)' }}>{tx(b.en, b.nl)}</div>
+                    <p style={{ margin: '8px 0 0', fontSize: 14, fontWeight: 400, lineHeight: 1.5, color: 'rgba(252,247,235,0.8)' }}>{tx(b.dEn, b.dNl)}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* LIFE IS MORE THAN WORK */}
+          <section className="container-wide cul-split" style={{ paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(48px, 6vw, 72px)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(32px, 5vw, 72px)', alignItems: 'center' }}>
+            <div>
+              <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('LIFE IS MORE THAN JUST WORK', 'ER IS MEER DAN WERK')}</div>
+              <h2 style={{ fontSize: 'clamp(30px,3.6vw,48px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.04, margin: '12px 0 0' }}>
+                {tx('Effort and enjoyment ', 'Inzet en plezier ')}<span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('go hand in hand.', 'gaan hand in hand.')}</span>
+              </h2>
+              <p style={{ marginTop: 18, fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 480 }}>
+                {tx(
+                  'We love our work and take it seriously, but having fun is just as important to us. We also value our own time and hobbies, because we know there’s more to life than work.',
+                  'We houden van ons werk en nemen het serieus, maar plezier is net zo belangrijk. We waarderen ook onze eigen tijd en hobby’s, want er is meer in het leven dan werk.'
+                )}
+              </p>
+            </div>
+            <div style={{ borderRadius: 24, overflow: 'hidden', border: '1px solid var(--border)', aspectRatio: '4/3', background: 'var(--intigris-off-white-200)' }}>
+              <img src="https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/64ca17513e8fdc3c227f64d4_helena-lopes-e3OUQGT9bWU-unsplash.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+          </section>
+
+          {/* OUR STORY */}
+          <section className="container-wide cul-split cul-split--rev" style={{ paddingTop: 'clamp(32px, 4vw, 56px)', paddingBottom: 'clamp(64px, 8vw, 104px)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(32px, 5vw, 72px)', alignItems: 'center' }}>
+            <div style={{ borderRadius: 24, overflow: 'hidden', border: '1px solid var(--border)', aspectRatio: '4/5', background: 'var(--intigris-off-white-200)' }}>
+              <img src="https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/652f9f7de2434b632b972bfe_HansNieuwenhuisIntigris.jpg" alt={tx('Hans Nieuwenhuis, founder of Intigris', 'Hans Nieuwenhuis, oprichter van Intigris')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+            <div>
+              <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('OUR STORY', 'ONS VERHAAL')}</div>
+              <h2 style={{ fontSize: 'clamp(30px,3.6vw,48px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.04, margin: '12px 0 0' }}>
+                {tx('From a passion for technology to a team of smart people.', 'Van passie voor technologie naar een team van slimme mensen.')}
+              </h2>
+              <p style={{ marginTop: 18, fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 520 }}>
+                {tx(
+                  'Founder Hans Nieuwenhuis worked for about ten years as a business consultant in telecom after studying electrical engineering at Delft University of Technology. In 2009 it was time to do what he likes best. Driven by a love for advanced technology, he founded Intigris with a clear goal: helping organizations improve through smart software.',
+                  'Oprichter Hans Nieuwenhuis werkte zo’n tien jaar als business consultant in de telecom, na zijn studie elektrotechniek aan de TU Delft. In 2009 werd het tijd om te doen waar hij het meest van houdt. Gedreven door een liefde voor geavanceerde technologie richtte hij Intigris op, met één duidelijk doel: organisaties helpen verbeteren met slimme software.'
+                )}
+              </p>
+              <p style={{ marginTop: 14, fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 520 }}>
+                {tx(
+                  'Today, Intigris works with a team of smart consultants and developers from the Kraanspoor building on the creative NDSM wharf in Amsterdam-Noord.',
+                  'Vandaag werkt Intigris met een team van slimme consultants en developers vanuit het Kraanspoor-gebouw op de creatieve NDSM-werf in Amsterdam-Noord.'
+                )}
+              </p>
+            </div>
+          </section>
+
+          {/* EXPLORE MORE */}
+          <section className="container-wide" style={{ paddingBottom: 'clamp(64px, 8vw, 104px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('EXPLORE MORE', 'ONTDEK MEER')}</div>
+            <div className="cul-explore" style={{ marginTop: 22, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+              {EXPLORE.map((c) => (
+                <a key={c.id} href={c.href} className="cul-card" style={{ display: 'flex', flexDirection: 'column', gap: 8, textDecoration: 'none', color: 'inherit', background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 18, padding: '26px 26px 22px' }}>
+                  <h3 style={{ fontSize: 21, fontWeight: 500, letterSpacing: '-0.014em', margin: 0 }}>{tx(c.en, c.nl)}</h3>
+                  <p style={{ margin: 0, fontSize: 15, fontWeight: 400, lineHeight: 1.5, color: 'var(--fg-muted)', flex: 1 }}>{tx(c.dEn, c.dNl)}</p>
+                  <span className="cul-more" style={{ marginTop: 6, fontSize: 14, fontWeight: 500, color: 'var(--intigris-coral-700)' }}>{tx('Read more', 'Lees meer')} <span aria-hidden>→</span></span>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <style>{`
+            .cul-card { transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+            .cul-card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(64,35,1,0.10); border-color: var(--intigris-coral); }
+            .cul-card:hover .cul-more span { transform: translateX(3px); display:inline-block; }
+            @media (max-width: 960px) {
+              .cul-pillars { grid-template-columns: 1fr !important; }
+              .cul-beliefs { grid-template-columns: 1fr 1fr !important; }
+              .cul-split { grid-template-columns: 1fr !important; }
+              .cul-split--rev > div:first-child { order: 2; }
+              .cul-explore { grid-template-columns: 1fr !important; }
+            }
+          `}</style>
+        </main>
+      );
+    }
+
+    function App() {
+      const [lang, setLang] = useState('en');
+      function changeLang(l){ window.__lang = l; setLang(l); }
+      function nav(r){ if (r === 'blog') return (window.location.href = 'Blog.html'); return (window.location.href = 'index.html'); }
+      return (
+        <>
+          <SiteHeader overlay={false} megaTheme="cream" lang={lang} onLang={changeLang} onNav={nav} />
+          <Culture key={'cul-' + lang} />
+          <SiteNewsletter key={'nl-' + lang} />
+          <SiteFooter />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

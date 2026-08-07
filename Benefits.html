@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Benefits | Intigris</title>
+  <link rel="stylesheet" href="design-system/site.css?v=1786027704000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = 'en';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+    window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="text/babel" src="components/Services.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Newsletter.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1786027704000"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const sb = (window.supabase && window.SUPABASE_URL)
+      ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY)
+      : null;
+
+    const BENEFITS = [
+      { en: 'A pleasant working environment', nl: 'Een prettige werkomgeving',
+        dEn: 'We offer an open and welcoming culture where you’ll quickly feel at home. You’ll experience a positive atmosphere with helpful colleagues who encourage you to be your authentic self. Our team is diverse, and we embrace that diversity because it fosters fresh ideas, bringing your unique self to the table matters to us.',
+        dNl: 'We bieden een open en gastvrije cultuur waarin je je snel thuis voelt. Je ervaart een positieve sfeer met behulpzame collega’s die je aanmoedigen jezelf te zijn. Ons team is divers, en we omarmen die diversiteit omdat het frisse ideeën oplevert, jezelf meebrengen is belangrijk voor ons.' },
+      { en: 'Freedom and ownership', nl: 'Vrijheid en eigenaarschap',
+        dEn: 'We grant you significant autonomy, the freedom to be yourself and the latitude to shape your work as you see fit. The only expectation is that you deliver and stay accessible to colleagues and clients. You’ll be happier and more productive with full responsibility for your projects. It means we expect ownership, but we won’t leave you to navigate it alone; we support you every step of the way.',
+        dNl: 'We geven je veel autonomie, de vrijheid om jezelf te zijn en de ruimte om je werk in te richten zoals jij dat wilt. De enige verwachting is dat je levert en bereikbaar blijft voor collega’s en klanten. Met volledige verantwoordelijkheid voor je projecten ben je gelukkiger en productiever. Dat betekent dat we eigenaarschap verwachten, maar je staat er niet alleen voor; we ondersteunen je bij elke stap.' },
+      { en: 'Learning opportunities', nl: 'Leermogelijkheden',
+        dEn: 'Expect a steep learning curve where you continuously challenge yourself with complex problems, alongside some of the brightest software consultants in the field. Through projects, training sessions, and internal hackathons you’ll keep developing your Salesforce skills into true specialism. What you learn in 2 years with us might take 5 elsewhere.',
+        dNl: 'Verwacht een steile leercurve waarin je jezelf voortdurend uitdaagt met complexe vraagstukken, samen met enkele van de slimste softwareconsultants uit het vak. Via projecten, trainingen en interne hackathons ontwikkel je je Salesforce-vaardigheden tot echt specialisme. Wat je bij ons in 2 jaar leert, kost elders misschien 5 jaar.' },
+      { en: 'Making an impact with clients', nl: 'Impact maken bij klanten',
+        dEn: 'We primarily work with small and medium-sized clients eager to move quickly, not large corporations where projects crawl. Our consultants find the work rewarding because they interact directly with company leadership and genuinely make a difference. Instead of a minor role at a major client, you’ll have a major role at a smaller one, truly influencing their success.',
+        dNl: 'We werken vooral met kleine en middelgrote klanten die snel vooruit willen, niet met grote concerns waar projecten traag verlopen. Onze consultants vinden het werk waardevol omdat ze direct met de leiding schakelen en echt verschil maken. In plaats van een kleine rol bij een grote klant, heb je een grote rol bij een kleinere, met echte invloed op hun succes.' },
+      { en: 'Room for enjoyment', nl: 'Ruimte voor plezier',
+        dEn: 'We work hard, but there’s plenty of time and space for fun. We have weekly gatherings and activities, and once a quarter a retrospective where you share ideas about your work and about Intigris. Several times a year we organize parties or outings, where our CEO Hans, along with COO Dick, takes on the DJ role for the evening.',
+        dNl: 'We werken hard, maar er is volop tijd en ruimte voor plezier. We hebben wekelijkse borrels en activiteiten, en één keer per kwartaal een retrospective waarin je ideeën deelt over je werk en over Intigris. Meerdere keren per jaar organiseren we feesten of uitjes, waar onze CEO Hans, samen met COO Dick, de rol van DJ op zich neemt.' },
+    ];
+
+    const QUOTES = [
+      { photo: 'https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/652e51a1abee3e6c038c0a5d_CarlijndHaanIntigris.png',
+        name: 'Carlijn de Haan', role: 'COO',
+        qEn: 'At Intigris, I feel really happy when we help a customer make their business better. It’s also great to see how smart my teammates are in finding answers to what the customer needs.',
+        qNl: 'Bij Intigris word ik echt blij als we een klant helpen zijn business te verbeteren. Het is ook geweldig om te zien hoe slim mijn teamgenoten zijn in het vinden van antwoorden op wat de klant nodig heeft.' },
+      { photo: 'https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/652f962d1fcddfc32c905eff_RonnyBlom.jpg',
+        name: 'Ronny Blom', role: 'Salesforce Consultant',
+        qEn: 'What really set Intigris apart was their commitment to personal growth and development. I was given the opportunity to chart my own path within the Salesforce landscape, despite my lack of previous experience.',
+        qNl: 'Wat Intigris echt onderscheidde, was hun toewijding aan persoonlijke groei en ontwikkeling. Ik kreeg de kans om mijn eigen pad binnen het Salesforce-landschap uit te stippelen, ondanks mijn gebrek aan eerdere ervaring.' },
+      { photo: 'https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/64b8decbcef32c7425b744a0_T03CWD3A3-U01TCHH4SJE-81b89c25229a-512.jpeg',
+        name: 'Elzinus van der Kleij', role: 'Salesforce Consultant',
+        qEn: 'The moment I realized I had a free hand in being as supportive as I can for our clients, and being able to communicate with colleagues in a flat hierarchy, this feeling of autonomy and responsibility makes me want to grow.',
+        qNl: 'Het moment waarop ik besefte dat ik de vrije hand had om onze klanten zo goed mogelijk te ondersteunen, en te communiceren met collega’s in een platte hiërarchie, dat gevoel van autonomie en verantwoordelijkheid maakt dat ik wil groeien.' },
+    ];
+
+    const EXPLORE = [
+      { id: 'culture',   href: 'Culture.html',   en: 'Our culture', nl: 'Onze cultuur', dEn: 'Feel at home from the moment you step in.', dNl: 'Voel je thuis vanaf het eerste moment.' },
+      { id: 'vacancies', href: 'Vacancies.html', en: 'Vacancies', nl: 'Vacatures', dEn: 'Explore open roles and apply to join our team.', dNl: 'Bekijk openstaande functies en solliciteer.' },
+      { id: 'isa',       href: 'ISA.html',       en: 'ISA', nl: 'ISA', dEn: 'Join as a consultant with little or no Salesforce experience.', dNl: 'Start als consultant met weinig of geen Salesforce-ervaring.' },
+    ];
+
+    function Benefits() {
+      // Pull the latest headshots from the team profiles in the portal.
+      // Falls back to the photo hardcoded on each quote if no match is found.
+      const [photos, setPhotos] = useState({});
+      useEffect(() => {
+        if (!sb) return;
+        const names = QUOTES.map((q) => q.name);
+        sb.from('team_members').select('name,headshot_url').in('name', names).then(({ data }) => {
+          if (!data) return;
+          const map = {};
+          data.forEach((m) => { if (m.headshot_url) map[m.name] = m.headshot_url; });
+          setPhotos(map);
+        });
+      }, []);
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+
+          {/* HERO */}
+          <section className="container-wide" style={{ paddingTop: 128, paddingBottom: 'clamp(48px, 6vw, 72px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('OUR BENEFITS', 'ARBEIDSVOORWAARDEN')}</div>
+            <h1 style={{ fontSize: 'clamp(38px,5vw,68px)', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 1.03, margin: '14px 0 0', maxWidth: 900 }}>
+              {tx('What makes working at Intigris ', 'Wat maakt werken bij Intigris ')}
+              <span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('worthwhile?', 'de moeite waard?')}</span>
+            </h1>
+            <p style={{ marginTop: 22, fontSize: 18, fontWeight: 400, lineHeight: 1.6, color: 'var(--intigris-dark-brown)', maxWidth: 720 }}>
+              {tx(
+                'We’ve outlined some key points for you. If these resonate, respond to one of our job postings or submit an open application.',
+                'We hebben een aantal kernpunten voor je op een rij gezet. Spreken die je aan? Reageer dan op een van onze vacatures of stuur een open sollicitatie.'
+              )}
+            </p>
+          </section>
+
+          {/* BENEFITS LIST */}
+          <section className="container-wide" style={{ paddingBottom: 'clamp(56px, 7vw, 96px)' }}>
+            <div className="ben-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>
+              {BENEFITS.map((b, i) => (
+                <div key={i} className="ben-card" style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 20, padding: '30px 30px 28px', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.14em', color: 'var(--intigris-coral-700)' }}>{String(i + 1).padStart(2, '0')}</div>
+                  <h3 style={{ fontSize: 24, fontWeight: 500, letterSpacing: '-0.018em', margin: '10px 0 12px' }}>{tx(b.en, b.nl)}</h3>
+                  <p style={{ margin: 0, fontSize: 15.5, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)' }}>{tx(b.dEn, b.dNl)}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* TESTIMONIALS */}
+          <section style={{ background: 'var(--intigris-chocolate)', color: 'var(--intigris-off-white)', paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(64px, 8vw, 104px)' }}>
+            <div className="container-wide">
+              <div className="eyebrow" style={{ color: 'rgba(252,247,235,0.7)' }}>{tx('IN THEIR OWN WORDS', 'IN HUN EIGEN WOORDEN')}</div>
+              <h2 style={{ fontSize: 'clamp(30px,3.6vw,48px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.04, margin: '12px 0 40px', color: 'var(--intigris-off-white)' }}>
+                {tx('Meet a few ', 'Ontmoet een paar ')}<span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('Intigrants.', 'Intigranten.')}</span>
+              </h2>
+              <div className="ben-quotes" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+                {QUOTES.map((q, i) => (
+                  <div key={i} style={{ background: 'rgba(252,247,235,0.06)', border: '1px solid rgba(252,247,235,0.16)', borderRadius: 20, padding: '28px 26px', display: 'flex', flexDirection: 'column' }}>
+                    <div aria-hidden style={{ fontSize: 40, lineHeight: 0.6, fontWeight: 700, color: 'var(--intigris-coral)' }}>“</div>
+                    <p style={{ margin: '10px 0 0', fontSize: 16, fontWeight: 400, fontStyle: 'italic', lineHeight: 1.55, color: 'rgba(252,247,235,0.92)', flex: 1 }}>{tx(q.qEn, q.qNl)}</p>
+                    <div style={{ marginTop: 22, display: 'flex', alignItems: 'center', gap: 14 }}>
+                      <img src={photos[q.name] || q.photo} alt={q.name} style={{ width: 48, height: 48, borderRadius: 999, objectFit: 'cover', border: '1px solid rgba(252,247,235,0.24)' }} />
+                      <div>
+                        <div style={{ fontSize: 15, fontWeight: 500, color: 'var(--intigris-off-white)' }}>{q.name}</div>
+                        <div style={{ fontSize: 13, fontWeight: 400, color: 'rgba(252,247,235,0.7)' }}>{q.role}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* EXPLORE MORE */}
+          <section className="container-wide" style={{ paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(64px, 8vw, 104px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('EXPLORE MORE', 'ONTDEK MEER')}</div>
+            <div className="ben-explore" style={{ marginTop: 22, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+              {EXPLORE.map((c) => (
+                <a key={c.id} href={c.href} className="ben-linkcard" style={{ display: 'flex', flexDirection: 'column', gap: 8, textDecoration: 'none', color: 'inherit', background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 18, padding: '26px 26px 22px' }}>
+                  <h3 style={{ fontSize: 21, fontWeight: 500, letterSpacing: '-0.014em', margin: 0 }}>{tx(c.en, c.nl)}</h3>
+                  <p style={{ margin: 0, fontSize: 15, fontWeight: 400, lineHeight: 1.5, color: 'var(--fg-muted)', flex: 1 }}>{tx(c.dEn, c.dNl)}</p>
+                  <span className="ben-more" style={{ marginTop: 6, fontSize: 14, fontWeight: 500, color: 'var(--intigris-coral-700)' }}>{tx('Read more', 'Lees meer')} <span aria-hidden>→</span></span>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <style>{`
+            .ben-card { transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+            .ben-card:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(64,35,1,0.08); border-color: var(--intigris-coral); }
+            .ben-linkcard { transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+            .ben-linkcard:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(64,35,1,0.10); border-color: var(--intigris-coral); }
+            .ben-linkcard:hover .ben-more span { transform: translateX(3px); display:inline-block; }
+            @media (max-width: 960px) {
+              .ben-grid { grid-template-columns: 1fr !important; }
+              .ben-quotes { grid-template-columns: 1fr !important; }
+              .ben-explore { grid-template-columns: 1fr !important; }
+            }
+          `}</style>
+        </main>
+      );
+    }
+
+    function App() {
+      const [lang, setLang] = useState('en');
+      function changeLang(l){ window.__lang = l; setLang(l); }
+      function nav(r){ if (r === 'blog') return (window.location.href = 'Blog.html'); return (window.location.href = 'index.html'); }
+      return (
+        <>
+          <SiteHeader overlay={false} megaTheme="cream" lang={lang} onLang={changeLang} onNav={nav} />
+          <Benefits key={'ben-' + lang} />
+          <SiteNewsletter key={'nl-' + lang} />
+          <SiteFooter />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-// Hero.jsx — Bold stacked headline + warm editorial composition right.
+// Hero.jsx, Bold stacked headline + warm editorial composition right.
 // Exposes: window.SiteHero
 
 const { useState: useHeroState, useEffect: useHeroEffect } = React;
@@ -7,13 +7,13 @@ const HERO_INDUSTRIES_EN = ['Business', 'Sales', 'Field Service', 'Integrations'
 const HERO_INDUSTRIES_NL = ['Business', 'Sales', 'Field Service', 'Integraties', 'Data', 'Service', 'AI'];
 const getHeroIndustries = () => (window.__lang === 'nl' ? HERO_INDUSTRIES_NL : HERO_INDUSTRIES_EN);
 
-function SiteHero({ onCta, onSecondary, variant = 'split', mood = 'coral' }) {
+function SiteHero({ onCta, onSecondary, variant = 'split', mood = 'coral', mode = 'ai', onMode }) {
   const [idx, setIdx] = useHeroState(0);
   const tx = window.tx || ((en) => en);
   const HERO_INDUSTRIES = getHeroIndustries();
 
   useHeroEffect(() => {
-    // "Business" (index 0) lingers twice as long as the rest — it's the
+    // "Business" (index 0) lingers twice as long as the rest, it's the
     // canonical tagline, the others rotate underneath.
     const t = setTimeout(
       () => setIdx(i => (i + 1) % HERO_INDUSTRIES.length),
@@ -22,7 +22,7 @@ function SiteHero({ onCta, onSecondary, variant = 'split', mood = 'coral' }) {
     return () => clearTimeout(t);
   }, [idx, HERO_INDUSTRIES.length]);
 
-  if (variant === 'cinematic')   return <HeroCinematic onCta={onCta} onSecondary={onSecondary} idx={idx} HERO_INDUSTRIES={HERO_INDUSTRIES} tx={tx} mood={mood} />;
+  if (variant === 'cinematic')   return <HeroCinematic onCta={onCta} onSecondary={onSecondary} idx={idx} HERO_INDUSTRIES={HERO_INDUSTRIES} tx={tx} mood={mood} mode={mode} onMode={onMode} />;
   if (variant === 'typographic') return <HeroTypographic onCta={onCta} onSecondary={onSecondary} idx={idx} HERO_INDUSTRIES={HERO_INDUSTRIES} tx={tx} />;
   if (variant === 'editorial')   return <HeroEditorial  onCta={onCta} onSecondary={onSecondary} idx={idx} HERO_INDUSTRIES={HERO_INDUSTRIES} tx={tx} />;
   return <HeroSplit onCta={onCta} onSecondary={onSecondary} idx={idx} HERO_INDUSTRIES={HERO_INDUSTRIES} tx={tx} />;
@@ -67,7 +67,7 @@ function RotatingWord({ words, idx, color = 'var(--intigris-coral)' }) {
 }
 
 /* ---------- Cinematic: full-bleed coral hero, transparent overlay header ---------- */
-function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'coral' }) {
+function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'coral', mode = 'ai', onMode }) {
   const dark = mood === 'dark';
   const services = [
     { n: '01', label: tx('Sales Cloud', 'Sales Cloud') },
@@ -87,7 +87,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
       borderBottomRightRadius: 'clamp(24px, 4vw, 56px)',
       isolation: 'isolate',
     }}>
-      {/* Photo layer — warm silhouette emerging from the right */}
+      {/* Photo layer, warm silhouette emerging from the right */}
       <div aria-hidden style={{
         position: 'absolute', inset: 0, zIndex: 0,
         backgroundImage: 'url("assets/hero-team.jpg")',
@@ -112,7 +112,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
         paddingTop: 'clamp(120px, 15vh, 180px)',
         paddingBottom: 'clamp(28px, 4vh, 44px)',
       }}>
-        {/* Top block — headline + right statement */}
+        {/* Top block, headline + right statement */}
         <div className="hero-cine-top" style={{
           display: 'grid',
           gridTemplateColumns: 'minmax(0, 1.35fr) minmax(0, 1fr)',
@@ -131,18 +131,28 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
                 <RotatingWord words={HERO_INDUSTRIES} idx={idx} color={dark ? 'var(--intigris-coral)' : 'var(--intigris-dark-brown)'} />
               </span>
             </h1>
-            <div style={{ marginTop: 'clamp(28px, 4vh, 40px)', display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-              <button onClick={() => { const el = document.getElementById('services'); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 72, behavior: 'smooth' }); }} className="btn btn-cine-primary">
-                {tx('AI solutions', 'AI-oplossingen')}
-                <span className="cine-arrow" aria-hidden>→</span>
-              </button>
-              <button className="btn btn-outline-light" onClick={() => { const el = document.getElementById('services'); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 72, behavior: 'smooth' }); }}>
-                {tx('Salesforce solutions', 'Salesforce-oplossingen')}
-              </button>
+            <div style={{ marginTop: 'clamp(28px, 4vh, 40px)' }}>
+              <div className="mode-toggle" data-mode={mode} role="tablist" aria-label={tx('Choose solutions view', 'Kies weergave')}>
+                <span className="mode-thumb" data-mode={mode} aria-hidden />
+                <button
+                  type="button" role="tab" aria-selected={mode === 'ai'}
+                  className={'mode-opt' + (mode === 'ai' ? ' is-active' : '')}
+                  onClick={() => onMode && onMode('ai')}
+                >
+                  {tx('AI solutions', 'AI-oplossingen')}
+                </button>
+                <button
+                  type="button" role="tab" aria-selected={mode === 'salesforce'}
+                  className={'mode-opt' + (mode === 'salesforce' ? ' is-active' : '')}
+                  onClick={() => onMode && onMode('salesforce')}
+                >
+                  {tx('Salesforce solutions', 'Salesforce-oplossingen')}
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Right — glassy credentials cell, bottom-aligned */}
+          {/* Right, glassy credentials cell, bottom-aligned */}
           <div style={{ justifySelf: 'end', paddingBottom: 8, width: '100%', maxWidth: 420 }}>
             <HeroStats tx={tx} glass />
           </div>
@@ -163,6 +173,51 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           font-size: 15px; transition: transform var(--t-base) var(--ease-out);
         }
         .btn-cine-primary:hover .cine-arrow { transform: translateX(3px); }
+
+        /* Segmented AI / Salesforce toggle */
+        .mode-toggle {
+          position: relative;
+          display: inline-grid;
+          grid-template-columns: 1fr 1fr;
+          padding: 5px;
+          border-radius: 999px;
+          background: var(--intigris-off-white);
+          border: 1px solid rgba(64,35,1,0.12);
+          box-shadow: 0 6px 20px rgba(64,35,1,0.14);
+          max-width: 100%;
+        }
+        .mode-thumb {
+          position: absolute;
+          top: 5px; bottom: 5px; left: 5px;
+          width: calc((100% - 10px) / 2);
+          border-radius: 999px;
+          background: var(--intigris-coral);
+          box-shadow: 0 4px 14px rgba(214,67,27,0.35);
+          transition: transform 300ms cubic-bezier(0.22,0.61,0.36,1),
+                      background-color 300ms var(--ease-out),
+                      box-shadow 300ms var(--ease-out);
+          z-index: 0;
+        }
+        .mode-thumb[data-mode="salesforce"] {
+          transform: translateX(100%);
+          background: var(--intigris-soft-blue);
+          box-shadow: 0 4px 14px rgba(154,184,226,0.5);
+        }
+        .mode-opt {
+          position: relative; z-index: 1;
+          border: 0; background: transparent; cursor: pointer;
+          padding: 13px clamp(18px, 3vw, 32px);
+          border-radius: 999px;
+          font-family: inherit; font-size: 15px; font-weight: 500;
+          letter-spacing: -0.005em; white-space: nowrap;
+          color: var(--intigris-dark-brown);
+          transition: color 220ms var(--ease-out);
+        }
+        .mode-opt.is-active { color: var(--intigris-off-white); }
+        .mode-opt:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 999px; }
+        @media (max-width: 460px) {
+          .mode-opt { padding: 12px 16px; font-size: 13.5px; }
+        }
         @media (max-width: 860px) {
           .hero-cine-top { grid-template-columns: 1fr !important; align-items: start !important; gap: 32px !important; }
           .hero-cine-top > div:last-child { justify-self: start !important; }
@@ -219,7 +274,7 @@ function HeroSplit({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
             </h1>
             <p style={{
               marginTop: 32, maxWidth: 520,
-              fontSize: 19, lineHeight: 1.5, fontWeight: 300,
+              fontSize: 19, lineHeight: 1.5, fontWeight: 400,
               color: 'var(--intigris-dark-brown)',
             }}>
               {tx(
@@ -238,7 +293,7 @@ function HeroSplit({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
             </div>
           </div>
 
-          {/* RIGHT — Summit Partner badge anchored top-right, credentials card bottom-right */}
+          {/* RIGHT, Summit Partner badge anchored top-right, credentials card bottom-right */}
           <div style={{
             position: 'relative', zIndex: 1,
             display: 'flex', flexDirection: 'column',
@@ -262,13 +317,13 @@ function HeroSplit({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
         </div>
       </div>
 
-      {/* Bottom marquee — already a peek of social proof */}
+      {/* Bottom marquee, already a peek of social proof */}
       <ProofMarquee />
     </section>
   );
 }
 
-/* ---------- B. Typographic — no photo, type-led with grid hint ---------- */
+/* ---------- B. Typographic, no photo, type-led with grid hint ---------- */
 function HeroTypographic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
   return (
     <section style={{ background: 'var(--intigris-off-white)', position: 'relative', overflow: 'hidden' }}>
@@ -309,7 +364,7 @@ function HeroTypographic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
           alignItems: 'end',
         }}>
           <p style={{
-            fontSize: 22, lineHeight: 1.45, fontWeight: 300, maxWidth: 720,
+            fontSize: 22, lineHeight: 1.45, fontWeight: 400, maxWidth: 720,
             color: 'var(--intigris-dark-brown)',
           }}>
             {tx(
@@ -328,7 +383,7 @@ function HeroTypographic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
   );
 }
 
-/* ---------- C. Editorial — magazine style ---------- */
+/* ---------- C. Editorial, magazine style ---------- */
 function HeroEditorial({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
   return (
     <section style={{ background: 'var(--intigris-off-white)', position: 'relative', overflow: 'hidden' }}>
@@ -339,13 +394,13 @@ function HeroEditorial({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
           gap: 32,
           minHeight: 620,
         }}>
-          {/* Left col — credentials stack */}
+          {/* Left col, credentials stack */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <div className="eyebrow" style={{ marginTop: 8 }}>{tx('EST. 2010 · AMSTERDAM', 'OPGERICHT 2010 · AMSTERDAM')}</div>
             <div style={{
               borderTop: '1px solid var(--border)',
               paddingTop: 20,
-              fontSize: 14, fontWeight: 300, color: 'var(--fg-muted)', lineHeight: 1.5,
+              fontSize: 14, fontWeight: 400, color: 'var(--fg-muted)', lineHeight: 1.5,
             }}>
               {tx(
                 'Salesforce Implementation Partner serving ambitious organisations across the Netherlands. 250+ projects delivered since 2010.',
@@ -357,7 +412,7 @@ function HeroEditorial({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
             </div>
           </div>
 
-          {/* Middle col — headline */}
+          {/* Middle col, headline */}
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
             <h1 style={{
               fontSize: 'clamp(56px, 8vw, 124px)',
@@ -374,7 +429,7 @@ function HeroEditorial({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
             </h1>
             <p style={{
               marginTop: 32,
-              fontSize: 17, fontWeight: 300, lineHeight: 1.5,
+              fontSize: 17, fontWeight: 400, lineHeight: 1.5,
               color: 'var(--fg-muted)', maxWidth: 440, marginLeft: 'auto', marginRight: 'auto',
             }}>
               {tx(
@@ -388,7 +443,7 @@ function HeroEditorial({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
             </div>
           </div>
 
-          {/* Right col — industry feed */}
+          {/* Right col, industry feed */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div className="photo" style={{ aspectRatio: '3/4' }}>
               <div className="photo-label">Implementation team</div>
@@ -419,7 +474,7 @@ function HeroEditorial({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
   );
 }
 
-/* ---------- Credentials card — three stats with hairline dividers ---------- */
+/* ---------- Credentials card, three stats with hairline dividers ---------- */
 function HeroStats({ tx, glass = false }) {
   const STATS = [
     { num: '15+',  label: tx('Years Salesforce partner', 'Jaar Salesforce-partner') },
@@ -483,7 +538,7 @@ function HeroStats({ tx, glass = false }) {
               {s.star && (
                 <>
                   <span aria-hidden style={{ fontSize: 20, lineHeight: 1, transform: 'translateY(-3px)', marginLeft: 4, color: 'var(--intigris-coral)' }}>★</span>
-                  <span style={{ fontSize: 22, fontWeight: 300, opacity: 0.55, letterSpacing: '-0.02em', marginLeft: 2 }}>/5</span>
+                  <span style={{ fontSize: 22, fontWeight: 400, opacity: 0.55, letterSpacing: '-0.02em', marginLeft: 2 }}>/5</span>
                 </>
               )}
             </div>

@@ -66,7 +66,10 @@ Weight carries meaning; don't use weights for arbitrary emphasis.
 - **Bold (700) — quotes only.** Reserve bold for pull-quotes / statement quotes.
 - **Medium (500) — titles.** Headings and display type. This is the most-used
   weight. Tight tracking (`--tracking-tight`), minimal line height (`--lh-tight`).
-- **Light (300) — navigation and body text** by brand-book default.
+- **Regular (400) — navigation and body text.** NOTE: although the brand book
+  names "Light (300)" for body, weight 300 reads too thin on screen. **Minimum
+  font weight anywhere on the site is 400 — never use 300.** The `--w-light`
+  token now resolves to 400 for this reason. Applies to all future work.
 - Section labels ("eyebrows"): uppercase, letter-spaced, **coral**, small
   (pattern in components as `.eyebrow`).
 - Legibility override: on dark surfaces, don't drop body below weight 400 or

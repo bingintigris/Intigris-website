@@ -1,4 +1,4 @@
-// FinalCTA.jsx + Footer — close of the home page.
+// FinalCTA.jsx + Footer, close of the home page.
 // Exposes: window.SiteFinalCTA, window.SiteFooter
 
 function SiteFinalCTA({ onCta }) {
@@ -43,7 +43,7 @@ function SiteFinalCTA({ onCta }) {
               {tx("Let’s ", 'Laten we ')}<span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('talk.', 'praten.')}</span>
             </h2>
             <p style={{
-              marginTop: 24, fontSize: 17, fontWeight: 300, lineHeight: 1.55,
+              marginTop: 24, fontSize: 17, fontWeight: 400, lineHeight: 1.55,
               color: 'rgba(252,247,235,0.8)', maxWidth: 520, margin: '24px 0 0 0',
             }}>
               {tx(
@@ -155,7 +155,7 @@ function SiteFooter() {
           alignItems: 'start',
         }}>
           <div>
-            <img src="assets/logo-dark-brown.png" alt="intigris" style={{ height: 64, marginBottom: 28, display: 'block' }} />
+            <img src="assets/logo-coral.png" alt="intigris" style={{ height: 64, marginBottom: 28, display: 'block' }} />
             <p style={{
               fontSize: 16, fontWeight: 400, lineHeight: 1.5,
               color: 'var(--intigris-dark-brown)', maxWidth: 340,
@@ -193,7 +193,7 @@ function SiteFooter() {
           flexWrap: 'wrap', gap: 16,
           fontSize: 12, color: 'rgba(64,35,1,0.85)', fontWeight: 400,
         }}>
-          <div>© 2026 Intigris B.V. · KvK 82252007 · Kraanspoor 42, 1033 SE Amsterdam</div>
+          <div>© 2026 Intigris B.V. · KvK 82252007</div>
           <div style={{ display: 'flex', gap: 24 }}>
             <a style={{ color: 'inherit', textDecoration: 'none' }}>{tx('Privacy', 'Privacy')}</a>
             <a style={{ color: 'inherit', textDecoration: 'none' }}>{tx('Cookies', 'Cookies')}</a>

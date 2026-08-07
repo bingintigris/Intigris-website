@@ -1,14 +1,15 @@
 -- =====================================================================
---  Intigris Admin Portal — Media Library storage policies
+--  Intigris Admin Portal — Media Library: bucket + storage policies
 --  Dollar-quoted so it is immune to smart-quote conversion on paste.
---
---  FIRST create the bucket in the dashboard:
---    Storage -> New bucket -> name: media -> tick "Public bucket" -> Create
---
---  Then run this to let signed-in users upload / update / delete in it.
---  (A public bucket already allows public reads, which is what the website
---  needs for image URLs.)
+--  Run this whole file once in the SQL Editor. It creates the public
+--  "media" bucket AND lets signed-in users upload / update / delete in it.
+--  (No dashboard clicks needed.)
 -- =====================================================================
+
+-- Create the public bucket (or make it public if it already exists).
+insert into storage.buckets (id, name, public)
+values ($q$media$q$, $q$media$q$, true)
+on conflict (id) do update set public = true;
 
 drop policy if exists media_public_read on storage.objects;
 create policy media_public_read on storage.objects

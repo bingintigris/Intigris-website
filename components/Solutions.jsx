@@ -1,4 +1,4 @@
-// Solutions.jsx — Salesforce clouds / solutions we implement.
+// Solutions.jsx, Salesforce clouds / solutions we implement.
 // Dark "chocolate" theme panel for visual rhythm after the services section.
 // Exposes: window.SiteSolutions
 
@@ -6,7 +6,7 @@ const SOLUTIONS = [
   {
     id: 'sales',
     name: 'Sales Cloud',
-    blurb: 'Pipeline, forecast, and account management — the CRM foundation the rest of the platform builds on.',
+    blurb: 'Pipeline, forecast, and account management, the CRM foundation the rest of the platform builds on.',
     tags: ['Pipeline', 'Forecasting', 'B2B Accounts'],
   },
   {
@@ -18,7 +18,7 @@ const SOLUTIONS = [
   {
     id: 'field-service',
     name: 'Field Service',
-    blurb: 'Scheduling, routing, mobile, parts and contracts — our specialism, in production at scale.',
+    blurb: 'Scheduling, routing, mobile, parts and contracts, our specialism, in production at scale.',
     tags: ['Dispatch', 'Mobile', 'Routing'],
     accent: true,
   },
@@ -37,7 +37,7 @@ const SOLUTIONS = [
   {
     id: 'data',
     name: 'Data 360',
-    blurb: 'Unify customer data across the enterprise — the foundation for analytics, automation, and AI.',
+    blurb: 'Unify customer data across the enterprise, the foundation for analytics, automation, and AI.',
     tags: ['Unified Profile', 'Activation'],
   },
   {
@@ -104,14 +104,14 @@ function SiteSolutions() {
               {tx('SALESFORCE SOLUTIONS WE IMPLEMENT', 'SALESFORCE-OPLOSSINGEN DIE WIJ IMPLEMENTEREN')}
             </div>
             <h2 className="display-md" style={{ color: 'var(--intigris-off-white)' }}>
-              {tx('The Salesforce stack —', 'De Salesforce-stack —')}<br/>
+              {tx('The Salesforce stack,', 'De Salesforce-stack,')}<br/>
               <span style={{ color: 'var(--intigris-coral)' }}>{tx('configured, integrated, in production.', 'geconfigureerd, geïntegreerd, in productie.')}</span>
             </h2>
           </div>
           <p className="lede" style={{ color: 'rgba(252,247,235,0.7)' }}>
             {tx(
               'We work across the Salesforce platform. These are the products we deliver most frequently, on programmes that demonstrably return their investment within a year.',
-              'Wij werken op het volledige Salesforce-platform. Dit zijn de producten die we het vaakst opleveren — in programma’s die zich aantoonbaar binnen een jaar terugverdienen.'
+              'Wij werken op het volledige Salesforce-platform. Dit zijn de producten die we het vaakst opleveren, in programma’s die zich aantoonbaar binnen een jaar terugverdienen.'
             )}
           </p>
         </div>
@@ -142,7 +142,7 @@ function SiteSolutions() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <div style={{
-              fontSize: 14, color: 'rgba(252,247,235,0.7)', fontWeight: 300, maxWidth: 460,
+              fontSize: 14, color: 'rgba(252,247,235,0.7)', fontWeight: 400, maxWidth: 460,
               lineHeight: 1.5,
             }}>
               {tx('Working with another cloud, or in need of a custom build?', 'Werkt u met een andere cloud, of heeft u een custom build nodig?')}
@@ -221,7 +221,7 @@ function SolutionCell({ sol }) {
       </h3>
 
       <p style={{
-        fontSize: 14, fontWeight: 300, lineHeight: 1.5,
+        fontSize: 14, fontWeight: 400, lineHeight: 1.5,
         margin: 0, color: mutedFg,
       }}>
         {sol.blurb}

@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About | Intigris</title>
+  <link rel="stylesheet" href="design-system/site.css?v=1786027704000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = 'en';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+    window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="text/babel" src="components/Services.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Newsletter.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/ContactSheet.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1786027704000"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const sb = (window.supabase && window.SUPABASE_URL)
+      ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY)
+      : null;
+
+    function initials(name){ return (name||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
+
+    function LinkedInGlyph({ size = 16 }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/>
+        </svg>
+      );
+    }
+
+
+
+    /* Values (condensed from the Culture page) */
+    const VALUES = [
+      { en: 'Ownership', nl: 'Eigenaarschap', dEn: 'We take responsibility, hold high standards, and lead from the front.', dNl: 'We nemen verantwoordelijkheid, hanteren hoge standaarden en nemen het voortouw.' },
+      { en: 'Craftsmanship', nl: 'Vakmanschap', dEn: 'We love the profession and keep mastering our craft, together.', dNl: 'We houden van het vak en blijven ons vakmanschap ontwikkelen, samen.' },
+      { en: 'Autonomy', nl: 'Autonomie', dEn: 'We value space, form our own opinions, and guide clients forward.', dNl: 'We waarderen ruimte, vormen onze eigen mening en helpen klanten vooruit.' },
+    ];
+
+    function AboutHero() {
+      return (
+        <section style={{
+          position: 'relative', overflow: 'hidden',
+          background: 'linear-gradient(90deg, #ff9166 0%, var(--intigris-coral) 44%, var(--intigris-coral-700) 80%, #9e300d 100%)',
+          borderBottomLeftRadius: 'clamp(24px, 4vw, 56px)', borderBottomRightRadius: 'clamp(24px, 4vw, 56px)', isolation: 'isolate',
+        }}>
+          <div aria-hidden style={{ position: 'absolute', inset: 0, zIndex: 0, backgroundImage: 'url("assets/hero-team.jpg")', backgroundSize: 'cover', backgroundPosition: 'center right', mixBlendMode: 'multiply', opacity: 0.5, WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%)', maskImage: 'linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%)' }} />
+          <div aria-hidden style={{ position: 'absolute', inset: 0, zIndex: 0, background: 'linear-gradient(180deg, rgba(64,35,1,0) 40%, rgba(64,35,1,0.28) 100%)' }} />
+          <div className="container-wide" style={{ position: 'relative', zIndex: 1, paddingTop: 'clamp(128px, 16vh, 190px)', paddingBottom: 'clamp(48px, 7vh, 84px)' }}>
+            <div className="ab-hero-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.35fr) minmax(0,1fr)', gap: 'clamp(32px, 5vw, 72px)', alignItems: 'end' }}>
+              <div>
+                <div className="eyebrow" style={{ marginBottom: 22, color: 'var(--intigris-dark-brown)' }}>{tx('ABOUT INTIGRIS', 'OVER INTIGRIS')}</div>
+                <h1 style={{ fontSize: 'clamp(44px,7vw,104px)', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 0.98, margin: 0, color: 'var(--intigris-off-white)' }}>
+                  {tx('We smarten up', 'Wij maken uw')}<br/>{tx('your business.', 'business slimmer.')}
+                </h1>
+                <p style={{ marginTop: 24, maxWidth: 560, fontSize: 18, fontWeight: 400, lineHeight: 1.55, color: 'rgba(252,247,235,0.92)' }}>
+                  {tx(
+                    'A certified Salesforce Consulting Partner helping ambitious organisations work smarter, from advice and configuration to development and support.',
+                    'Een gecertificeerde Salesforce Consulting Partner die ambitieuze organisaties helpt slimmer te werken, van advies en configuratie tot ontwikkeling en support.'
+                  )}
+                </p>
+              </div>
+              <div style={{ justifySelf: 'end', width: '100%', maxWidth: 400 }}>
+                <div style={{ background: 'rgba(252,247,235,0.14)', border: '1px solid rgba(252,247,235,0.34)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', borderRadius: 20, padding: '26px 28px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {[
+                    tx('Salesforce Consulting Partner', 'Salesforce Consulting Partner'),
+                    tx('AWS Partner Network', 'AWS Partner Network'),
+                    tx('Amsterdam · NDSM wharf', 'Amsterdam · NDSM-werf'),
+                    tx('Since 2010', 'Sinds 2010'),
+                  ].map((s, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 14, fontWeight: 500, letterSpacing: '0.02em', color: 'var(--intigris-off-white)', paddingBottom: i < 3 ? 12 : 0, borderBottom: i < 3 ? '1px solid rgba(252,247,235,0.18)' : 'none' }}>
+                      <span style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--intigris-off-white)', flex: 'none' }} />{s}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          <style>{`@media (max-width: 900px){ .ab-hero-grid{ grid-template-columns: 1fr !important; align-items: start !important; } .ab-hero-grid > div:last-child{ justify-self: start !important; } }`}</style>
+        </section>
+      );
+    }
+
+    function About({ onCta }) {
+      const [team, setTeam] = useState(null);
+      useEffect(() => {
+        if (!sb) { setTeam([]); return; }
+        sb.from('team_members').select('id,name,title,headshot_url,linkedin_url,sort_order')
+          .eq('status', 'active').order('sort_order', { ascending: true }).order('created_at', { ascending: true })
+          .then(({ data }) => {
+            const rows = data || [];
+            // Pin leadership to the front of the first row, in this order.
+            const PRIORITY = ['hans', 'dick', 'carlijn', 'ronald'];
+            const rank = (m) => {
+              const first = (m.name || '').trim().toLowerCase().split(/\s+/)[0];
+              const i = PRIORITY.indexOf(first);
+              return i === -1 ? 999 : i;
+            };
+            // Stable sort keeps everyone else in their existing sort_order.
+            rows.sort((a, b) => rank(a) - rank(b));
+            setTeam(rows);
+          });
+      }, []);
+      const teamCount = team && team.length ? team.length : null;
+
+      const STATS = [
+        { v: '2009', k: tx('Founded', 'Opgericht') },
+        { v: '15+', k: tx('Years as a Salesforce partner', 'Jaar Salesforce-partner') },
+        { v: teamCount ? String(teamCount) : '…', k: tx('Intigrants', 'Intigranten') },
+        { v: tx('Amsterdam', 'Amsterdam'), k: tx('NDSM wharf, Noord', 'NDSM-werf, Noord') },
+      ];
+
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+          <AboutHero />
+
+          {/* WHO WE ARE */}
+          <section className="container-wide" style={{ paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(40px, 5vw, 64px)' }}>
+            <div className="ab-two" style={{ display: 'grid', gridTemplateColumns: '0.85fr 1.15fr', gap: 'clamp(28px, 5vw, 72px)', alignItems: 'start' }}>
+              <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('WHO WE ARE', 'WIE WE ZIJN')}</div>
+              <div>
+                <h2 style={{ fontSize: 'clamp(28px,3.2vw,44px)', fontWeight: 500, letterSpacing: '-0.022em', lineHeight: 1.08, margin: 0 }}>
+                  {tx('A decade of making complex business simpler.', 'Al meer dan tien jaar maken we complexe business eenvoudiger.')}
+                </h2>
+                <p style={{ marginTop: 18, fontSize: 17.5, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)' }}>
+                  {tx(
+                    'We are a certified Salesforce Consulting Partner, dedicated to helping companies work smarter by optimising complex business processes. With over a decade of experience, we have a deep understanding of Salesforce cloud solutions and provide unparalleled advice, configuration, development, and support.',
+                    'We zijn een gecertificeerde Salesforce Consulting Partner en helpen bedrijven slimmer te werken door complexe processen te optimaliseren. Met ruim tien jaar ervaring kennen we Salesforce-cloudoplossingen door en door en bieden we advies, configuratie, ontwikkeling en support van hoog niveau.'
+                  )}
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* BY THE NUMBERS */}
+          <section className="container-wide" style={{ paddingBottom: 'clamp(56px, 7vw, 88px)' }}>
+            <div className="ab-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 18 }}>
+              {STATS.map((s, i) => (
+                <div key={i} style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 18, padding: '26px 24px' }}>
+                  <div style={{ fontSize: 'clamp(30px,3.4vw,44px)', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--intigris-coral-700)', lineHeight: 1 }}>{s.v}</div>
+                  <div style={{ marginTop: 10, fontSize: 14, fontWeight: 500, color: 'var(--fg-muted)' }}>{s.k}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* OUR STORY */}
+          <section style={{ background: 'var(--intigris-chocolate)', color: 'var(--intigris-off-white)', paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(64px, 8vw, 104px)' }}>
+            <div className="container-wide ab-split" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(32px, 5vw, 72px)', alignItems: 'center' }}>
+              <div style={{ borderRadius: 24, overflow: 'hidden', border: '1px solid rgba(252,247,235,0.2)', aspectRatio: '4/5', background: 'rgba(252,247,235,0.06)' }}>
+                <img src="https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/652f9f7de2434b632b972bfe_HansNieuwenhuisIntigris.jpg" alt={tx('Hans Nieuwenhuis, founder of Intigris', 'Hans Nieuwenhuis, oprichter van Intigris')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+              <div>
+                <div className="eyebrow" style={{ color: 'rgba(252,247,235,0.7)' }}>{tx('OUR STORY', 'ONS VERHAAL')}</div>
+                <h2 style={{ fontSize: 'clamp(30px,3.6vw,50px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.04, margin: '12px 0 0', color: 'var(--intigris-off-white)' }}>
+                  {tx('From a passion for technology to a team of smart people.', 'Van passie voor technologie naar een team van slimme mensen.')}
+                </h2>
+                <p style={{ marginTop: 18, fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'rgba(252,247,235,0.9)', maxWidth: 540 }}>
+                  {tx(
+                    'Founder Hans Nieuwenhuis worked for about ten years as a business consultant in telecom after studying electrical engineering at Delft University of Technology. In 2009 it was time to do what he likes best. Driven by a love for advanced technology, he founded Intigris with a clear goal: helping organisations improve through smart software.',
+                    'Oprichter Hans Nieuwenhuis werkte zo’n tien jaar als business consultant in de telecom, na zijn studie elektrotechniek aan de TU Delft. In 2009 werd het tijd om te doen waar hij het meest van houdt. Gedreven door een liefde voor geavanceerde technologie richtte hij Intigris op, met één duidelijk doel: organisaties helpen verbeteren met slimme software.'
+                  )}
+                </p>
+                <p style={{ marginTop: 14, fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'rgba(252,247,235,0.9)', maxWidth: 540 }}>
+                  {tx(
+                    'Today, Intigris works with a team of smart consultants and developers from the Kraanspoor building on the creative NDSM wharf in Amsterdam-Noord.',
+                    'Vandaag werkt Intigris met een team van slimme consultants en developers vanuit het Kraanspoor-gebouw op de creatieve NDSM-werf in Amsterdam-Noord.'
+                  )}
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* VISION */}
+          <section className="container-wide" style={{ paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(40px, 5vw, 56px)' }}>
+            <div className="ab-two" style={{ display: 'grid', gridTemplateColumns: '0.85fr 1.15fr', gap: 'clamp(28px, 5vw, 72px)', alignItems: 'start' }}>
+              <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('OUR VISION', 'ONZE VISIE')}</div>
+              <div>
+                <h2 style={{ fontSize: 'clamp(28px,3.2vw,44px)', fontWeight: 500, letterSpacing: '-0.022em', lineHeight: 1.08, margin: 0 }}>
+                  {tx('Enable clients with innovative IT solutions.', 'Klanten versterken met innovatieve IT-oplossingen.')}
+                </h2>
+                <p style={{ marginTop: 18, fontSize: 17.5, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)' }}>
+                  {tx(
+                    'We stand for innovation, optimisation, and information technology, combining smart business consulting with a thorough understanding of IT to empower our clients. Our phased, result-oriented approach, built on Cloud Computing and Software as a Service, helps companies achieve more intelligent business operations with as little friction as possible.',
+                    'We staan voor innovatie, optimalisatie en informatietechnologie, we combineren slim business-advies met een grondige kennis van IT om onze klanten te versterken. Onze gefaseerde, resultaatgerichte aanpak, gebouwd op Cloud Computing en Software as a Service, helpt bedrijven slimmer te werken met zo min mogelijk frictie.'
+                  )}
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* VALUES */}
+          <section className="container-wide" style={{ paddingBottom: 'clamp(56px, 7vw, 96px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('WHAT WE STAND FOR', 'WAAR WE VOOR STAAN')}</div>
+            <div className="ab-values" style={{ marginTop: 24, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+              {VALUES.map((v, i) => (
+                <div key={i} style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 20, padding: '28px 26px' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.14em', color: 'var(--intigris-coral-700)' }}>{String(i + 1).padStart(2, '0')}</div>
+                  <h3 style={{ fontSize: 24, fontWeight: 500, letterSpacing: '-0.018em', margin: '10px 0 10px' }}>{tx(v.en, v.nl)}</h3>
+                  <p style={{ margin: 0, fontSize: 15.5, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)' }}>{tx(v.dEn, v.dNl)}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* MEET THE TEAM */}
+          <section className="container-wide" style={{ paddingBottom: 'clamp(64px, 8vw, 104px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('MEET THE TEAM', 'ONS TEAM')}</div>
+            <h2 style={{ fontSize: 'clamp(30px,3.6vw,50px)', fontWeight: 500, letterSpacing: '-0.026em', lineHeight: 1.03, margin: '12px 0 36px', maxWidth: 620 }}>
+              {tx('The people behind Intigris.', 'De mensen achter Intigris.')}
+            </h2>
+            {team === null ? (
+              <div style={{ padding: '32px 0', color: 'var(--fg-muted)' }}>{tx('Loading team…', 'Team laden…')}</div>
+            ) : team.length === 0 ? (
+              <div style={{ padding: '24px 0', color: 'var(--fg-muted)' }}>{tx('Our team profiles are on their way.', 'Onze teamprofielen komen eraan.')}</div>
+            ) : (
+              <div className="ab-team" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 18 }}>
+                {team.map((m) => (
+                  <div key={m.id} style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 20, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ aspectRatio: '1/1', background: 'var(--intigris-off-white-200)', overflow: 'hidden' }}>
+                      {m.headshot_url
+                        ? <img src={m.headshot_url} alt={m.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        : <div style={{ width: '100%', height: '100%', display: 'grid', placeItems: 'center', background: 'var(--intigris-coral)', color: 'var(--intigris-off-white)', fontSize: 28, fontWeight: 600 }}>{initials(m.name)}</div>}
+                    </div>
+                    <div style={{ padding: '18px 20px 20px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, flex: 1 }}>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 17, fontWeight: 500, letterSpacing: '-0.012em', color: 'var(--intigris-dark-brown)' }}>{m.name}</div>
+                        {m.title && <div style={{ marginTop: 3, fontSize: 14, fontWeight: 400, color: 'var(--fg-muted)' }}>{m.title}</div>}
+                      </div>
+                      {m.linkedin_url && (
+                        <a href={m.linkedin_url} target="_blank" rel="noopener noreferrer" aria-label={`${m.name} on LinkedIn`} className="ab-li" style={{ flex: 'none', width: 30, height: 30, display: 'grid', placeItems: 'center', borderRadius: 8 }}>
+                          <LinkedInGlyph size={16} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <SiteFinalCTA onCta={onCta} />
+
+          <style>{`
+            .ab-li { color: var(--intigris-coral); transition: background-color 160ms var(--ease-out), color 160ms var(--ease-out); }
+            .ab-li:hover { background: var(--intigris-coral); color: var(--intigris-off-white); }
+            @media (max-width: 1180px){ .ab-team{ grid-template-columns: repeat(4,1fr) !important; } }
+            @media (max-width: 1040px){ .ab-team{ grid-template-columns: repeat(3,1fr) !important; } .ab-stats{ grid-template-columns: repeat(2,1fr) !important; } }
+            @media (max-width: 860px){ .ab-two{ grid-template-columns: 1fr !important; } .ab-split{ grid-template-columns: 1fr !important; } .ab-split > div:first-child{ order: 2; } .ab-values{ grid-template-columns: 1fr !important; } }
+            @media (max-width: 680px){ .ab-team{ grid-template-columns: repeat(2,1fr) !important; } }
+          `}</style>
+        </main>
+      );
+    }
+
+    function App() {
+      const [lang, setLang] = useState('en');
+      const [contactOpen, setContactOpen] = useState(false);
+      function changeLang(l){ window.__lang = l; setLang(l); }
+      function nav(r){
+        if (r === 'contact') return setContactOpen(true);
+        if (r === 'blog') return (window.location.href = 'Blog.html');
+        if (r === 'home') return (window.location.href = 'index.html');
+        return (window.location.href = 'index.html');
+      }
+      return (
+        <>
+          <SiteHeader overlay={false} megaTheme="cream" lang={lang} onLang={changeLang} onNav={nav} />
+          <About key={'ab-' + lang} onCta={() => setContactOpen(true)} />
+          <SiteNewsletter key={'nl-' + lang} />
+          <SiteFooter />
+          <SiteContactSheet open={contactOpen} onClose={() => setContactOpen(false)} source="About.html" />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+</body>
+</html>

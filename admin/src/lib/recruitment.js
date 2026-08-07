@@ -1,19 +1,26 @@
 import { supabase, supabaseConfigured } from './supabase';
 
-// Pipeline stages for applicants (Kanban columns).
+// Pipeline stages for applicants (Kanban columns) — matches the public
+// Application Procedure page: Application, Intro interview, Office interview,
+// Case presentation, Offer, Onboarding. Rejected is kept for declined candidates.
 export const STAGES = [
-  { value: 'new', label: 'New' },
-  { value: 'reviewed', label: 'Reviewed' },
-  { value: 'interview', label: 'Interview' },
-  { value: 'hired', label: 'Hired' },
+  { value: 'application', label: 'Application' },
+  { value: 'intro', label: 'Intro interview' },
+  { value: 'office', label: 'Office interview' },
+  { value: 'case', label: 'Case presentation' },
+  { value: 'offer', label: 'Offer' },
+  { value: 'onboarding', label: 'Onboarding' },
   { value: 'rejected', label: 'Rejected' },
 ];
 
+export const DEFAULT_STAGE = 'application';
+
 const SAMPLE_APPS = [
-  { id: 'a1', candidate: 'Nadia El Amrani', email: 'nadia@example.com', role_applied: 'Salesforce Consultant', status: 'new', created_at: new Date(Date.now() - 864e5 * 1).toISOString() },
-  { id: 'a2', candidate: 'Pieter Vos', email: 'pieter@example.com', role_applied: 'Medior Developer', status: 'reviewed', created_at: new Date(Date.now() - 864e5 * 3).toISOString() },
-  { id: 'a3', candidate: 'Kim Bakhuis', email: 'kim@example.com', role_applied: 'ISA Trainee', status: 'interview', created_at: new Date(Date.now() - 864e5 * 5).toISOString() },
-  { id: 'a4', candidate: 'Sam de Boer', email: 'sam@example.com', role_applied: 'Salesforce Consultant', status: 'new', created_at: new Date(Date.now() - 864e5 * 2).toISOString() },
+  { id: 'a1', candidate: 'Nadia El Amrani', email: 'nadia@example.com', role_applied: 'Salesforce Consultant', status: 'application', created_at: new Date(Date.now() - 864e5 * 1).toISOString() },
+  { id: 'a2', candidate: 'Pieter Vos', email: 'pieter@example.com', role_applied: 'Medior Developer', status: 'intro', created_at: new Date(Date.now() - 864e5 * 3).toISOString() },
+  { id: 'a3', candidate: 'Kim Bakhuis', email: 'kim@example.com', role_applied: 'ISA Trainee', status: 'office', created_at: new Date(Date.now() - 864e5 * 5).toISOString() },
+  { id: 'a4', candidate: 'Sam de Boer', email: 'sam@example.com', role_applied: 'Salesforce Consultant', status: 'case', created_at: new Date(Date.now() - 864e5 * 2).toISOString() },
+  { id: 'a5', candidate: 'Lotte Smit', email: 'lotte@example.com', role_applied: 'Medior Developer', status: 'offer', created_at: new Date(Date.now() - 864e5 * 7).toISOString() },
 ];
 
 const SAMPLE_OPENINGS = [
@@ -26,15 +33,22 @@ export async function listApplicants() {
   if (!supabaseConfigured) return { rows: SAMPLE_APPS, sample: true };
   const { data, error } = await supabase
     .from('job_applications')
-    .select('id, candidate, email, role_applied, status, notes, created_at, opening_id')
+    .select('id, candidate, email, phone, role_applied, status, notes, cover_note, cv_path, photo_path, salesforce_certified, languages, netherlands_resident, created_at, opening_id')
     .order('created_at', { ascending: false });
-  if (error || !data || data.length === 0) return { rows: SAMPLE_APPS, sample: true };
-  return { rows: data, sample: false };
+  if (error) { console.error(error.message); return { rows: [], sample: false, error: error.message }; }
+  return { rows: data || [], sample: false };
 }
 export async function updateApplicant(id, patch) {
   if (!supabaseConfigured) return { error: { message: 'Not connected' } };
   const { error } = await supabase.from('job_applications').update(patch).eq('id', id);
   return { error };
+}
+
+// Signed, temporary URL for a private applications-bucket file (CV/photo).
+export async function signedFileUrl(path) {
+  if (!supabaseConfigured || !path) return null;
+  const { data } = await supabase.storage.from('applications').createSignedUrl(path, 3600);
+  return data?.signedUrl || null;
 }
 
 /* ---- Openings ---- */
@@ -44,8 +58,8 @@ export async function listOpenings() {
     .from('job_openings')
     .select('*')
     .order('created_at', { ascending: false });
-  if (error || !data || data.length === 0) return { rows: SAMPLE_OPENINGS, sample: true };
-  return { rows: data, sample: false };
+  if (error) { console.error(error.message); return { rows: [], sample: false, error: error.message }; }
+  return { rows: data || [], sample: false };
 }
 export async function createOpening(patch) {
   if (!supabaseConfigured) return { error: { message: 'Not connected' } };

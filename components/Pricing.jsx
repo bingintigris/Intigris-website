@@ -1,4 +1,4 @@
-// Pricing.jsx — 3-tier packages, middle tier highlighted coral (Folioblox-inspired).
+// Pricing.jsx, 3-tier packages, middle tier highlighted coral (Folioblox-inspired).
 // Exposes: window.SitePricing
 
 function PriceCheck({ tone = 'coral' }) {
@@ -52,15 +52,15 @@ function SitePricing({ onCta }) {
       badge: tx('Most chosen', 'Meest gekozen'),
       highlight: true,
       blurb: tx(
-        'A full implementation across your priority clouds — configured, integrated, and adopted by your team.',
-        'Een volledige implementatie op uw belangrijkste clouds — ingericht, geïntegreerd en geadopteerd door uw team.'
+        'A full implementation across your priority clouds, configured, integrated, and adopted by your team.',
+        'Een volledige implementatie op uw belangrijkste clouds, ingericht, geïntegreerd en geadopteerd door uw team.'
       ),
       features: [
         tx('Multi-cloud implementation', 'Multi-cloud implementatie'),
         tx('Integrations (AWS & more)', 'Integraties (AWS & meer)'),
         tx('Dedicated Intigrant team', 'Vast Intigrant-team'),
         tx('Adoption & enablement', 'Adoptie & enablement'),
-        tx('8–16 week programme', 'Programma van 8–16 weken'),
+        tx('8 to 16 week programme', 'Programma van 8 tot 16 weken'),
       ],
       cta: tx("Let's talk", 'Neem contact op'),
     },
@@ -70,8 +70,8 @@ function SitePricing({ onCta }) {
       price: tx('Custom', 'Op maat'),
       unit: tx('retainer', 'retainer'),
       blurb: tx(
-        'Ongoing partnership — we stay close as your managed Salesforce team, releasing improvements every sprint.',
-        'Doorlopend partnerschap — we blijven dichtbij als uw managed Salesforce-team en leveren elke sprint verbeteringen.'
+        'Ongoing partnership, we stay close as your managed Salesforce team, releasing improvements every sprint.',
+        'Doorlopend partnerschap, we blijven dichtbij als uw managed Salesforce-team en leveren elke sprint verbeteringen.'
       ),
       features: [
         tx('Managed service & support', 'Managed service & support'),
@@ -97,8 +97,8 @@ function SitePricing({ onCta }) {
           </div>
           <p className="lede">
             {tx(
-              'No mystery quotes. Pick the engagement that fits where you are — and we scope the rest together.',
-              'Geen vage offertes. Kies het traject dat past bij waar u nu staat — de rest bepalen we samen.'
+              'No mystery quotes. Pick the engagement that fits where you are, and we scope the rest together.',
+              'Geen vage offertes. Kies het traject dat past bij waar u nu staat, de rest bepalen we samen.'
             )}
           </p>
         </div>
@@ -141,12 +141,12 @@ function SitePricing({ onCta }) {
                   <span style={{ fontSize: 48, fontWeight: 500, letterSpacing: '-0.028em', lineHeight: 1 }}>
                     {t.price}
                   </span>
-                  <span style={{ fontSize: 14, fontWeight: 300, opacity: hi ? 0.7 : 0.6 }}>{t.unit}</span>
+                  <span style={{ fontSize: 14, fontWeight: 400, opacity: hi ? 0.7 : 0.6 }}>{t.unit}</span>
                 </div>
 
                 <p style={{
                   marginTop: 16, marginBottom: 24,
-                  fontSize: 15, lineHeight: 1.5, fontWeight: 300,
+                  fontSize: 15, lineHeight: 1.5, fontWeight: 400,
                   color: hi ? 'rgba(64,35,1,0.82)' : 'var(--fg-muted)',
                 }}>
                   {t.blurb}
@@ -160,7 +160,7 @@ function SitePricing({ onCta }) {
 
                 <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 13, flex: 1 }}>
                   {t.features.map((f, i) => (
-                    <li key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontSize: 15, fontWeight: 300, lineHeight: 1.4 }}>
+                    <li key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontSize: 15, fontWeight: 400, lineHeight: 1.4 }}>
                       <PriceCheck tone={hi ? 'brown' : 'coral'} />
                       <span>{f}</span>
                     </li>
@@ -190,7 +190,7 @@ function SitePricing({ onCta }) {
 
         <p style={{
           marginTop: 32, textAlign: 'center',
-          fontSize: 14, fontWeight: 300, color: 'var(--fg-muted)',
+          fontSize: 14, fontWeight: 400, color: 'var(--fg-muted)',
         }}>
           {tx(
             'All engagements are scoped with a real Intigrant, not a bot.* Prices exclude VAT and Salesforce licences.',

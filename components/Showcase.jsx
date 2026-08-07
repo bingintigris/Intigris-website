@@ -1,4 +1,4 @@
-// Showcase.jsx — "Behind the work" band: split heading + intro, then a row of
+// Showcase.jsx, "Behind the work" band: split heading + intro, then a row of
 // three black-and-white photos. Modeled on the Folioblox "Shaping Experiences"
 // section, restyled on-brand (off-white surface, coral accents).
 // Exposes: window.SiteShowcase
@@ -19,7 +19,7 @@ function SiteShowcase({ onCta }) {
       style={{ background: 'var(--intigris-off-white)', borderTop: '1px solid var(--border)' }}
     >
       <div className="container-wide">
-        {/* Top — split intro */}
+        {/* Top, split intro */}
         <div className="showcase-head">
           <div>
             <div className="eyebrow" style={{ marginBottom: 20, color: 'var(--intigris-coral)' }}>
@@ -31,14 +31,14 @@ function SiteShowcase({ onCta }) {
             </h2>
           </div>
           <div className="showcase-intro">
-            <p style={{ margin: 0, fontSize: 'clamp(19px, 1.6vw, 22px)', fontWeight: 300, lineHeight: 1.4, color: 'var(--intigris-dark-brown)' }}>
+            <p style={{ margin: 0, fontSize: 'clamp(19px, 1.6vw, 22px)', fontWeight: 400, lineHeight: 1.4, color: 'var(--intigris-dark-brown)' }}>
               {tx(
                 'We bring focus to what your business needs, then build it on Salesforce so your teams can move forward.',
                 'We brengen focus aan in wat uw bedrijf nodig heeft en bouwen het op Salesforce, zodat uw teams verder kunnen.'
               )}
             </p>
             <div className="showcase-cta-row">
-              <span style={{ fontSize: 14, fontWeight: 300, color: 'var(--fg-muted)', lineHeight: 1.35 }}>
+              <span style={{ fontSize: 14, fontWeight: 400, color: 'var(--fg-muted)', lineHeight: 1.35 }}>
                 {tx('Curious what we can do', 'Benieuwd wat we kunnen doen')}<br/>
                 {tx('for your team?', 'voor uw team?')}
               </span>

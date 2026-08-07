@@ -1,4 +1,4 @@
-// Cases.jsx — featured cases teaser, 3-up.
+// Cases.jsx, featured cases teaser, 3-up.
 // Exposes: window.SiteCases
 
 const CASES = [

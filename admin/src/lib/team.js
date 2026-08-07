@@ -13,18 +13,31 @@ export async function listTeam() {
     .select('*')
     .order('sort_order', { ascending: true })
     .order('created_at', { ascending: true });
-  if (error || !data || data.length === 0) return { rows: SAMPLE, sample: true };
-  return { rows: data, sample: false };
+  if (error) { console.error(error.message); return { rows: [], sample: false, error: error.message }; }
+  return { rows: data || [], sample: false };
+}
+
+// If a team member's email matches a portal account, mirror their photo onto
+// that account so the top-right avatar shows it. Best-effort (RLS may block
+// updating other people's profiles for non-admins) — errors are ignored.
+async function syncProfileAvatar(patch) {
+  const email = (patch.email || '').trim();
+  if (!email) return;
+  try {
+    await supabase.from('profiles').update({ avatar_url: patch.headshot_url || null }).ilike('email', email);
+  } catch { /* ignore */ }
 }
 
 export async function createMember(patch) {
   if (!supabaseConfigured) return { error: { message: 'Not connected' } };
   const { error } = await supabase.from('team_members').insert(patch);
+  if (!error) await syncProfileAvatar(patch);
   return { error };
 }
 export async function updateMember(id, patch) {
   if (!supabaseConfigured) return { error: { message: 'Not connected' } };
   const { error } = await supabase.from('team_members').update(patch).eq('id', id);
+  if (!error) await syncProfileAvatar(patch);
   return { error };
 }
 export async function deleteMember(id) {

@@ -1,4 +1,4 @@
-// WhyIntigris.jsx — editorial redesign of the "Why Intigris" section.
+// WhyIntigris.jsx, editorial redesign of the "Why Intigris" section.
 // Big stacked headline left, three pillar rows right with giant outlined numbers
 // that fill on hover, plus a brandbook-style asterisk footnote and a faint
 // 12-col grid motif. Off-white surface to preserve page rhythm.
@@ -47,7 +47,7 @@ function SiteWhy() {
         overflow: 'hidden',
       }}
     >
-      {/* Faint 12-column grid lines — the brandbook's "structured thinking" motif */}
+      {/* Faint 12-column grid lines, the brandbook's "structured thinking" motif */}
       <div aria-hidden style={{
         position: 'absolute',
         top: 0, bottom: 0,
@@ -112,7 +112,7 @@ function SiteWhy() {
                   }}
                   className="why-pillar"
                 >
-                  {/* Big outlined number — fills coral on hover */}
+                  {/* Big outlined number, fills coral on hover */}
                   <div style={{
                     fontSize: 'clamp(48px, 5.2vw, 76px)',
                     fontWeight: 500,
@@ -145,7 +145,7 @@ function SiteWhy() {
                     <p style={{
                       margin: 0,
                       fontSize: 14,
-                      fontWeight: 300,
+                      fontWeight: 400,
                       lineHeight: 1.55,
                       color: 'var(--fg-muted)',
                       maxWidth: 480,

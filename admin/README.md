@@ -122,6 +122,16 @@ No secrets to set. New users get a temporary password to share; they can reset
 it via "Forgot password?" on the login screen. Until deployed, the button shows
 a friendly "not deployed yet" message.
 
+### Klaviyo sync (Newsletter)
+
+Newsletter sign-ups land in Supabase; the **Sync to Klaviyo** button pushes them
+into your Klaviyo list, where the campaigns are written and sent. Your Klaviyo
+private key stays in an Edge Function secret, never in the browser.
+
+Full walkthrough: **[KLAVIYO-SETUP.md](./KLAVIYO-SETUP.md)**. In short: run
+`supabase/klaviyo_sync.sql`, deploy the `klaviyo-sync` function with Verify JWT
+OFF, and set the `KLAVIYO_API_KEY` and `KLAVIYO_LIST_ID` secrets.
+
 ## Roles & access
 
 | Module      | Admin | HR Manager | Content Editor | Support Lead |

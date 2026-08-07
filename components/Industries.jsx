@@ -1,4 +1,4 @@
-// Industries.jsx — Leading section: interactive tabs of industries we serve.
+// Industries.jsx, Leading section: interactive tabs of industries we serve.
 // The whole point: visitors immediately see "is Intigris for my industry?"
 // Exposes: window.SiteIndustries
 
@@ -55,7 +55,7 @@ const INDUSTRIES = [
     photoClass: 'photo',
     photoLabel: 'Logistics · in transit',
     headline: 'Move every shipment, customer, and case through one platform.',
-    description: 'For transport, freight forwarding, and supply chain operators, we connect Salesforce to TMS, customs, and tracking systems — so commercial, planning, and customer service teams work from the same shipment data.',
+    description: 'For transport, freight forwarding, and supply chain operators, we connect Salesforce to TMS, customs, and tracking systems, so commercial, planning, and customer service teams work from the same shipment data.',
     pains: ['Disjointed shipment visibility', 'Manual customer-service hand-offs', 'Slow quote-to-booking cycles'],
     services: ['Sales Cloud', 'Service Cloud', 'Integration', 'Data 360'],
     cases: 'Customs and freight programs across NL and Benelux',
@@ -99,7 +99,7 @@ function SiteIndustries() {
       headline: tx('Connect the shop floor to the commercial team.', 'Verbind de werkvloer met het commerciële team.'),
       description: tx(
         'From quote-to-cash on configurable products to real-time service capacity, we integrate Salesforce with ERP and MES so every team operates on the same data.',
-        'Van quote-to-cash op configureerbare producten tot real-time servicecapaciteit — we integreren Salesforce met ERP en MES, zodat ieder team op dezelfde data werkt.'
+        'Van quote-to-cash op configureerbare producten tot real-time servicecapaciteit, we integreren Salesforce met ERP en MES, zodat ieder team op dezelfde data werkt.'
       ),
       cases: tx('12 manufacturing clients · average 38% faster quote cycle', '12 industriële klanten · gemiddeld 38% snellere quote-cyclus'),
       pains: [
@@ -113,7 +113,7 @@ function SiteIndustries() {
       headline: tx('From first quote to final acceptance, in one system.', 'Van eerste offerte tot oplevering, in één systeem.'),
       description: tx(
         'Installer businesses run on hand-offs between sales, planning, engineers and finance. We connect them inside Salesforce so jobs flow end-to-end with no spreadsheets in between.',
-        'Installatiebedrijven draaien op overdrachten tussen sales, planning, monteurs en finance. We verbinden deze in Salesforce, zodat klussen end-to-end doorlopen — zonder spreadsheets ertussen.'
+        'Installatiebedrijven draaien op overdrachten tussen sales, planning, monteurs en finance. We verbinden deze in Salesforce, zodat klussen end-to-end doorlopen, zonder spreadsheets ertussen.'
       ),
       cases: tx('Installer rollouts across HVAC, solar, and security verticals', 'Implementaties bij installateurs in HVAC, zonne-energie en beveiliging'),
       pains: [
@@ -140,8 +140,8 @@ function SiteIndustries() {
       name: tx('Logistics', 'Logistiek'),
       headline: tx('Move every shipment, customer, and case through one platform.', 'Iedere zending, klant en case op één platform.'),
       description: tx(
-        'For transport, freight forwarding, and supply chain operators, we connect Salesforce to TMS, customs, and tracking systems — so commercial, planning, and customer service teams work from the same shipment data.',
-        'Voor transport, expediteurs en supply chain-operators verbinden we Salesforce met TMS, douane- en tracking-systemen — zodat commercie, planning en customer service vanuit dezelfde zendingdata werken.'
+        'For transport, freight forwarding, and supply chain operators, we connect Salesforce to TMS, customs, and tracking systems, so commercial, planning, and customer service teams work from the same shipment data.',
+        'Voor transport, expediteurs en supply chain-operators verbinden we Salesforce met TMS, douane- en tracking-systemen, zodat commercie, planning en customer service vanuit dezelfde zendingdata werken.'
       ),
       cases: tx('Customs and freight programs across NL and Benelux', 'Douane- en freightprogramma’s in NL en de Benelux'),
       pains: [
@@ -195,7 +195,7 @@ function SiteIndustries() {
           alignItems: 'start',
           position: 'relative',
         }}>
-          {/* LEFT — stacked industry cards */}
+          {/* LEFT, stacked industry cards */}
           <div style={{
             display: 'flex', flexDirection: 'column', gap: 12,
             position: 'relative', zIndex: 2,
@@ -256,7 +256,7 @@ function SiteIndustries() {
                   </div>
                   <div style={{
                     fontSize: 13,
-                    fontWeight: 300,
+                    fontWeight: 400,
                     lineHeight: 1.4,
                     color: isActive ? 'rgba(252,247,235,0.88)' : 'var(--fg-muted)',
                   }}>
@@ -267,7 +267,7 @@ function SiteIndustries() {
             })}
           </div>
 
-          {/* RIGHT — detail panel: bordered card, distinct from the cards on the left */}
+          {/* RIGHT, detail panel: bordered card, distinct from the cards on the left */}
           <div style={{
             background: 'var(--intigris-off-white)',
             border: '1.5px solid var(--intigris-dark-brown)',
@@ -317,7 +317,7 @@ function SiteIndustries() {
               }}>
                 {indCopy.headline}
               </h3>
-              <p style={{ fontSize: 16, lineHeight: 1.55, fontWeight: 300, color: 'var(--fg-muted)', margin: 0 }}>
+              <p style={{ fontSize: 16, lineHeight: 1.55, fontWeight: 400, color: 'var(--fg-muted)', margin: 0 }}>
                 {indCopy.description}
               </p>
 
@@ -328,7 +328,7 @@ function SiteIndustries() {
                   {indCopy.pains.map((p, i) => (
                     <li key={i} style={{
                       display: 'flex', alignItems: 'flex-start', gap: 12,
-                      fontSize: 15, fontWeight: 300, lineHeight: 1.45,
+                      fontSize: 15, fontWeight: 400, lineHeight: 1.45,
                       color: 'var(--intigris-dark-brown)',
                     }}>
                       <span style={{
@@ -384,7 +384,7 @@ function SiteIndustries() {
 window.SiteIndustries = SiteIndustries;
 
 /* ===========================================================================
-   SiteIndustriesGrid — alternative layout of the same six industries, using
+   SiteIndustriesGrid, alternative layout of the same six industries, using
    the same visual language as the "Selected cases" section: 3×2 grid of photo
    cards with tags + chips. Lives directly under the tabbed Industries section
    so the team can compare both treatments side-by-side.
@@ -459,7 +459,7 @@ function SiteIndustriesGrid() {
           flexWrap: 'wrap',
         }}>
           <span style={{
-            fontSize: 15, fontWeight: 300, color: 'var(--fg-muted)',
+            fontSize: 15, fontWeight: 400, color: 'var(--fg-muted)',
           }}>
             {tx(
               'Don’t see your industry?',
@@ -543,7 +543,7 @@ function IndustryGridCard({ ind, copy }) {
           pointerEvents: 'none',
         }} />
 
-        {/* CTA pill — slides up from the bottom-right on hover */}
+        {/* CTA pill, slides up from the bottom-right on hover */}
         <span style={{
           position: 'absolute',
           right: 16, bottom: 16,
@@ -583,7 +583,7 @@ function IndustryGridCard({ ind, copy }) {
         </h3>
         <p style={{
           margin: 0,
-          fontSize: 15, fontWeight: 300, lineHeight: 1.45,
+          fontSize: 15, fontWeight: 400, lineHeight: 1.45,
           color: 'var(--fg-muted)',
         }}>
           {copy.headline}

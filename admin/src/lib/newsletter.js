@@ -1,20 +1,35 @@
 import { supabase, supabaseConfigured } from './supabase';
 
-const SAMPLE = [
-  { id: 'n1', email: 'info@direct-healthcare.com', source_page: '/blog', created_at: new Date(Date.now() - 864e5 * 3).toISOString() },
-  { id: 'n2', email: 'planner@warmgarant.nl', source_page: '/careers', created_at: new Date(Date.now() - 864e5 * 6).toISOString() },
-  { id: 'n3', email: 'hr@bouwgroep-schrijver.nl', source_page: '/', created_at: new Date(Date.now() - 864e5 * 9).toISOString() },
-  { id: 'n4', email: 'ops@customs-support.com', source_page: '/services', created_at: new Date(Date.now() - 864e5 * 12).toISOString() },
-];
-
 export async function listSubscribers() {
-  if (!supabaseConfigured) return { rows: SAMPLE, sample: true };
+  if (!supabaseConfigured) return { rows: [], sample: false, error: 'Supabase is not configured.' };
   const { data, error } = await supabase
     .from('subscribers')
-    .select('id, email, source_page, created_at')
+    .select('id, email, source_page, created_at, klaviyo_synced_at')
     .order('created_at', { ascending: false });
-  if (error || !data || data.length === 0) return { rows: SAMPLE, sample: true };
-  return { rows: data, sample: false };
+  if (error) { console.error(error.message); return { rows: [], sample: false, error: error.message }; }
+  return { rows: data || [], sample: false };
+}
+
+// Pushes subscribers to Klaviyo via the klaviyo-sync Edge Function.
+// The Klaviyo private API key lives as a server side secret, never in the browser.
+// Pass { all: true } to re-send every subscriber instead of only the new ones.
+export async function syncToKlaviyo({ all = false } = {}) {
+  if (!supabaseConfigured) throw new Error('Supabase is not configured.');
+  const { data, error } = await supabase.functions.invoke('klaviyo-sync', { body: { all } });
+  if (error) {
+    // Edge Functions return the JSON body alongside non 2xx statuses; read it
+    // so the user sees Klaviyo's actual complaint rather than "non-2xx status".
+    let detail = '';
+    try { detail = (await error.context?.json())?.error || ''; } catch { /* ignore */ }
+    if (detail) throw new Error(detail);
+    throw new Error(
+      error.message?.includes('Failed to fetch') || error.message?.includes('404')
+        ? 'The klaviyo-sync function is not deployed yet (see admin/README).'
+        : error.message || 'Sync failed.'
+    );
+  }
+  if (data?.error) throw new Error(data.error);
+  return data;
 }
 
 // Build a CSV string and trigger a browser download. No server needed.

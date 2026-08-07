@@ -1,4 +1,4 @@
-// Services.jsx — Brief, clear overview of the four service lines.
+// Services.jsx, Brief, clear overview of the four service lines.
 // Exposes: window.SiteServices
 
 const SERVICES = [
@@ -30,7 +30,7 @@ const SERVICES = [
     id: 'field-service',
     num: '03',
     name: 'Field Service Consulting',
-    blurb: 'Specialists in Salesforce Field Service — from dispatch and routing to mobile and parts.',
+    blurb: 'Specialists in Salesforce Field Service, from dispatch and routing to mobile and parts.',
     bullets: [
       'Routing, dispatch, mobile, parts',
       '40+ field service rollouts delivered',
@@ -41,7 +41,7 @@ const SERVICES = [
   {
     id: 'isa',
     num: '04',
-    name: 'ISA — Salesforce Academy',
+    name: 'ISA: Salesforce Academy',
     blurb: 'Our in-house Salesforce traineeship, developing the next generation of certified consultants.',
     bullets: [
       'Six-month immersive programme',
@@ -112,7 +112,7 @@ function SiteServices() {
         name: tx('Integration Development', 'Integration Development'),
         blurb: tx(
           'Connect Salesforce to your ERP, data warehouse, and core systems with maintainable architectures.',
-          'Koppel Salesforce aan ERP, data warehouse en kernsystemen — met onderhoudbare architecturen.'
+          'Koppel Salesforce aan ERP, data warehouse en kernsystemen, met onderhoudbare architecturen.'
         ),
         bullets: [
           tx('Event-driven & batch architectures', 'Event-driven en batch-architecturen'),
@@ -123,8 +123,8 @@ function SiteServices() {
       'field-service': {
         name: tx('Field Service Consulting', 'Field Service Consulting'),
         blurb: tx(
-          'Specialists in Salesforce Field Service — from dispatch and routing to mobile and parts.',
-          'Specialisten in Salesforce Field Service — van dispatch en routing tot mobile en parts.'
+          'Specialists in Salesforce Field Service, from dispatch and routing to mobile and parts.',
+          'Specialisten in Salesforce Field Service, van dispatch en routing tot mobile en parts.'
         ),
         bullets: [
           tx('Routing, dispatch, mobile, parts', 'Routing, dispatch, mobile, parts'),
@@ -133,7 +133,7 @@ function SiteServices() {
         ],
       },
       isa: {
-        name: tx('ISA — Salesforce Academy', 'ISA — Salesforce Academy'),
+        name: tx('ISA: Salesforce Academy', 'ISA: Salesforce Academy'),
         blurb: tx(
           'Our in-house Salesforce traineeship, developing the next generation of certified consultants.',
           'Ons interne Salesforce-traineeship dat de volgende generatie gecertificeerde consultants opleidt.'
@@ -175,7 +175,7 @@ function SiteServices() {
           </p>
         </div>
 
-        {/* Service grid — compact "what we do" cards */}
+        {/* Service grid, compact "what we do" cards */}
         <CompactProductsGrid tx={tx} />
 
         {/* Bottom row CTA */}
@@ -187,7 +187,7 @@ function SiteServices() {
           gap: 24,
           flexWrap: 'wrap',
         }}>
-          <p style={{ fontSize: 16, fontWeight: 300, color: 'var(--fg-muted)', maxWidth: 540 }}>
+          <p style={{ fontSize: 16, fontWeight: 400, color: 'var(--fg-muted)', maxWidth: 540 }}>
             {tx(
               'Not sure which engagement fits? Most programmes begin with a 30-minute call where we determine that together.',
               'Niet zeker welk engagement past? De meeste programma’s beginnen met een gesprek van 30 minuten waarin we dat samen bepalen.'
@@ -200,11 +200,11 @@ function SiteServices() {
   );
 }
 
-/* ---------- Products row — Salesforce stack we implement ---------- */
+/* ---------- Products row, Salesforce stack we implement ---------- */
 const PRODUCTS = [
   {
     id: 'sales', num: '01', name: 'Sales Cloud',
-    blurb: 'The core CRM for pipeline, forecasting, and account management — configured to match how your team actually sells.',
+    blurb: 'The core CRM for pipeline, forecasting, and account management, configured to match how your team actually sells.',
     bullets: [
       'Pipeline, forecast, opportunities',
       'Accounts, contacts, activity',
@@ -213,7 +213,7 @@ const PRODUCTS = [
   },
   {
     id: 'field-service', num: '02', name: 'Field Service',
-    blurb: 'Our deepest specialism — Salesforce Field Service from dispatch and routing to mobile, parts and assets.',
+    blurb: 'Our deepest specialism, Salesforce Field Service from dispatch and routing to mobile, parts and assets.',
     bullets: [
       'Dispatch, scheduling, routing',
       'Mobile, offline, work orders',
@@ -222,7 +222,7 @@ const PRODUCTS = [
   },
   {
     id: 'service', num: '03', name: 'Service Cloud',
-    blurb: 'Case management and omnichannel service across email, chat, voice and self-service — one agent console.',
+    blurb: 'Case management and omnichannel service across email, chat, voice and self-service, one agent console.',
     bullets: [
       'Cases, queues, omni-routing',
       'Knowledge & self-service',
@@ -240,7 +240,7 @@ const PRODUCTS = [
   },
   {
     id: 'agentforce', num: '05', name: 'Agentforce',
-    blurb: 'Salesforce AI agents grounded in your data — designed, deployed and governed for real customer-facing work.',
+    blurb: 'Salesforce AI agents grounded in your data, designed, deployed and governed for real customer-facing work.',
     bullets: [
       'Agents on your trusted data',
       'Guardrails & approvals built in',
@@ -258,7 +258,7 @@ const PRODUCTS = [
   },
   {
     id: 'fieldbuddy', num: '07', name: 'FieldBuddy',
-    blurb: 'Our in-house service-ops app on the Salesforce platform — extended and integrated for your operation.',
+    blurb: 'Our in-house service-ops app on the Salesforce platform, extended and integrated for your operation.',
     bullets: [
       'Service-ops on the platform',
       'Pre-built integration patterns',
@@ -267,7 +267,7 @@ const PRODUCTS = [
   },
   {
     id: 'experience', num: '08', name: 'Experience Cloud',
-    blurb: 'Customer, partner and self-service portals on the platform — branded, secure, and easy to evolve.',
+    blurb: 'Customer, partner and self-service portals on the platform, branded, secure, and easy to evolve.',
     bullets: [
       'Customer & partner portals',
       'Self-service & case deflection',
@@ -307,8 +307,8 @@ function ProductsRow({ tx, headless = false }) {
           </div>
           <p className="lede">
             {tx(
-              'The Salesforce products we deliver most frequently — configured, integrated, and running in production at our clients.',
-              'De Salesforce-producten die we het vaakst opleveren — geconfigureerd, geïntegreerd en in productie bij onze klanten.'
+              'The Salesforce products we deliver most frequently, configured, integrated, and running in production at our clients.',
+              'De Salesforce-producten die we het vaakst opleveren, geconfigureerd, geïntegreerd en in productie bij onze klanten.'
             )}
           </p>
         </div>
@@ -369,7 +369,7 @@ function ProductCell({ p, idx, total, cols, tx }) {
   const isLastCol  = (idx + 1) % cols === 0;
   const isLastRow  = idx >= total - cols;
 
-  // Hover applies a soft coral "filter" — less intense than full coral —
+  // Hover applies a soft coral "filter", less intense than full coral
   // and shifts the title + icon glyph to cream so they pop as the
   // hero elements of the card. Body copy stays in dark-brown ink so the
   // detail remains easy to read against the warm fill.
@@ -430,7 +430,7 @@ function ProductCell({ p, idx, total, cols, tx }) {
       </h3>
 
       <p style={{
-        fontSize: 15, fontWeight: 300, lineHeight: 1.5,
+        fontSize: 15, fontWeight: 400, lineHeight: 1.5,
         color: inkMuted,
         margin: 0,
         transition: 'color 220ms var(--ease-out)',
@@ -535,7 +535,7 @@ function ServiceCell({ s, idx, total, tx }) {
       </h3>
 
       <p style={{
-        fontSize: 15, fontWeight: 300, lineHeight: 1.5,
+        fontSize: 15, fontWeight: 400, lineHeight: 1.5,
         color: 'var(--fg-muted)',
         margin: 0,
       }}>
@@ -586,7 +586,7 @@ window.SiteServices = SiteServices;
 function productCopy(tx) {
   return {
     sales:          { name: tx('Sales Cloud', 'Sales Cloud'),               short: tx('Pipeline, forecasting & CRM that fits how you sell.', 'Pipeline, forecasting & CRM die past bij hoe u verkoopt.') },
-    'field-service':{ name: tx('Field Service', 'Field Service'),           short: tx('Dispatch, routing, mobile & parts — our deepest specialism.', 'Dispatch, routing, mobile & parts — ons grootste specialisme.') },
+    'field-service':{ name: tx('Field Service', 'Field Service'),           short: tx('Dispatch, routing, mobile & parts, our deepest specialism.', 'Dispatch, routing, mobile & parts, ons grootste specialisme.') },
     service:        { name: tx('Service Cloud', 'Service Cloud'),           short: tx('Omnichannel case management in one console.', 'Omnichannel casemanagement in één console.') },
     integrations:   { name: tx('Integrations', 'Integraties'),              short: tx('Salesforce connected to ERP, data & core systems.', 'Salesforce gekoppeld aan ERP, data & kernsystemen.') },
     agentforce:     { name: tx('Agentforce', 'Agentforce'),                 short: tx('Salesforce AI agents grounded in your data.', 'Salesforce AI-agents op basis van uw data.') },
@@ -654,7 +654,7 @@ function CompactProductCard({ p, copy, tx }) {
             transition: 'transform 220ms var(--ease-out)',
           }}>→</span>
         </div>
-        <p style={{ margin: 0, fontSize: 14, fontWeight: 300, lineHeight: 1.45, color: 'var(--fg-muted)' }}>
+        <p style={{ margin: 0, fontSize: 14, fontWeight: 400, lineHeight: 1.45, color: 'var(--fg-muted)' }}>
           {copy?.short}
         </p>
       </div>

@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Blog — Intigris</title>
-  <link rel="stylesheet" href="design-system/site.css?v=1784731379000">
+  <title>Blog | Intigris</title>
+  <link rel="stylesheet" href="design-system/site.css?v=1786027704000">
   <link rel="icon" href="assets/logo-coral.png">
   <script>
     window.__lang = 'en';
     window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
-    /* Public Supabase config — anon key is safe to expose (RLS restricts it to
+    /* Public Supabase config, anon key is safe to expose (RLS restricts it to
        reading published posts only). */
     window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
     window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
@@ -23,9 +23,9 @@
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script type="text/babel" src="components/Services.jsx?v=1784731379000"></script>
-  <script type="text/babel" src="components/Header.jsx?v=1784731379000"></script>
-  <script type="text/babel" src="components/Footer.jsx?v=1784731379000"></script>
+  <script type="text/babel" src="components/Services.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1786027704000"></script>
 
   <script type="text/babel">
     const { useState, useEffect } = React;
@@ -104,7 +104,7 @@
                 <div style={{ padding: '32px 40px 32px 0' }}>
                   <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{hero.category || 'Article'}</div>
                   <h2 style={{ fontSize: 'clamp(26px,3vw,38px)', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1.06, margin: '10px 0 0' }}>{hero.title}</h2>
-                  <p style={{ marginTop: 12, fontSize: 16, fontWeight: 300, color: 'var(--fg-muted)', lineHeight: 1.5 }}>{hero.excerpt}</p>
+                  <p style={{ marginTop: 12, fontSize: 16, fontWeight: 400, color: 'var(--fg-muted)', lineHeight: 1.5 }}>{hero.excerpt}</p>
                   <div style={{ marginTop: 16, fontSize: 13, color: 'var(--fg-muted)' }}>{fmtDate(hero.published_at)} · {hero.read_minutes || 4} min read</div>
                 </div>
               </a>
@@ -121,7 +121,7 @@
                 <div style={{ padding: 20, display: 'flex', flexDirection: 'column', flex: 1 }}>
                   <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{p.category || 'Article'}</div>
                   <h3 style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-0.015em', lineHeight: 1.15, margin: '8px 0 0' }}>{p.title}</h3>
-                  <p style={{ marginTop: 8, fontSize: 14, fontWeight: 300, color: 'var(--fg-muted)', lineHeight: 1.5, flex: 1 }}>{p.excerpt}</p>
+                  <p style={{ marginTop: 8, fontSize: 14, fontWeight: 400, color: 'var(--fg-muted)', lineHeight: 1.5, flex: 1 }}>{p.excerpt}</p>
                   <div style={{ marginTop: 14, fontSize: 12.5, color: 'var(--fg-muted)' }}>{fmtDate(p.published_at)} · {p.read_minutes || 4} min read</div>
                 </div>
               </a>
@@ -197,7 +197,7 @@
     @media (max-width: 620px) {
       .blog-grid { grid-template-columns: 1fr !important; }
     }
-    .post-body { margin-top: 28px; font-size: 18px; line-height: 1.7; color: var(--intigris-dark-brown); font-weight: 300; }
+    .post-body { margin-top: 28px; font-size: 18px; line-height: 1.7; color: var(--intigris-dark-brown); font-weight: 400; }
     .post-body h2 { font-size: 28px; font-weight: 500; letter-spacing: -0.02em; margin: 36px 0 12px; }
     .post-body h3 { font-size: 22px; font-weight: 500; margin: 28px 0 10px; }
     .post-body h4 { font-size: 18px; font-weight: 600; margin: 22px 0 8px; }

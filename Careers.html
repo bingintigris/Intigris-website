@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Careers | Intigris</title>
+  <link rel="stylesheet" href="design-system/site.css?v=1786027704000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = 'en';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+    window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="text/babel" src="components/Services.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Newsletter.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1786027704000"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    /* Small inline glyphs for the explore cards */
+    function Glyph({ id }) {
+      const P = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' };
+      const s = (c) => <svg width="24" height="24" viewBox="0 0 24 24" {...P} aria-hidden>{c}</svg>;
+      switch (id) {
+        case 'culture':  return s(<><circle cx="9" cy="8" r="3"/><path d="M3.5 19.5c0-3 2.4-5 5.5-5s5.5 2 5.5 5"/><path d="M16 5.2a3 3 0 0 1 0 5.6"/><path d="M20.5 19.5c0-2.2-1.1-3.9-3-4.6"/></>);
+        case 'benefits': return s(<><rect x="3.5" y="9" width="17" height="11.5" rx="1.5"/><path d="M3.5 13h17"/><path d="M12 9v11.5"/><path d="M12 9S10.7 4.8 8.3 5.6 12 9 12 9z"/><path d="M12 9s1.3-4.2 3.7-3.4S12 9 12 9z"/></>);
+        case 'vacancies':return s(<><rect x="3" y="7.5" width="18" height="12.5" rx="2"/><path d="M8 7.5V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1.5"/><path d="M3 12.5h18"/></>);
+        case 'isa':      return s(<><path d="M12 4 2.5 8.5 12 13l9.5-4.5z"/><path d="M6.5 10.5v4.2c0 1.4 2.6 2.8 5.5 2.8s5.5-1.4 5.5-2.8v-4.2"/><path d="M21.5 8.5v5"/></>);
+        default: return null;
+      }
+    }
+
+    const CARDS = [
+      { id: 'culture',   href: '#', en: 'Our culture', nl: 'Onze cultuur',
+        dEn: 'Discover our welcoming culture where you’ll feel at home from the moment you step in.',
+        dNl: 'Ontdek onze gastvrije cultuur waar je je vanaf het eerste moment thuis voelt.' },
+      { id: 'benefits',  href: '#', en: 'Benefits', nl: 'Arbeidsvoorwaarden',
+        dEn: 'What makes working at Intigris worthwhile? Let us highlight a few key points that will resonate with you.',
+        dNl: 'Wat maakt werken bij Intigris de moeite waard? We lichten een paar punten uit die je zullen aanspreken.' },
+      { id: 'vacancies', href: 'Vacancies.html', en: 'Vacancies', nl: 'Vacatures',
+        dEn: 'Explore exciting opportunities and apply now to join our diverse and dynamic team.',
+        dNl: 'Bekijk boeiende kansen en solliciteer om ons diverse, dynamische team te versterken.' },
+      { id: 'isa',       href: '#', en: 'Intigris Salesforce Academy (ISA)', nl: 'Intigris Salesforce Academy (ISA)',
+        dEn: 'Interested in joining us as a Salesforce consultant but have little or no experience with Salesforce?',
+        dNl: 'Wil je als Salesforce-consultant bij ons aan de slag, maar heb je weinig of geen Salesforce-ervaring?' },
+    ];
+
+    function CareersOverview() {
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+
+          {/* ---------- HERO ---------- */}
+          <section className="container-wide car-hero" style={{ paddingTop: 128, paddingBottom: 'clamp(56px, 7vw, 96px)' }}>
+            <div className="car-hero-grid" style={{ display: 'grid', gridTemplateColumns: '1.05fr 0.95fr', gap: 'clamp(36px, 5vw, 72px)', alignItems: 'center' }}>
+              <div>
+                <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('CAREERS · OVERVIEW', 'WERKEN BIJ · OVERZICHT')}</div>
+                <h1 style={{ fontSize: 'clamp(40px,5.6vw,76px)', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 1.0, margin: '14px 0 0' }}>
+                  {tx('Master your skills, ', 'Ontwikkel jezelf, ')}<br/>
+                  <span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('grow your impact.', 'vergroot je impact.')}</span>
+                </h1>
+                <p style={{ marginTop: 22, fontSize: 18, fontWeight: 400, lineHeight: 1.55, color: 'var(--intigris-dark-brown)', maxWidth: 520 }}>
+                  {tx(
+                    'Do people often say you’re smart? Are you a quick thinker who thrives on complex challenges? Then you’ve come to the right place. Welcome to Intigris. Here you’ll collaborate with the friendliest and brightest minds in the field.',
+                    'Zeggen mensen vaak dat je slim bent? Ben je een snelle denker die opbloeit bij complexe uitdagingen? Dan ben je bij ons aan het juiste adres. Welkom bij Intigris. Hier werk je samen met de aardigste en slimste mensen uit het vak.'
+                  )}
+                </p>
+                <a className="btn btn-primary btn-lg" href="Vacancies.html" style={{ marginTop: 28, color: 'var(--intigris-off-white)' }}>
+                  {tx('Check our vacancies', 'Bekijk onze vacatures')} <span className="arrow">→</span>
+                </a>
+              </div>
+              <div style={{ borderRadius: 24, overflow: 'hidden', border: '1px solid var(--border)', aspectRatio: '4/3', background: 'var(--intigris-off-white-200)' }}>
+                <img src="assets/hero-team.jpg" alt={tx('The Intigris team', 'Het Intigris-team')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            </div>
+          </section>
+
+          {/* ---------- LEARN EVERY DAY ---------- */}
+          <section style={{ background: 'var(--intigris-chocolate)', color: 'var(--intigris-off-white)', paddingTop: 'clamp(64px, 8vw, 112px)', paddingBottom: 'clamp(64px, 8vw, 112px)' }}>
+            <div className="container-wide car-learn" style={{ display: 'grid', gridTemplateColumns: '0.8fr 1.2fr', gap: 'clamp(32px, 5vw, 80px)', alignItems: 'start' }}>
+              <div>
+                <div className="eyebrow" style={{ color: 'rgba(252,247,235,0.7)' }}>{tx('CAREERS AT INTIGRIS', 'WERKEN BIJ INTIGRIS')}</div>
+                <h2 style={{ fontSize: 'clamp(34px,4.2vw,56px)', fontWeight: 500, letterSpacing: '-0.026em', lineHeight: 1.02, margin: '14px 0 0', color: 'var(--intigris-off-white)' }}>
+                  {tx('Learn ', 'Leer ')}<span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('every day.', 'elke dag.')}</span>
+                </h2>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+                <p style={{ margin: 0, fontSize: 18, fontWeight: 400, lineHeight: 1.6, color: 'rgba(252,247,235,0.9)' }}>
+                  {tx(
+                    'We provide an engaging learning environment for rapid growth. You’ll work on complex projects with full responsibility. Try new things and make mistakes, with a supportive network of colleagues around you.',
+                    'We bieden een uitdagende leeromgeving voor snelle groei. Je werkt met volledige verantwoordelijkheid aan complexe projecten. Probeer nieuwe dingen en maak fouten, met een ondersteunend netwerk van collega’s om je heen.'
+                  )}
+                </p>
+                <p style={{ margin: 0, fontSize: 18, fontWeight: 400, lineHeight: 1.6, color: 'rgba(252,247,235,0.9)' }}>
+                  {tx(
+                    'We love working with bright minds but don’t expect perfection. Bring your true self. We seek diverse colleagues who bring fresh perspectives, and we embrace uniqueness. Fresh insights push us to improve what we do. Better in software, better at helping our clients make their businesses smarter.',
+                    'We werken graag met slimme mensen, maar verwachten geen perfectie. Breng jezelf mee. We zoeken diverse collega’s met frisse perspectieven en omarmen uniciteit. Nieuwe inzichten helpen ons beter te worden. Beter in software en beter in het slimmer maken van de business van onze klanten.'
+                  )}
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* ---------- EXPLORE CARDS ---------- */}
+          <section className="container-wide" style={{ paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(64px, 8vw, 112px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('EXPLORE', 'ONTDEK')}</div>
+            <h2 style={{ fontSize: 'clamp(30px,3.4vw,46px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.04, margin: '12px 0 36px', maxWidth: 620 }}>
+              {tx('Find out what life at Intigris looks like.', 'Ontdek hoe werken bij Intigris eruitziet.')}
+            </h2>
+            <div className="car-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>
+              {CARDS.map((c) => (
+                <a key={c.id} href={c.href} className="car-card" style={{
+                  display: 'flex', flexDirection: 'column', gap: 14,
+                  textDecoration: 'none', color: 'inherit',
+                  background: 'var(--intigris-paper)', border: '1px solid var(--border)',
+                  borderRadius: 20, padding: '30px 30px 26px',
+                }}>
+                  <span className="car-card-icon" style={{
+                    width: 52, height: 52, borderRadius: 14, display: 'grid', placeItems: 'center',
+                    background: 'var(--intigris-coral-100)', color: 'var(--intigris-coral-700)',
+                  }}><Glyph id={c.id} /></span>
+                  <h3 style={{ fontSize: 23, fontWeight: 500, letterSpacing: '-0.016em', lineHeight: 1.15, margin: 0 }}>{tx(c.en, c.nl)}</h3>
+                  <p style={{ margin: 0, fontSize: 15.5, fontWeight: 400, lineHeight: 1.55, color: 'var(--fg-muted)', flex: 1 }}>{tx(c.dEn, c.dNl)}</p>
+                  <span className="car-card-more" style={{ fontSize: 14, fontWeight: 500, color: 'var(--intigris-coral-700)' }}>
+                    {tx('Read more', 'Lees meer')} <span aria-hidden>→</span>
+                  </span>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <style>{`
+            .car-card { transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+            .car-card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(64,35,1,0.10); border-color: var(--intigris-coral); }
+            .car-card:hover .car-card-more span { transform: translateX(3px); display:inline-block; }
+            @media (max-width: 920px) {
+              .car-hero-grid { grid-template-columns: 1fr !important; }
+              .car-learn { grid-template-columns: 1fr !important; }
+              .car-cards { grid-template-columns: 1fr !important; }
+            }
+          `}</style>
+        </main>
+      );
+    }
+
+    function App() {
+      const [lang, setLang] = useState('en');
+      function changeLang(l){ window.__lang = l; setLang(l); }
+      function nav(r){ if (r === 'blog') return (window.location.href = 'Blog.html'); return (window.location.href = 'index.html'); }
+      return (
+        <>
+          <SiteHeader overlay={false} megaTheme="cream" lang={lang} onLang={changeLang} onNav={nav} />
+          <CareersOverview key={'ov-' + lang} />
+          <SiteNewsletter key={'nl-' + lang} />
+          <SiteFooter />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-// Header.jsx — sticky top nav with mega-menu hint for Services + Industries
+// Header.jsx, sticky top nav with mega-menu hint for Services + Industries
 // Exposes: window.SiteHeader
 
 const { useState: useHeaderState, useEffect: useHeaderEffect } = React;
@@ -13,6 +13,16 @@ const HEADER_INDUSTRIES = [
   { id: 'technology',    en: 'Technology',    nl: 'Technologie',tagEn: 'A revenue platform that scales with you.',      tagNl: 'Een revenue-platform dat meegroeit.' },
 ];
 
+function AIScanGlyph() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="M20 20l-4.2-4.2" />
+      <path d="M10.5 7.4l0.75 1.85 1.85 0.75-1.85 0.75-0.75 1.85-0.75-1.85-1.85-0.75 1.85-0.75z" />
+    </svg>
+  );
+}
+
 function ServicesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
   const items = window.PRODUCTS || [];
   const copy = window.productCopy ? window.productCopy(tx) : {};
@@ -20,35 +30,68 @@ function ServicesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
   return (
     <div className={'svc-mega' + (theme === 'coral' ? ' svc-mega--coral' : theme === 'cream' ? ' svc-mega--cream' : '')} onMouseEnter={onEnter} onMouseLeave={onLeave}>
       <div className="svc-mega-card">
-        <div className="svc-mega-head">
-          <div>
-            <div className="svc-mega-eyebrow">{tx('WHAT WE DO', 'WAT WIJ DOEN')}</div>
-            <div className="svc-mega-title">{tx('Across the Salesforce stack.', 'Op de hele Salesforce-stack.')}</div>
-          </div>
-          <a className="svc-mega-all" onClick={() => onNav?.('services')}>
-            {tx('All services', 'Alle diensten')} <span aria-hidden>→</span>
-          </a>
-        </div>
-        <div className="svc-mega-grid">
-          {items.map((p) => (
-            <a key={p.id} className="svc-mega-item" onClick={() => onNav?.('services')}>
-              <div className="svc-mega-icon"><Glyph id={p.id} /></div>
-              <div className="svc-mega-copy">
-                <div className="svc-mega-name">
-                  {copy[p.id]?.name || p.name}
-                  <span className="svc-mega-arrow" aria-hidden>→</span>
-                </div>
-                <div className="svc-mega-desc">{copy[p.id]?.short}</div>
+        <div className="svc-mega-body">
+          {/* LEFT, Salesforce stack (2 columns × 4 rows) */}
+          <div className="svc-mega-col">
+            <div className="svc-mega-head">
+              <div>
+                <div className="svc-mega-eyebrow">{tx('WHAT WE DO', 'WAT WIJ DOEN')}</div>
+                <div className="svc-mega-title">{tx('Across the Salesforce stack.', 'Op de hele Salesforce-stack.')}</div>
               </div>
-            </a>
-          ))}
+              <a className="svc-mega-all" onClick={() => onNav?.('services')}>
+                {tx('All services', 'Alle diensten')} <span aria-hidden>→</span>
+              </a>
+            </div>
+            <div className="svc-mega-grid">
+              {items.map((p) => (
+                <a key={p.id} className="svc-mega-item" onClick={() => onNav?.('services')}>
+                  <div className="svc-mega-icon"><Glyph id={p.id} /></div>
+                  <div className="svc-mega-copy">
+                    <div className="svc-mega-name">
+                      {copy[p.id]?.name || p.name}
+                      <span className="svc-mega-arrow" aria-hidden>→</span>
+                    </div>
+                    <div className="svc-mega-desc">{copy[p.id]?.short}</div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* SEPARATOR */}
+          <div className="svc-mega-sep" aria-hidden />
+
+          {/* RIGHT, AI stack */}
+          <div className="svc-mega-col">
+            <div className="svc-mega-head">
+              <div>
+                <div className="svc-mega-eyebrow">{tx('NEW', 'NIEUW')}</div>
+                <div className="svc-mega-title">{tx('Across the AI stack.', 'Op de hele AI-stack.')}</div>
+              </div>
+              <a className="svc-mega-all" onClick={() => (window.location.href = 'AIReadinessScan.html')}>
+                {tx('All services', 'Alle diensten')} <span aria-hidden>→</span>
+              </a>
+            </div>
+            <div className="svc-mega-ai">
+              <a className="svc-mega-item" onClick={() => (window.location.href = 'AIReadinessScan.html')}>
+                <div className="svc-mega-icon"><AIScanGlyph /></div>
+                <div className="svc-mega-copy">
+                  <div className="svc-mega-name">
+                    {tx('AI readiness scan', 'AI-readiness scan')}
+                    <span className="svc-mega-arrow" aria-hidden>→</span>
+                  </div>
+                  <div className="svc-mega-desc">{tx('See where AI can move the needle in your business.', 'Ontdek waar AI het verschil kan maken in uw business.')}</div>
+                </div>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
       <style>{`
         .svc-mega {
           position: fixed;
           top: 76px; left: 50%; transform: translateX(-50%);
-          width: min(1360px, 94vw);
+          width: calc(min(100vw, 1360px) - 2 * var(--container-pad));
           z-index: 60; padding-top: 12px;
           animation: svcMegaIn 260ms cubic-bezier(0.22,0.61,0.36,1) both;
         }
@@ -60,6 +103,9 @@ function ServicesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
           box-shadow: 0 30px 80px -24px rgba(64,35,1,0.62), 0 8px 22px -10px rgba(64,35,1,0.4);
           border: 1px solid rgba(252,247,235,0.08);
         }
+        .svc-mega-body { display: grid; grid-template-columns: minmax(0, 1.75fr) 1px minmax(0, 1fr); gap: 28px; align-items: stretch; }
+        .svc-mega-col { min-width: 0; }
+        .svc-mega-sep { width: 1px; align-self: stretch; background: rgba(252,247,235,0.14); }
         .svc-mega-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
         .svc-mega-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; font-weight: 500; color: var(--intigris-coral); margin-bottom: 8px; }
         .svc-mega-title { font-size: 24px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.05; color: var(--intigris-off-white); }
@@ -74,7 +120,8 @@ function ServicesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
         .svc-mega-all span { transition: transform 220ms var(--ease-out); display: inline-block; }
         .svc-mega-all:hover { background: var(--intigris-coral); color: var(--intigris-dark-brown); border-color: var(--intigris-coral); }
         .svc-mega-all:hover span { transform: translateX(4px); }
-        .svc-mega-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
+        .svc-mega-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+        .svc-mega-ai { display: grid; grid-template-columns: 1fr; gap: 12px; }
         .svc-mega-item {
           display: flex; gap: 14px; align-items: flex-start;
           text-decoration: none; color: inherit; cursor: pointer;
@@ -98,8 +145,13 @@ function ServicesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
         .svc-mega-item:hover .svc-mega-name { color: var(--intigris-coral); }
         .svc-mega-item:hover .svc-mega-arrow { transform: translateX(4px); }
         .svc-mega-desc { margin-top: 5px; font-size: 12.5px; font-weight: 400; line-height: 1.4; color: rgba(252,247,235,0.78); }
-        @media (max-width: 980px) { .svc-mega-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 980px) {
+          .svc-mega-body { grid-template-columns: 1fr; gap: 20px; }
+          .svc-mega-sep { display: none; }
+          .svc-mega-grid { grid-template-columns: repeat(2, 1fr); }
+        }
         /* Coral theme */
+        .svc-mega--coral .svc-mega-sep { background: rgba(64,35,1,0.18); }
         .svc-mega--coral .svc-mega-card { background: var(--intigris-coral); color: var(--intigris-dark-brown); border-color: rgba(64,35,1,0.14); }
         .svc-mega--coral .svc-mega-eyebrow { color: var(--intigris-dark-brown); }
         .svc-mega--coral .svc-mega-title { color: var(--intigris-dark-brown); }
@@ -113,6 +165,7 @@ function ServicesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
         .svc-mega--coral .svc-mega-item:hover .svc-mega-name { color: var(--intigris-dark-brown); }
         .svc-mega--coral .svc-mega-desc { color: rgba(64,35,1,0.7); }
         /* Cream theme */
+        .svc-mega--cream .svc-mega-sep { background: var(--border); }
         .svc-mega--cream .svc-mega-card { background: var(--intigris-off-white); color: var(--intigris-dark-brown); border-color: var(--border); }
         .svc-mega--cream .svc-mega-title { color: var(--intigris-dark-brown); }
         .svc-mega--cream .svc-mega-all { background: var(--intigris-coral); color: var(--intigris-off-white); border-color: transparent; }
@@ -146,12 +199,9 @@ function IndustriesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
         <div className="ind-mega-grid">
           {HEADER_INDUSTRIES.map((i) => (
             <a key={i.id} className="ind-mega-item" onClick={() => onNav?.('industries')}>
-              <div className="ind-mega-thumb">
-                <img src={`assets/industries/${i.id}.jpg`} alt={tx(i.en, i.nl)} loading="lazy" />
-                <span className="ind-mega-scrim" aria-hidden></span>
-                <span className="ind-mega-cta">{tx(`Explore ${i.en}`, `Ontdek ${i.nl}`)}<span aria-hidden>→</span></span>
-              </div>
-              <div className="ind-mega-copy">
+              <img className="ind-mega-img" src={`assets/industries/${i.id}.jpg`} alt={tx(i.en, i.nl)} loading="lazy" />
+              <span className="ind-mega-scrim" aria-hidden></span>
+              <div className="ind-mega-overlay">
                 <div className="ind-mega-name">
                   {tx(i.en, i.nl)}
                   <span className="ind-mega-arrow" aria-hidden>→</span>
@@ -166,7 +216,7 @@ function IndustriesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
         .ind-mega {
           position: fixed;
           top: 76px; left: 50%; transform: translateX(-50%);
-          width: min(1360px, 94vw);
+          width: calc(min(100vw, 1360px) - 2 * var(--container-pad));
           z-index: 60;
           padding-top: 12px;
           animation: indMegaIn 260ms cubic-bezier(0.22,0.61,0.36,1) both;
@@ -206,60 +256,29 @@ function IndustriesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
         .ind-mega-all span { transition: transform 220ms var(--ease-out); display: inline-block; }
         .ind-mega-all:hover { background: var(--intigris-coral); color: var(--intigris-dark-brown); border-color: var(--intigris-coral); }
         .ind-mega-all:hover span { transform: translateX(4px); }
-        .ind-mega-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+        .ind-mega-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
         .ind-mega-item {
-          display: flex; flex-direction: column; gap: 12px;
-          text-decoration: none; color: inherit; cursor: pointer;
-          padding: 10px; border-radius: 16px;
-          border: 1px solid transparent;
-          transition: background 180ms var(--ease-out), border-color 180ms var(--ease-out), transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+          position: relative; display: block; overflow: hidden;
+          border-radius: 14px; cursor: pointer; aspect-ratio: 20 / 9;
+          text-decoration: none; color: inherit;
         }
-        .ind-mega-item:hover {
-          background: rgba(252,247,235,0.07);
-          border-color: rgba(252,247,235,0.16);
-          transform: translateY(-3px);
-          box-shadow: 0 16px 32px -18px rgba(0,0,0,0.55);
-        }
-        .ind-mega-item:active { transform: translateY(-1px); }
-        .ind-mega-thumb { position: relative; overflow: hidden; border-radius: 12px; aspect-ratio: 16 / 9; }
-        .ind-mega-thumb img {
-          width: 100%; height: 100%; object-fit: cover; display: block;
-          transition: transform 520ms var(--ease-out);
-        }
-        .ind-mega-thumb::after {
-          content: ""; position: absolute; inset: 0;
-          background: var(--intigris-coral); opacity: 0.16; mix-blend-mode: multiply;
-          transition: opacity 180ms var(--ease-out);
-        }
+        .ind-mega-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 520ms var(--ease-out); }
+        .ind-mega-item:hover .ind-mega-img { transform: scale(1.06); }
         .ind-mega-scrim {
           position: absolute; inset: 0; pointer-events: none;
-          background: linear-gradient(180deg, rgba(64,35,1,0) 40%, rgba(64,35,1,0.55) 100%);
-          opacity: 0; transition: opacity 280ms var(--ease-out);
+          background: linear-gradient(180deg, rgba(64,35,1,0.05) 20%, rgba(64,35,1,0.80) 100%);
         }
-        .ind-mega-cta {
-          position: absolute; right: 12px; bottom: 12px; pointer-events: none;
-          display: none; align-items: center; gap: 8px;
-          background: var(--intigris-coral); color: var(--intigris-off-white);
-          padding: 9px 16px; border-radius: 999px;
-          font-size: 13px; font-weight: 500; letter-spacing: -0.005em; white-space: nowrap;
-          box-shadow: 0 12px 28px -8px rgba(64,35,1,0.4);
-          opacity: 0; transform: translateY(12px);
-          transition: opacity 240ms var(--ease-out), transform 320ms var(--ease-spring);
-        }
-        .ind-mega-item:hover .ind-mega-thumb img { transform: scale(1.05); }
-        .ind-mega-item:hover .ind-mega-thumb::after { opacity: 0.04; }
+        .ind-mega-overlay { position: absolute; left: 15px; right: 15px; bottom: 12px; pointer-events: none; }
         .ind-mega-name {
           display: flex; align-items: center; gap: 8px;
-          font-size: 19px; font-weight: 500; letter-spacing: -0.018em; line-height: 1.1;
+          font-size: 17px; font-weight: 500; letter-spacing: -0.016em; line-height: 1.12;
           color: var(--intigris-off-white);
-          transition: color 160ms var(--ease-out);
         }
-        .ind-mega-arrow { color: var(--intigris-coral); font-size: 16px; transition: transform 220ms var(--ease-out); }
-        .ind-mega-item:hover .ind-mega-name { color: var(--intigris-coral); }
+        .ind-mega-arrow { color: var(--intigris-coral); font-size: 15px; transition: transform 220ms var(--ease-out); }
         .ind-mega-item:hover .ind-mega-arrow { transform: translateX(4px); }
         .ind-mega-tag {
-          margin-top: 4px; font-size: 13px; font-weight: 400; line-height: 1.4;
-          color: rgba(252,247,235,0.78);
+          margin-top: 3px; font-size: 12.5px; font-weight: 400; line-height: 1.3;
+          color: rgba(252,247,235,0.9);
         }
         @media (max-width: 980px) { .ind-mega-grid { grid-template-columns: repeat(2, 1fr); } }
         /* Coral theme */
@@ -268,27 +287,11 @@ function IndustriesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
         .ind-mega--coral .ind-mega-title { color: var(--intigris-dark-brown); }
         .ind-mega--coral .ind-mega-all { color: var(--intigris-dark-brown); border-color: rgba(64,35,1,0.4); }
         .ind-mega--coral .ind-mega-all:hover { background: var(--intigris-dark-brown); color: var(--intigris-off-white); border-color: var(--intigris-dark-brown); }
-        .ind-mega--coral .ind-mega-item:hover { background: rgba(64,35,1,0.08); border-color: rgba(64,35,1,0.18); }
-        .ind-mega--coral .ind-mega-thumb::after { opacity: 0; }
-        .ind-mega--coral .ind-mega-name { color: var(--intigris-dark-brown); }
-        .ind-mega--coral .ind-mega-arrow { color: var(--intigris-dark-brown); }
-        .ind-mega--coral .ind-mega-item:hover .ind-mega-name { color: var(--intigris-dark-brown); }
-        .ind-mega--coral .ind-mega-tag { color: rgba(64,35,1,0.7); }
-        /* Cream theme — mirrors the homepage industry-grid hover: card stays
-           cream, photo zooms, warm scrim + coral "Explore" pill reveal, title coral. */
+        /* Cream theme */
         .ind-mega--cream .ind-mega-card { background: var(--intigris-off-white); color: var(--intigris-dark-brown); border-color: var(--border); }
         .ind-mega--cream .ind-mega-title { color: var(--intigris-dark-brown); }
         .ind-mega--cream .ind-mega-all { background: var(--intigris-coral); color: var(--intigris-off-white); border-color: transparent; }
         .ind-mega--cream .ind-mega-all:hover { background: var(--intigris-coral-700); color: var(--intigris-off-white); border-color: transparent; }
-        .ind-mega--cream .ind-mega-item { padding: 0; }
-        .ind-mega--cream .ind-mega-item:hover { background: transparent; border-color: transparent; box-shadow: none; transform: none; }
-        .ind-mega--cream .ind-mega-cta { display: inline-flex; }
-        .ind-mega--cream .ind-mega-item:hover .ind-mega-scrim { opacity: 1; }
-        .ind-mega--cream .ind-mega-item:hover .ind-mega-cta { opacity: 1; transform: translateY(0); }
-        .ind-mega--cream .ind-mega-name { color: var(--intigris-dark-brown); }
-        .ind-mega--cream .ind-mega-item:hover .ind-mega-name { color: var(--intigris-coral); }
-        .ind-mega--cream .ind-mega-item:hover .ind-mega-arrow { color: var(--intigris-coral); }
-        .ind-mega--cream .ind-mega-tag { color: rgba(64,35,1,0.82); }
       `}</style>
     </div>
   );
@@ -300,7 +303,7 @@ const HEADER_CAREERS = [
   { id: 'vacancies',   en: 'Vacancies',             nl: 'Vacatures',              dEn: 'Explore open roles and apply.',                    dNl: 'Bekijk openstaande functies en solliciteer.' },
   { id: 'culture',     en: 'Our culture',           nl: 'Onze cultuur',           dEn: 'Feel at home from day one.',                       dNl: 'Voel je thuis vanaf dag één.' },
   { id: 'benefits',    en: 'Benefits',              nl: 'Arbeidsvoorwaarden',     dEn: 'What makes working here worthwhile.',              dNl: 'Wat werken bij Intigris de moeite waard maakt.' },
-  { id: 'isa',         en: 'ISA',                   nl: 'ISA',                    dEn: 'Our academy — start with zero Salesforce experience.', dNl: 'Onze academy — begin zonder Salesforce-ervaring.' },
+  { id: 'isa',         en: 'ISA',                   nl: 'ISA',                    dEn: 'Our academy, start with zero Salesforce experience.', dNl: 'Onze academy, begin zonder Salesforce-ervaring.' },
   { id: 'application', en: 'Application procedure', nl: 'Sollicitatieprocedure',  dEn: 'What to expect, step by step.',                    dNl: 'Wat je kunt verwachten, stap voor stap.' },
 ];
 
@@ -327,13 +330,13 @@ function CareersMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
             <div className="car-mega-eyebrow">{tx('CAREERS AT INTIGRIS', 'WERKEN BIJ INTIGRIS')}</div>
             <div className="car-mega-title">{tx('Master your skills, grow your impact.', 'Ontwikkel jezelf, vergroot je impact.')}</div>
             <p className="car-mega-sub">{tx('Collaborate with the friendliest and brightest minds in the field.', 'Werk samen met de aardigste en slimste mensen uit het vak.')}</p>
-            <a className="car-mega-cta" onClick={() => onNav?.('careers')}>
+            <a className="car-mega-cta" onClick={() => (window.location.href = 'Vacancies.html')}>
               {tx('Check our vacancies', 'Bekijk onze vacatures')} <span aria-hidden>→</span>
             </a>
           </div>
           <div className="car-mega-grid">
             {HEADER_CAREERS.map((c) => (
-              <a key={c.id} className="car-mega-item" onClick={() => onNav?.('careers')}>
+              <a key={c.id} className="car-mega-item" onClick={() => c.id === 'vacancies' ? (window.location.href = 'Vacancies.html') : c.id === 'overview' ? (window.location.href = 'Careers.html') : c.id === 'culture' ? (window.location.href = 'Culture.html') : c.id === 'benefits' ? (window.location.href = 'Benefits.html') : c.id === 'isa' ? (window.location.href = 'ISA.html') : c.id === 'application' ? (window.location.href = 'ApplicationProcedure.html') : onNav?.('careers')}>
                 <div className="car-mega-icon"><CareerGlyph id={c.id} /></div>
                 <div className="car-mega-copy">
                   <div className="car-mega-name">
@@ -351,7 +354,7 @@ function CareersMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
         .car-mega {
           position: fixed;
           top: 76px; left: 50%; transform: translateX(-50%);
-          width: min(1200px, 92vw);
+          width: calc(min(100vw, 1360px) - 2 * var(--container-pad));
           z-index: 60; padding-top: 12px;
           animation: carMegaIn 260ms cubic-bezier(0.22,0.61,0.36,1) both;
         }
@@ -475,7 +478,7 @@ function SiteHeader({ onNav, theme, overlay = false, lang = 'en', onLang, megaTh
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Header now lives on coral — per brandbook pairing, coral surface
+  // Header now lives on coral, per brandbook pairing, coral surface
   // takes dark-brown ink for highest contrast. In `overlay` mode it starts
   // transparent (floating over the cinematic hero) and turns solid coral once
   // the user scrolls past the top.
@@ -579,7 +582,7 @@ function SiteHeader({ onNav, theme, overlay = false, lang = 'en', onLang, megaTh
             onMouseEnter={() => openMenu('careers')}
             onMouseLeave={scheduleClose}
           >
-            <a style={{ ...linkStyle, display: 'inline-flex', alignItems: 'center' }}>
+            <a style={{ ...linkStyle, display: 'inline-flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => (window.location.href = 'Careers.html')}>
               {tx('Careers', 'Werken bij')}<Caret />
             </a>
             {open === 'careers' && <CareersMega onNav={onNav} tx={tx} theme={megaTheme} onEnter={() => openMenu('careers')} onLeave={scheduleClose} />}
@@ -678,7 +681,7 @@ const megaLink = {
   borderRadius: 8,
   color: 'var(--intigris-dark-brown)',
   fontSize: 14,
-  fontWeight: 300,
+  fontWeight: 400,
   textDecoration: 'none',
   cursor: 'pointer',
   transition: 'background 140ms var(--ease-out), color 140ms var(--ease-out)',

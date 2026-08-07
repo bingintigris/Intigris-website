@@ -1,4 +1,4 @@
-// Testimonial.jsx — coral panel, swipeable carousel of client pull-quotes.
+// Testimonial.jsx, coral panel, swipeable carousel of client pull-quotes.
 // Bold weight (brandbook reserves bold for quotes). Each slide carries the
 // client's logo + role + a "Read the case" CTA. Swipe via drag / arrows /
 // dots / keyboard arrows.
@@ -25,7 +25,7 @@ const QUOTES_EN = [
   },
   {
     id: 'warmgarant',
-    quote: 'A genuine partner, not a vendor. Intigris translated a messy reality into clear processes in Salesforce — and stuck around to make sure adoption actually happened.',
+    quote: 'A genuine partner, not a vendor. Intigris translated a messy reality into clear processes in Salesforce, and stuck around to make sure adoption actually happened.',
     name: 'Commercial Director',
     org: 'Warmgarant · the Netherlands',
     logo: 'assets/logos/warmgarant.png',
@@ -66,7 +66,7 @@ const QUOTES_NL = [
   },
   {
     id: 'warmgarant',
-    quote: 'Een echte partner, geen leverancier. Intigris vertaalde een rommelige werkelijkheid naar heldere processen in Salesforce — en bleef erbij tot adoptie écht stond.',
+    quote: 'Een echte partner, geen leverancier. Intigris vertaalde een rommelige werkelijkheid naar heldere processen in Salesforce, en bleef erbij tot adoptie écht stond.',
     name: 'Commercieel Directeur',
     org: 'Warmgarant · Nederland',
     logo: 'assets/logos/warmgarant.png', logoH: 38,
@@ -305,7 +305,7 @@ function QuoteSlide({ q, active, tx }) {
           <div style={{ marginTop: 28, display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
             <div>
               <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--intigris-dark-brown)' }}>{q.name}</div>
-              <div style={{ fontSize: 13, fontWeight: 300, color: 'rgba(64,35,1,0.7)' }}>{q.org}</div>
+              <div style={{ fontSize: 13, fontWeight: 400, color: 'rgba(64,35,1,0.7)' }}>{q.org}</div>
             </div>
             <div style={{ height: 28, width: 1, background: 'rgba(64,35,1,0.25)' }} />
             <button className="btn" style={{

@@ -74,6 +74,17 @@ export async function uploadMedia(file) {
   return { error };
 }
 
+// Upload a single image and return its public URL (used by Team headshots).
+export async function uploadImage(file) {
+  if (!supabaseConfigured) return { error: { message: 'Not connected' } };
+  const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
+  const path = `${Date.now()}-${safe}`;
+  const { error } = await supabase.storage.from(MEDIA_BUCKET).upload(path, file, { cacheControl: '3600', upsert: false });
+  if (error) return { error };
+  const url = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path).data.publicUrl;
+  return { url };
+}
+
 export async function deleteMedia(name) {
   if (!supabaseConfigured) return { error: { message: 'Not connected' } };
   const { error } = await supabase.storage.from(MEDIA_BUCKET).remove([name]);

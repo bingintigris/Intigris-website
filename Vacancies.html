@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vacancies | Intigris</title>
+  <link rel="stylesheet" href="design-system/site.css?v=1786027704000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = 'en';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+    window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="text/babel" src="components/Services.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Newsletter.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1786027704000"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+    function inl(s){return s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>').replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');}
+    function md(src){
+      const lines=esc(src||'').replace(/\r\n/g,'\n').split('\n'); const out=[]; let list=null,para=[];
+      const fp=()=>{if(para.length){out.push('<p>'+inl(para.join(' '))+'</p>');para=[];}};
+      const cl=()=>{if(list){out.push('</'+list+'>');list=null;}};
+      for(const raw of lines){const line=raw.trimEnd(); if(!line.trim()){fp();cl();continue;} let m;
+        if((m=line.match(/^(#{1,6})\s+(.*)$/))){fp();cl();const l=Math.min(m[1].length,6);out.push('<h'+l+'>'+inl(m[2])+'</h'+l+'>');continue;}
+        if((m=line.match(/^\s*[-•]\s+(.*)$/))){fp();if(list!=='ul'){cl();list='ul';out.push('<ul>');}out.push('<li>'+inl(m[1])+'</li>');continue;}
+        cl();para.push(line.trim());}
+      fp();cl();return out.join('\n');
+    }
+
+    const sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    const params = new URLSearchParams(window.location.search);
+    const jobSlug = params.get('job');
+    function nav(r){ if (r === 'blog') return (window.location.href = 'Blog.html'); return (window.location.href = 'index.html'); }
+
+    /* -------- Vacancies list -------- */
+    function VacancyList({ jobs }) {
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+          <section className="container-wide" style={{ paddingTop: 120, paddingBottom: 24 }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>CAREERS · VACANCIES</div>
+            <h1 style={{ fontSize: 'clamp(40px,6vw,72px)', fontWeight: 500, letterSpacing: '-0.028em', lineHeight: 1.02, margin: '12px 0 0' }}>
+              Come build with us.
+            </h1>
+            <p style={{ marginTop: 16, fontSize: 18, fontWeight: 400, color: 'var(--intigris-dark-brown)', maxWidth: 560 }}>
+              {tx('Interested in joining our team? Explore our open roles below.', 'Interesse om ons team te versterken? Bekijk hieronder onze openstaande functies.')}
+            </p>
+          </section>
+
+          <div className="container-wide" style={{ paddingBottom: 96 }}>
+            {jobs.length === 0 ? (
+              <div style={{ padding: '48px 0', color: 'var(--fg-muted)' }}>
+                {tx('No open positions right now, check back soon, or send an open application to ', 'Op dit moment geen openstaande functies, kom binnenkort terug, of stuur een open sollicitatie naar ')}
+                <a href="mailto:info@intigris.nl" style={{ color: 'var(--intigris-coral)' }}>info@intigris.nl</a>.
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gap: 16 }}>
+                {jobs.map((j) => (
+                  <a key={j.id} href={`Vacancies.html?job=${j.slug}`} className="vac-row" style={{
+                    display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 24,
+                    textDecoration: 'none', color: 'inherit',
+                    background: 'var(--intigris-paper)', border: '1px solid var(--border)',
+                    borderRadius: 18, padding: '26px 28px',
+                  }}>
+                    <div>
+                      <h3 style={{ fontSize: 24, fontWeight: 500, letterSpacing: '-0.018em', margin: 0 }}>{j.title}</h3>
+                      <div style={{ marginTop: 8, display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 14, fontWeight: 500, color: 'rgba(64,35,1,0.78)' }}>
+                        {j.department && <span>{j.department}</span>}
+                        {j.location && <span>· {j.location}</span>}
+                        {j.employment_type && <span>· {j.employment_type}</span>}
+                      </div>
+                    </div>
+                    <span className="btn btn-primary" style={{ color: 'var(--intigris-off-white)' }}>{tx('View role', 'Bekijk functie')} <span className="arrow">→</span></span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </main>
+      );
+    }
+
+    /* -------- Single vacancy + apply -------- */
+    function Vacancy({ job }) {
+      const [showForm, setShowForm] = useState(false);
+      const [form, setForm] = useState({
+        candidate: '', email: '', phone: '', cover_note: '',
+        certified: '', resident: '',
+        langNl: false, langEn: false, langOther: false, langOtherText: '',
+      });
+      const [photoFile, setPhotoFile] = useState(null);
+      const [cvFile, setCvFile] = useState(null);
+      const [sending, setSending] = useState(false);
+      const [sent, setSent] = useState(false);
+      const [err, setErr] = useState('');
+
+      useEffect(() => {
+        const onKey = (e) => { if (e.key === 'Escape') setShowForm(false); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+      }, []);
+
+      async function submit(e) {
+        e.preventDefault();
+        if (!form.candidate.trim() || !form.email.trim()) { setErr(tx('Please add your name and email.', 'Vul je naam en e-mailadres in.')); return; }
+        setSending(true); setErr('');
+        try {
+          const upload = async (file, kind) => {
+            if (!file) return null;
+            const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
+            const path = `${job.slug}/${Date.now()}-${kind}-${safe}`;
+            const { error } = await sb.storage.from('applications').upload(path, file);
+            if (error) throw error;
+            return path;
+          };
+          const cv_path = await upload(cvFile, 'cv');
+          const photo_path = await upload(photoFile, 'photo');
+          const langs = [];
+          if (form.langNl) langs.push('Dutch');
+          if (form.langEn) langs.push('English');
+          if (form.langOther) langs.push(form.langOtherText.trim() ? 'Other: ' + form.langOtherText.trim() : 'Other');
+          const { error } = await sb.from('job_applications').insert({
+            candidate: form.candidate.trim(), email: form.email.trim(), phone: form.phone.trim() || null,
+            role_applied: job.title, opening_id: job.id, cover_note: form.cover_note.trim() || null,
+            cv_path, photo_path,
+            salesforce_certified: form.certified === 'yes' ? true : form.certified === 'no' ? false : null,
+            languages: langs.join(', ') || null,
+            netherlands_resident: form.resident === 'yes' ? true : form.resident === 'no' ? false : null,
+          });
+          if (error) throw error;
+          setSending(false); setSent(true);
+        } catch (e2) {
+          setSending(false); setErr(e2.message || 'Something went wrong.');
+        }
+      }
+
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+          <article className="container" style={{ maxWidth: 900, paddingTop: 120, paddingBottom: 96 }}>
+            <div>
+              <a href="Vacancies.html" style={{ display: 'inline-block', fontSize: 14, fontWeight: 500, color: 'var(--intigris-coral)', textDecoration: 'none', marginBottom: 22 }}>← {tx('All vacancies', 'Alle vacatures')}</a>
+            </div>
+            <div>
+              <span className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{job.department || 'Careers'}</span>
+            </div>
+            <h1 style={{ fontSize: 'clamp(32px,4.5vw,56px)', fontWeight: 500, letterSpacing: '-0.026em', lineHeight: 1.04, margin: '12px 0 0' }}>{job.title}</h1>
+            <div style={{ marginTop: 14, display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 14, fontWeight: 500, color: 'rgba(64,35,1,0.78)' }}>
+              {job.location && <span>{job.location}</span>}
+              {job.employment_type && <span>· {job.employment_type}</span>}
+            </div>
+
+            <div className="post-body" dangerouslySetInnerHTML={{ __html: md(job.description) }} />
+
+            {!sent ? (
+              <button className="btn btn-primary btn-lg" style={{ marginTop: 32, color: 'var(--intigris-off-white)' }} onClick={() => setShowForm(true)}>
+                {tx('Apply for this position', 'Solliciteer op deze functie')} <span className="arrow">→</span>
+              </button>
+            ) : (
+              <div style={{ marginTop: 32, display: 'inline-flex', alignItems: 'center', gap: 10, background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 999, padding: '10px 18px' }}>
+                <span style={{ color: 'var(--intigris-coral)', fontWeight: 600 }}>✓</span>
+                <span style={{ fontSize: 15, fontWeight: 500 }}>{tx('Application received', 'Sollicitatie ontvangen')}</span>
+              </div>
+            )}
+          </article>
+
+          {/* Apply modal (popup) */}
+          {showForm && (
+            <div onClick={() => setShowForm(false)} style={{
+              position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(64,35,1,0.42)',
+              backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+              display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+              padding: '40px 20px', overflowY: 'auto',
+              animation: 'fadeIn 200ms cubic-bezier(0.22,0.61,0.36,1)',
+            }}>
+              <div onClick={(e) => e.stopPropagation()} style={{
+                background: 'var(--intigris-off-white)', width: '100%', maxWidth: 600,
+                borderRadius: 20, boxShadow: '0 30px 80px -20px rgba(0,0,0,0.45)',
+                position: 'relative', animation: 'popIn 260ms cubic-bezier(0.22,0.61,0.36,1)',
+              }}>
+                <button onClick={() => setShowForm(false)} aria-label="Close" style={{
+                  position: 'absolute', top: 16, right: 16, width: 36, height: 36, borderRadius: 999,
+                  background: 'transparent', border: '1px solid var(--border)', cursor: 'pointer',
+                  color: 'var(--intigris-dark-brown)', fontSize: 18, lineHeight: 1,
+                }}>×</button>
+
+                <div style={{ padding: '36px 36px 32px' }}>
+                  {!sent ? (
+                    <form onSubmit={submit}>
+                      <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('APPLY', 'SOLLICITEER')}</div>
+                      <h3 style={{ fontSize: 26, fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1.1, margin: '6px 0 0' }}>{job.title}</h3>
+
+                      {/* Section 1: personal information */}
+                      <div className="eyebrow" style={{ color: 'var(--intigris-coral)', marginTop: 26 }}>{tx('PERSONAL INFORMATION', 'PERSOONLIJKE GEGEVENS')}</div>
+                      <div style={{ display: 'grid', gap: 14, marginTop: 14 }}>
+                        <Field label={tx('Full name', 'Volledige naam')} value={form.candidate} onChange={(v) => setForm({ ...form, candidate: v })} placeholder="Anna de Vries" />
+                        <div className="app-two" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                          <Field label={tx('Email', 'E-mailadres')} type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} placeholder="anna@example.com" />
+                          <Field label={tx('Phone number', 'Telefoonnummer')} value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} placeholder="+31 6 12345678" />
+                        </div>
+                        <Field label={tx('Cover letter (optional)', 'Motivatiebrief (optioneel)')} value={form.cover_note} onChange={(v) => setForm({ ...form, cover_note: v })} placeholder={tx('Give us a short description why you’d be a great fit…', 'Geef een korte omschrijving waarom je goed past…')} multiline />
+                        <FileInput label={tx('Photo (optional)', 'Foto (optioneel)')} accept="image/*" file={photoFile} onChange={setPhotoFile} />
+                        <FileInput label={tx('CV / resume', 'CV')} accept=".pdf,.doc,.docx" file={cvFile} onChange={setCvFile} hint={tx('PDF or Word', 'PDF of Word')} />
+                      </div>
+
+                      {/* Section 2: questions */}
+                      <div className="eyebrow" style={{ color: 'var(--intigris-coral)', marginTop: 30 }}>{tx('A FEW QUESTIONS', 'ENKELE VRAGEN')}</div>
+                      <div style={{ display: 'grid', gap: 20, marginTop: 14 }}>
+                        <Radio label={tx('Are you Salesforce certified?', 'Ben je Salesforce-gecertificeerd?')} value={form.certified}
+                          onChange={(v) => setForm({ ...form, certified: v })}
+                          options={[{ value: 'yes', label: tx('Yes', 'Ja') }, { value: 'no', label: tx('No', 'Nee') }]} />
+
+                        <div>
+                          <span className="eyebrow eyebrow--bare">{tx('Which languages do you speak?', 'Welke talen spreek je?')}</span>
+                          <div style={{ display: 'flex', gap: 20, marginTop: 8, flexWrap: 'wrap' }}>
+                            {[['langNl', tx('Dutch', 'Nederlands')], ['langEn', tx('English', 'Engels')], ['langOther', tx('Other', 'Anders')]].map(([k, l]) => (
+                              <label key={k} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 15, fontWeight: 400, color: 'var(--intigris-dark-brown)', cursor: 'pointer' }}>
+                                <input type="checkbox" checked={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.checked })} style={{ accentColor: '#ff5f36', width: 16, height: 16 }} /> {l}
+                              </label>
+                            ))}
+                          </div>
+                          {form.langOther && (
+                            <input value={form.langOtherText} onChange={(e) => setForm({ ...form, langOtherText: e.target.value })} placeholder={tx('Which language(s)?', 'Welke taal/talen?')}
+                              style={{ marginTop: 10, width: '100%', fontFamily: 'inherit', fontSize: 16, fontWeight: 400, color: 'var(--intigris-dark-brown)', height: 50, padding: '0 16px', background: 'var(--intigris-paper)', border: '1.5px solid var(--border)', borderRadius: 10, outline: 'none' }} />
+                          )}
+                        </div>
+
+                        <Radio label={tx('Are you a resident of the Netherlands?', 'Woon je in Nederland?')} value={form.resident}
+                          onChange={(v) => setForm({ ...form, resident: v })}
+                          options={[{ value: 'yes', label: tx('Yes', 'Ja') }, { value: 'no', label: tx('No', 'Nee') }]} />
+                      </div>
+
+                      {err && <div style={{ marginTop: 16, color: '#d6431b', fontSize: 14 }}>{err}</div>}
+                      <button type="submit" className="btn btn-primary btn-lg" style={{ marginTop: 24, color: 'var(--intigris-off-white)' }} disabled={sending}>
+                        {sending ? tx('Sending…', 'Versturen…') : tx('Submit application', 'Verstuur sollicitatie')} <span className="arrow">→</span>
+                      </button>
+                      <p style={{ marginTop: 12, fontSize: 13, fontWeight: 500, color: 'var(--fg-muted)' }}>
+                        {tx('We’ll get back to you ASAP.', 'We nemen zo snel mogelijk contact op.')}
+                      </p>
+                    </form>
+                  ) : (
+                    <div>
+                      <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('THANK YOU', 'BEDANKT')}</div>
+                      <h3 style={{ fontSize: 30, fontWeight: 500, letterSpacing: '-0.02em', margin: '8px 0 0' }}>
+                        {tx('Application received.', 'Sollicitatie ontvangen.')} <span style={{ color: 'var(--intigris-coral)' }}>→</span>
+                      </h3>
+                      <p style={{ marginTop: 12, fontSize: 16, fontWeight: 400, color: 'var(--fg-muted)' }}>
+                        {tx('Thanks for applying to ', 'Bedankt voor je sollicitatie op ')}{job.title}. {tx('We’ll be in touch within 5 business days.', 'We nemen binnen 5 werkdagen contact op.')}
+                      </p>
+                      <button onClick={() => setShowForm(false)} className="btn btn-secondary" style={{ marginTop: 24 }}>{tx('Close', 'Sluiten')}</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
+      );
+    }
+
+    function Field({ label, value, onChange, placeholder, type, multiline }) {
+      const Tag = multiline ? 'textarea' : 'input';
+      return (
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <span className="eyebrow eyebrow--bare">{label}</span>
+          <Tag type={type || 'text'} value={value} placeholder={placeholder} rows={multiline ? 4 : undefined}
+            onChange={(e) => onChange(e.target.value)}
+            style={{ fontFamily: 'inherit', fontSize: 16, fontWeight: 400, color: 'var(--intigris-dark-brown)',
+              minHeight: multiline ? 110 : 50, padding: multiline ? '14px 16px' : '0 16px',
+              background: 'var(--intigris-paper)', border: '1.5px solid var(--border)', borderRadius: 10, outline: 'none', resize: 'vertical' }} />
+        </label>
+      );
+    }
+
+    function Radio({ label, value, onChange, options }) {
+      return (
+        <div>
+          <span className="eyebrow eyebrow--bare">{label}</span>
+          <div style={{ display: 'flex', gap: 24, marginTop: 8 }}>
+            {options.map((o) => (
+              <label key={o.value} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 15, fontWeight: 400, color: 'var(--intigris-dark-brown)', cursor: 'pointer' }}>
+                <input type="radio" checked={value === o.value} onChange={() => onChange(o.value)} style={{ accentColor: '#ff5f36', width: 16, height: 16 }} /> {o.label}
+              </label>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function FileInput({ label, accept, file, onChange, hint }) {
+      const ref = React.useRef(null);
+      return (
+        <div>
+          <span className="eyebrow eyebrow--bare">{label}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
+            <input ref={ref} type="file" accept={accept} style={{ display: 'none' }} onChange={(e) => onChange(e.target.files[0] || null)} />
+            <button type="button" className="btn btn-secondary btn-sm" onClick={() => ref.current.click()}>
+              {file ? tx('Change file', 'Wijzig bestand') : tx('Choose file', 'Kies bestand')}
+            </button>
+            <span style={{ fontSize: 14, fontWeight: 400, color: file ? 'var(--intigris-dark-brown)' : 'var(--fg-muted)' }}>
+              {file ? file.name : (hint || tx('No file selected', 'Geen bestand gekozen'))}
+            </span>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [lang, setLang] = useState('en');
+      const [jobs, setJobs] = useState(null);
+      const [job, setJob] = useState(undefined);
+      const changeLang = (n) => { window.__lang = n; document.documentElement.setAttribute('lang', n); setLang(n); };
+
+      useEffect(() => {
+        if (jobSlug) {
+          sb.from('job_openings').select('*').eq('slug', jobSlug).eq('status', 'open').maybeSingle().then(({ data }) => setJob(data || null));
+        } else {
+          sb.from('job_openings').select('id,title,slug,department,location,employment_type').eq('status', 'open').order('created_at', { ascending: true }).then(({ data }) => setJobs(data || []));
+        }
+      }, []);
+
+      return (
+        <>
+          <SiteHeader overlay={false} megaTheme="cream" lang={lang} onLang={changeLang} onNav={nav} />
+          {jobSlug
+            ? (job === undefined ? <Loading /> : job ? <Vacancy job={job} /> : <NotFound />)
+            : (jobs === null ? <Loading /> : <VacancyList jobs={jobs} />)}
+          <SiteNewsletter key={'nl-' + lang} />
+          <SiteFooter />
+        </>
+      );
+    }
+
+    function Loading(){ return <main style={{ minHeight: '60vh', display: 'grid', placeItems: 'center', paddingTop: 76, color: 'var(--fg-muted)' }}>Loading…</main>; }
+    function NotFound(){ return <main style={{ minHeight: '60vh', display: 'grid', placeItems: 'center', paddingTop: 76 }}><div style={{ textAlign: 'center' }}><h1 style={{ fontSize: 32, fontWeight: 500 }}>Position not found</h1><p style={{ marginTop: 8 }}><a href="Vacancies.html" style={{ color: 'var(--intigris-coral)' }}>← Back to vacancies</a></p></div></main>; }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+
+  <style>
+    @media (max-width: 560px) { .app-two { grid-template-columns: 1fr !important; } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popIn { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .vac-row { transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out); }
+    .vac-row:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -18px rgba(64,35,1,0.3); }
+    .post-body { margin-top: 28px; font-size: 17px; line-height: 1.7; color: var(--intigris-dark-brown); font-weight: 400; }
+    .post-body h2 { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin: 32px 0 12px; }
+    .post-body p { margin: 0 0 16px; }
+    .post-body ul { margin: 0 0 16px 22px; }
+    .post-body li { margin: 6px 0; }
+    .post-body strong { font-weight: 600; }
+  </style>
+</body>
+</html>

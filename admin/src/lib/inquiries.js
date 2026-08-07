@@ -25,13 +25,24 @@ const SAMPLE = [
 ];
 
 export async function listInquiries() {
+  // Demo mode only: no Supabase connection at all.
   if (!supabaseConfigured) return { rows: SAMPLE, sample: true };
+
   const { data, error } = await supabase
     .from('inquiries')
     .select('id, name, email, company, subject, message, status, priority, assigned_to, source_page, created_at')
     .order('created_at', { ascending: false });
-  if (error || !data || data.length === 0) return { rows: SAMPLE, sample: true };
-  return { rows: data, sample: false };
+
+  // Connected but the read failed (e.g. permissions): surface it rather than
+  // quietly showing fake rows, which makes a real problem look like no data.
+  if (error) {
+    console.error('Could not load inquiries:', error.message);
+    return { rows: [], sample: false, error: error.message };
+  }
+
+  // Connected and genuinely empty: show a real empty state, not samples, so
+  // you can tell "nothing has come in yet" from "something is broken".
+  return { rows: data || [], sample: false };
 }
 
 export async function updateInquiry(id, patch) {

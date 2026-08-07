@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ISA | Intigris Salesforce Academy</title>
+  <link rel="stylesheet" href="design-system/site.css?v=1786027704000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = 'en';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+    window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="text/babel" src="components/Services.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Newsletter.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/ContactSheet.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1786027704000"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+
+
+    const ISA_SUBJECT = { en: 'Intigris Salesforce Academy (ISA)', nl: 'Intigris Salesforce Academy (ISA)' };
+    const ISA_MESSAGE = {
+      en: "I'm interested in joining the Intigris Salesforce Academy (ISA) traineeship. I'd love to hear more about the next cohort and how to get started.",
+      nl: 'Ik ben geïnteresseerd in het Intigris Salesforce Academy (ISA) traineeship. Ik hoor graag meer over de volgende lichting en hoe ik kan starten.',
+    };
+
+    const MONTHS = [
+      { en: 'Month 1', nl: 'Maand 1',
+        dEn: 'Internal training covering Intigris work methods, Jira, and flow training, plus self-study for Sales Cloud and Service Cloud. You’ll also tackle a two-week ‘practice’ project centered on a use case.',
+        dNl: 'Interne training over de werkwijze van Intigris, Jira en flow-training, plus zelfstudie voor Sales Cloud en Service Cloud. Daarnaast pak je een ‘oefenproject’ van twee weken rond een use case.' },
+      { en: 'Month 2', nl: 'Maand 2',
+        dEn: 'Comprehensive communication training, shadowing our support team, and a two-week project focused on a use case to sharpen your practical experience.',
+        dNl: 'Uitgebreide communicatietraining, meelopen met ons supportteam en een project van twee weken rond een use case om je praktijkervaring te vergroten.' },
+      { en: 'Month 3', nl: 'Maand 3',
+        dEn: 'From month three you actively join projects and support, guided by senior consultants during the early months. As the year progresses, you take on more responsibility.',
+        dNl: 'Vanaf maand drie werk je actief mee in projecten en support, begeleid door senior consultants in de eerste maanden. Naarmate het jaar vordert, neem je meer verantwoordelijkheid.' },
+    ];
+
+    const EXPLORE = [
+      { id: 'culture',   href: 'Culture.html',   en: 'Our culture', nl: 'Onze cultuur', dEn: 'Feel at home from the moment you step in.', dNl: 'Voel je thuis vanaf het eerste moment.' },
+      { id: 'benefits',  href: 'Benefits.html',  en: 'Benefits', nl: 'Arbeidsvoorwaarden', dEn: 'What makes working at Intigris worthwhile.', dNl: 'Wat werken bij Intigris de moeite waard maakt.' },
+      { id: 'vacancies', href: 'Vacancies.html', en: 'Vacancies', nl: 'Vacatures', dEn: 'Explore open roles and apply to join our team.', dNl: 'Bekijk openstaande functies en solliciteer.' },
+    ];
+
+    function ISA({ onJoin }) {
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+
+          {/* HERO */}
+          <section className="container-wide isa-hero" style={{ paddingTop: 128, paddingBottom: 'clamp(48px, 6vw, 80px)' }}>
+            <div className="isa-hero-grid" style={{ display: 'grid', gridTemplateColumns: '1.05fr 0.95fr', gap: 'clamp(36px, 5vw, 72px)', alignItems: 'center' }}>
+              <div>
+                <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('CAREERS · ISA', 'WERKEN BIJ · ISA')}</div>
+                <h1 style={{ fontSize: 'clamp(38px,5vw,68px)', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 1.02, margin: '14px 0 0' }}>
+                  {tx('Intigris Salesforce ', 'Intigris Salesforce ')}<span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('Academy.', 'Academy.')}</span>
+                </h1>
+                <p style={{ marginTop: 22, fontSize: 18, fontWeight: 400, lineHeight: 1.6, color: 'var(--intigris-dark-brown)', maxWidth: 520 }}>
+                  {tx(
+                    'Interested in joining us as a Salesforce consultant but have little or no experience with Salesforce? ISA might be the right choice for you.',
+                    'Wil je als Salesforce-consultant bij ons aan de slag, maar heb je weinig of geen Salesforce-ervaring? Dan is ISA misschien iets voor jou.'
+                  )}
+                </p>
+                <button className="btn btn-primary btn-lg" onClick={onJoin} style={{ marginTop: 28, color: 'var(--intigris-off-white)' }}>
+                  {tx('Join ISA', 'Doe mee met ISA')} <span className="arrow">→</span>
+                </button>
+              </div>
+              <div style={{ borderRadius: 24, overflow: 'hidden', border: '1px solid var(--border)', aspectRatio: '4/3', background: 'var(--intigris-off-white-200)' }}>
+                <img src="https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/64410322b2af2d8c825d8d70_2022_Intigris705-1024x683.jpg" alt={tx('Intigris consultants at work', 'Intigris-consultants aan het werk')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            </div>
+          </section>
+
+          {/* WHAT IS ISA */}
+          <section className="container-wide" style={{ paddingBottom: 'clamp(40px, 5vw, 64px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('INTIGRIS SALESFORCE ACADEMY', 'INTIGRIS SALESFORCE ACADEMY')}</div>
+            <h2 style={{ fontSize: 'clamp(30px,3.6vw,48px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.04, margin: '12px 0 0', maxWidth: 720 }}>
+              {tx('What is ISA all about?', 'Waar draait ISA om?')}
+            </h2>
+            <p style={{ marginTop: 18, fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 760 }}>
+              {tx(
+                'ISA stands for Intigris Salesforce Academy, a traineeship where we train you to become a Salesforce Consultant. You won’t just learn everything about Salesforce; you’ll also develop your skills as a consultant. The programme lasts a year and is structured as follows:',
+                'ISA staat voor Intigris Salesforce Academy, een traineeship waarin we je opleiden tot Salesforce-consultant. Je leert niet alleen alles over Salesforce, maar ontwikkelt ook je vaardigheden als consultant. Het programma duurt een jaar en is als volgt opgebouwd:'
+              )}
+            </p>
+            <div className="isa-months" style={{ marginTop: 32, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+              {MONTHS.map((m, i) => (
+                <div key={i} style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 20, padding: '28px 26px', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--intigris-coral-700)' }}>{tx(m.en, m.nl)}</div>
+                  <p style={{ margin: '12px 0 0', fontSize: 15.5, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)' }}>{tx(m.dEn, m.dNl)}</p>
+                </div>
+              ))}
+            </div>
+            <p style={{ marginTop: 20, fontSize: 16, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 760 }}>
+              {tx(
+                'In the second half of the year you’ll receive two more training sessions: one on personal leadership and another on best practices.',
+                'In de tweede helft van het jaar volgen nog twee trainingen: één over persoonlijk leiderschap en één over best practices.'
+              )}
+            </p>
+          </section>
+
+          {/* CAREER */}
+          <section style={{ background: 'var(--intigris-chocolate)', color: 'var(--intigris-off-white)', paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(64px, 8vw, 104px)' }}>
+            <div className="container-wide isa-split" style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 'clamp(32px, 5vw, 72px)', alignItems: 'center' }}>
+              <div>
+                <div className="eyebrow" style={{ color: 'rgba(252,247,235,0.7)' }}>{tx('CAREER', 'CARRIÈRE')}</div>
+                <h2 style={{ fontSize: 'clamp(30px,3.6vw,48px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.04, margin: '12px 0 0', color: 'var(--intigris-off-white)' }}>
+                  {tx('Salary and ', 'Salaris en ')}<span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('career progression.', 'doorgroei.')}</span>
+                </h2>
+                <p style={{ marginTop: 18, fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'rgba(252,247,235,0.9)', maxWidth: 560 }}>
+                  {tx(
+                    'Every trainee starts on the same salary, regardless of prior experience: €3,000 gross per month. After a year you receive a permanent contract and a corresponding raise. We aim for you to progress to a mid-level consultant role within two years, with a salary to match.',
+                    'Elke trainee start met hetzelfde salaris, ongeacht eerdere ervaring: €3.000 bruto per maand. Na een jaar krijg je een vast contract en een bijbehorende verhoging. We streven ernaar dat je binnen twee jaar doorgroeit naar een medior consultant-rol, met een passend salaris.'
+                  )}
+                </p>
+                <p style={{ marginTop: 14, fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'rgba(252,247,235,0.9)', maxWidth: 560 }}>
+                  {tx(
+                    'We invest in your development and ask for commitment in return, so there’s a study-cost agreement at the start of the traineeship. If you leave within three years, you repay part of the training costs: €15,000 in the first year, €10,000 in the second, and €5,000 in the third.',
+                    'We investeren in je ontwikkeling en vragen daarvoor commitment terug, dus er is een studiekostenregeling bij de start van het traineeship. Vertrek je binnen drie jaar, dan betaal je een deel van de opleidingskosten terug: €15.000 in het eerste jaar, €10.000 in het tweede en €5.000 in het derde.'
+                  )}
+                </p>
+              </div>
+              <div style={{ display: 'grid', gap: 14 }}>
+                {[
+                  { k: tx('Starting salary', 'Startsalaris'), v: '€3,000', s: tx('gross / month', 'bruto / maand') },
+                  { k: tx('Permanent contract', 'Vast contract'), v: tx('After 1 year', 'Na 1 jaar'), s: tx('with a raise', 'met verhoging') },
+                  { k: tx('Mid-level consultant', 'Medior consultant'), v: tx('~2 years', '~2 jaar'), s: tx('target progression', 'beoogde doorgroei') },
+                ].map((x, i) => (
+                  <div key={i} style={{ background: 'rgba(252,247,235,0.06)', border: '1px solid rgba(252,247,235,0.16)', borderRadius: 16, padding: '20px 22px', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16 }}>
+                    <div style={{ fontSize: 15, fontWeight: 500, color: 'rgba(252,247,235,0.85)' }}>{x.k}</div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: 22, fontWeight: 600, color: 'var(--intigris-coral)' }}>{x.v}</div>
+                      <div style={{ fontSize: 12, fontWeight: 400, color: 'rgba(252,247,235,0.65)' }}>{x.s}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* FIT */}
+          <section className="container-wide isa-split" style={{ paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(56px, 7vw, 88px)', display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: 'clamp(32px, 5vw, 72px)', alignItems: 'center' }}>
+            <div style={{ borderRadius: 24, overflow: 'hidden', border: '1px solid var(--border)', aspectRatio: '4/3', background: 'var(--intigris-off-white-200)' }}>
+              <img src="https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/64410a2a6b79b5cfd60fddc0_Sfeerfoto-overleg-I-1024x683.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+            <div>
+              <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('FIT', 'PASSEND?')}</div>
+              <h2 style={{ fontSize: 'clamp(30px,3.6vw,48px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.04, margin: '12px 0 0' }}>
+                {tx('Is ISA ', 'Is ISA ')}<span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('right for you?', 'iets voor jou?')}</span>
+              </h2>
+              <p style={{ marginTop: 18, fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 540 }}>
+                {tx(
+                  'Some Salesforce knowledge is a plus, but you can start the traineeship without any prior Salesforce experience. Whether you’re fresh out of school and drawn to the consultant role, or you have years of work experience and want to transition to Salesforce, you’re welcome to join us.',
+                  'Enige Salesforce-kennis is een pluspunt, maar je kunt het traineeship ook starten zonder eerdere Salesforce-ervaring. Of je nu net van school komt en de consultant-rol aantrekkelijk vindt, of al jaren werkervaring hebt en wilt overstappen naar Salesforce, je bent van harte welkom.'
+                )}
+              </p>
+              <p style={{ marginTop: 14, fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 540 }}>
+                {tx(
+                  'Interested or want to learn more about the next cohort? Get in touch with our HR department.',
+                  'Interesse of meer weten over de volgende lichting? Neem contact op met onze HR-afdeling.'
+                )}
+              </p>
+              <button className="btn btn-primary btn-lg" onClick={onJoin} style={{ marginTop: 24, color: 'var(--intigris-off-white)' }}>
+                {tx('Contact our HR team', 'Neem contact op met HR')} <span className="arrow">→</span>
+              </button>
+            </div>
+          </section>
+
+          {/* EXPLORE MORE */}
+          <section className="container-wide" style={{ paddingBottom: 'clamp(64px, 8vw, 104px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('EXPLORE MORE', 'ONTDEK MEER')}</div>
+            <div className="isa-explore" style={{ marginTop: 22, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+              {EXPLORE.map((c) => (
+                <a key={c.id} href={c.href} className="isa-linkcard" style={{ display: 'flex', flexDirection: 'column', gap: 8, textDecoration: 'none', color: 'inherit', background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 18, padding: '26px 26px 22px' }}>
+                  <h3 style={{ fontSize: 21, fontWeight: 500, letterSpacing: '-0.014em', margin: 0 }}>{tx(c.en, c.nl)}</h3>
+                  <p style={{ margin: 0, fontSize: 15, fontWeight: 400, lineHeight: 1.5, color: 'var(--fg-muted)', flex: 1 }}>{tx(c.dEn, c.dNl)}</p>
+                  <span className="isa-more" style={{ marginTop: 6, fontSize: 14, fontWeight: 500, color: 'var(--intigris-coral-700)' }}>{tx('Read more', 'Lees meer')} <span aria-hidden>→</span></span>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <style>{`
+            .isa-linkcard { transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+            .isa-linkcard:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(64,35,1,0.10); border-color: var(--intigris-coral); }
+            .isa-linkcard:hover .isa-more span { transform: translateX(3px); display:inline-block; }
+            @media (max-width: 960px) {
+              .isa-hero-grid { grid-template-columns: 1fr !important; }
+              .isa-months { grid-template-columns: 1fr !important; }
+              .isa-split { grid-template-columns: 1fr !important; }
+              .isa-split .isa-photo-first { order: 2; }
+              .isa-explore { grid-template-columns: 1fr !important; }
+            }
+          `}</style>
+        </main>
+      );
+    }
+
+    function App() {
+      const [lang, setLang] = useState('en');
+      const [contact, setContact] = useState(null); // null (closed) | { subject, message }
+      function changeLang(l){ window.__lang = l; setLang(l); }
+      function nav(r){
+        if (r === 'contact') return setContact({ subject: '', message: '' });
+        if (r === 'blog') return (window.location.href = 'Blog.html');
+        return (window.location.href = 'index.html');
+      }
+      const openJoin = () => setContact({ subject: tx(ISA_SUBJECT.en, ISA_SUBJECT.nl), message: tx(ISA_MESSAGE.en, ISA_MESSAGE.nl) });
+      return (
+        <>
+          <SiteHeader overlay={false} megaTheme="cream" lang={lang} onLang={changeLang} onNav={nav} />
+          <ISA key={'isa-' + lang} onJoin={openJoin} />
+          <SiteNewsletter key={'nl-' + lang} />
+          <SiteFooter />
+          <SiteContactSheet open={contact !== null} onClose={() => setContact(null)} subject={contact?.subject} message={contact?.message} source="ISA.html" />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+</body>
+</html>

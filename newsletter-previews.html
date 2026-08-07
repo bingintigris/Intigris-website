@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Newsletter section — 3 options</title>
+  <link rel="stylesheet" href="design-system/colors_and_type.css">
+  <link rel="stylesheet" href="design-system/site.css">
+  <link rel="icon" href="assets/logo-coral.png">
+  <style>
+    body { margin: 0; background: var(--intigris-off-white-200); color: var(--intigris-dark-brown); }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 40px clamp(16px,4vw,48px) 80px; }
+    .page-eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; color: var(--intigris-coral); }
+    .page-title { font-size: clamp(28px,4vw,44px); font-weight: 500; letter-spacing: -0.022em; margin: 8px 0 4px; }
+    .page-sub { font-size: 16px; color: var(--fg-muted); }
+    .opt { margin-top: 44px; }
+    .opt-label { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+    .opt-badge { background: var(--intigris-coral); color: #fff; border-radius: 999px; padding: 3px 11px; font-size: 12px; }
+    .frame { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+
+    .nl-input {
+      height: 52px; border-radius: 999px; border: 1.5px solid var(--border);
+      background: var(--intigris-paper); padding: 0 20px; font-family: inherit; font-size: 16px;
+      color: var(--intigris-dark-brown); outline: none; min-width: 0; flex: 1;
+    }
+    .nl-form { display: flex; gap: 10px; flex-wrap: wrap; }
+    .nl-note { font-size: 13px; color: var(--fg-muted); margin-top: 12px; }
+
+    /* A — dark statement band */
+    .a { background: var(--intigris-dark-brown); color: var(--intigris-off-white); padding: clamp(48px,6vw,80px) clamp(24px,5vw,72px); }
+    .a-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; }
+    .a h2 { font-size: clamp(34px,4vw,52px); font-weight: 500; letter-spacing: -0.026em; line-height: 1.03; margin: 12px 0 0; color: var(--intigris-off-white); }
+    .a p { margin: 14px 0 0; font-size: 17px; color: rgba(252,247,235,0.75); max-width: 420px; }
+    .a .nl-input { background: rgba(252,247,235,0.1); border-color: rgba(252,247,235,0.3); color: var(--intigris-off-white); }
+
+    /* B — cream centered card */
+    .b { background: var(--intigris-off-white); padding: clamp(40px,5vw,72px) clamp(20px,4vw,48px); }
+    .b-card { max-width: 760px; margin: 0 auto; background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 24px; padding: clamp(36px,5vw,56px); text-align: center; box-shadow: var(--shadow-2); }
+    .b h2 { font-size: clamp(30px,3.5vw,44px); font-weight: 500; letter-spacing: -0.024em; line-height: 1.04; margin: 12px 0 0; }
+    .b p { margin: 14px auto 0; font-size: 17px; color: var(--fg-muted); max-width: 460px; }
+    .b .nl-form { max-width: 480px; margin: 28px auto 0; }
+
+    /* C — coral band */
+    .c { background: var(--intigris-coral); color: var(--intigris-dark-brown); padding: clamp(48px,6vw,80px) clamp(24px,5vw,72px); }
+    .c-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; }
+    .c .page-eyebrow, .c .c-eyebrow { color: var(--intigris-dark-brown); }
+    .c h2 { font-size: clamp(34px,4vw,52px); font-weight: 500; letter-spacing: -0.026em; line-height: 1.03; margin: 12px 0 0; color: var(--intigris-dark-brown); }
+    .c p { margin: 14px 0 0; font-size: 17px; color: rgba(64,35,1,0.72); max-width: 420px; }
+    .c .nl-input { background: var(--intigris-off-white); border-color: rgba(64,35,1,0.2); }
+    .c-eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; }
+    .eyebrow-on-dark { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; color: var(--intigris-coral); }
+
+    @media (max-width: 820px) { .a-grid, .c-grid { grid-template-columns: 1fr; gap: 28px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="page-eyebrow">NEWSLETTER SECTION · CONCEPTS</div>
+    <div class="page-title">Three sign-up sections for above the footer</div>
+    <p class="page-sub">Same idea, three moods. Pick one and I'll add it to the home page (with a working sign-up wired to your subscriber list).</p>
+
+    <!-- A -->
+    <section class="opt">
+      <div class="opt-label"><span class="opt-badge">A</span> Dark statement band</div>
+      <div class="frame">
+        <div class="a">
+          <div class="a-grid">
+            <div>
+              <div class="eyebrow-on-dark">NEWSLETTER</div>
+              <h2>Smarten up <span style="color:var(--intigris-coral); font-style:italic;">your inbox.</span></h2>
+              <p>Occasional insights on Salesforce, Agentforce, and field service. No noise, no spam.</p>
+            </div>
+            <div>
+              <div class="nl-form">
+                <input class="nl-input" type="email" placeholder="Your work email" />
+                <button class="btn btn-primary btn-lg" style="color:var(--intigris-off-white)">Subscribe <span class="arrow">→</span></button>
+              </div>
+              <div class="nl-note" style="color:rgba(252,247,235,0.6)">Unsubscribe anytime. We respect your inbox.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- B -->
+    <section class="opt">
+      <div class="opt-label"><span class="opt-badge">B</span> Cream centered card</div>
+      <div class="frame">
+        <div class="b">
+          <div class="b-card">
+            <div class="page-eyebrow">NEWSLETTER</div>
+            <h2>Stay in the loop.</h2>
+            <p>Get our occasional take on Salesforce, Agentforce, and making operations smarter — straight to your inbox.</p>
+            <div class="nl-form">
+              <input class="nl-input" type="email" placeholder="Your work email" />
+              <button class="btn btn-primary btn-lg" style="color:var(--intigris-off-white)">Subscribe <span class="arrow">→</span></button>
+            </div>
+            <div class="nl-note">No spam. Unsubscribe anytime.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- C -->
+    <section class="opt">
+      <div class="opt-label"><span class="opt-badge">C</span> Coral band</div>
+      <div class="frame">
+        <div class="c">
+          <div class="c-grid">
+            <div>
+              <div class="c-eyebrow">NEWSLETTER</div>
+              <h2>Get smarter about Salesforce.</h2>
+              <p>Practical insights from our consultants, a few times a quarter. Worth the inbox space.</p>
+            </div>
+            <div>
+              <div class="nl-form">
+                <input class="nl-input" type="email" placeholder="Your work email" />
+                <button class="btn btn-dark btn-lg" style="background:var(--intigris-dark-brown); color:var(--intigris-off-white)">Subscribe <span class="arrow">→</span></button>
+              </div>
+              <div class="nl-note" style="color:rgba(64,35,1,0.6)">Unsubscribe anytime.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

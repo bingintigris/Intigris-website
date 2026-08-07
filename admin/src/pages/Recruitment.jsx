@@ -1,15 +1,38 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Plus, Trash2, Save, Mail, Clock, Eye, Code } from 'lucide-react';
+import { Plus, Trash2, Save, Mail, Phone, Clock, Eye, Code, FileText, Image as ImageIcon, Check, X } from 'lucide-react';
 import { Card, Badge, Button, Input, Textarea, Select, Spinner, Drawer } from '../components/ui/index.jsx';
 import { useToast } from '../components/ui/toast.jsx';
 import {
-  STAGES, listApplicants, updateApplicant,
+  STAGES, DEFAULT_STAGE, listApplicants, updateApplicant, signedFileUrl,
   listOpenings, createOpening, updateOpening, deleteOpening,
 } from '../lib/recruitment';
 import { renderMarkdown, slugify } from '../lib/markdown';
 import { formatDate, timeAgo } from '../lib/format';
 
 const OPENING_BLANK = { title: '', slug: '', department: '', location: '', employment_type: 'Full-time', description: '', status: 'open' };
+
+const firstOf = (n) => (n ? n.trim().split(/\s+/)[0] : 'there');
+
+// Stage-based email templates. subject/body take (candidate name, role).
+const EMAIL_TEMPLATES = {
+  invite: {
+    label: 'Invite to interview',
+    subject: (n, r) => `Interview invitation — ${r} at Intigris`,
+    body: (n, r) => `Hi ${firstOf(n)},\n\nThank you for applying for the ${r} role at Intigris. We were impressed by your application and would love to invite you for an interview.\n\nCould you share a few dates and times that work for you over the coming days?\n\nLooking forward to speaking with you.\n\nKind regards,\nThe Intigris team`,
+  },
+  info: {
+    label: 'Request more information',
+    subject: (n, r) => `A few questions about your application — ${r}`,
+    body: (n, r) => `Hi ${firstOf(n)},\n\nThank you for your application for the ${r} role at Intigris. To help us review it, could you tell us a little more about your experience and availability?\n\nThanks in advance.\n\nKind regards,\nThe Intigris team`,
+  },
+  reject: {
+    label: 'Rejection',
+    subject: (n, r) => `Update on your application — ${r}`,
+    body: (n, r) => `Hi ${firstOf(n)},\n\nThank you for taking the time to apply for the ${r} role at Intigris and for sharing your background with us. After careful consideration, we've decided not to move forward with your application at this time.\n\nWe genuinely appreciated your interest and wish you all the best in your search.\n\nKind regards,\nThe Intigris team`,
+  },
+};
+
+const suggestTemplate = (status) => (status === 'rejected' ? 'reject' : 'invite');
 
 export default function Recruitment() {
   const [tab, setTab] = useState('applicants');
@@ -38,8 +61,39 @@ function Applicants() {
   const [rows, setRows] = useState(null);
   const [sample, setSample] = useState(false);
   const [sel, setSel] = useState(null);
+  const [files, setFiles] = useState({ cv: null, photo: null });
+  const [termTab, setTermTab] = useState('onboarding'); // onboarding | rejected
+  const [termRange, setTermRange] = useState('30'); // 30 | 90 | 365 (days)
+  const [emailTpl, setEmailTpl] = useState('invite');
 
   useEffect(() => { listApplicants().then(({ rows, sample }) => { setRows(rows); setSample(sample); }); }, []);
+
+  useEffect(() => {
+    setFiles({ cv: null, photo: null });
+    if (!sel) return;
+    setEmailTpl(suggestTemplate(sel.status));
+    if (sel.cv_path) signedFileUrl(sel.cv_path).then((u) => setFiles((f) => ({ ...f, cv: u })));
+    if (sel.photo_path) signedFileUrl(sel.photo_path).then((u) => setFiles((f) => ({ ...f, photo: u })));
+  }, [sel]);
+
+  const yesno = (v) => (v === true ? 'Yes' : v === false ? 'No' : '—');
+
+  function emailCandidate(app) {
+    if (!app?.email) return toast('No email on this applicant.', 'error');
+    const t = EMAIL_TEMPLATES[emailTpl] || EMAIL_TEMPLATES[''];
+    const role = app.role_applied || 'the role';
+    const su = t.subject(app.candidate || '', role);
+    const body = t.body(app.candidate || '', role);
+    const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(app.email)}&su=${encodeURIComponent(su)}&body=${encodeURIComponent(body)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+    // Log to internal notes
+    const stamp = `Emailed on ${formatDate(new Date().toISOString())}${emailTpl ? ` (${t.label})` : ''}`;
+    const newNotes = (app.notes ? app.notes + '\n' : '') + stamp;
+    setRows((prev) => prev.map((r) => (r.id === app.id ? { ...r, notes: newNotes } : r)));
+    setSel((s) => (s && s.id === app.id ? { ...s, notes: newNotes } : s));
+    if (!sample) updateApplicant(app.id, { notes: newNotes });
+    toast(sample ? 'Opened Gmail (sample — not logged).' : 'Opened Gmail · logged to notes.', 'success');
+  }
 
   async function move(app, status) {
     setRows((prev) => prev.map((r) => (r.id === app.id ? { ...r, status } : r)));
@@ -59,52 +113,200 @@ function Applicants() {
 
   if (!rows) return <div className="h-64 grid place-items-center text-muted"><Spinner className="text-coral" /></div>;
 
+  const MID = STAGES.filter((s) => ['intro', 'office', 'case', 'offer'].includes(s.value));
+  const applications = rows.filter((r) => (r.status || DEFAULT_STAGE) === 'application');
+  const rangeDays = { '30': 30, '90': 90, '365': 365 }[termRange];
+  const cutoff = termRange === 'all' ? 0 : Date.now() - rangeDays * 864e5;
+  const termList = rows.filter((r) => r.status === termTab && new Date(r.created_at).getTime() >= cutoff);
+  const termCount = (v) => rows.filter((r) => r.status === v && new Date(r.created_at).getTime() >= cutoff).length;
+
+  const ApplicantCard = (a) => (
+    <div key={a.id} className="bg-white border border-line rounded-lg p-3 shadow-sm">
+      <button onClick={() => setSel(a)} className="text-left w-full">
+        <div className="text-sm font-medium text-ink leading-snug">{a.candidate || 'Applicant'}</div>
+        <div className="text-xs text-muted mt-0.5">{a.role_applied || '—'}</div>
+        <div className="text-[11px] text-muted mt-1">{timeAgo(a.created_at)}</div>
+      </button>
+      <select
+        value={a.status || DEFAULT_STAGE} onChange={(e) => move(a, e.target.value)}
+        className="mt-2 w-full text-xs rounded-md border border-line bg-cream-paper px-1.5 py-1 text-ink focus:border-coral focus:outline-none"
+      >
+        {STAGES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+      </select>
+    </div>
+  );
+
+  const ApplicantTable = (list) => (
+    <Card className="overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-xs uppercase tracking-wide text-muted border-b border-line">
+              <th className="font-medium px-5 py-3">Candidate</th>
+              <th className="font-medium px-3 py-3">Role applied</th>
+              <th className="font-medium px-3 py-3">Contact</th>
+              <th className="font-medium px-3 py-3">SF cert.</th>
+              <th className="font-medium px-3 py-3">Languages</th>
+              <th className="font-medium px-3 py-3">NL</th>
+              <th className="font-medium px-3 py-3 whitespace-nowrap">Applied</th>
+              <th className="font-medium px-3 py-3">Stage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {list.map((a) => (
+              <tr key={a.id} className="border-b border-line last:border-0 hover:bg-cream-100">
+                <td className="px-5 py-3 cursor-pointer" onClick={() => setSel(a)}>
+                  <div className="font-medium text-ink">{a.candidate || '—'}</div>
+                </td>
+                <td className="px-3 py-3 text-ink cursor-pointer" onClick={() => setSel(a)}>{a.role_applied || '—'}</td>
+                <td className="px-3 py-3 text-muted">
+                  <a href={`mailto:${a.email}`} className="hover:text-coral-700">{a.email}</a>
+                  {a.phone && <div className="text-xs">{a.phone}</div>}
+                </td>
+                <td className="px-3 py-3 text-ink">{yesno(a.salesforce_certified)}</td>
+                <td className="px-3 py-3 text-muted max-w-[180px] truncate" title={a.languages || ''}>{a.languages || '—'}</td>
+                <td className="px-3 py-3 text-ink">{yesno(a.netherlands_resident)}</td>
+                <td className="px-3 py-3 text-muted whitespace-nowrap">{formatDate(a.created_at)}</td>
+                <td className="px-3 py-3">
+                  <select
+                    value={a.status || DEFAULT_STAGE} onChange={(e) => move(a, e.target.value)}
+                    className="text-xs rounded-md border border-line bg-cream-paper px-1.5 py-1 text-ink focus:border-coral focus:outline-none"
+                  >
+                    {STAGES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  );
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-6">
       {sample && <Badge tone="yellow">Sample data</Badge>}
-      <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${STAGES.length}, minmax(180px, 1fr))` }}>
-        {STAGES.map((stage) => {
-          const items = rows.filter((r) => (r.status || 'new') === stage.value);
-          return (
-            <div key={stage.value} className="bg-cream-100 rounded-xl p-2.5 min-h-[120px]">
-              <div className="flex items-center justify-between px-1.5 py-1 mb-1">
-                <span className="text-xs font-semibold uppercase tracking-wide text-muted">{stage.label}</span>
-                <span className="text-xs text-muted">{items.length}</span>
-              </div>
-              <div className="space-y-2">
-                {items.map((a) => (
-                  <div key={a.id} className="bg-white border border-line rounded-lg p-3 shadow-sm">
-                    <button onClick={() => setSel(a)} className="text-left w-full">
-                      <div className="text-sm font-medium text-ink leading-snug">{a.candidate || 'Applicant'}</div>
-                      <div className="text-xs text-muted mt-0.5">{a.role_applied || '—'}</div>
-                      <div className="text-[11px] text-muted mt-1">{timeAgo(a.created_at)}</div>
-                    </button>
-                    <select
-                      value={a.status || 'new'} onChange={(e) => move(a, e.target.value)}
-                      className="mt-2 w-full text-xs rounded-md border border-line bg-cream-paper px-1.5 py-1 text-ink focus:border-coral focus:outline-none"
-                    >
-                      {STAGES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-                    </select>
+
+      {/* Section 1 — New application (full width table) */}
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-xs font-semibold uppercase tracking-wide text-muted">New application</span>
+          <span className="text-xs text-muted">· {applications.length} new</span>
+        </div>
+        {applications.length === 0 ? (
+          <Card className="p-6 text-center text-sm text-muted">No new applications right now.</Card>
+        ) : (
+          ApplicantTable(applications)
+        )}
+      </div>
+
+      {/* Section 2 — mid pipeline (Kanban) */}
+      <div>
+        <div className="text-xs font-semibold uppercase tracking-wide text-muted mb-2">Interview pipeline</div>
+        <div className="overflow-x-auto pb-2">
+          <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${MID.length}, minmax(220px, 1fr))`, minWidth: 'min-content' }}>
+            {MID.map((stage) => {
+              const items = rows.filter((r) => r.status === stage.value);
+              return (
+                <div key={stage.value} className="bg-cream-100 rounded-xl p-2.5 min-h-[120px]">
+                  <div className="flex items-center justify-between px-1.5 py-1 mb-1">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-muted">{stage.label}</span>
+                    <span className="text-xs text-muted">{items.length}</span>
                   </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+                  <div className="space-y-2">{items.map(ApplicantCard)}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Section 3 — Onboarding / Rejected with time filter */}
+      <div>
+        <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
+          <div className="flex items-center gap-1 bg-cream-100 rounded-full p-1">
+            {[['onboarding', 'Onboarding'], ['rejected', 'Rejected']].map(([v, l]) => (
+              <button key={v} onClick={() => setTermTab(v)}
+                className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium ${termTab === v ? 'bg-white text-ink shadow-sm' : 'text-muted'}`}>
+                {l}<span className={`text-xs ${termTab === v ? 'text-muted' : 'text-muted/70'}`}>{termCount(v)}</span>
+              </button>
+            ))}
+          </div>
+          <select value={termRange} onChange={(e) => setTermRange(e.target.value)}
+            className="h-9 rounded-full border border-line bg-white px-3.5 text-sm text-ink focus:border-coral focus:outline-none">
+            <option value="30">Last 30 days</option>
+            <option value="90">Last 3 months</option>
+            <option value="365">Last year</option>
+            <option value="all">All time</option>
+          </select>
+        </div>
+        {termList.length === 0 ? (
+          <Card className="p-6 text-center text-sm text-muted">No {termTab === 'onboarding' ? 'onboarded' : 'rejected'} candidates in this period.</Card>
+        ) : (
+          ApplicantTable(termList)
+        )}
       </div>
 
       <Drawer open={!!sel} onClose={() => setSel(null)} title={sel?.candidate || 'Applicant'}>
         {sel && (
           <div className="space-y-4">
-            <div>
-              <div className="text-base font-medium text-ink">{sel.candidate}</div>
-              <a href={`mailto:${sel.email}`} className="text-sm text-coral-700 inline-flex items-center gap-1.5 mt-1"><Mail size={14} /> {sel.email}</a>
+            <div className="flex items-start gap-3">
+              {files.photo
+                ? <img src={files.photo} alt="" className="h-12 w-12 rounded-full object-cover border border-line" />
+                : sel.photo_path ? <span className="h-12 w-12 rounded-full bg-cream-100 grid place-items-center"><ImageIcon size={16} className="text-muted" /></span> : null}
+              <div>
+                <div className="text-base font-medium text-ink">{sel.candidate}</div>
+                <a href={`mailto:${sel.email}`} className="text-sm text-coral-700 inline-flex items-center gap-1.5 mt-1"><Mail size={14} /> {sel.email}</a>
+                {sel.phone && <div className="text-sm text-muted inline-flex items-center gap-1.5 mt-1 ml-0"><Phone size={13} /> {sel.phone}</div>}
+              </div>
             </div>
             <div className="flex items-center gap-4 text-sm text-muted">
               <span>Applied for: <span className="text-ink">{sel.role_applied || '—'}</span></span>
               <span className="inline-flex items-center gap-1"><Clock size={13} /> {formatDate(sel.created_at)}</span>
             </div>
-            <Select label="Stage" value={sel.status || 'new'} onChange={(e) => move(sel, e.target.value)}>
+
+            {/* Email via Gmail */}
+            <div className="rounded-xl border border-line bg-white p-3">
+              <div className="text-xs font-medium uppercase tracking-wide text-muted mb-2">Email via Gmail</div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <select
+                  value={emailTpl} onChange={(e) => setEmailTpl(e.target.value)}
+                  className="h-9 rounded-lg border border-line bg-cream-paper px-2.5 text-sm text-ink focus:border-coral focus:outline-none"
+                >
+                  {Object.entries(EMAIL_TEMPLATES).map(([k, t]) => <option key={k} value={k}>{t.label}</option>)}
+                </select>
+                <Button size="sm" onClick={() => emailCandidate(sel)}><Mail size={15} /> Email via Gmail</Button>
+              </div>
+              <p className="text-xs text-muted mt-2">Opens Gmail with the message pre-filled; review and send from there.</p>
+            </div>
+
+            {/* Files */}
+            {(sel.cv_path || sel.photo_path) && (
+              <div className="flex flex-wrap gap-2">
+                {sel.cv_path && (files.cv
+                  ? <a href={files.cv} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm bg-cream-100 rounded-lg px-3 py-1.5 text-ink hover:bg-cream"><FileText size={14} /> Download CV</a>
+                  : <span className="inline-flex items-center gap-1.5 text-sm text-muted"><Spinner /> CV…</span>)}
+                {sel.photo_path && files.photo && (
+                  <a href={files.photo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm bg-cream-100 rounded-lg px-3 py-1.5 text-ink hover:bg-cream"><ImageIcon size={14} /> View photo</a>
+                )}
+              </div>
+            )}
+
+            {/* Answers */}
+            <div className="rounded-xl border border-line bg-white p-4 space-y-2 text-sm">
+              <div className="flex justify-between"><span className="text-muted">Salesforce certified</span><span className="text-ink inline-flex items-center gap-1">{sel.salesforce_certified === true ? <Check size={14} className="text-washed-green" /> : sel.salesforce_certified === false ? <X size={14} className="text-coral-700" /> : null}{yesno(sel.salesforce_certified)}</span></div>
+              <div className="flex justify-between"><span className="text-muted">Languages</span><span className="text-ink text-right">{sel.languages || '—'}</span></div>
+              <div className="flex justify-between"><span className="text-muted">NL resident</span><span className="text-ink">{yesno(sel.netherlands_resident)}</span></div>
+            </div>
+
+            {sel.cover_note && (
+              <div>
+                <div className="text-xs font-medium uppercase tracking-wide text-muted mb-1.5">Cover letter</div>
+                <div className="rounded-xl border border-line bg-white p-4 text-sm text-ink whitespace-pre-wrap">{sel.cover_note}</div>
+              </div>
+            )}
+
+            <Select label="Stage" value={sel.status || DEFAULT_STAGE} onChange={(e) => move(sel, e.target.value)}>
               {STAGES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
             </Select>
             <Textarea label="Internal notes" rows={5} defaultValue={sel.notes || ''}

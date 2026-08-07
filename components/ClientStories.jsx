@@ -1,4 +1,4 @@
-// ClientStories.jsx — auto-scrolling marquee of client success stories.
+// ClientStories.jsx, auto-scrolling marquee of client success stories.
 // Tall photo cards drift right-to-left in a seamless loop, each tagged with a
 // client name + one-line result. Modeled on the shared "Een greep uit onze
 // klanten" reference, restyled on-brand.
@@ -44,7 +44,7 @@ function SiteClientStories() {
         <h2 className="display-md" style={{ color: 'var(--intigris-dark-brown)', margin: 0 }}>
           {tx('A selection of our clients.', 'Een greep uit onze klanten.')}
         </h2>
-        <p style={{ marginTop: 20, maxWidth: 560, fontSize: 'clamp(17px, 1.4vw, 20px)', fontWeight: 300, lineHeight: 1.45, color: 'var(--fg-muted)' }}>
+        <p style={{ marginTop: 20, maxWidth: 560, fontSize: 'clamp(17px, 1.4vw, 20px)', fontWeight: 400, lineHeight: 1.45, color: 'var(--fg-muted)' }}>
           {tx(
             'See how businesses across sectors move forward with our Salesforce and AI solutions.',
             'Ontdek hoe bedrijven uit verschillende sectoren vooruitkomen met onze Salesforce- en AI-oplossingen.'
@@ -105,7 +105,7 @@ function SiteClientStories() {
           color: var(--intigris-off-white);
         }
         #client-stories .cs-result {
-          font-size: 14px; font-weight: 300; line-height: 1.35;
+          font-size: 14px; font-weight: 400; line-height: 1.35;
           color: rgba(252,247,235,0.82);
         }
       `}</style>

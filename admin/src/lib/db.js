@@ -34,7 +34,7 @@ export async function getDashboardData() {
       count('subscribers'),
       count('inquiries', (q) => q.eq('status', 'new')),
       count('blog_posts', (q) => q.eq('status', 'published')),
-      count('job_applications', (q) => q.not('status', 'in', '("rejected","hired")')),
+      count('job_applications', (q) => q.not('status', 'in', '("rejected","onboarding")')),
     ]);
 
     const { data: followUps } = await supabase
@@ -51,9 +51,9 @@ export async function getDashboardData() {
       .order('created_at', { ascending: false })
       .limit(8);
 
-    const hasAny = subscribers || inquiriesNew || blogPublished || applicationsActive || (activity && activity.length);
-    if (!hasAny) return SAMPLE;
-
+    // Note: we deliberately do NOT fall back to sample data when everything is
+    // zero. A genuinely empty portal should look empty, otherwise real problems
+    // (and real first submissions) are impossible to spot.
     return {
       counts: { subscribers, inquiriesNew, blogPublished, applicationsActive },
       followUps: (followUps || []).map((r) => ({

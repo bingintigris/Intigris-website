@@ -1,4 +1,4 @@
-// Offerings.jsx — bento grid of what we build: automation, AI-CRM, AI agents,
+// Offerings.jsx, bento grid of what we build: automation, AI-CRM, AI agents,
 // app development, and system improvement. Modeled on the shared reference,
 // restyled on-brand with flat brand surfaces (no gradients).
 // Exposes: window.SiteOfferings
@@ -35,14 +35,14 @@ function SiteOfferings() {
           </div>
           <p className="lede">
             {tx(
-              'From business automation to bespoke AI — we design, build, and improve the systems your teams run on.',
-              'Van bedrijfsautomatisering tot AI op maat — we ontwerpen, bouwen en verbeteren de systemen waarop uw teams draaien.'
+              'From business automation to bespoke AI, we design, build, and improve the systems your teams run on.',
+              'Van bedrijfsautomatisering tot AI op maat, we ontwerpen, bouwen en verbeteren de systemen waarop uw teams draaien.'
             )}
           </p>
         </div>
 
         <div className="off-grid">
-          {/* 1 — Business automation (cream) */}
+          {/* 1, Business automation (cream) */}
           <article className="off-card off-card--cream off-a">
             <div className="off-body">
               <h3 className="off-title">{tx('Business automation', 'Bedrijfsautomatisering')}</h3>
@@ -57,7 +57,7 @@ function SiteOfferings() {
             </div>
           </article>
 
-          {/* 2 — AI-CRM (coral) */}
+          {/* 2, AI-CRM (coral) */}
           <article className="off-card off-card--coral off-b">
             <div className="off-body">
               <h3 className="off-title">{tx('AI-CRM systems', 'AI-CRM systemen')}</h3>
@@ -72,7 +72,7 @@ function SiteOfferings() {
             </div>
           </article>
 
-          {/* 3 — AI agents (dark brown) */}
+          {/* 3, AI agents (dark brown) */}
           <article className="off-card off-card--brown off-c">
             <div className="off-body">
               <h3 className="off-title">{tx('AI agents', 'AI-agents')}</h3>
@@ -87,7 +87,7 @@ function SiteOfferings() {
             </div>
           </article>
 
-          {/* 4 — App development (soft blue) */}
+          {/* 4, App development (soft blue) */}
           <article className="off-card off-card--blue off-d">
             <div className="off-body">
               <h3 className="off-title">{tx('App development', 'App-ontwikkeling')}</h3>
@@ -102,14 +102,14 @@ function SiteOfferings() {
             </div>
           </article>
 
-          {/* 5 — Improving existing systems (cream, wide, with chart) */}
+          {/* 5, Improving existing systems (cream, wide, with chart) */}
           <article className="off-card off-card--cream off-e">
             <div className="off-e-head">
               <div style={{ maxWidth: 440 }}>
                 <h3 className="off-title">{tx('Improving existing systems', 'Verbetering van bestaande systemen')}</h3>
                 <p className="off-desc">{tx(
-                  'Give your current systems an AI upgrade. We build AI features on top of what you run — that meet your exact needs, even without APIs.',
-                  'Geef uw huidige systemen een AI-upgrade. We bouwen AI-functies bovenop uw systemen die exact aansluiten — ook zonder API-mogelijkheden.'
+                  'Give your current systems an AI upgrade. We build AI features on top of what you run, that meet your exact needs, even without APIs.',
+                  'Geef uw huidige systemen een AI-upgrade. We bouwen AI-functies bovenop uw systemen die exact aansluiten, ook zonder API-mogelijkheden.'
                 )}</p>
                 <InfoButton label={tx('More info', 'Meer info')} tone="dark" />
               </div>

@@ -23,9 +23,9 @@ export default function UserMenu() {
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2.5 rounded-full pl-1 pr-2.5 py-1 hover:bg-cream-100 transition-colors"
       >
-        <span className="h-9 w-9 rounded-full bg-coral text-white grid place-items-center text-sm font-medium">
-          {initials(name)}
-        </span>
+        {profile?.avatar_url
+          ? <img src={profile.avatar_url} alt="" className="h-9 w-9 rounded-full object-cover" />
+          : <span className="h-9 w-9 rounded-full bg-coral text-white grid place-items-center text-sm font-medium">{initials(name)}</span>}
         <span className="hidden sm:block text-left leading-tight">
           <span className="block text-sm text-ink">{name}</span>
           <span className="block text-[11px] text-muted">{roleLabel(role)}</span>

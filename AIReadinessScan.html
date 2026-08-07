@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI readiness scan | Intigris</title>
+  <link rel="stylesheet" href="design-system/site.css?v=1786027704000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = 'en';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+    window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="text/babel" src="components/Services.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Newsletter.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/ContactSheet.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1786027704000"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+
+
+    const SCAN_SUBJECT = { en: 'AI readiness scan', nl: 'AI-readiness scan' };
+    const SCAN_MESSAGE = {
+      en: "I'd like to request an AI readiness scan for our organisation. A little about us: ",
+      nl: 'Ik wil graag een AI-readiness scan voor onze organisatie aanvragen. Kort over ons: ',
+    };
+
+    /* ===================== Data ===================== */
+    const MOSCOW = [
+      { key: 'must', label: tx('MUST', 'MUST'), en: 'Must', nl: 'Must',
+        dEn: 'High-impact opportunities you should act on now, the clear, low-hanging fruit where AI delivers value fast.',
+        dNl: 'High-impact kansen om nú op te pakken, het laaghangend fruit waar AI snel waarde levert.' },
+      { key: 'should', label: tx('SHOULD', 'SHOULD'), en: 'Should', nl: 'Should',
+        dEn: 'Strong opportunities worth planning for, meaningful gains that take a bit more preparation or investment.',
+        dNl: 'Sterke kansen om in te plannen, betekenisvolle winst die iets meer voorbereiding of investering vraagt.' },
+      { key: 'could', label: tx('COULD', 'COULD'), en: 'Could', nl: 'Could',
+        dEn: 'Future possibilities to keep on the radar, ideas that could pay off now or as your business grows.',
+        dNl: 'Toekomstige mogelijkheden om op de radar te houden, ideeën die nu of bij groei kunnen renderen.' },
+    ];
+
+    const STEPS = [
+      { en: 'Intake & organizational scan', nl: 'Intake & organisatiescan',
+        dEn: 'We sit down with you for an in-depth conversation about what you do and how you operate, a structured scan of your organisation, processes, and data.',
+        dNl: 'We gaan met u in gesprek over wat u doet en hoe u werkt, een gestructureerde scan van uw organisatie, processen en data.' },
+      { en: 'Analysis', nl: 'Analyse',
+        dEn: 'We map where AI creates real value: the time-consuming processes ripe for improvement and the low-hanging fruit with the biggest impact.',
+        dNl: 'We brengen in kaart waar AI echt waarde levert: de tijdrovende processen die klaar zijn voor verbetering en het laaghangend fruit met de grootste impact.' },
+      { en: 'The report', nl: 'Het rapport',
+        dEn: 'Within about two working days you receive a fully written report, with every opportunity prioritised as Must, Should, or Could.',
+        dNl: 'Binnen circa twee werkdagen ontvangt u een volledig uitgeschreven rapport, met elke kans geprioriteerd als Must, Should of Could.' },
+      { en: 'Roadmap & offer', nl: 'Roadmap & aanbod',
+        dEn: 'We walk you through the findings and give you a tailored offer to implement them, with the €2,000 credited back against that work.',
+        dNl: 'We nemen de bevindingen met u door en doen een aanbod op maat om ze te implementeren, met de €2.000 verrekend op dat traject.' },
+    ];
+
+    const ASSESS = [
+      { en: 'Processes & workflows', nl: 'Processen & workflows', dEn: 'Where repetitive, manual work slows you down.', dNl: 'Waar repetitief, handmatig werk u vertraagt.' },
+      { en: 'Data & systems', nl: 'Data & systemen', dEn: 'How ready your data and tools are to power AI.', dNl: 'Hoe klaar uw data en tools zijn voor AI.' },
+      { en: 'Quick wins', nl: 'Quick wins', dEn: 'The fastest, lowest-risk places to start.', dNl: 'De snelste, minst risicovolle plekken om te starten.' },
+      { en: 'Team & adoption', nl: 'Team & adoptie', dEn: 'How your people will actually use it day to day.', dNl: 'Hoe uw mensen het dagelijks gaan gebruiken.' },
+      { en: 'Impact & effort', nl: 'Impact & inspanning', dEn: 'Value versus effort, so you prioritise with confidence.', dNl: 'Waarde versus inspanning, zodat u zeker prioriteert.' },
+      { en: 'Salesforce fit', nl: 'Salesforce-fit', dEn: 'Extra leverage if you already run on Salesforce.', dNl: 'Extra hefboom als u al op Salesforce draait.' },
+    ];
+
+    const STORIES = [
+      { tag: tx('Logistics · SMB', 'Logistiek · MKB'), metric: tx('12 hrs/week saved', '12 uur/week bespaard'),
+        qEn: '“The scan showed us exactly where to start. Automating our order intake freed up more than a day a week almost immediately.”',
+        qNl: '“De scan liet precies zien waar we moesten beginnen. Het automatiseren van onze orderintake leverde bijna direct ruim een dag per week op.”',
+        role: tx('Operations Director', 'Operations Director') },
+      { tag: tx('Installation · Mid-market', 'Installatie · Middenbedrijf'), metric: tx('40% faster quotes', '40% snellere offertes'),
+        qEn: '“We expected a vague strategy deck. Instead we got a concrete Must/Should/Could list we could act on the same week.”',
+        qNl: '“We verwachtten een vaag strategie-deck. In plaats daarvan kregen we een concrete Must/Should/Could-lijst waar we dezelfde week mee aan de slag konden.”',
+        role: tx('Managing Director', 'Algemeen directeur') },
+      { tag: tx('Professional services', 'Zakelijke dienstverlening'), metric: tx('2-day turnaround', '2 dagen doorlooptijd'),
+        qEn: '“Fast, practical, and honest about what AI should and shouldn’t do for us. The fee paid for itself in the first project.”',
+        qNl: '“Snel, praktisch en eerlijk over wat AI wel en niet voor ons moet doen. De kosten verdienden zich terug in het eerste project.”',
+        role: tx('Founder', 'Oprichter') },
+    ];
+
+    const FAQS = [
+      { qEn: 'Do we need to use Salesforce?', qNl: 'Moeten we Salesforce gebruiken?',
+        aEn: 'No. The scan works for any organisation, in any tooling. If you already run on Salesforce, that’s a bonus, it gives us extra leverage, but it’s not a requirement.',
+        aNl: 'Nee. De scan werkt voor elke organisatie, in elke tooling. Draait u al op Salesforce, dan is dat mooi meegenomen, dat geeft ons extra hefboom, maar het is geen vereiste.' },
+      { qEn: 'How long does it take?', qNl: 'Hoe lang duurt het?',
+        aEn: 'After the intake and organizational scan, you receive the fully written report in about two working days.',
+        aNl: 'Na de intake en organisatiescan ontvangt u het volledig uitgeschreven rapport in circa twee werkdagen.' },
+      { qEn: 'What does it cost?', qNl: 'Wat kost het?',
+        aEn: 'The scan is €2,000. If you decide to implement any of the recommendations with us, that €2,000 is deducted in full from the implementation cost.',
+        aNl: 'De scan kost €2.000. Besluit u een of meer aanbevelingen met ons te implementeren, dan wordt die €2.000 volledig verrekend met de implementatiekosten.' },
+      { qEn: 'What happens after the report?', qNl: 'Wat gebeurt er na het rapport?',
+        aEn: 'We walk you through the findings together and give you a tailored offer to implement the opportunities you want to pursue. There’s no obligation to continue.',
+        aNl: 'We nemen de bevindingen samen door en doen een aanbod op maat om de kansen te implementeren die u wilt oppakken. Er is geen verplichting om door te gaan.' },
+      { qEn: 'Is our information kept confidential?', qNl: 'Blijft onze informatie vertrouwelijk?',
+        aEn: 'Yes. Everything shared during the intake and scan is treated as strictly confidential.',
+        aNl: 'Ja. Alles wat tijdens de intake en scan wordt gedeeld, behandelen we strikt vertrouwelijk.' },
+    ];
+
+    /* ===================== Self-check quiz ===================== */
+    const QUIZ = [
+      { qEn: 'How much of your team’s week goes to repetitive, manual tasks?', qNl: 'Hoeveel van de week van uw team gaat op aan repetitief, handmatig werk?',
+        opts: [ { en: 'A lot', nl: 'Veel', s: 2 }, { en: 'Some', nl: 'Best wat', s: 1 }, { en: 'Very little', nl: 'Heel weinig', s: 0 } ] },
+      { qEn: 'How often do people re-key the same information across systems?', qNl: 'Hoe vaak typen mensen dezelfde informatie opnieuw in verschillende systemen?',
+        opts: [ { en: 'Daily', nl: 'Dagelijks', s: 2 }, { en: 'Sometimes', nl: 'Soms', s: 1 }, { en: 'Rarely', nl: 'Zelden', s: 0 } ] },
+      { qEn: 'How much of your customer or operational data is centralised?', qNl: 'Hoeveel van uw klant- of operationele data is gecentraliseerd?',
+        opts: [ { en: 'Mostly centralised', nl: 'Grotendeels centraal', s: 2 }, { en: 'Partly', nl: 'Deels', s: 1 }, { en: 'Scattered', nl: 'Versnipperd', s: 0 } ] },
+      { qEn: 'Have you already experimented with AI tools?', qNl: 'Heeft u al geëxperimenteerd met AI-tools?',
+        opts: [ { en: 'Yes, actively', nl: 'Ja, actief', s: 2 }, { en: 'A little', nl: 'Een beetje', s: 1 }, { en: 'Not yet', nl: 'Nog niet', s: 0 } ] },
+      { qEn: 'Is leadership keen to move on AI this year?', qNl: 'Wil de directie dit jaar stappen zetten met AI?',
+        opts: [ { en: 'Absolutely', nl: 'Absoluut', s: 2 }, { en: 'Curious', nl: 'Nieuwsgierig', s: 1 }, { en: 'Not sure', nl: 'Weet niet', s: 0 } ] },
+      { qEn: 'Do you have processes that are clearly slow or costly?', qNl: 'Heeft u processen die duidelijk traag of kostbaar zijn?',
+        opts: [ { en: 'Definitely', nl: 'Zeker', s: 2 }, { en: 'Maybe', nl: 'Misschien', s: 1 }, { en: 'Not really', nl: 'Niet echt', s: 0 } ] },
+    ];
+
+    function SelfCheck({ onCta }) {
+      const [scores, setScores] = useState([]); // one score per answered question
+      const [done, setDone] = useState(false);
+      const total = QUIZ.length;
+      const step = scores.length;            // index of the current question
+      const score = scores.reduce((a, b) => a + b, 0);
+      const pct = Math.round((score / (total * 2)) * 100);
+
+      function answer(s) {
+        const next = [...scores, s];
+        setScores(next);
+        if (next.length === total) setDone(true);
+      }
+      function back() { setScores(s => s.slice(0, -1)); }
+      function restart() { setScores([]); setDone(false); }
+      const band = score >= 9
+        ? { en: 'Well positioned', nl: 'Goed gepositioneerd', mEn: 'You have real momentum. A scan will turn that into a prioritised, costed plan, fast.', mNl: 'U heeft echt momentum. Een scan vertaalt dat snel naar een geprioriteerd plan met kosten.' }
+        : score >= 5
+        ? { en: 'Strong potential', nl: 'Sterk potentieel', mEn: 'There’s clear low-hanging fruit here. A scan will pinpoint exactly where to start.', mNl: 'Er is duidelijk laaghangend fruit. Een scan wijst precies aan waar te beginnen.' }
+        : { en: 'Lots to gain', nl: 'Veel te winnen', mEn: 'Even a few targeted changes could free up real time. A scan makes the first steps concrete.', mNl: 'Zelfs een paar gerichte wijzigingen kunnen echt tijd besparen. Een scan maakt de eerste stappen concreet.' };
+
+      return (
+        <div style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 22, padding: 'clamp(22px, 3vw, 32px)' }}>
+          {!done ? (
+            <>
+              {/* progress */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, marginBottom: 6 }}>
+                <div style={{ fontSize: 12.5, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--intigris-coral-700)' }}>
+                  {tx('Question', 'Vraag')} {step + 1} / {total}
+                </div>
+                {step > 0 && (
+                  <button onClick={back} style={{ background: 'transparent', border: 0, cursor: 'pointer', fontFamily: 'inherit', fontSize: 13.5, fontWeight: 500, color: 'var(--fg-muted)' }}>
+                    ← {tx('Back', 'Terug')}
+                  </button>
+                )}
+              </div>
+              <div style={{ height: 5, borderRadius: 999, background: 'var(--intigris-off-white-200)', overflow: 'hidden', marginBottom: 20 }}>
+                <div style={{ height: '100%', width: ((step / total) * 100) + '%', background: 'var(--intigris-coral)', borderRadius: 999, transition: 'width 320ms cubic-bezier(0.22,0.61,0.36,1)' }} />
+              </div>
+
+              <div style={{ fontSize: 18, fontWeight: 500, letterSpacing: '-0.012em', lineHeight: 1.3, minHeight: 52 }}>
+                {tx(QUIZ[step].qEn, QUIZ[step].qNl)}
+              </div>
+              <div style={{ marginTop: 16, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {QUIZ[step].opts.map((o, oi) => (
+                  <button key={oi} onClick={() => answer(o.s)} className="sc-opt">{tx(o.en, o.nl)}</button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '8px 0' }}>
+              <div className="eyebrow" style={{ color: 'var(--intigris-coral)', justifyContent: 'center' }}>{tx('YOUR AI OPPORTUNITY', 'UW AI-KANS')}</div>
+              <div style={{ margin: '18px auto 0', maxWidth: 520 }}>
+                <div style={{ height: 12, borderRadius: 999, background: 'var(--intigris-off-white-200)', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: pct + '%', background: 'var(--intigris-coral)', borderRadius: 999, transition: 'width 700ms cubic-bezier(0.22,0.61,0.36,1)' }} />
+                </div>
+              </div>
+              <h3 style={{ fontSize: 'clamp(26px,3vw,38px)', fontWeight: 500, letterSpacing: '-0.02em', margin: '20px 0 0' }}>{tx(band.en, band.nl)}</h3>
+              <p style={{ margin: '12px auto 0', maxWidth: 500, fontSize: 16.5, fontWeight: 400, lineHeight: 1.55, color: 'var(--fg-muted)' }}>{tx(band.mEn, band.mNl)}</p>
+              <div style={{ marginTop: 26, display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button className="btn btn-primary btn-lg" onClick={onCta} style={{ color: 'var(--intigris-off-white)' }}>{tx('Request your scan', 'Vraag uw scan aan')} <span className="arrow">→</span></button>
+                <button className="btn btn-secondary btn-lg" onClick={restart}>{tx('Retake', 'Opnieuw')}</button>
+              </div>
+              <p style={{ marginTop: 16, fontSize: 13, color: 'var(--fg-soft)' }}>{tx('This is a quick indication, not the scan itself.', 'Dit is een snelle indicatie, niet de scan zelf.')}</p>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* ===================== Page ===================== */
+    function Scan({ onScan }) {
+      const scrollTo = (id) => { const el = document.getElementById(id); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' }); };
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+
+          {/* HERO */}
+          <section style={{ position: 'relative', overflow: 'hidden',
+            background: 'linear-gradient(90deg, #ff9166 0%, var(--intigris-coral) 44%, var(--intigris-coral-700) 80%, #9e300d 100%)',
+            borderBottomLeftRadius: 'clamp(24px, 4vw, 56px)', borderBottomRightRadius: 'clamp(24px, 4vw, 56px)' }}>
+            <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(rgba(64,35,1,0.07) 1.2px, transparent 1.2px)', backgroundSize: '7px 7px', opacity: 0.7 }} />
+            <div className="container-wide" style={{ position: 'relative', paddingTop: 'clamp(128px, 16vh, 190px)', paddingBottom: 'clamp(56px, 8vh, 96px)' }}>
+              <div className="sc-hero-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.35fr) minmax(0,1fr)', gap: 'clamp(32px, 5vw, 72px)', alignItems: 'end' }}>
+                <div>
+                  <div className="eyebrow" style={{ color: 'var(--intigris-dark-brown)' }}>{tx('AI · READINESS SCAN', 'AI · READINESS SCAN')}</div>
+                  <h1 style={{ fontSize: 'clamp(42px,6vw,84px)', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 0.99, margin: '14px 0 0', color: 'var(--intigris-off-white)' }}>
+                    {tx('Is your business ', 'Is uw business ')}<span style={{ color: 'var(--intigris-dark-brown)', fontStyle: 'italic' }}>{tx('AI-ready?', 'AI-ready?')}</span>
+                  </h1>
+                  <p style={{ marginTop: 22, fontSize: 19, fontWeight: 400, lineHeight: 1.55, color: 'rgba(64,35,1,0.86)', maxWidth: 560 }}>
+                    {tx(
+                      'In about two working days, we assess your organisation and hand you a written report on exactly where AI can save time and create value, prioritised, practical, and specific to your business.',
+                      'In circa twee werkdagen scannen we uw organisatie en geven we u een uitgeschreven rapport over waar AI precies tijd bespaart en waarde creëert, geprioriteerd, praktisch en specifiek voor uw business.'
+                    )}
+                  </p>
+                  <div style={{ marginTop: 30, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                    <button className="btn btn-lg" onClick={onScan} style={{ background: 'var(--intigris-dark-brown)', color: 'var(--intigris-off-white)' }}>{tx('Request your scan', 'Vraag uw scan aan')} <span className="arrow">→</span></button>
+                    <button className="btn btn-lg" onClick={() => scrollTo('included')} style={{ background: 'transparent', color: 'var(--intigris-dark-brown)', border: '1.5px solid rgba(64,35,1,0.42)' }}>{tx('See what’s included', 'Bekijk wat erbij zit')}</button>
+                  </div>
+                </div>
+
+                {/* Glassy facts card, mirrors the About page credentials cell */}
+                <div style={{ justifySelf: 'end', width: '100%', maxWidth: 400 }}>
+                  <div style={{ background: 'rgba(252,247,235,0.14)', border: '1px solid rgba(252,247,235,0.4)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', borderRadius: 20, padding: '26px 28px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    {[
+                      tx('€2,000 fixed', '€2.000 vast'),
+                      tx('Report in ~2 working days', 'Rapport in ~2 werkdagen'),
+                      tx('Credited back on implementation', 'Verrekend bij implementatie'),
+                      tx('Works for any type of business', 'Werkt voor elk type business'),
+                    ].map((s, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 14, fontWeight: 500, letterSpacing: '0.02em', color: 'var(--intigris-off-white)', paddingBottom: i < 3 ? 12 : 0, borderBottom: i < 3 ? '1px solid rgba(252,247,235,0.22)' : 'none' }}>
+                        <span style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--intigris-off-white)', flex: 'none' }} />{s}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* WHAT IT IS */}
+          <section className="container-wide" style={{ paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(40px, 5vw, 56px)' }}>
+            <div className="sc-two" style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: 'clamp(32px, 5vw, 64px)', alignItems: 'center' }}>
+              <div style={{ borderRadius: 24, overflow: 'hidden', border: '1px solid var(--border)', aspectRatio: '4/3', background: 'var(--intigris-off-white-200)' }}>
+                <img src="assets/hero-team.jpg" alt={tx('Intigris consultants at work', 'Intigris-consultants aan het werk')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+              <div>
+                <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('WHAT IT IS', 'WAT HET IS')}</div>
+                <h2 style={{ fontSize: 'clamp(28px,3.4vw,46px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.06, margin: '12px 0 0' }}>
+                  {tx('An honest look at where AI actually pays off for you.', 'Een eerlijke blik op waar AI voor u écht rendeert.')}
+                </h2>
+                <p style={{ marginTop: 18, fontSize: 17.5, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)' }}>
+                  {tx(
+                    'The AI readiness scan is a structured organisational assessment. We look at how you work, find the time-consuming processes and the low-hanging fruit, and translate them into concrete AI opportunities. No hype, just what’s worth doing. It works for any company; if you’re already on Salesforce, even better.',
+                    'De AI-readiness scan is een gestructureerde organisatiescan. We kijken hoe u werkt, vinden de tijdrovende processen en het laaghangend fruit, en vertalen die naar concrete AI-kansen. Geen hype, alleen wat de moeite waard is. Het werkt voor elk bedrijf; draait u al op Salesforce, des te beter.'
+                  )}
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* WHAT YOU GET, MoSCoW */}
+          <section id="included" className="container-wide" style={{ paddingTop: 'clamp(24px, 3vw, 40px)', paddingBottom: 'clamp(56px, 7vw, 88px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('WHAT YOU GET', 'WAT U KRIJGT')}</div>
+            <h2 style={{ fontSize: 'clamp(28px,3.4vw,46px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.05, margin: '12px 0 6px', maxWidth: 720 }}>
+              {tx('A written report, prioritised as Must, Should & Could.', 'Een uitgeschreven rapport, geprioriteerd als Must, Should & Could.')}
+            </h2>
+            <p style={{ margin: '0 0 34px', fontSize: 16.5, color: 'var(--fg-muted)', maxWidth: 640 }}>
+              {tx('Every opportunity we find is sorted so you know exactly what to do first.', 'Elke kans die we vinden wordt gesorteerd, zodat u precies weet wat u eerst moet doen.')}
+            </p>
+            <div className="sc-moscow" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }}>
+              {MOSCOW.map((m, i) => (
+                <div key={i} style={{ background: i === 0 ? 'var(--intigris-coral)' : 'var(--intigris-paper)', color: i === 0 ? 'var(--intigris-off-white)' : 'var(--intigris-dark-brown)', border: i === 0 ? '1px solid transparent' : '1px solid var(--border)', borderRadius: 20, padding: '28px 26px' }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.16em', color: i === 0 ? 'var(--intigris-off-white)' : 'var(--intigris-coral-700)' }}>{m.label}</div>
+                  <h3 style={{ fontSize: 24, fontWeight: 500, letterSpacing: '-0.018em', margin: '10px 0 10px' }}>{tx(m.en, m.nl)}</h3>
+                  <p style={{ margin: 0, fontSize: 15.5, fontWeight: 400, lineHeight: 1.6, color: i === 0 ? 'rgba(252,247,235,0.92)' : 'var(--fg-muted)' }}>{tx(m.dEn, m.dNl)}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* HOW IT WORKS */}
+          <section style={{ background: 'var(--intigris-coral)', paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(64px, 8vw, 104px)' }}>
+            <div className="container-wide">
+              <div className="eyebrow" style={{ color: 'rgba(64,35,1,0.7)' }}>{tx('HOW IT WORKS', 'HOE HET WERKT')}</div>
+              <h2 style={{ fontSize: 'clamp(30px,3.6vw,50px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.04, margin: '12px 0 40px', color: 'var(--intigris-dark-brown)' }}>
+                {tx('From intake to ', 'Van intake tot ')}<span style={{ color: 'var(--intigris-off-white)', fontStyle: 'italic' }}>{tx('a plan you can act on.', 'een plan om mee aan de slag te gaan.')}</span>
+              </h2>
+              <div className="sc-steps" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 18 }}>
+                {STEPS.map((s, i) => (
+                  <div key={i} style={{ background: 'var(--intigris-off-white)', border: '1px solid rgba(64,35,1,0.1)', borderRadius: 18, padding: '24px 22px' }}>
+                    <div style={{ width: 40, height: 40, borderRadius: 999, background: 'var(--intigris-dark-brown)', color: 'var(--intigris-off-white)', display: 'grid', placeItems: 'center', fontSize: 15, fontWeight: 600 }}>{i + 1}</div>
+                    <h3 style={{ fontSize: 18, fontWeight: 500, letterSpacing: '-0.014em', margin: '16px 0 8px', color: 'var(--intigris-dark-brown)' }}>{tx(s.en, s.nl)}</h3>
+                    <p style={{ margin: 0, fontSize: 14.5, fontWeight: 400, lineHeight: 1.55, color: 'var(--fg-muted)' }}>{tx(s.dEn, s.dNl)}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* WHAT WE ASSESS */}
+          <section className="container-wide" style={{ paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(40px, 5vw, 56px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('WHAT WE ASSESS', 'WAT WE BEOORDELEN')}</div>
+            <h2 style={{ fontSize: 'clamp(28px,3.4vw,46px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.05, margin: '12px 0 34px', maxWidth: 640 }}>
+              {tx('Six lenses on your business.', 'Zes invalshoeken op uw business.')}
+            </h2>
+            <div className="sc-assess" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }}>
+              {ASSESS.map((a, i) => (
+                <div key={i} style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 18, padding: '24px 24px' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.04em', color: 'var(--intigris-coral-700)' }}>{String(i + 1).padStart(2, '0')}</div>
+                  <h3 style={{ fontSize: 19, fontWeight: 500, letterSpacing: '-0.014em', margin: '8px 0 6px' }}>{tx(a.en, a.nl)}</h3>
+                  <p style={{ margin: 0, fontSize: 15, fontWeight: 400, lineHeight: 1.5, color: 'var(--fg-muted)' }}>{tx(a.dEn, a.dNl)}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* SELF-CHECK */}
+          <section className="container-wide" style={{ paddingTop: 'clamp(40px, 5vw, 64px)', paddingBottom: 'clamp(56px, 7vw, 88px)' }}>
+            <div className="sc-two" style={{ display: 'grid', gridTemplateColumns: '0.85fr 1.15fr', gap: 'clamp(28px, 5vw, 56px)', alignItems: 'start' }}>
+              <div>
+                <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('60-SECOND SELF-CHECK', '60-SECONDEN ZELFCHECK')}</div>
+                <h2 style={{ fontSize: 'clamp(26px,3vw,42px)', fontWeight: 500, letterSpacing: '-0.022em', lineHeight: 1.06, margin: '12px 0 0' }}>
+                  {tx('Get a quick read on your AI opportunity.', 'Krijg snel zicht op uw AI-kans.')}
+                </h2>
+                <p style={{ marginTop: 16, fontSize: 16.5, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 360 }}>
+                  {tx('Six quick questions, no email required. It’s a taster, the full scan goes far deeper.', 'Zes korte vragen, geen e-mail nodig. Het is een voorproefje, de volledige scan gaat veel dieper.')}
+                </p>
+              </div>
+              <SelfCheck onCta={onScan} />
+            </div>
+          </section>
+
+          {/* INVESTMENT */}
+          <section className="container-wide" style={{ paddingBottom: 'clamp(56px, 7vw, 88px)' }}>
+            <div className="sc-price" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(28px, 5vw, 56px)', alignItems: 'center', background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 24, padding: 'clamp(28px, 4vw, 48px)' }}>
+              <div>
+                <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('THE INVESTMENT', 'DE INVESTERING')}</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginTop: 14 }}>
+                  <span style={{ fontSize: 'clamp(48px,6vw,72px)', fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 1, color: 'var(--intigris-dark-brown)' }}>€2,000</span>
+                  <span style={{ fontSize: 16, fontWeight: 500, color: 'var(--fg-muted)' }}>{tx('fixed', 'vast')}</span>
+                </div>
+                <p style={{ marginTop: 16, fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'var(--intigris-dark-brown)', maxWidth: 420 }}>
+                  {tx(
+                    'And here’s the best part: if you decide to implement with us, the full €2,000 is deducted from your implementation cost. Effectively, the scan pays for itself.',
+                    'En het mooiste: besluit u met ons te implementeren, dan wordt de volledige €2.000 verrekend met uw implementatiekosten. In feite verdient de scan zichzelf terug.'
+                  )}
+                </p>
+                <button className="btn btn-primary btn-lg" onClick={onScan} style={{ marginTop: 24, color: 'var(--intigris-off-white)' }}>{tx('Request your scan', 'Vraag uw scan aan')} <span className="arrow">→</span></button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {[
+                  tx('In-depth intake & organizational scan', 'Diepgaande intake & organisatiescan'),
+                  tx('Fully written report in ~2 working days', 'Volledig rapport in ~2 werkdagen'),
+                  tx('Opportunities prioritised as Must / Should / Could', 'Kansen geprioriteerd als Must / Should / Could'),
+                  tx('Walkthrough of the findings with our team', 'Doorloop van de bevindingen met ons team'),
+                  tx('Tailored implementation offer, no obligation', 'Implementatie-aanbod op maat, vrijblijvend'),
+                  tx('€2,000 credited back if you proceed', '€2.000 terug verrekend als u doorgaat'),
+                ].map((it, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, fontSize: 15.5, fontWeight: 400, color: 'var(--intigris-dark-brown)' }}>
+                    <span aria-hidden style={{ flex: 'none', marginTop: 2, width: 20, height: 20, borderRadius: 999, background: 'rgba(76,105,58,0.16)', color: 'var(--intigris-washed-green)', display: 'grid', placeItems: 'center', fontSize: 12, fontWeight: 700 }}>✓</span>
+                    {it}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* SUCCESS STORIES */}
+          <section style={{ background: 'var(--intigris-coral)', paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(64px, 8vw, 104px)' }}>
+            <div className="container-wide">
+              <div className="eyebrow" style={{ color: 'rgba(64,35,1,0.7)' }}>{tx('SUCCESS STORIES', 'SUCCESVERHALEN')}</div>
+              <h2 style={{ fontSize: 'clamp(30px,3.6vw,50px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.04, margin: '12px 0 40px', color: 'var(--intigris-dark-brown)' }}>
+                {tx('Real starting points, real ', 'Echte startpunten, echte ')}<span style={{ color: 'var(--intigris-off-white)', fontStyle: 'italic' }}>{tx('time back.', 'tijdswinst.')}</span>
+              </h2>
+              <div className="sc-stories" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+                {STORIES.map((s, i) => (
+                  <div key={i} style={{ background: 'var(--intigris-off-white)', border: '1px solid rgba(64,35,1,0.1)', borderRadius: 20, padding: '26px 24px', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--fg-muted)' }}>{s.tag}</div>
+                    <div style={{ fontSize: 26, fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--intigris-coral-700)', margin: '10px 0 14px' }}>{s.metric}</div>
+                    <p style={{ margin: 0, fontSize: 15.5, fontWeight: 400, fontStyle: 'italic', lineHeight: 1.55, color: 'var(--intigris-dark-brown)', flex: 1 }}>{tx(s.qEn, s.qNl)}</p>
+                    <div style={{ marginTop: 18, fontSize: 13.5, fontWeight: 500, color: 'var(--fg-muted)' }}>{s.role}</div>
+                  </div>
+                ))}
+              </div>
+              <p style={{ marginTop: 22, fontSize: 13, color: 'rgba(64,35,1,0.6)' }}>{tx('Illustrative examples, real named client stories coming soon.', 'Illustratieve voorbeelden, echte klantverhalen met naam volgen binnenkort.')}</p>
+            </div>
+          </section>
+
+          {/* WHY INTIGRIS */}
+          <section className="container-wide" style={{ paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(40px, 5vw, 56px)' }}>
+            <div style={{ maxWidth: 780 }}>
+              <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('WHY INTIGRIS', 'WAAROM INTIGRIS')}</div>
+              <h2 style={{ fontSize: 'clamp(28px,3.4vw,46px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.06, margin: '12px 0 0' }}>
+                {tx('We don’t just advise. We build it too.', 'We adviseren niet alleen. We bouwen het ook.')}
+              </h2>
+              <p style={{ marginTop: 18, fontSize: 17.5, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 660 }}>
+                {tx(
+                  'We’ve been implementing smart software since 2010. That means the scan isn’t a theoretical deck, every recommendation comes from people who can actually deliver it. Practical, honest about what AI should and shouldn’t do, and focused on outcomes you can measure.',
+                  'We implementeren slimme software sinds 2010. Daardoor is de scan geen theoretisch deck, elke aanbeveling komt van mensen die het ook echt kunnen bouwen. Praktisch, eerlijk over wat AI wel en niet moet doen, en gericht op resultaat dat u kunt meten.'
+                )}
+              </p>
+            </div>
+          </section>
+
+          {/* FAQ */}
+          <section className="container-wide" style={{ paddingBottom: 'clamp(64px, 8vw, 96px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('FAQ', 'VEELGESTELDE VRAGEN')}</div>
+            <h2 style={{ fontSize: 'clamp(28px,3.4vw,44px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.05, margin: '12px 0 28px' }}>
+              {tx('Good to know.', 'Goed om te weten.')}
+            </h2>
+            <div style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 24, padding: '4px clamp(18px, 3vw, 34px)', maxWidth: 900 }}>
+              {FAQS.map((f, i) => <FaqItem key={i} q={tx(f.qEn, f.qNl)} a={tx(f.aEn, f.aNl)} last={i === FAQS.length - 1} />)}
+            </div>
+          </section>
+
+          <style>{`
+            .sc-opt { border: 1.5px solid var(--border); background: var(--intigris-off-white); color: var(--intigris-dark-brown);
+              border-radius: 999px; padding: 9px 18px; font-family: inherit; font-size: 14.5px; font-weight: 500; cursor: pointer;
+              transition: background 140ms var(--ease-out), border-color 140ms var(--ease-out), color 140ms var(--ease-out); }
+            .sc-opt:hover { border-color: var(--intigris-coral); }
+            .sc-opt[data-sel="1"] { background: var(--intigris-coral); border-color: var(--intigris-coral); color: var(--intigris-off-white); }
+            @media (max-width: 900px) {
+              .sc-hero-grid { grid-template-columns: 1fr !important; align-items: start !important; gap: 32px !important; }
+              .sc-hero-grid > div:last-child { justify-self: start !important; }
+            }
+            @media (max-width: 960px) {
+              .sc-two { grid-template-columns: 1fr !important; }
+              .sc-moscow, .sc-assess, .sc-stories { grid-template-columns: 1fr !important; }
+              .sc-steps { grid-template-columns: 1fr 1fr !important; }
+              .sc-price { grid-template-columns: 1fr !important; }
+            }
+            @media (max-width: 560px) { .sc-steps { grid-template-columns: 1fr !important; } }
+          `}</style>
+        </main>
+      );
+    }
+
+    function FaqItem({ q, a, last }) {
+      const [open, setOpen] = useState(false);
+      return (
+        <div style={{ borderBottom: last ? 'none' : '1px solid var(--border)' }}>
+          <button onClick={() => setOpen(o => !o)} style={{ width: '100%', textAlign: 'left', background: 'transparent', border: 0, cursor: 'pointer', padding: '20px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, fontFamily: 'inherit' }}>
+            <span style={{ fontSize: 17, fontWeight: 500, letterSpacing: '-0.012em', color: 'var(--intigris-dark-brown)' }}>{q}</span>
+            <span aria-hidden style={{ flex: 'none', color: 'var(--intigris-coral)', fontSize: 22, lineHeight: 1, transform: open ? 'rotate(45deg)' : 'none', transition: 'transform 200ms var(--ease-out)' }}>+</span>
+          </button>
+          {open && <div style={{ padding: '0 0 20px', fontSize: 15.5, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 720 }}>{a}</div>}
+        </div>
+      );
+    }
+
+    function App() {
+      const [lang, setLang] = useState('en');
+      const [contact, setContact] = useState(null);
+      function changeLang(l){ window.__lang = l; setLang(l); }
+      function nav(r){
+        if (r === 'contact') return setContact({ subject: '', message: '' });
+        if (r === 'blog') return (window.location.href = 'Blog.html');
+        return (window.location.href = 'index.html');
+      }
+      const openScan = () => setContact({ subject: tx(SCAN_SUBJECT.en, SCAN_SUBJECT.nl), message: tx(SCAN_MESSAGE.en, SCAN_MESSAGE.nl) });
+      return (
+        <>
+          <SiteHeader overlay={true} megaTheme="cream" lang={lang} onLang={changeLang} onNav={nav} />
+          <Scan key={'scan-' + lang} onScan={openScan} />
+          <SiteNewsletter key={'nl-' + lang} />
+          <SiteFooter />
+          <SiteContactSheet open={contact !== null} onClose={() => setContact(null)} subject={contact?.subject} message={contact?.message} source="AIReadinessScan.html" />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+</body>
+</html>

@@ -16,8 +16,8 @@ export function Button({ variant = 'primary', size = 'md', className = '', child
   );
 }
 
-export function Card({ className = '', children }) {
-  return <div className={`bg-white border border-line rounded-2xl shadow-card ${className}`}>{children}</div>;
+export function Card({ className = '', children, ...props }) {
+  return <div className={`bg-white border border-line rounded-2xl shadow-card ${className}`} {...props}>{children}</div>;
 }
 
 export function Badge({ tone = 'neutral', children }) {
