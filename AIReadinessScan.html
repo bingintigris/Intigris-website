@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI readiness scan | Intigris</title>
-  <link rel="stylesheet" href="design-system/site.css?v=1786027704000">
+  <link rel="stylesheet" href="design-system/site.css?v=1786365408000">
   <link rel="icon" href="assets/logo-coral.png">
   <script>
     window.__lang = 'en';
@@ -21,11 +21,11 @@
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script type="text/babel" src="components/Services.jsx?v=1786027704000"></script>
-  <script type="text/babel" src="components/Header.jsx?v=1786027704000"></script>
-  <script type="text/babel" src="components/Newsletter.jsx?v=1786027704000"></script>
-  <script type="text/babel" src="components/ContactSheet.jsx?v=1786027704000"></script>
-  <script type="text/babel" src="components/Footer.jsx?v=1786027704000"></script>
+  <script type="text/babel" src="components/Services.jsx?v=1786365408000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1786365408000"></script>
+  <script type="text/babel" src="components/Newsletter.jsx?v=1786365408000"></script>
+  <script type="text/babel" src="components/ContactSheet.jsx?v=1786365408000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1786365408000"></script>
 
   <script type="text/babel">
     const { useState, useEffect } = React;
@@ -393,7 +393,7 @@
           </section>
 
           {/* WHY INTIGRIS */}
-          <section className="container-wide" style={{ paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(40px, 5vw, 56px)' }}>
+          <section className="container-wide" style={{ paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(48px, 6vw, 72px)' }}>
             <div style={{ maxWidth: 780 }}>
               <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('WHY INTIGRIS', 'WAAROM INTIGRIS')}</div>
               <h2 style={{ fontSize: 'clamp(28px,3.4vw,46px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.06, margin: '12px 0 0' }}>
@@ -410,11 +410,14 @@
 
           {/* FAQ */}
           <section className="container-wide" style={{ paddingBottom: 'clamp(64px, 8vw, 96px)' }}>
-            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('FAQ', 'VEELGESTELDE VRAGEN')}</div>
-            <h2 style={{ fontSize: 'clamp(28px,3.4vw,44px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.05, margin: '12px 0 28px' }}>
-              {tx('Good to know.', 'Goed om te weten.')}
+            {/* Divider: closes off Why Intigris so the centered FAQ reads as its own section */}
+            <div aria-hidden style={{ height: 1, background: 'var(--border)', marginBottom: 'clamp(46px, 5.5vw, 68px)' }} />
+            <h2 style={{ fontSize: 'clamp(28px,3.4vw,44px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.05, margin: '0 0 28px', textAlign: 'center' }}>
+              <span style={{ color: 'var(--intigris-coral)' }}>FAQ</span>
+              <span aria-hidden style={{ color: 'var(--intigris-coral)', opacity: 0.55, margin: '0 0.34em' }}>·</span>
+              <span style={{ color: 'var(--intigris-dark-brown)' }}>{tx('Good to know.', 'Goed om te weten.')}</span>
             </h2>
-            <div style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 24, padding: '4px clamp(18px, 3vw, 34px)', maxWidth: 900 }}>
+            <div style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 24, padding: '4px clamp(18px, 3vw, 34px)', maxWidth: 900, margin: '0 auto' }}>
               {FAQS.map((f, i) => <FaqItem key={i} q={tx(f.qEn, f.qNl)} a={tx(f.aEn, f.aNl)} last={i === FAQS.length - 1} />)}
             </div>
           </section>
