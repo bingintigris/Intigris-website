@@ -122,6 +122,19 @@ No secrets to set. New users get a temporary password to share; they can reset
 it via "Forgot password?" on the login screen. Until deployed, the button shows
 a friendly "not deployed yet" message.
 
+### Connectors register (Settings → Connectors)
+
+A fourth tab in Settings listing every external service the website and portal
+rely on: what it does, whether it's connected, where its credential lives, and a
+link to its console. It stores **no secrets**, only a note of where each one is.
+
+Setup: run `supabase/connectors.sql` in the SQL Editor. It creates the table,
+restricts writes to admins (any signed-in user can read), and seeds the seven
+services we've agreed on. Status is then edited from the portal, not the SQL.
+
+Klaviyo's card shows real numbers read from `subscribers`, rather than trusting
+the status field to be kept current by hand.
+
 ### Klaviyo sync (Newsletter)
 
 Newsletter sign-ups land in Supabase; the **Sync to Klaviyo** button pushes them

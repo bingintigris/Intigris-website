@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { Upload, Copy, Trash2, FileText, Image as ImageIcon, ExternalLink, UserPlus, Check } from 'lucide-react';
-import { Card, Badge, Button, Select, Input, Spinner, Drawer } from '../components/ui/index.jsx';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Upload, Copy, Trash2, FileText, Image as ImageIcon, ExternalLink, UserPlus, Check,
+  AlertCircle, Plug, KeyRound,
+} from 'lucide-react';
+import { Card, Badge, Button, Select, Input, Textarea, Spinner, Drawer } from '../components/ui/index.jsx';
 import { useToast } from '../components/ui/toast.jsx';
 import { ROLES } from '../lib/roles';
 import { initials, timeAgo } from '../lib/format';
@@ -8,8 +11,16 @@ import {
   listUsers, updateUserRole, inviteUser, listActivity,
   listMedia, uploadMedia, deleteMedia, isImage, formatBytes,
 } from '../lib/settings';
+import {
+  listConnectors, updateConnector, klaviyoSyncSummary, STATUSES, STATUS_TONE,
+} from '../lib/connectors';
 
-const TABS = [['users', 'Users & roles'], ['media', 'Media library'], ['activity', 'Activity log']];
+const TABS = [
+  ['users', 'Users & roles'],
+  ['media', 'Media library'],
+  ['connectors', 'Connectors'],
+  ['activity', 'Activity log'],
+];
 
 export default function Settings() {
   const [tab, setTab] = useState('users');
@@ -17,7 +28,7 @@ export default function Settings() {
     <div className="max-w-6xl mx-auto space-y-5">
       <div>
         <h2 className="text-2xl font-medium text-ink">Settings</h2>
-        <p className="text-sm text-muted mt-1">Manage access, media, and review activity.</p>
+        <p className="text-sm text-muted mt-1">Manage access, media, connectors, and review activity.</p>
       </div>
       <div className="flex items-center gap-1 bg-cream-100 rounded-full p-1 w-fit">
         {TABS.map(([v, l]) => (
@@ -29,6 +40,7 @@ export default function Settings() {
       </div>
       {tab === 'users' && <Users />}
       {tab === 'media' && <Media />}
+      {tab === 'connectors' && <Connectors />}
       {tab === 'activity' && <Activity />}
     </div>
   );
@@ -248,6 +260,202 @@ function Media() {
 
 /* ---------- Activity log ---------- */
 const DOT = { inquiry: 'bg-coral', subscriber: 'bg-[#1f4c86]', blog: 'bg-washed-green', application: 'bg-[#7a4d0b]', system: 'bg-muted' };
+
+/* ============================== Connectors ==============================
+   A register of the external services the website and portal talk to. It
+   records what is connected, what each one does, where its credential lives
+   and where to manage it, so none of that has to be rediscovered from the
+   code later. It does not hold any secrets itself.
+   ====================================================================== */
+function Connectors() {
+  const { toast } = useToast();
+  const [rows, setRows] = useState(null);
+  const [loadError, setLoadError] = useState('');
+  const [klaviyo, setKlaviyo] = useState(null);
+  const [editing, setEditing] = useState(null);
+  const [saving, setSaving] = useState(false);
+
+  function load() {
+    return listConnectors().then(({ rows, error }) => {
+      setRows(rows);
+      setLoadError(error || '');
+    });
+  }
+
+  useEffect(() => {
+    load();
+    klaviyoSyncSummary().then(setKlaviyo);
+  }, []);
+
+  // Group by category, preserving the sort order within each.
+  const groups = useMemo(() => {
+    const out = new Map();
+    for (const r of rows || []) {
+      if (!out.has(r.category)) out.set(r.category, []);
+      out.get(r.category).push(r);
+    }
+    return Array.from(out.entries());
+  }, [rows]);
+
+  const counts = useMemo(() => {
+    const c = { connected: 0, needs_setup: 0, not_connected: 0, planned: 0 };
+    for (const r of rows || []) c[r.status] = (c[r.status] || 0) + 1;
+    return c;
+  }, [rows]);
+
+  if (!rows) return <div className="h-64 grid place-items-center text-muted"><Spinner className="text-coral" /></div>;
+
+  async function save() {
+    setSaving(true);
+    try {
+      await updateConnector(editing.id, {
+        status: editing.status,
+        owner: editing.owner?.trim() || null,
+        setup_notes: editing.setup_notes?.trim() || null,
+      });
+      await load();
+      toast(`${editing.name} updated.`, 'success');
+      setEditing(null);
+    } catch (e) {
+      toast(e.message, 'error');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (loadError) {
+    return (
+      <Card className="p-8 text-center">
+        <AlertCircle size={20} className="text-coral mx-auto mb-3" />
+        <p className="text-sm text-ink">{loadError}</p>
+        <p className="text-xs text-muted mt-2">
+          Supabase → SQL Editor → paste <span className="text-ink">admin/supabase/connectors.sql</span> → Run.
+        </p>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <p className="text-sm text-muted max-w-xl">
+          Every external service the website and this portal rely on. Secrets are never
+          stored here, only a note of where each one lives.
+        </p>
+        <div className="flex items-center gap-2 flex-wrap text-xs">
+          {counts.connected > 0 && <Badge tone="green">{counts.connected} connected</Badge>}
+          {counts.needs_setup > 0 && <Badge tone="yellow">{counts.needs_setup} needs setup</Badge>}
+          {counts.not_connected > 0 && <Badge tone="neutral">{counts.not_connected} not connected</Badge>}
+        </div>
+      </div>
+
+      {groups.map(([category, items]) => (
+        <div key={category} className="space-y-3">
+          <h3 className="text-xs font-medium uppercase tracking-wide text-muted">{category}</h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            {items.map((c) => (
+              <Card key={c.id} className="p-5 flex flex-col">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="h-8 w-8 rounded-lg bg-cream-100 grid place-items-center shrink-0">
+                      <Plug size={15} className="text-muted" />
+                    </span>
+                    <h4 className="font-medium text-ink truncate">{c.name}</h4>
+                  </div>
+                  <Badge tone={STATUS_TONE[c.status]}>
+                    {(STATUSES.find(([v]) => v === c.status) || [, c.status])[1]}
+                  </Badge>
+                </div>
+
+                {c.purpose && <p className="text-sm text-muted mt-3 leading-relaxed">{c.purpose}</p>}
+
+                {/* Klaviyo's real state is already in the database, so show that
+                    rather than trusting the status field to be current. */}
+                {c.key === 'klaviyo' && klaviyo && (
+                  <p className="text-xs text-muted mt-2.5">
+                    {klaviyo.total} subscriber{klaviyo.total === 1 ? '' : 's'}
+                    {klaviyo.pending > 0
+                      ? <>, <span className="text-coral">{klaviyo.pending} waiting to sync</span></>
+                      : klaviyo.total > 0 ? ', all synced' : ''}
+                    {klaviyo.lastSync && <>, last sync {timeAgo(klaviyo.lastSync)}</>}
+                  </p>
+                )}
+
+                {c.credential_location && (
+                  <p className="text-xs text-muted mt-3 flex items-start gap-1.5">
+                    <KeyRound size={12} className="mt-0.5 shrink-0" />
+                    <span>{c.credential_location}</span>
+                  </p>
+                )}
+
+                {c.setup_notes && (
+                  <div className="mt-3 rounded-xl bg-cream-100 px-3.5 py-2.5 text-xs text-ink leading-relaxed">
+                    {c.setup_notes}
+                  </div>
+                )}
+
+                <div className="mt-4 pt-3 border-t border-line flex items-center justify-between gap-3">
+                  <span className="text-xs text-muted truncate">
+                    {c.owner ? `Owner: ${c.owner}` : 'No owner set'}
+                  </span>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {c.console_url && (
+                      <a href={c.console_url} target="_blank" rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs text-coral hover:underline px-2 py-1">
+                        Open <ExternalLink size={11} />
+                      </a>
+                    )}
+                    <Button size="sm" variant="secondary" onClick={() => setEditing({ ...c })}>Edit</Button>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <Drawer open={!!editing} onClose={() => setEditing(null)} title={editing ? editing.name : ''}>
+        {editing && (
+          <div className="space-y-4">
+            <p className="text-sm text-muted">{editing.purpose}</p>
+
+            <Select label="Status" value={editing.status}
+              onChange={(e) => setEditing({ ...editing, status: e.target.value })}>
+              {STATUSES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+            </Select>
+
+            <Input label="Owner" placeholder="Who looks after this?"
+              value={editing.owner || ''}
+              onChange={(e) => setEditing({ ...editing, owner: e.target.value })} />
+
+            <Textarea label="Setup notes" rows={5}
+              placeholder="What is left to do, or anything worth knowing."
+              value={editing.setup_notes || ''}
+              onChange={(e) => setEditing({ ...editing, setup_notes: e.target.value })} />
+
+            {editing.credential_location && (
+              <div className="rounded-xl border border-line bg-cream px-3.5 py-3 text-xs text-muted">
+                <span className="text-ink font-medium">Credential:</span> {editing.credential_location}
+              </div>
+            )}
+
+            <p className="text-xs text-muted">
+              Do not paste keys or tokens here. This register is readable by every portal
+              user; secrets belong in Supabase Edge Function secrets.
+            </p>
+
+            <div className="flex items-center gap-2 pt-1">
+              <Button onClick={save} disabled={saving}>
+                {saving ? <><Spinner className="text-white" /> Saving…</> : <><Check size={15} /> Save</>}
+              </Button>
+              <Button variant="ghost" onClick={() => setEditing(null)}>Cancel</Button>
+            </div>
+          </div>
+        )}
+      </Drawer>
+    </div>
+  );
+}
 
 function Activity() {
   const [rows, setRows] = useState(null);
