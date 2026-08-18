@@ -194,9 +194,10 @@ function SiteFooter({ divider }) {
                 'We brengen scherp in beeld wat u nodig heeft en implementeren het, zodat u vooruit kunt.'
               )}
             </p>
+            {/* 16px, matching the tagline above it. */}
             <div style={{
               marginTop: 28,
-              fontSize: 14, color: 'rgba(64,35,1,0.9)', lineHeight: 1.6, fontWeight: 400,
+              fontSize: 16, color: 'rgba(64,35,1,0.9)', lineHeight: 1.6, fontWeight: 400,
             }}>
               Kraanspoor 42, 1033 SE,<br/>
               Amsterdam, Noord-Holland<br/>
@@ -204,7 +205,7 @@ function SiteFooter({ divider }) {
             </div>
             <div style={{
               marginTop: 14,
-              fontSize: 14, color: 'rgba(64,35,1,0.9)', lineHeight: 1.55, fontWeight: 400,
+              fontSize: 16, color: 'rgba(64,35,1,0.9)', lineHeight: 1.55, fontWeight: 400,
             }}>
               {/* Class, not inline styles, so the :hover rule below can win. */}
               <a href="mailto:info@intigris.nl" className="footer-email">info@intigris.nl</a>
