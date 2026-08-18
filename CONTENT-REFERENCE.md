@@ -39,6 +39,22 @@ reimagine them to the new design direction.
   Ebusco. (New site's home already uses others — reconcile when relevant.)
 - Contact: +31 20 624 0027 · info@intigris.nl · Kraanspoor 42, 1033 SE Amsterdam.
 - Social: linkedin.com/company/intigris, twitter.com/intigris.
+
+### Company identifiers (verified, use these verbatim)
+
+- **KvK 50050168** — the Chamber of Commerce number.
+- **VAT NL822520072B01** — the BTW number.
+- **RSIN 822520072** — the fiscal number the VAT number is built from.
+- **Kraanspoor 42, 1033 SE Amsterdam** — note SE, not ES.
+
+Two traps worth knowing, because both have already caused an error:
+
+1. A Dutch BV's VAT number is derived from the **RSIN**, not the KvK number.
+   Do not shorten 822520072 into an 8-digit "KvK 82252007". That number does
+   not exist; it is the RSIN with its last digit removed.
+2. The company letterhead in the old PDFs is correct (1033 SE, KvK 50050168),
+   but the typed contact blocks inside those same PDFs say "1033 ES". The
+   letterhead wins.
 - Legal docs (PDFs on the live CDN): Terms & Conditions (NLdigital), Privacy
   Policy, Cookie Policy.
 

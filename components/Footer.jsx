@@ -193,7 +193,7 @@ function SiteFooter() {
           flexWrap: 'wrap', gap: 16,
           fontSize: 12, color: 'rgba(64,35,1,0.85)', fontWeight: 400,
         }}>
-          <div>© 2026 Intigris B.V. · KvK 82252007</div>
+          <div>© 2026 Intigris B.V. · KvK 50050168</div>
           <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
             {/* NLdigital terms: the Dutch edition is the binding one, the English is a translation. */}
             <a
