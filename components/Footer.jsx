@@ -195,8 +195,6 @@ function SiteFooter() {
         }}>
           <div>© 2026 Intigris B.V. · KvK 82252007</div>
           <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
-            <a href="Privacy.html" style={{ color: 'inherit', textDecoration: 'none' }}>{tx('Privacy', 'Privacy')}</a>
-            <a href="Cookies.html" style={{ color: 'inherit', textDecoration: 'none' }}>{tx('Cookies', 'Cookies')}</a>
             {/* NLdigital terms: the Dutch edition is the binding one, the English is a translation. */}
             <a
               href={tx('legal/NLdigital-Terms-EN.pdf', 'legal/NLdigital-Voorwaarden-NL.pdf')}
@@ -206,15 +204,10 @@ function SiteFooter() {
             >
               {tx('Terms', 'Voorwaarden')}
             </a>
-            <button
-              onClick={() => window.IntigrisConsent && window.IntigrisConsent.open()}
-              style={{
-                color: 'inherit', background: 'transparent', border: 0, padding: 0,
-                font: 'inherit', cursor: 'pointer', textDecoration: 'none',
-              }}
-            >
-              {tx('Cookie preferences', 'Cookievoorkeuren')}
-            </button>
+            <a href="Privacy.html" style={{ color: 'inherit', textDecoration: 'none' }}>{tx('Privacy', 'Privacy')}</a>
+            {/* Cookies covers withdrawing consent too: that page carries the
+                "Change my cookie preferences" button, so there is no separate link here. */}
+            <a href="Cookies.html" style={{ color: 'inherit', textDecoration: 'none' }}>{tx('Cookies', 'Cookies')}</a>
           </div>
         </div>
       </div>
