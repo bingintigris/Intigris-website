@@ -37,7 +37,7 @@ reimagine them to the new design direction.
 - "We breathe Salesforce" — certified team, Salesforce partner since 2010.
 - Reference customers (logos): WeTransfer, Opcharge, Alpha Ventilatie, ATAG Warmte,
   Ebusco. (New site's home already uses others — reconcile when relevant.)
-- Contact: +31 20 624 0027 · info@intigris.nl · Kraanspoor 42, 1033 SE Amsterdam.
+- Contact: +31 20 624 0027 · info@intigris.nl · Kraanspoor 42, 1033 SE, Amsterdam, Noord-Holland.
 - Social: linkedin.com/company/intigris, twitter.com/intigris.
 
 ### Company identifiers (verified, use these verbatim)
@@ -45,7 +45,7 @@ reimagine them to the new design direction.
 - **KvK 50050168** — the Chamber of Commerce number.
 - **VAT NL822520072B01** — the BTW number.
 - **RSIN 822520072** — the fiscal number the VAT number is built from.
-- **Kraanspoor 42, 1033 SE Amsterdam** — note SE, not ES.
+- **Kraanspoor 42, 1033 SE, Amsterdam, Noord-Holland** — note SE, not ES.
 
 Two traps worth knowing, because both have already caused an error:
 

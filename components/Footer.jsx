@@ -170,8 +170,8 @@ function SiteFooter() {
               marginTop: 28,
               fontSize: 14, color: 'rgba(64,35,1,0.9)', lineHeight: 1.6, fontWeight: 400,
             }}>
-              Kraanspoor 42<br/>
-              1033 SE Amsterdam<br/>
+              Kraanspoor 42, 1033 SE,<br/>
+              Amsterdam, Noord-Holland<br/>
               {tx('The Netherlands', 'Nederland')}
             </div>
             <div style={{
