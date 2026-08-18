@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy notice | Intigris</title>
+  <meta name="description" content="How Intigris handles personal information collected through intigris.nl: contact enquiries, newsletter sign-ups and job applications.">
+  <link rel="stylesheet" href="design-system/site.css?v=1787048513000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = 'en';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+    window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="text/babel" src="components/Services.jsx?v=1787048513000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1787048513000"></script>
+  <script type="text/babel" src="components/ContactSheet.jsx?v=1787048513000"></script>
+  <script type="text/babel" src="components/CookieConsent.jsx?v=1787048513000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1787048513000"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    /* This page is intentionally English only, matching the notice it replaces.
+       Legal text is the one place where a rough translation does real damage. */
+
+    function Privacy() {
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+          <article className="container" style={{ paddingTop: 132, paddingBottom: 96 }}>
+            <div className="legal">
+              <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>LEGAL</div>
+              <h1 style={{ fontSize: 'clamp(32px,4vw,52px)', fontWeight: 500, letterSpacing: '-0.026em', lineHeight: 1.04, margin: '14px 0 10px' }}>
+                Privacy notice.
+              </h1>
+              <p className="legal-meta">Last updated 18 August 2026</p>
+
+              <div className="legal-note">
+                <p><strong>The short version.</strong> We only hold personal information you
+                deliberately give us: an enquiry, a newsletter sign-up, or a job application.
+                We do not buy data, we do not sell it, and we do not build advertising profiles
+                about you. This site sets no tracking cookies unless you switch them on
+                yourself.</p>
+              </div>
+
+              <p>This notice explains what Intigris B.V. does with personal information collected
+              through <a href="index.html">intigris.nl</a>. It covers this website only. If you are
+              a client and we handle personal data inside your own Salesforce or other systems, we
+              act as a processor on your instructions, and the data processing agreement we signed
+              with you governs that work instead of this notice.</p>
+
+              <h2>Who is responsible</h2>
+              <p>Intigris B.V. is the controller for the information described here.</p>
+              <ul>
+                <li>Intigris B.V., Kraanspoor 42, 1033 SE Amsterdam, Netherlands</li>
+                <li>Chamber of Commerce (KvK) 82252007 · VAT NL8225.2007.B01</li>
+                <li><a href="mailto:info@intigris.nl">info@intigris.nl</a> · +31 (0)20 624 00 27</li>
+              </ul>
+              <p>We are not required to appoint a Data Protection Officer. Privacy questions go to
+              the address above and reach a person, not a queue.</p>
+
+              <h2>What we collect, and why</h2>
+              <p>Everything below is information you type in yourself. Nothing on this site collects
+              it silently.</p>
+
+              <div className="legal-table-wrap">
+                <table className="legal-table">
+                  <thead>
+                    <tr>
+                      <th>When</th>
+                      <th>What we collect</th>
+                      <th>Why, and our legal basis</th>
+                      <th>How long we keep it</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>You send an enquiry</td>
+                      <td>Your name, email address, the subject, your message, and which page you
+                          sent it from.</td>
+                      <td>To answer you and, if it goes that way, to prepare an offer.
+                          <strong> Legitimate interest</strong> in responding to people who contact
+                          us, and steps taken at your request before a contract.</td>
+                      <td>Up to 24 months after our last contact. Longer if it becomes a client
+                          relationship, under the retention rules for that.</td>
+                    </tr>
+                    <tr>
+                      <td>You sign up for the newsletter</td>
+                      <td>Your email address and which page you signed up from.</td>
+                      <td>To send you our newsletter. <strong>Consent</strong>, which you can
+                          withdraw at any time.</td>
+                      <td>Until you unsubscribe, plus a short record of the unsubscribe itself so we
+                          do not email you again by mistake.</td>
+                    </tr>
+                    <tr>
+                      <td>You apply for a job</td>
+                      <td>Your name, email address, phone number, CV, an optional cover letter and
+                          photo, whether you are Salesforce certified, which languages you speak,
+                          and whether you are a resident of the Netherlands.</td>
+                      <td>To assess your application. Steps taken at your request before a possible
+                          employment contract, and your <strong>consent</strong> for anything you
+                          chose to add.</td>
+                      <td>Four weeks after the process ends. If you agree, up to one year, so we can
+                          come back to you about something suitable.</td>
+                    </tr>
+                    <tr>
+                      <td>You use the site at all</td>
+                      <td>Standard server logs from our hosting provider, including your IP address,
+                          browser type and the pages requested.</td>
+                      <td>To keep the site available and secure, and to spot abuse.
+                          <strong> Legitimate interest</strong> in the security of our own systems.</td>
+                      <td>A short rolling window held by our hosting provider, typically no more
+                          than 30 days.</td>
+                    </tr>
+                    <tr>
+                      <td>You accept analytics cookies</td>
+                      <td>Aggregated statistics about pages viewed and how you arrived, with your IP
+                          address truncated.</td>
+                      <td>To understand which pages are useful. <strong>Consent</strong>, given
+                          through the cookie banner.</td>
+                      <td>See our <a href="Cookies.html">cookie notice</a> for the retention of each
+                          cookie.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p>Applying for a job asks for the most from you, so to be explicit: your CV and cover
+              letter are visible only to the people at Intigris involved in hiring for that role. We
+              do not run automated screening or scoring over applications. A human reads every one.</p>
+
+              <h3>What we deliberately do not do</h3>
+              <ul>
+                <li>We do not process special category data such as health, religion or ethnicity,
+                    and we ask you not to include it. If your CV happens to mention something of
+                    that kind, we ignore it in our assessment.</li>
+                <li>We do not knowingly collect information from anyone under 16.</li>
+                <li>We do not make decisions about you purely by automated means, and we do not
+                    profile you.</li>
+                <li>We do not buy contact lists, and we do not enrich your details from data
+                    brokers or social media.</li>
+                <li>We never sell or rent personal information to anyone.</li>
+              </ul>
+
+              <h2>Who else sees it</h2>
+              <p>We use a small number of suppliers to run this site. They act only on our
+              instructions, under a data processing agreement, and may not use your information for
+              their own purposes.</p>
+
+              <div className="legal-table-wrap">
+                <table className="legal-table">
+                  <thead>
+                    <tr>
+                      <th>Supplier</th>
+                      <th>What they do for us</th>
+                      <th>Where the data sits</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Supabase</td>
+                      <td>Hosts the database and file storage behind our forms, and our internal
+                          portal.</td>
+                      <td>European Union</td>
+                    </tr>
+                    <tr>
+                      <td>Klaviyo</td>
+                      <td>Sends the newsletter. Receives only the email addresses of people who
+                          signed up.</td>
+                      <td>United States</td>
+                    </tr>
+                    <tr>
+                      <td>Our hosting provider</td>
+                      <td>Serves the website itself and keeps the server logs described above.</td>
+                      <td>European Union, with a global content network</td>
+                    </tr>
+                    <tr>
+                      <td>Google</td>
+                      <td>Analytics, and only if you accept analytics cookies. Never loaded
+                          otherwise.</td>
+                      <td>United States</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p>We also use ordinary business tools such as email and calendars, which will hold
+              your message if you write to us, and we may share information with our accountant or
+              legal advisers where we have to. If we were ever bought or merged, information could
+              transfer as part of that, and we would tell you.</p>
+
+              <h3>Transfers outside the EU</h3>
+              <p>Klaviyo and Google are based in the United States. Those transfers rest on the
+              safeguards in their data processing agreements with us, being the European
+              Commission's Standard Contractual Clauses and, where the supplier is certified, the
+              EU–U.S. Data Privacy Framework. You can ask us for details of the safeguards that
+              apply to your information.</p>
+
+              <h2>Cookies</h2>
+              <p>Before you choose, this site sets exactly one cookie, which records your choice so
+              we do not ask again. Nothing else runs until you agree to it. The full detail, and the
+              button to change your mind, is in our <a href="Cookies.html">cookie notice</a>.</p>
+
+              <h2>How we protect it</h2>
+              <p>Traffic to this site is encrypted in transit. Access to enquiries, subscribers and
+              applications is limited to Intigris staff who need it, protected by individual logins
+              and enforced at the database level rather than only in the interface. Uploaded files
+              are kept in private storage that is not publicly reachable.</p>
+              <p>No system is perfectly secure, and we would rather say so than imply otherwise. If
+              you believe something is wrong with the security of this site, please tell us at
+              <a href="mailto:info@intigris.nl"> info@intigris.nl</a> and we will look at it
+              promptly.</p>
+
+              <h2>Your rights</h2>
+              <p>Under the GDPR you can ask us to:</p>
+              <ul>
+                <li>give you a copy of the information we hold about you</li>
+                <li>correct it if it is wrong</li>
+                <li>delete it</li>
+                <li>restrict what we do with it, or object to us using it</li>
+                <li>send it to you, or to someone else, in a portable format</li>
+                <li>withdraw consent you gave earlier, at any time</li>
+              </ul>
+              <p>Email <a href="mailto:info@intigris.nl">info@intigris.nl</a> and say what you would
+              like. There is no form to fill in. We answer within one month, and we will not charge
+              you or make it difficult. Withdrawing consent does not undo processing that was lawful
+              before you withdrew it.</p>
+              <p>To stop the newsletter, use the unsubscribe link in any issue, which works
+              immediately, or just email us.</p>
+              <p>If you are unhappy with how we have handled your information, we would like the
+              chance to put it right. You also have the right to complain to the Dutch data
+              protection authority, the <a href="https://autoriteitpersoonsgegevens.nl"
+              target="_blank" rel="noopener">Autoriteit Persoonsgegevens</a>, or to the authority
+              where you live.</p>
+
+              <h2>Changes to this notice</h2>
+              <p>If we change how we handle personal information, we will update this page and move
+              the date at the top. If a change is significant, we will say so clearly rather than
+              quietly editing the text.</p>
+
+              <h2>Getting in touch</h2>
+              <p>Email <a href="mailto:info@intigris.nl">info@intigris.nl</a>, call
+              +31 (0)20 624 00 27, or write to Intigris B.V., Kraanspoor 42, 1033 SE Amsterdam,
+              Netherlands.</p>
+            </div>
+          </article>
+        </main>
+      );
+    }
+
+    function App() {
+      const [lang, setLang] = useState('en');
+      const [contact, setContact] = useState(null);
+      function changeLang(l){ window.__lang = l; setLang(l); }
+      function nav(r){
+        if (r === 'contact') return setContact({ subject: '', message: '' });
+        if (r === 'blog') return (window.location.href = 'Blog.html');
+        return (window.location.href = 'index.html');
+      }
+      return (
+        <>
+          <SiteHeader overlay={false} megaTheme="cream" lang={lang} onLang={changeLang} onNav={nav} />
+          <Privacy />
+          <SiteFooter />
+          <SiteContactSheet
+            open={!!contact}
+            onClose={() => setContact(null)}
+            subject={contact ? contact.subject : ''}
+            message={contact ? contact.message : ''}
+            source="Privacy.html"
+          />
+          <SiteCookieConsent />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
