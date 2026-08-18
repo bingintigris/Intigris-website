@@ -94,8 +94,35 @@ function SiteFinalCTA({ onCta }) {
   );
 }
 
-function SiteFooter() {
+function SiteFooter({ divider }) {
   const tx = window.tx || ((en) => en);
+  const rootRef = React.useRef(null);
+
+  // Most pages end in the coral newsletter band, which separates itself from the
+  // cream footer perfectly well. Pages that end in cream content (Privacy,
+  // Cookies, Blog) merge into the footer with no visible boundary, so those need
+  // a hairline. Rather than flag each page by hand and have to remember it on the
+  // next one, look at whatever sits directly above and decide.
+  //
+  // Pass divider={true} or divider={false} to override.
+  const [autoDivider, setAutoDivider] = React.useState(false);
+
+  React.useEffect(() => {
+    if (divider !== undefined || !rootRef.current) return;
+    // Skip back over <style> and <script> tags, which components emit and which
+    // have no background of their own.
+    let prev = rootRef.current.previousElementSibling;
+    while (prev && /^(STYLE|SCRIPT|LINK)$/.test(prev.tagName)) prev = prev.previousElementSibling;
+    if (!prev) return setAutoDivider(true);          // footer is the whole page
+    const above = getComputedStyle(prev).backgroundColor;
+    const mine = getComputedStyle(rootRef.current).backgroundColor;
+    // A transparent block above means the body's cream shows through, which is
+    // exactly the case we want to draw a line for.
+    const seeThrough = /^rgba\(0, 0, 0, 0\)$|transparent/.test(above);
+    setAutoDivider(seeThrough || above === mine);
+  }, [divider]);
+
+  const showDivider = divider !== undefined ? divider : autoDivider;
   const COL = (title, items) => (
     <div>
       <div style={{
@@ -140,10 +167,11 @@ function SiteFooter() {
   );
 
   return (
-    <footer style={{
+    <footer ref={rootRef} style={{
       background: 'var(--intigris-off-white)',
       color: 'var(--intigris-dark-brown)',
       paddingTop: 88, paddingBottom: 32,
+      borderTop: showDivider ? '1px solid var(--border)' : 'none',
     }}>
       <div className="container-wide">
         <div className="footer-grid" style={{
