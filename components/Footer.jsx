@@ -206,7 +206,8 @@ function SiteFooter({ divider }) {
               marginTop: 14,
               fontSize: 14, color: 'rgba(64,35,1,0.9)', lineHeight: 1.55, fontWeight: 400,
             }}>
-              <a href="mailto:info@intigris.nl" style={{ color: 'inherit', textDecoration: 'none' }}>info@intigris.nl</a>
+              {/* Class, not inline styles, so the :hover rule below can win. */}
+              <a href="mailto:info@intigris.nl" className="footer-email">info@intigris.nl</a>
             </div>
           </div>
 
@@ -244,15 +245,17 @@ function SiteFooter({ divider }) {
       </div>
 
       <style>{`
-        /* Terms / Privacy / Cookies. Coral on hover to match the columns above,
-           plus a hairline that wipes in from the left. */
-        .footer-legal a {
+        /* Terms / Privacy / Cookies and the email address. Coral on hover to match
+           the columns above, plus a hairline that wipes in from the left. */
+        .footer-legal a,
+        .footer-email {
           position: relative;
           color: inherit;
           text-decoration: none;
           transition: color 140ms var(--ease-out);
         }
-        .footer-legal a::after {
+        .footer-legal a::after,
+        .footer-email::after {
           content: '';
           position: absolute;
           left: 0; right: 0; bottom: -3px;
@@ -263,15 +266,21 @@ function SiteFooter({ divider }) {
           transition: transform 220ms var(--ease-out);
         }
         .footer-legal a:hover,
-        .footer-legal a:focus-visible { color: var(--intigris-coral); }
+        .footer-legal a:focus-visible,
+        .footer-email:hover,
+        .footer-email:focus-visible { color: var(--intigris-coral); }
         .footer-legal a:hover::after,
-        .footer-legal a:focus-visible::after { transform: scaleX(1); }
+        .footer-legal a:focus-visible::after,
+        .footer-email:hover::after,
+        .footer-email:focus-visible::after { transform: scaleX(1); }
         /* Keyboard users get the same affordance, not a browser default outline. */
-        .footer-legal a:focus-visible { outline: none; }
+        .footer-legal a:focus-visible,
+        .footer-email:focus-visible { outline: none; }
         /* Respect a reduced-motion preference: colour still changes, the line
            just appears instead of sliding. */
         @media (prefers-reduced-motion: reduce) {
-          .footer-legal a::after { transition: none; }
+          .footer-legal a::after,
+          .footer-email::after { transition: none; }
         }
 
         @media (max-width: 900px) {
