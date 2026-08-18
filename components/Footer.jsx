@@ -215,11 +215,13 @@ function SiteFooter({ divider }) {
           {COL(tx('COMPANY', 'BEDRIJF'), [tx('About', 'Over ons'), 'Blog', tx('Careers', 'Werken bij'), tx('Contact', 'Contact'), 'LinkedIn', { label: tx('Admin', 'Admin'), href: 'https://intigris-admin.netlify.app' }])}
         </div>
 
+        {/* 14px matches the column links and the address block above, so the
+            bottom bar no longer reads as fine print. */}
         <div style={{
-          marginTop: 24,
+          marginTop: 26,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          flexWrap: 'wrap', gap: 16,
-          fontSize: 12, color: 'rgba(64,35,1,0.85)', fontWeight: 400,
+          flexWrap: 'wrap', gap: 18,
+          fontSize: 14, color: 'rgba(64,35,1,0.85)', fontWeight: 400,
         }}>
           <div>© 2026 Intigris B.V. · KvK 50050168</div>
           {/* Styling lives in the CSS below rather than inline, because an inline
