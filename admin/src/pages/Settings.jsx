@@ -3,7 +3,7 @@ import {
   Upload, Copy, Trash2, FileText, Image as ImageIcon, ExternalLink, UserPlus, Check,
   AlertCircle, Plug, KeyRound,
 } from 'lucide-react';
-import { Card, Badge, Button, Select, Input, Textarea, Spinner, Drawer } from '../components/ui/index.jsx';
+import { Card, Badge, Button, Select, Input, Textarea, Spinner, Drawer, SegmentedTabs } from '../components/ui/index.jsx';
 import { useToast } from '../components/ui/toast.jsx';
 import { ROLES } from '../lib/roles';
 import { initials, timeAgo } from '../lib/format';
@@ -17,9 +17,9 @@ import {
 
 const TABS = [
   ['users', 'Users & roles'],
-  ['media', 'Media library'],
   ['connectors', 'Connectors'],
   ['activity', 'Activity log'],
+  ['media', 'Media library'],
 ];
 
 export default function Settings() {
@@ -30,14 +30,7 @@ export default function Settings() {
         <h2 className="text-2xl font-medium text-ink">Settings</h2>
         <p className="text-sm text-muted mt-1">Manage access, media, connectors, and review activity.</p>
       </div>
-      <div className="flex items-center gap-1 bg-cream-100 rounded-full p-1 w-fit">
-        {TABS.map(([v, l]) => (
-          <button key={v} onClick={() => setTab(v)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium ${tab === v ? 'bg-white text-ink shadow-sm' : 'text-muted'}`}>
-            {l}
-          </button>
-        ))}
-      </div>
+      <SegmentedTabs value={tab} onChange={setTab} options={TABS} />
       {tab === 'users' && <Users />}
       {tab === 'media' && <Media />}
       {tab === 'connectors' && <Connectors />}

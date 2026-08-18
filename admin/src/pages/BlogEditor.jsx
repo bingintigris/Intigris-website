@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, Save, Send, Trash2, Eye, Code } from 'lucide-react';
-import { Card, Button, Input, Textarea, Select, Spinner, Badge } from '../components/ui/index.jsx';
+import { Card, Button, Input, Textarea, Select, Spinner, Badge, SegmentedTabs } from '../components/ui/index.jsx';
 import { useToast } from '../components/ui/toast.jsx';
 import { getPost, createPost, updatePost, deletePost, CATEGORIES } from '../lib/blog';
 import { renderMarkdown, slugify, estimateReadMinutes } from '../lib/markdown';
@@ -94,10 +94,15 @@ export default function BlogEditor({ postId, seed, onBack }) {
           <Card className="p-0 overflow-hidden">
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
               <span className="text-xs font-medium uppercase tracking-wide text-muted">Body (Markdown)</span>
-              <div className="flex items-center gap-1 bg-cream-100 rounded-full p-0.5">
-                <button onClick={() => setTab('write')} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm ${tab === 'write' ? 'bg-white text-ink shadow-sm' : 'text-muted'}`}><Code size={14} /> Write</button>
-                <button onClick={() => setTab('preview')} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm ${tab === 'preview' ? 'bg-white text-ink shadow-sm' : 'text-muted'}`}><Eye size={14} /> Preview</button>
-              </div>
+              <SegmentedTabs
+                size="sm"
+                value={tab}
+                onChange={setTab}
+                options={[
+                  { value: 'write', label: 'Write', icon: <Code size={14} /> },
+                  { value: 'preview', label: 'Preview', icon: <Eye size={14} /> },
+                ]}
+              />
             </div>
             {tab === 'write' ? (
               <textarea

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Plus, Trash2, Save, Upload } from 'lucide-react';
-import { Card, Badge, Button, Input, Textarea, Select, Spinner, Drawer } from '../components/ui/index.jsx';
+import { Card, Badge, Button, Input, Textarea, Select, Spinner, Drawer, SegmentedTabs } from '../components/ui/index.jsx';
 
 /* Official LinkedIn "in" brand glyph */
 function LinkedInGlyph({ size = 16 }) {
@@ -83,16 +83,6 @@ export default function Team() {
   const pastCount = rows.length - activeCount;
   const visible = rows.filter((m) => (tab === 'active' ? m.status === 'active' : m.status !== 'active'));
 
-  const Pill = ({ id, label, count }) => (
-    <button
-      onClick={() => setTab(id)}
-      className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-        tab === id ? 'bg-ink text-white' : 'text-muted hover:text-ink'
-      }`}
-    >
-      {label} <span className={tab === id ? 'opacity-70' : 'opacity-60'}>({count})</span>
-    </button>
-  );
 
   return (
     <div className="max-w-6xl mx-auto space-y-5">
@@ -107,10 +97,14 @@ export default function Team() {
         <Button onClick={() => open(null)}><Plus size={16} /> Add member</Button>
       </div>
 
-      <div className="inline-flex items-center gap-1 p-1 rounded-full bg-cream-100 border border-line">
-        <Pill id="active" label="Active" count={activeCount} />
-        <Pill id="past" label="Past" count={pastCount} />
-      </div>
+      <SegmentedTabs
+        value={tab}
+        onChange={setTab}
+        options={[
+          { value: 'active', label: 'Active', count: activeCount },
+          { value: 'past', label: 'Past', count: pastCount },
+        ]}
+      />
 
       {visible.length === 0 ? (
         <div className="text-sm text-muted py-8">

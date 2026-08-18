@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Plus, Trash2, Save, Mail, Phone, Clock, Eye, Code, FileText, Image as ImageIcon, Check, X } from 'lucide-react';
-import { Card, Badge, Button, Input, Textarea, Select, Spinner, Drawer } from '../components/ui/index.jsx';
+import { Card, Badge, Button, Input, Textarea, Select, Spinner, Drawer, SegmentedTabs } from '../components/ui/index.jsx';
 import { useToast } from '../components/ui/toast.jsx';
 import {
   STAGES, DEFAULT_STAGE, listApplicants, updateApplicant, signedFileUrl,
@@ -42,14 +42,11 @@ export default function Recruitment() {
         <h2 className="text-2xl font-medium text-ink">Recruitment</h2>
         <p className="text-sm text-muted mt-1">Track applicants and manage open positions.</p>
       </div>
-      <div className="flex items-center gap-1 bg-cream-100 rounded-full p-1 w-fit">
-        {[['applicants', 'Applicants'], ['openings', 'Open positions']].map(([v, l]) => (
-          <button key={v} onClick={() => setTab(v)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium ${tab === v ? 'bg-white text-ink shadow-sm' : 'text-muted'}`}>
-            {l}
-          </button>
-        ))}
-      </div>
+      <SegmentedTabs
+        value={tab}
+        onChange={setTab}
+        options={[['applicants', 'Applicants'], ['openings', 'Open positions']]}
+      />
       {tab === 'applicants' ? <Applicants /> : <Openings />}
     </div>
   );
@@ -224,14 +221,14 @@ function Applicants() {
       {/* Section 3 — Onboarding / Rejected with time filter */}
       <div>
         <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
-          <div className="flex items-center gap-1 bg-cream-100 rounded-full p-1">
-            {[['onboarding', 'Onboarding'], ['rejected', 'Rejected']].map(([v, l]) => (
-              <button key={v} onClick={() => setTermTab(v)}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium ${termTab === v ? 'bg-white text-ink shadow-sm' : 'text-muted'}`}>
-                {l}<span className={`text-xs ${termTab === v ? 'text-muted' : 'text-muted/70'}`}>{termCount(v)}</span>
-              </button>
-            ))}
-          </div>
+          <SegmentedTabs
+            value={termTab}
+            onChange={setTermTab}
+            options={[
+              { value: 'onboarding', label: 'Onboarding', count: termCount('onboarding') },
+              { value: 'rejected', label: 'Rejected', count: termCount('rejected') },
+            ]}
+          />
           <select value={termRange} onChange={(e) => setTermRange(e.target.value)}
             className="h-9 rounded-full border border-line bg-white px-3.5 text-sm text-ink focus:border-coral focus:outline-none">
             <option value="30">Last 30 days</option>
@@ -425,10 +422,15 @@ function Openings() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xs font-medium uppercase tracking-wide text-muted">Description (Markdown)</span>
-                <div className="flex items-center gap-1 bg-cream-100 rounded-full p-0.5">
-                  <button onClick={() => setDescTab('write')} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm ${descTab === 'write' ? 'bg-white text-ink shadow-sm' : 'text-muted'}`}><Code size={14} /> Write</button>
-                  <button onClick={() => setDescTab('preview')} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm ${descTab === 'preview' ? 'bg-white text-ink shadow-sm' : 'text-muted'}`}><Eye size={14} /> Preview</button>
-                </div>
+                <SegmentedTabs
+                  size="sm"
+                  value={descTab}
+                  onChange={setDescTab}
+                  options={[
+                    { value: 'write', label: 'Write', icon: <Code size={14} /> },
+                    { value: 'preview', label: 'Preview', icon: <Eye size={14} /> },
+                  ]}
+                />
               </div>
               {descTab === 'write' ? (
                 <textarea value={draft.description} onChange={(e) => set('description', e.target.value)} rows={10}

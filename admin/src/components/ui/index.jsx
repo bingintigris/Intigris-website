@@ -1,4 +1,6 @@
 // Lightweight, shadcn-flavoured UI primitives (no external UI dep).
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 export function Button({ variant = 'primary', size = 'md', className = '', children, ...props }) {
   const base = 'inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none';
   const sizes = { sm: 'text-sm px-3.5 py-1.5', md: 'text-sm px-4 py-2.5', lg: 'text-base px-5 py-3' };
@@ -94,6 +96,101 @@ export function Drawer({ open, onClose, title, children, footer }) {
         {footer && <div className="shrink-0 border-t border-line p-4 bg-cream">{footer}</div>}
       </div>
       <style>{`@keyframes slidein{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}`}</style>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------------------
+   SegmentedTabs
+   A pill switcher with a thumb that slides between options, matching the
+   AI / Salesforce toggle on the website's home page.
+
+   The thumb is measured from the active button rather than assuming every
+   option is the same width, because these labels are not ("Users & roles" next
+   to "Connectors"). Measured on mount, on selection, and on resize, and again
+   once webfonts land since text reflows and would otherwise leave the thumb
+   slightly off.
+
+     <SegmentedTabs
+       value={tab}
+       onChange={setTab}
+       options={[['users', 'Users & roles'], ['media', 'Media library']]}
+     />
+
+   Options may be [value, label] pairs or { value, label, icon, count }.
+   --------------------------------------------------------------------------- */
+export function SegmentedTabs({ value, onChange, options, size = 'md', className = '' }) {
+  const trackRef = useRef(null);
+  const btnRefs = useRef({});
+  const [thumb, setThumb] = useState({ left: 0, width: 0, ready: false });
+
+  const items = options.map((o) =>
+    Array.isArray(o) ? { value: o[0], label: o[1] } : o
+  );
+
+  const measure = useCallback(() => {
+    const track = trackRef.current;
+    const btn = btnRefs.current[value];
+    if (!track || !btn) return;
+    const t = track.getBoundingClientRect();
+    const b = btn.getBoundingClientRect();
+    setThumb({ left: b.left - t.left, width: b.width, ready: true });
+  }, [value]);
+
+  useEffect(() => {
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (trackRef.current) ro.observe(trackRef.current);
+    // Webfonts change text width after first paint; remeasure when they arrive.
+    if (document.fonts?.ready) document.fonts.ready.then(measure).catch(() => {});
+    return () => ro.disconnect();
+  }, [measure]);
+
+  const pad = size === 'sm' ? 'p-0.5' : 'p-1';
+  const btnPad = size === 'sm' ? 'px-3 py-1' : 'px-4 py-1.5';
+
+  return (
+    <div
+      ref={trackRef}
+      role="tablist"
+      className={`relative inline-flex items-center gap-1 ${pad} rounded-full bg-cream-100 border border-line w-fit ${className}`}
+    >
+      {/* The sliding thumb. Hidden until measured so it never flashes at 0,0. */}
+      <span
+        aria-hidden
+        className="absolute rounded-full bg-white shadow-sm"
+        style={{
+          left: thumb.left,
+          width: thumb.width,
+          top: size === 'sm' ? 2 : 4,
+          bottom: size === 'sm' ? 2 : 4,
+          opacity: thumb.ready ? 1 : 0,
+          transition: thumb.ready
+            ? 'left 300ms cubic-bezier(0.22,0.61,0.36,1), width 300ms cubic-bezier(0.22,0.61,0.36,1), opacity 150ms ease-out'
+            : 'none',
+        }}
+      />
+      {items.map((it) => {
+        const active = it.value === value;
+        return (
+          <button
+            key={it.value}
+            ref={(el) => { btnRefs.current[it.value] = el; }}
+            role="tab"
+            aria-selected={active}
+            onClick={() => onChange(it.value)}
+            className={`relative z-[1] inline-flex items-center gap-2 rounded-full ${btnPad} text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
+              active ? 'text-ink' : 'text-muted hover:text-ink'
+            }`}
+          >
+            {it.icon}
+            {it.label}
+            {it.count !== undefined && (
+              <span className={active ? 'text-xs text-muted' : 'text-xs text-muted/70'}>{it.count}</span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }
