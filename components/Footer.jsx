@@ -222,25 +222,56 @@ function SiteFooter({ divider }) {
           fontSize: 12, color: 'rgba(64,35,1,0.85)', fontWeight: 400,
         }}>
           <div>© 2026 Intigris B.V. · KvK 50050168</div>
-          <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Styling lives in the CSS below rather than inline, because an inline
+              color would outrank the :hover rule. */}
+          <div className="footer-legal" style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
             {/* NLdigital terms: the Dutch edition is the binding one, the English is a translation. */}
             <a
               href={tx('legal/NLdigital-Terms-EN.pdf', 'legal/NLdigital-Voorwaarden-NL.pdf')}
               target="_blank"
               rel="noopener"
-              style={{ color: 'inherit', textDecoration: 'none' }}
             >
               {tx('Terms', 'Voorwaarden')}
             </a>
-            <a href="Privacy.html" style={{ color: 'inherit', textDecoration: 'none' }}>{tx('Privacy', 'Privacy')}</a>
+            <a href="Privacy.html">{tx('Privacy', 'Privacy')}</a>
             {/* Cookies covers withdrawing consent too: that page carries the
                 "Change my cookie preferences" button, so there is no separate link here. */}
-            <a href="Cookies.html" style={{ color: 'inherit', textDecoration: 'none' }}>{tx('Cookies', 'Cookies')}</a>
+            <a href="Cookies.html">{tx('Cookies', 'Cookies')}</a>
           </div>
         </div>
       </div>
 
       <style>{`
+        /* Terms / Privacy / Cookies. Coral on hover to match the columns above,
+           plus a hairline that wipes in from the left. */
+        .footer-legal a {
+          position: relative;
+          color: inherit;
+          text-decoration: none;
+          transition: color 140ms var(--ease-out);
+        }
+        .footer-legal a::after {
+          content: '';
+          position: absolute;
+          left: 0; right: 0; bottom: -3px;
+          height: 1px;
+          background: var(--intigris-coral);
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 220ms var(--ease-out);
+        }
+        .footer-legal a:hover,
+        .footer-legal a:focus-visible { color: var(--intigris-coral); }
+        .footer-legal a:hover::after,
+        .footer-legal a:focus-visible::after { transform: scaleX(1); }
+        /* Keyboard users get the same affordance, not a browser default outline. */
+        .footer-legal a:focus-visible { outline: none; }
+        /* Respect a reduced-motion preference: colour still changes, the line
+           just appears instead of sliding. */
+        @media (prefers-reduced-motion: reduce) {
+          .footer-legal a::after { transition: none; }
+        }
+
         @media (max-width: 900px) {
           .footer-grid { grid-template-columns: 1fr 1fr !important; }
         }
