@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sales Cloud | Intigris</title>
+  <meta name="description" content="Salesforce Sales Cloud (now Agentforce Sales) implemented by Intigris: one pipeline for every deal and every rep. Live in four weeks with our Quickstart, or a full implementation on our proven process.">
+  <link rel="stylesheet" href="design-system/site.css?v=1788863018000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = 'en';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+    window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="text/babel" src="components/Services.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/Newsletter.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/ContactSheet.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/CookieConsent.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1788863018000"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    /* ================================================================== */
+    /*  SALES CLOUD PAGE                                                   */
+    /*  English first. NL toggle shows English until copy is final.       */
+    /*  TODO markers show where real data should replace placeholders.    */
+    /* ================================================================== */
+
+    const PROOF = [
+      'Salesforce partner since 2010',
+      'Quickstart: live in 4 weeks',
+      'WeTransfer, Bedrocan, GoBright and more run on it',
+      'Certified consultants, Amsterdam-Noord',
+    ];
+
+    const BENEFITS = [
+      { t: 'One view of every customer', d: 'Accounts, contacts, activity and history in one place. No more asking three people what happened last.' },
+      { t: 'A pipeline you can trust', d: 'Every deal has a stage, an owner and a next step. Forecasts stop being a Friday-afternoon guess.' },
+      { t: 'Less admin, more selling', d: 'Automatic activity capture, guided steps and approvals that route themselves.' },
+      { t: 'Reports that answer questions', d: 'Dashboards for reps, managers and the board, built on the same numbers.' },
+      { t: 'Grows with you', d: 'Start with leads and opportunities. Add quoting, territories, partners and AI when you are ready.' },
+    ];
+
+    /* The sales cycle walk-through. `illo` selects the on-brand illustration. */
+    const STEPS = [
+      {
+        num: '01', illo: 'lead',
+        title: 'Capture and qualify leads',
+        body: 'Web forms, inbound mail, events and imports all land in one queue. Assignment rules route each lead to the right person, and scoring tells them who to call first.',
+        points: ['Web-to-lead and email capture', 'Assignment rules and queues', 'Lead scoring and conversion'],
+      },
+      {
+        num: '02', illo: 'account',
+        title: 'Know the whole account',
+        body: 'Every contact, meeting, email and open case on one record. Your reps walk into a call knowing what finance, service and the last rep already said.',
+        points: ['Account and contact hierarchy', 'Activity timeline', 'Related cases, orders and files'],
+      },
+      {
+        num: '03', illo: 'pipeline',
+        title: 'Run the pipeline',
+        body: 'Opportunities move through stages you define, with required fields and guidance at each one. Managers see stalled deals before they die quietly.',
+        points: ['Custom stages and sales paths', 'Kanban and list views', 'Stalled-deal alerts'],
+      },
+      {
+        num: '04', illo: 'forecast',
+        title: 'Forecast with confidence',
+        body: 'Commit, best case and pipeline roll up from rep to team to region. Adjustments are tracked, so the number you give the board is one you can defend.',
+        points: ['Collaborative forecasting', 'Quota tracking', 'Forecast adjustments with history'],
+      },
+      {
+        num: '05', illo: 'quote',
+        title: 'Quote and get approval',
+        body: 'Products, price books and discount rules live in the CRM. Quotes generate from the opportunity and approvals route to the right manager automatically.',
+        points: ['Products and price books', 'Quote templates', 'Discount approval flows'],
+      },
+      {
+        num: '06', illo: 'dashboard',
+        title: 'See what is working',
+        body: 'Win rates, cycle time, pipeline coverage and rep activity on dashboards that refresh themselves. The Monday meeting starts with facts instead of anecdotes.',
+        points: ['Reports and dashboards', 'Pipeline coverage and velocity', 'Rep and team scorecards'],
+      },
+    ];
+
+    const CUSTOMERS = [
+      { name: 'WeTransfer', note: 'From Excel to Sales Cloud, then order-to-cash into NetSuite.' },
+      { name: 'Bedrocan', note: 'TODO: one line on the Sales Cloud project.' },
+      { name: 'VETkanaal', note: 'TODO: one line on the Sales Cloud project.' },
+      { name: 'Straight-Line Leadership', note: 'TODO: one line on the Sales Cloud project.' },
+      { name: 'GoBright', note: 'TODO: one line on the Sales Cloud project.' },
+    ];
+
+    const QUICKSTART_WEEKS = [
+      { w: 'Week 1', t: 'Information gathering', d: 'Your process, your data, your must-haves.' },
+      { w: 'Week 2', t: 'Configuration', d: 'Leads, accounts, contacts, opportunities set up.' },
+      { w: 'Week 3', t: 'Configuration and demo', d: 'Reports, dashboards, and a walkthrough with your team.' },
+      { w: 'Week 4', t: 'Feedback and go-live', d: 'Final changes, handover, and support on day one.' },
+    ];
+
+    const PROCESS = ['Discover', 'Analyse', 'Design', 'Realisation', 'Deploy', 'Support'];
+
+    const FAQ = [
+      { q: 'What does a Sales Cloud implementation cost?', a: 'It depends on scope, which is why we start with a 30-minute call. As a guide: the Quickstart is a fixed four-week programme with a fixed price we share on that call. A full implementation is scoped after a short analysis phase, so you get a number you can plan on rather than an estimate that grows. Salesforce licences are separate and billed by Salesforce.' },
+      { q: 'How long does it take?', a: 'The Quickstart takes four weeks from kick-off to go-live. Full implementations typically run eight to sixteen weeks depending on integrations, data migration and the number of teams involved. We deliver in sprints, so you see working software every two weeks.' },
+      { q: 'We are on HubSpot, Dynamics or spreadsheets. Can you migrate us?', a: 'Yes. Migration is a standard part of our projects: we map your objects and fields, clean the data on the way over, and run a trial load before the real one. Spreadsheets are the most common starting point we see, and WeTransfer is a good example of what that move looks like.' },
+      { q: 'Which Salesforce licences do we need?', a: 'Most teams start on Sales Cloud Enterprise, which covers pipeline, forecasting, automation and reporting. Smaller teams can start on Professional. Agentforce and Einstein features are add-ons or included in higher editions. We advise on the mix before you sign anything, and we do not resell licences, so the advice is not tied to margin.' },
+      { q: 'Who owns the setup after go-live?', a: 'You do. Everything is built in your own Salesforce org with your admin users. We document the configuration, train your admin, and offer support options if you want us to stay close. There is no lock-in and no proprietary layer between you and Salesforce.' },
+      { q: 'Where is our data stored?', a: 'In Salesforce data centres in the EU when your org is provisioned in the EU region, which is what we set up for Dutch and Benelux customers by default. Salesforce also offers Hyperforce on public cloud infrastructure in the EU. We can walk through the data residency and GDPR paperwork with your DPO.' },
+    ];
+
+    /* ------------------------------------------------------------------ */
+    /*  On-brand UI illustrations (HTML/CSS, no screenshots)               */
+    /* ------------------------------------------------------------------ */
+
+    const Illo = ({ kind }) => {
+      const chip = (label, filled) => (
+        <span className={'sc-ui-chip' + (filled ? ' sc-ui-chip--fill' : '')}>{label}</span>
+      );
+      const line = (w, dim) => <span className={'sc-ui-line' + (dim ? ' sc-ui-line--dim' : '')} style={{ width: w }} />;
+
+      if (kind === 'lead') {
+        const leads = [
+          { init: 'NJ', name: 'Noor Jansen', co: 'Havenwerk BV', src: 'Web form', score: 92, hot: true },
+          { init: 'DV', name: 'Daan Visser', co: 'Brightline Energy', src: 'Event', score: 74 },
+          { init: 'IdG', name: 'Iris de Groot', co: 'Kade & Zonen', src: 'Inbound mail', score: 61 },
+          { init: 'SM', name: 'Sem Meijer', co: 'Polder Logistiek', src: 'Import', score: 38 },
+        ];
+        return (
+          <div className="sc-ui">
+            <div className="sc-ui-head"><span className="sc-ui-title">Leads · My queue</span>{chip('4 new', true)}</div>
+            {leads.map((l, i) => (
+              <div key={i} className="sc-ui-row">
+                <span className={'sc-ui-avatar' + (l.hot ? ' sc-ui-avatar--hot' : '')}>{l.init}</span>
+                <span className="sc-ui-cell sc-ui-cell--grow"><b>{l.name}</b><small>{l.co} · {l.src}</small></span>
+                <span className="sc-ui-score"><i style={{ width: l.score + '%' }} /><em>{l.score}</em></span>
+              </div>
+            ))}
+            <div className="sc-ui-foot">Assignment rule: <b>NL Inbound → Sales team A</b></div>
+          </div>
+        );
+      }
+
+      if (kind === 'account') {
+        return (
+          <div className="sc-ui">
+            <div className="sc-ui-head">
+              <span className="sc-ui-logo">H</span>
+              <span className="sc-ui-cell sc-ui-cell--grow"><b>Havenwerk BV</b><small>Customer · Rotterdam · Since 2019</small></span>
+              {chip('Key account', true)}
+            </div>
+            <div className="sc-ui-tabs"><span className="is-on">Timeline</span><span>Contacts 12</span><span>Opportunities 3</span><span>Cases 1</span></div>
+            <div className="sc-ui-timeline">
+              {[
+                ['Today', 'Call · Renewal terms discussed', 'coral'],
+                ['Yesterday', 'Email · Quote Q-2041 sent to Noor', ''],
+                ['Mon', 'Case #4410 closed by Service team', ''],
+                ['Last week', 'Meeting · Integration roadmap review', ''],
+              ].map((t, i) => (
+                <div key={i} className="sc-ui-tl">
+                  <span className={'sc-ui-dot' + (t[2] ? ' sc-ui-dot--coral' : '')} />
+                  <small>{t[0]}</small><span>{t[1]}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      if (kind === 'pipeline') {
+        const cols = [
+          ['Qualify', ['Brightline · €48k', 'Bouwgroep · €22k']],
+          ['Propose', ['Kade & Zonen · €95k', 'Polder Logistiek · €31k', 'Capisoft · €18k']],
+          ['Negotiate', ['Havenwerk · €140k']],
+          ['Closed won', ['Nova Energy · €62k']],
+        ];
+        return (
+          <div className="sc-ui sc-ui--wide">
+            <div className="sc-ui-head"><span className="sc-ui-title">Opportunities · This quarter</span>{chip('€416k open')}</div>
+            <div className="sc-ui-kanban">
+              {cols.map((c, i) => (
+                <div key={i} className="sc-ui-col">
+                  <div className="sc-ui-colhead">{c[0]} <em>{c[1].length}</em></div>
+                  {c[1].map((card, j) => <div key={j} className={'sc-ui-card' + (i === 3 ? ' sc-ui-card--won' : '')}>{card}</div>)}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      if (kind === 'forecast') {
+        const bars = [62, 74, 58, 88, 81, 95];
+        return (
+          <div className="sc-ui">
+            <div className="sc-ui-head"><span className="sc-ui-title">Forecast · Q4</span>{chip('Commit €1.2M', true)}</div>
+            <div className="sc-ui-chart">
+              <span className="sc-ui-quota"><em>Quota €1.4M</em></span>
+              {bars.map((h, i) => <div key={i} className="sc-ui-bar" style={{ height: h + '%' }}><i style={{ height: Math.min(100, h + 14) + '%' }} /></div>)}
+            </div>
+            <div className="sc-ui-legend"><span><i /> Commit</span><span><i className="dim" /> Best case</span></div>
+          </div>
+        );
+      }
+
+      if (kind === 'quote') {
+        return (
+          <div className="sc-ui">
+            <div className="sc-ui-head"><span className="sc-ui-title">Quote Q-2041 · Havenwerk BV</span>{chip('Approved', true)}</div>
+            {[['Sales Cloud Enterprise · 40 users', '€ 72.000'], ['Implementation · Quickstart', '€ —'], ['Data migration', '€ 6.400'], ['Discount 8%', '− € 6.272']].map((r, i) => (
+              <div key={i} className="sc-ui-row sc-ui-row--thin"><span className="sc-ui-cell sc-ui-cell--grow">{r[0]}</span><span className="sc-ui-amt">{r[1]}</span></div>
+            ))}
+            <div className="sc-ui-total"><span>Total</span><b>€ 72.128</b></div>
+            <div className="sc-ui-foot">Approval: Discount &gt; 5% → <b>Sales Director</b> · approved 14:02</div>
+          </div>
+        );
+      }
+
+      if (kind === 'dashboard') {
+        return (
+          <div className="sc-ui sc-ui--wide">
+            <div className="sc-ui-head"><span className="sc-ui-title">Sales dashboard · Team NL</span>{chip('Live')}</div>
+            <div className="sc-ui-kpis">
+              {[['Win rate', '34%', '+6'], ['Cycle time', '41 d', '−9'], ['Coverage', '3.2×', '+0.4'], ['Activities', '218', '+31']].map((k, i) => (
+                <div key={i} className="sc-ui-kpi"><small>{k[0]}</small><b>{k[1]}</b><em>{k[2]}</em></div>
+              ))}
+            </div>
+            <div className="sc-ui-spark">{[30, 42, 38, 55, 61, 58, 72, 80].map((h, i) => <i key={i} style={{ height: h + '%' }} />)}</div>
+          </div>
+        );
+      }
+
+      if (kind === 'agent') {
+        return (
+          <div className="sc-ui sc-ui--dark">
+            <div className="sc-ui-head"><span className="sc-ui-title">Agentforce · Deal summary</span>{chip('AI', true)}</div>
+            <p className="sc-ui-ai">Havenwerk renewal is at <b>Negotiate</b> with €140k committed. Last touch was a call today about terms. Risk: procurement contact has not replied in 9 days.</p>
+            <div className="sc-ui-actions"><span>Draft follow-up to procurement</span><span>Schedule exec check-in</span><span>Update close date</span></div>
+          </div>
+        );
+      }
+      return null;
+    };
+
+    /* ------------------------------------------------------------------ */
+    /*  Sections                                                           */
+    /* ------------------------------------------------------------------ */
+
+    function Hero({ onCta }) {
+      return (
+        <section className="sc-hero">
+          <div aria-hidden className="sc-hero-photo" />
+          <div aria-hidden className="sc-hero-glow" />
+          <div aria-hidden className="sc-hero-fade" />
+          <div className="container-wide sc-hero-inner">
+            <div className="sc-hero-grid">
+              <div>
+                <div className="eyebrow" style={{ marginBottom: 22, color: 'var(--intigris-coral)' }}>SALES CLOUD · NOW AGENTFORCE SALES</div>
+                <h1 className="sc-h1">Every deal, every rep, <span>one pipeline.</span></h1>
+                <p className="sc-lede-dark">
+                  Salesforce Sales Cloud, implemented by people who have done it since 2010. Leads, accounts, opportunities, forecasts and quotes in one system your team will actually use. Live in four weeks with our Quickstart, or scoped properly for the long haul.
+                </p>
+                <div style={{ marginTop: 32, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                  <button className="btn btn-on-brown" onClick={onCta}>Book a 30-min call <span className="arrow">→</span></button>
+                  <a className="btn btn-outline-light" href="#how">See how it works <span className="arrow">↓</span></a>
+                </div>
+              </div>
+              <div className="sc-proof">
+                {PROOF.map((s, i) => (
+                  <div key={i} className="sc-proof-row">
+                    <span className="sc-proof-num">#{String(i + 1).padStart(2, '0')}</span>
+                    <span>{s}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function WhatItIs() {
+      return (
+        <section className="container-wide sc-section">
+          <div className="section-head">
+            <div>
+              <div className="eyebrow" style={{ marginBottom: 20 }}>WHAT IT IS</div>
+              <h2 className="display-md">The CRM your sales team <span style={{ color: 'var(--intigris-coral)' }}>runs on.</span></h2>
+            </div>
+            <p className="lede">
+              Sales Cloud is Salesforce's platform for selling: the place where leads become opportunities, opportunities become revenue, and everyone from the newest rep to the CFO looks at the same numbers. Salesforce now sells it as Agentforce Sales, with AI agents built in. Same platform, more help.
+            </p>
+          </div>
+          <div className="sc-benefits">
+            {BENEFITS.map((b, i) => (
+              <div key={i} className="sc-benefit">
+                <span className="sc-benefit-num">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{b.t}</h3>
+                <p>{b.d}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    function HowItWorks() {
+      return (
+        <section id="how" className="sc-section sc-section--soft">
+          <div className="container-wide">
+            <div className="section-head">
+              <div>
+                <div className="eyebrow" style={{ marginBottom: 20 }}>FROM LEAD TO CLOSED DEAL</div>
+                <h2 className="display-md">Six steps. <span style={{ color: 'var(--intigris-coral)' }}>One system.</span></h2>
+              </div>
+              <p className="lede">This is what a sales cycle looks like once it runs on Sales Cloud. Each step is something we configure with you in the first weeks, not a feature you discover later.</p>
+            </div>
+
+            {STEPS.map((s, i) => (
+              <article key={s.num} className={'sc-step' + (i % 2 ? ' sc-step--flip' : '')}>
+                <div className="sc-step-illo"><Illo kind={s.illo} /></div>
+                <div className="sc-step-copy">
+                  <div className="sc-step-num">{s.num}</div>
+                  <h3>{s.title}</h3>
+                  <p>{s.body}</p>
+                  <ul>
+                    {s.points.map((p, j) => <li key={j}><span aria-hidden className="sc-dot" />{p}</li>)}
+                  </ul>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    function AgentforceBand() {
+      return (
+        <section className="sc-agent">
+          <div className="container-wide sc-agent-grid">
+            <div>
+              <div className="eyebrow" style={{ marginBottom: 20, color: 'var(--intigris-coral)' }}>AND THEN THERE IS AGENTFORCE</div>
+              <h2 className="sc-h2-light">An AI colleague who has <span>read every record.</span></h2>
+              <p>
+                Since Dreamforce '25, Sales Cloud ships as Agentforce Sales. Agents summarise deals, draft follow-ups, flag risk and update records from a call transcript. Grounded in your data, with guardrails you set. We switch it on once the basics are solid, not before.
+              </p>
+              <ul className="sc-agent-list">
+                <li>Deal and account summaries on demand</li>
+                <li>Next-best-action and follow-up drafts</li>
+                <li>Call notes to CRM fields, automatically</li>
+              </ul>
+              <a className="link-arrow sc-link-light" href="Services.html#agentforce">Our Agentforce practice <span className="arrow">→</span></a>
+            </div>
+            <div><Illo kind="agent" /></div>
+          </div>
+        </section>
+      );
+    }
+
+    function Customers() {
+      return (
+        <section className="container-wide sc-section">
+          <div className="section-head">
+            <div>
+              <div className="eyebrow" style={{ marginBottom: 20 }}>WHO RUNS ON IT</div>
+              <h2 className="display-md">Built for teams that <span style={{ color: 'var(--intigris-coral)' }}>outgrew the spreadsheet.</span></h2>
+            </div>
+          </div>
+          <div className="sc-customers">
+            <article className="sc-case">
+              <div className="eyebrow eyebrow--bare" style={{ marginBottom: 14 }}>CASE · WETRANSFER</div>
+              <blockquote>“Due to the work Intigris delivered we have taken an important step forward in automation and cleaning of data.”</blockquote>
+              <div className="sc-case-who"><b>Mathieu Kok</b><span>Advertising Systems Director, WeTransfer</span></div>
+              <p>WeTransfer's sales ran on spreadsheets that stopped scaling with the company. We implemented Sales Cloud, then connected it to NetSuite so orders flow to invoices without anyone retyping them. Finance got its time back; leadership got dashboards it trusts.</p>
+              <a className="link-arrow" href="#" aria-disabled="true">Read the case <span className="arrow">→</span></a>
+              <span className="sc-todo">TODO: link to case page</span>
+            </article>
+            <div className="sc-logos">
+              {CUSTOMERS.slice(1).map((c, i) => (
+                <div key={i} className="sc-logo">
+                  <b>{c.name}</b>
+                  <span>{c.note}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Offers({ onCta }) {
+      return (
+        <section id="offers" className="sc-section sc-section--soft">
+          <div className="container-wide">
+            <div className="section-head">
+              <div>
+                <div className="eyebrow" style={{ marginBottom: 20 }}>TWO WAYS TO START</div>
+                <h2 className="display-md">Fast, or <span style={{ color: 'var(--intigris-coral)' }}>thorough.</span></h2>
+              </div>
+              <p className="lede">Both end with a Sales Cloud your team uses on Monday morning. The difference is how much we tailor before go-live.</p>
+            </div>
+            <div className="sc-offers">
+              <article className="sc-offer sc-offer--hi">
+                <div className="sc-offer-head">
+                  <div>
+                    <div className="eyebrow eyebrow--bare">QUICKSTART TO SALES CLOUD</div>
+                    <h3>Live in four weeks.</h3>
+                  </div>
+                  <span className="sc-offer-badge">Fixed scope</span>
+                </div>
+                <p>A working Sales Cloud with your leads, accounts, contacts, opportunities and dashboards, configured around how you sell today. For teams that want to stop planning and start using.</p>
+                <ol className="sc-weeks">
+                  {QUICKSTART_WEEKS.map((w, i) => (
+                    <li key={i}><small>{w.w}</small><b>{w.t}</b><span>{w.d}</span></li>
+                  ))}
+                </ol>
+                <div className="sc-offer-inc">
+                  <small>Included</small>
+                  <span>Basic setup and lead management · Accounts, contacts, opportunities · Reports and dashboards · Go-live support</span>
+                  <small style={{ marginTop: 10 }}>Optional</small>
+                  <span>Extra reports and dashboards · Email integration · Mobile · Data migration</span>
+                </div>
+                <button className="btn btn-primary" onClick={onCta}>Let's scope it <span className="arrow">→</span></button>
+              </article>
+
+              <article className="sc-offer">
+                <div className="sc-offer-head">
+                  <div>
+                    <div className="eyebrow eyebrow--bare">FULL IMPLEMENTATION</div>
+                    <h3>Designed around you.</h3>
+                  </div>
+                  <span className="sc-offer-badge sc-offer-badge--soft">Scoped</span>
+                </div>
+                <p>For teams with integrations, multiple business units, quoting rules or a migration behind them. We follow our six-step process: agree the blueprint like waterfall, deliver in sprints like agile.</p>
+                <ol className="sc-process">
+                  {PROCESS.map((p, i) => <li key={i}><small>{String(i + 1).padStart(2, '0')}</small>{p}</li>)}
+                </ol>
+                <div className="sc-offer-inc">
+                  <small>Typical additions</small>
+                  <span>ERP and finance integration · Data migration and cleaning · CPQ and approvals · Territories and partner channels · Agentforce</span>
+                </div>
+                <button className="btn btn-secondary" onClick={onCta}>Talk to a consultant <span className="arrow">→</span></button>
+              </article>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function WorksWith() {
+      const items = [['Integrations', 'integrations'], ['Data 360', 'data'], ['Agentforce', 'agentforce'], ['Service Cloud', 'service'], ['Experience Cloud', 'experience']];
+      return (
+        <section className="container-wide sc-section sc-section--tight">
+          <div className="sc-works">
+            <div>
+              <div className="eyebrow" style={{ marginBottom: 12 }}>WORKS WITH</div>
+              <p>Sales Cloud rarely stands alone. These are the pieces we most often connect to it.</p>
+            </div>
+            <div className="sc-chips">
+              {items.map(([l, a]) => <a key={a} className="chip sc-chip" href={'Services.html#' + a}>{l} <span aria-hidden>→</span></a>)}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Faq() {
+      const [open, setOpen] = useState(0);
+      return (
+        <section className="container-wide sc-section">
+          <div className="sc-faq-grid">
+            <div>
+              <div className="eyebrow" style={{ marginBottom: 20 }}>QUESTIONS WE GET</div>
+              <h2 className="display-md" style={{ fontSize: 'clamp(32px, 3.6vw, 52px)' }}>Before you <span style={{ color: 'var(--intigris-coral)' }}>book the call.</span></h2>
+            </div>
+            <div className="sc-faq">
+              {FAQ.map((f, i) => (
+                <div key={i} className={'sc-faq-item' + (open === i ? ' is-open' : '')}>
+                  <button type="button" onClick={() => setOpen(open === i ? -1 : i)} aria-expanded={open === i}>
+                    <span>{f.q}</span><i aria-hidden>{open === i ? '−' : '+'}</i>
+                  </button>
+                  {open === i && <p>{f.a}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function SalesCloudPage({ onCta }) {
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+          <Hero onCta={onCta} />
+          <WhatItIs />
+          <HowItWorks />
+          <AgentforceBand />
+          <Customers />
+          <Offers onCta={onCta} />
+          <WorksWith />
+          <Faq />
+          <SiteFinalCTA onCta={onCta} />
+          <style>{`
+            /* ---------- layout ---------- */
+            .sc-section { padding-top: clamp(64px, 8vw, 112px); padding-bottom: clamp(64px, 8vw, 112px); }
+            .sc-section--soft { background: var(--intigris-off-white-200); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+            .sc-section--tight { padding-top: clamp(40px, 5vw, 64px); padding-bottom: clamp(40px, 5vw, 64px); }
+
+            /* ---------- hero ---------- */
+            .sc-hero { position: relative; overflow: hidden; isolation: isolate; background: var(--intigris-brown-700); color: var(--intigris-off-white); border-bottom-left-radius: clamp(24px, 4vw, 56px); border-bottom-right-radius: clamp(24px, 4vw, 56px); }
+            .sc-hero-photo { position: absolute; inset: 0; z-index: 0; background: url("assets/hero-team.jpg") center right / cover; opacity: .38; mix-blend-mode: luminosity; -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 36%, #000 80%); mask-image: linear-gradient(90deg, transparent 0%, transparent 36%, #000 80%); }
+            .sc-hero-glow { position: absolute; inset: 0; z-index: 0; background: radial-gradient(120% 90% at 82% 30%, rgba(255,95,54,.55) 0%, rgba(255,95,54,.18) 38%, rgba(43,23,0,0) 70%); }
+            .sc-hero-fade { position: absolute; inset: 0; z-index: 0; background: linear-gradient(180deg, rgba(43,23,0,.1) 0%, rgba(43,23,0,0) 40%, rgba(43,23,0,.55) 100%); }
+            .sc-hero-inner { position: relative; z-index: 1; padding-top: clamp(132px, 17vh, 200px); padding-bottom: clamp(56px, 8vh, 96px); }
+            .sc-hero-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: end; }
+            .sc-h1 { font-size: clamp(42px, 5.8vw, 84px); font-weight: 500; letter-spacing: -.03em; line-height: .98; margin: 0; color: var(--intigris-off-white); text-wrap: balance; }
+            .sc-h1 span { color: var(--intigris-coral); font-style: italic; }
+            .sc-lede-dark { margin-top: 26px; max-width: 600px; font-size: 18px; font-weight: 400; line-height: 1.55; color: rgba(252,247,235,.88); }
+            .sc-proof { justify-self: end; width: 100%; max-width: 420px; background: rgba(252,247,235,.06); border: 1px solid rgba(252,247,235,.18); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 20px; padding: 10px 26px; }
+            .sc-proof-row { display: flex; align-items: center; gap: 16px; padding: 15px 0; border-bottom: 1px solid rgba(252,247,235,.14); font-size: 15px; font-weight: 500; letter-spacing: -.005em; }
+            .sc-proof-row:last-child { border-bottom: 0; }
+            .sc-proof-num { font-size: 12px; font-weight: 500; letter-spacing: .12em; color: var(--intigris-coral); flex: none; width: 28px; }
+
+            /* ---------- benefits ---------- */
+            .sc-benefits { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+            .sc-benefit { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 20px; padding: 24px 22px 26px; }
+            .sc-benefit-num { font-size: 12px; font-weight: 600; letter-spacing: .14em; color: var(--intigris-coral-700); }
+            .sc-benefit h3 { font-size: 19px; font-weight: 500; letter-spacing: -.016em; line-height: 1.15; margin: 12px 0 8px; }
+            .sc-benefit p { margin: 0; font-size: 14.5px; line-height: 1.5; color: var(--fg-muted); }
+
+            /* ---------- steps ---------- */
+            .sc-step { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 80px); align-items: center; padding: clamp(36px, 4.5vw, 64px) 0; border-top: 1px solid var(--border); }
+            .sc-step:first-of-type { border-top: 0; }
+            .sc-step--flip .sc-step-illo { order: 2; }
+            .sc-step-num { font-size: 13px; font-weight: 600; letter-spacing: .14em; color: var(--intigris-coral-700); }
+            .sc-step-copy h3 { font-size: clamp(26px, 2.8vw, 38px); font-weight: 500; letter-spacing: -.022em; line-height: 1.08; margin: 12px 0 0; }
+            .sc-step-copy p { margin: 16px 0 0; font-size: 16.5px; line-height: 1.6; color: var(--fg-muted); max-width: 520px; }
+            .sc-step-copy ul { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+            .sc-step-copy li { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; color: var(--intigris-dark-brown); }
+            .sc-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--intigris-coral); flex: none; margin-top: 7px; }
+            .sc-step-illo { display: flex; justify-content: center; }
+
+            /* ---------- UI illustrations ---------- */
+            .sc-ui { width: 100%; max-width: 440px; background: var(--intigris-off-white); border: 1px solid var(--border); border-radius: 18px; padding: 18px 18px 16px; box-shadow: 0 30px 60px -36px rgba(64,35,1,.45), 0 2px 0 rgba(64,35,1,.04); font-size: 13px; color: var(--intigris-dark-brown); }
+            .sc-ui--wide { max-width: 560px; }
+            .sc-ui--dark { background: var(--intigris-brown-700); color: var(--intigris-off-white); border-color: rgba(252,247,235,.16); box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+            .sc-ui-head { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+            .sc-ui--dark .sc-ui-head { border-color: rgba(252,247,235,.16); }
+            .sc-ui-title { font-weight: 500; letter-spacing: -.01em; flex: 1; }
+            .sc-ui-chip { font-size: 11px; font-weight: 500; letter-spacing: .02em; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--fg-muted); white-space: nowrap; }
+            .sc-ui-chip--fill { background: var(--intigris-coral); border-color: var(--intigris-coral); color: var(--intigris-dark-brown); }
+            .sc-ui-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid rgba(64,35,1,.06); }
+            .sc-ui-row:last-of-type { border-bottom: 0; }
+            .sc-ui-row--thin { padding: 7px 0; }
+            .sc-ui-avatar { width: 32px; height: 32px; border-radius: 999px; display: grid; place-items: center; font-size: 11px; font-weight: 600; background: var(--intigris-off-white-200); color: var(--intigris-dark-brown); flex: none; }
+            .sc-ui-avatar--hot { background: var(--intigris-coral); }
+            .sc-ui-cell { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+            .sc-ui-cell--grow { flex: 1; }
+            .sc-ui-cell b { font-weight: 500; }
+            .sc-ui-cell small { font-size: 11.5px; color: var(--fg-muted); }
+            .sc-ui-score { position: relative; width: 84px; height: 6px; border-radius: 999px; background: var(--intigris-off-white-200); flex: none; }
+            .sc-ui-score i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--intigris-coral); }
+            .sc-ui-score em { position: absolute; right: 0; top: -18px; font-size: 10.5px; font-style: normal; color: var(--fg-muted); }
+            .sc-ui-foot { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--fg-muted); }
+            .sc-ui-foot b { color: var(--intigris-dark-brown); font-weight: 500; }
+            .sc-ui-logo { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--intigris-dark-brown); color: var(--intigris-off-white); font-weight: 600; flex: none; }
+            .sc-ui-tabs { display: flex; gap: 14px; font-size: 12px; color: var(--fg-muted); padding: 2px 0 10px; border-bottom: 1px solid var(--border); }
+            .sc-ui-tabs .is-on { color: var(--intigris-dark-brown); font-weight: 500; position: relative; }
+            .sc-ui-tabs .is-on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -11px; height: 2px; background: var(--intigris-coral); }
+            .sc-ui-timeline { padding-top: 10px; display: flex; flex-direction: column; gap: 10px; }
+            .sc-ui-tl { display: grid; grid-template-columns: 10px 72px 1fr; gap: 10px; align-items: center; }
+            .sc-ui-tl small { font-size: 11px; color: var(--fg-muted); }
+            .sc-ui-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--intigris-off-white-200); border: 1px solid var(--border); }
+            .sc-ui-dot--coral { background: var(--intigris-coral); border-color: var(--intigris-coral); }
+            .sc-ui-kanban { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+            .sc-ui-colhead { font-size: 11px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--fg-muted); display: flex; justify-content: space-between; margin-bottom: 8px; }
+            .sc-ui-colhead em { font-style: normal; }
+            .sc-ui-card { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 10px; padding: 9px 10px; font-size: 11.5px; margin-bottom: 8px; line-height: 1.3; }
+            .sc-ui-card--won { background: var(--intigris-coral); border-color: var(--intigris-coral); }
+            .sc-ui-chart { position: relative; height: 140px; display: flex; align-items: flex-end; gap: 12px; padding: 22px 6px 0; }
+            .sc-ui-bar { flex: 1; position: relative; background: var(--intigris-coral); border-radius: 6px 6px 0 0; }
+            .sc-ui-bar i { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(255,95,54,.28); border-radius: 6px 6px 0 0; z-index: -1; }
+            .sc-ui-quota { position: absolute; left: 0; right: 0; top: 26px; border-top: 1.5px dashed var(--intigris-dark-brown); }
+            .sc-ui-quota em { position: absolute; right: 0; top: -18px; font-size: 10.5px; font-style: normal; color: var(--fg-muted); }
+            .sc-ui-legend { display: flex; gap: 16px; margin-top: 12px; font-size: 11.5px; color: var(--fg-muted); }
+            .sc-ui-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: var(--intigris-coral); margin-right: 6px; vertical-align: -1px; }
+            .sc-ui-legend i.dim { background: rgba(255,95,54,.28); }
+            .sc-ui-amt { font-variant-numeric: tabular-nums; font-weight: 500; }
+            .sc-ui-total { display: flex; justify-content: space-between; padding: 10px 0 2px; margin-top: 4px; border-top: 1px solid var(--border); font-size: 14px; }
+            .sc-ui-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+            .sc-ui-kpi { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+            .sc-ui-kpi small { font-size: 11px; color: var(--fg-muted); }
+            .sc-ui-kpi b { font-size: 20px; font-weight: 500; letter-spacing: -.02em; }
+            .sc-ui-kpi em { font-size: 11px; font-style: normal; color: var(--intigris-coral-700); }
+            .sc-ui-spark { display: flex; align-items: flex-end; gap: 8px; height: 80px; margin-top: 14px; padding: 0 4px; }
+            .sc-ui-spark i { flex: 1; background: var(--intigris-coral); border-radius: 5px 5px 0 0; opacity: .85; }
+            .sc-ui-ai { margin: 6px 0 12px; font-size: 14px; line-height: 1.5; color: rgba(252,247,235,.9); }
+            .sc-ui-ai b { color: var(--intigris-coral); font-weight: 500; }
+            .sc-ui-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+            .sc-ui-actions span { font-size: 11.5px; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(252,247,235,.3); }
+
+            /* ---------- agentforce band ---------- */
+            .sc-agent { background: var(--intigris-chocolate); color: var(--intigris-off-white); padding: clamp(64px, 8vw, 112px) 0; }
+            .sc-agent-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
+            .sc-agent-grid > div:last-child { display: flex; justify-content: flex-end; }
+            .sc-h2-light { font-size: clamp(30px, 3.6vw, 50px); font-weight: 500; letter-spacing: -.024em; line-height: 1.04; margin: 0; color: var(--intigris-off-white); text-wrap: balance; }
+            .sc-h2-light span { color: var(--intigris-coral); font-style: italic; }
+            .sc-agent p { margin: 18px 0 0; font-size: 17px; line-height: 1.6; color: rgba(252,247,235,.88); max-width: 560px; }
+            .sc-agent-list { list-style: none; margin: 20px 0 24px; padding: 0; display: flex; flex-direction: column; gap: 9px; font-size: 15px; }
+            .sc-agent-list li::before { content: "→"; color: var(--intigris-coral); margin-right: 10px; }
+            .sc-link-light { color: var(--intigris-off-white); border-color: rgba(252,247,235,.4); }
+
+            /* ---------- customers ---------- */
+            .sc-customers { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 18px; align-items: start; }
+            .sc-case { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: clamp(24px, 3vw, 40px); position: relative; }
+            .sc-case blockquote { margin: 0; font-size: clamp(20px, 2vw, 26px); font-weight: 700; letter-spacing: -.018em; line-height: 1.25; color: var(--intigris-dark-brown); }
+            .sc-case-who { margin: 16px 0 18px; display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+            .sc-case-who b { font-weight: 500; }
+            .sc-case-who span { color: var(--fg-muted); }
+            .sc-case p { margin: 0 0 18px; font-size: 15.5px; line-height: 1.6; color: var(--fg-muted); }
+            .sc-todo { position: absolute; top: 14px; right: 16px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--intigris-off-white); background: var(--intigris-washed-green); padding: 3px 8px; border-radius: 999px; }
+            .sc-logos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+            .sc-logo { background: var(--intigris-off-white); border: 1px solid var(--border); border-radius: 16px; padding: 20px 18px; display: flex; flex-direction: column; gap: 6px; min-height: 120px; }
+            .sc-logo b { font-size: 17px; font-weight: 500; letter-spacing: -.014em; }
+            .sc-logo span { font-size: 13px; line-height: 1.45; color: var(--fg-muted); }
+
+            /* ---------- offers ---------- */
+            .sc-offers { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; }
+            .sc-offer { background: var(--intigris-off-white); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: clamp(24px, 3vw, 36px); display: flex; flex-direction: column; gap: 18px; }
+            .sc-offer--hi { border: 1.5px solid var(--intigris-coral); box-shadow: 0 24px 60px -36px rgba(255,95,54,.5); }
+            .sc-offer-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+            .sc-offer h3 { font-size: clamp(24px, 2.4vw, 32px); font-weight: 500; letter-spacing: -.02em; line-height: 1.1; margin: 10px 0 0; }
+            .sc-offer > p { margin: 0; font-size: 15.5px; line-height: 1.6; color: var(--fg-muted); }
+            .sc-offer-badge { flex: none; font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; background: var(--intigris-coral); color: var(--intigris-dark-brown); }
+            .sc-offer-badge--soft { background: var(--intigris-off-white-200); color: var(--fg-muted); }
+            .sc-weeks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .sc-weeks li { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 3px; }
+            .sc-weeks small { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--intigris-coral-700); font-weight: 600; }
+            .sc-weeks b { font-size: 14.5px; font-weight: 500; }
+            .sc-weeks span { font-size: 12.5px; color: var(--fg-muted); line-height: 1.4; }
+            .sc-process { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .sc-process li { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; font-size: 14.5px; font-weight: 500; display: flex; flex-direction: column; gap: 4px; }
+            .sc-process small { font-size: 11px; letter-spacing: .08em; color: var(--intigris-coral-700); font-weight: 600; }
+            .sc-offer-inc { display: flex; flex-direction: column; gap: 4px; font-size: 13.5px; line-height: 1.5; color: var(--intigris-dark-brown); flex: 1; }
+            .sc-offer-inc small { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-muted); font-weight: 600; }
+            .sc-offer .btn { align-self: flex-start; }
+
+            /* ---------- works with ---------- */
+            .sc-works { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 32px; align-items: center; padding: 28px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+            .sc-works p { margin: 0; font-size: 15.5px; color: var(--fg-muted); }
+            .sc-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+            .sc-chip { text-decoration: none; cursor: pointer; height: 38px; padding: 0 16px; font-size: 14px; transition: background 160ms var(--ease-out), color 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+            .sc-chip:hover { background: var(--intigris-coral); color: var(--intigris-dark-brown); border-color: var(--intigris-coral); }
+
+            /* ---------- faq ---------- */
+            .sc-faq-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+            .sc-faq { border-top: 1px solid var(--border); }
+            .sc-faq-item { border-bottom: 1px solid var(--border); }
+            .sc-faq-item button { appearance: none; background: none; border: 0; width: 100%; text-align: left; padding: 20px 0; display: flex; justify-content: space-between; align-items: center; gap: 20px; cursor: pointer; font: inherit; font-size: 18px; font-weight: 500; letter-spacing: -.012em; color: var(--intigris-dark-brown); }
+            .sc-faq-item button i { font-style: normal; color: var(--intigris-coral); font-size: 22px; line-height: 1; flex: none; }
+            .sc-faq-item p { margin: 0 0 22px; font-size: 15.5px; line-height: 1.6; color: var(--fg-muted); max-width: 640px; }
+            .sc-faq-item.is-open button { color: var(--intigris-coral); }
+
+            /* ---------- responsive ---------- */
+            @media (max-width: 1180px) { .sc-benefits { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+            @media (max-width: 980px) {
+              .sc-hero-grid, .sc-step, .sc-agent-grid, .sc-customers, .sc-offers, .sc-works, .sc-faq-grid { grid-template-columns: 1fr; }
+              .sc-hero-grid { align-items: start; } .sc-proof { justify-self: start; }
+              .sc-step--flip .sc-step-illo { order: 0; }
+              .sc-agent-grid > div:last-child { justify-content: flex-start; }
+              .sc-chips { justify-content: flex-start; }
+            }
+            @media (max-width: 620px) {
+              .sc-benefits, .sc-logos, .sc-weeks { grid-template-columns: 1fr; }
+              .sc-process { grid-template-columns: repeat(2, 1fr); }
+              .sc-ui-kanban, .sc-ui-kpis { grid-template-columns: repeat(2, minmax(0,1fr)); }
+            }
+          `}</style>
+        </main>
+      );
+    }
+
+    function App() {
+      const [lang, setLang] = useState('en');
+      const [contactOpen, setContactOpen] = useState(false);
+      function changeLang(l){ window.__lang = l; document.documentElement.setAttribute('lang', l); setLang(l); }
+      function nav(r){
+        if (r === 'contact') return setContactOpen(true);
+        if (r === 'home') return (window.location.href = 'index.html');
+        return (window.location.href = 'index.html');
+      }
+      return (
+        <>
+          <SiteHeader overlay={true} megaTheme="cream" lang={lang} onLang={changeLang} onNav={nav} />
+          <SalesCloudPage key={'sc-' + lang} onCta={() => setContactOpen(true)} />
+          <SiteNewsletter key={'nl-' + lang} />
+          <SiteFooter key={'f-' + lang} />
+          <SiteCookieConsent />
+          <SiteContactSheet open={contactOpen} onClose={() => setContactOpen(false)} source="SalesCloud.html" />
+        </>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+</body>
+</html>
