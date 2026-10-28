@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Industries | Intigris</title>
+  <meta name="description" content="Salesforce for energy, manufacturing, installation, healthcare, logistics and technology. Domain expertise for the sectors that run on service.">
+  <link rel="stylesheet" href="design-system/site.css?v=1788863018000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = 'en';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+    window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="text/babel" src="components/Services.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/Newsletter.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/ContactSheet.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/CookieConsent.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1788863018000"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    /* ------------------------------------------------------------------ */
+    /*  Content                                                            */
+    /* ------------------------------------------------------------------ */
+
+    /* Same six sectors as the header mega menu and the home-page tabs, with
+       the copy kept in sync. Photos live in assets/industries/<id>.jpg.
+       `products` link into Services.html by anchor. */
+    const INDUSTRIES = [
+      {
+        id: 'energy', photoPos: 'center',
+        name: ['Energy', 'Energie'],
+        headline: ['Customer operations built for the energy transition.', 'Customer operations gebouwd voor de energietransitie.'],
+        body: [
+          'High volumes, complex regulated products and a market that keeps shifting. We build Salesforce-based service and engagement operations that absorb the load, keep the audit trail intact and stay compliant while the rules change.',
+          'Hoge volumes, complexe gereguleerde producten en een markt die blijft bewegen. We bouwen Salesforce-gestuurde service- en engagement-operaties die de druk opvangen, de audit trail intact houden en compliant blijven terwijl de regels veranderen.'
+        ],
+        pains: [
+          ['Spikes in customer demand', 'Pieken in klantvraag'],
+          ['Compliance and audit trails', 'Compliance en audit trails'],
+          ['Legacy billing integration', 'Legacy billing-integratie'],
+        ],
+        products: [['Service Cloud', 'service'], ['Data 360', 'data'], ['Agentforce', 'agentforce'], ['Integrations', 'integrations']],
+        proof: ['6 energy programmes · 3.2M+ customer interactions per year', '6 energieprogramma’s · 3,2M+ klantinteracties per jaar'],
+      },
+      {
+        id: 'manufacturing', photoPos: 'center',
+        name: ['Manufacturing', 'Industrie'],
+        headline: ['Connect the shop floor to the commercial team.', 'Verbind de werkvloer met het commerciële team.'],
+        body: [
+          'From quote-to-cash on configurable products to real-time service capacity, we integrate Salesforce with ERP and MES so sales, service and production operate on the same data instead of arguing about it.',
+          'Van quote-to-cash op configureerbare producten tot real-time servicecapaciteit: we integreren Salesforce met ERP en MES, zodat sales, service en productie op dezelfde data werken in plaats van erover te discussiëren.'
+        ],
+        pains: [
+          ['Disconnected ERP and CRM', 'Niet-verbonden ERP en CRM'],
+          ['Long quote cycles for configurable products', 'Lange quote-cycli voor configureerbare producten'],
+          ['No visibility on service profitability', 'Geen zicht op service-rentabiliteit'],
+        ],
+        products: [['Sales Cloud', 'sales'], ['Service Cloud', 'service'], ['Platform Development', 'platform'], ['Integrations', 'integrations']],
+        proof: ['12 manufacturing clients · average 38% faster quote cycle', '12 industriële klanten · gemiddeld 38% snellere quote-cyclus'],
+      },
+      {
+        id: 'installation', photoPos: 'center',
+        name: ['Installation', 'Installatie'],
+        headline: ['From first quote to final acceptance, in one system.', 'Van eerste offerte tot oplevering, in één systeem.'],
+        body: [
+          'Installer businesses run on hand-offs between sales, planning, engineers and finance. We connect them inside Salesforce so a job flows from survey to invoice end-to-end, with no spreadsheets in between and no engineer waiting for a part.',
+          'Installatiebedrijven draaien op overdrachten tussen sales, planning, monteurs en finance. We verbinden die in Salesforce, zodat een klus van opname tot factuur end-to-end doorloopt, zonder spreadsheets ertussen en zonder monteur die op een onderdeel wacht.'
+        ],
+        pains: [
+          ['Hand-offs between sales and operations', 'Overdrachten tussen sales en operatie'],
+          ['Slow site surveys and quoting', 'Trage opname en offertes'],
+          ['Acceptance and invoicing delays', 'Vertraging in oplevering en facturatie'],
+        ],
+        products: [['Field Service', 'field-service'], ['FieldBuddy', 'fieldbuddy'], ['Sales Cloud', 'sales'], ['Integrations', 'integrations']],
+        proof: ['Installer rollouts across HVAC, solar and security', 'Implementaties bij installateurs in HVAC, zonne-energie en beveiliging'],
+      },
+      {
+        id: 'healthcare', photoPos: 'center',
+        name: ['Healthcare', 'Zorg'],
+        headline: ['A patient and member experience that actually works.', 'Een patiënt- en leden-ervaring die écht werkt.'],
+        body: [
+          'For payers, providers and life-sciences organisations we deliver Salesforce solutions that respect regulatory boundaries while improving every patient or member touchpoint. Privacy by design, not by afterthought.',
+          'Voor zorgverzekeraars, zorgaanbieders en life-sciences leveren we Salesforce-oplossingen die binnen de regelgeving blijven én iedere patiënt- of leden-touchpoint verbeteren. Privacy by design, niet als nagedachte.'
+        ],
+        pains: [
+          ['Fragmented member data', 'Versplinterde leden-data'],
+          ['Compliance and privacy requirements', 'Compliance- en privacy-eisen'],
+          ['Multiple intake channels', 'Meerdere intake-kanalen'],
+        ],
+        products: [['Service Cloud', 'service'], ['Experience Cloud', 'experience'], ['Data 360', 'data'], ['Salesforce Consulting', 'consulting']],
+        proof: ['Implementations for healthcare and life-sciences organisations', 'Implementaties voor zorg- en life-sciences organisaties'],
+      },
+      {
+        id: 'logistics', photoPos: 'center',
+        name: ['Logistics', 'Logistiek'],
+        headline: ['Move every shipment, customer and case through one platform.', 'Iedere zending, klant en case op één platform.'],
+        body: [
+          'For transport, freight forwarding and supply chain operators we connect Salesforce to TMS, customs and tracking systems, so commercial, planning and customer service teams work from the same shipment data and the customer only has to ask once.',
+          'Voor transport, expediteurs en supply chain-operators verbinden we Salesforce met TMS, douane- en tracking-systemen, zodat commercie, planning en customer service vanuit dezelfde zendingdata werken en de klant maar één keer hoeft te vragen.'
+        ],
+        pains: [
+          ['Disjointed shipment visibility', 'Gefragmenteerd zicht op zendingen'],
+          ['Manual customer-service hand-offs', 'Handmatige overdrachten in customer service'],
+          ['Slow quote-to-booking cycles', 'Trage quote-to-booking cycli'],
+        ],
+        products: [['Sales Cloud', 'sales'], ['Service Cloud', 'service'], ['Integrations', 'integrations'], ['Data 360', 'data']],
+        proof: ['Customs and freight programmes across NL and Benelux', 'Douane- en freightprogramma’s in NL en de Benelux'],
+      },
+      {
+        id: 'technology', photoPos: 'center',
+        name: ['Technology', 'Technologie'],
+        headline: ['A revenue platform that scales as fast as your product.', 'Een revenue-platform dat meegroeit met uw product.'],
+        body: [
+          'For SaaS, fintech and platform businesses we build Salesforce environments that keep up with product launches, pricing changes and a go-to-market motion that never sits still. Sales and customer success on the same numbers, renewals that run themselves.',
+          'Voor SaaS-, fintech- en platformbedrijven bouwen we Salesforce-omgevingen die meebewegen met productlanceringen, prijswijzigingen en een go-to-market die nooit stilstaat. Sales en customer success op dezelfde cijfers, verlengingen die zichzelf regelen.'
+        ],
+        pains: [
+          ['Sales and CS running on different data', 'Sales en CS op verschillende data'],
+          ['Manual provisioning and renewals', 'Handmatige provisioning en verlengingen'],
+          ['Reporting that can’t keep up with the roadmap', 'Rapportages die de roadmap niet bijhouden'],
+        ],
+        products: [['Sales Cloud', 'sales'], ['Service Cloud', 'service'], ['Platform Development', 'platform'], ['Integrations', 'integrations']],
+        proof: ['Implementations for SaaS, fintech and platform companies', 'Implementaties voor SaaS-, fintech- en platformbedrijven'],
+      },
+    ];
+
+    /* ------------------------------------------------------------------ */
+    /*  Helpers                                                            */
+    /* ------------------------------------------------------------------ */
+
+    /* Smooth-scroll to the hash once React has painted; native anchor jumps
+       happen before <main> exists. Also tracks the target for highlighting. */
+    function useHashTarget() {
+      const [target, setTarget] = useState(() => (window.location.hash || '').slice(1));
+      useEffect(() => {
+        const go = () => {
+          const id = (window.location.hash || '').slice(1);
+          setTarget(id);
+          if (!id) return;
+          const el = document.getElementById(id);
+          if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+        };
+        go();
+        window.addEventListener('hashchange', go);
+        return () => window.removeEventListener('hashchange', go);
+      }, []);
+      return target;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Sections                                                           */
+    /* ------------------------------------------------------------------ */
+
+    function IndustriesHero({ onCta }) {
+      return (
+        <section style={{
+          position: 'relative', overflow: 'hidden', isolation: 'isolate',
+          background: 'var(--intigris-brown-700)', color: 'var(--intigris-off-white)',
+          borderBottomLeftRadius: 'clamp(24px, 4vw, 56px)', borderBottomRightRadius: 'clamp(24px, 4vw, 56px)',
+        }}>
+          <div aria-hidden style={{
+            position: 'absolute', inset: 0, zIndex: 0,
+            backgroundImage: 'url("assets/industries/pexels-tima-miroshnichenko-6196229.jpg")', backgroundSize: 'cover', backgroundPosition: 'center',
+            opacity: 0.4, mixBlendMode: 'luminosity',
+            WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, transparent 30%, #000 76%)', maskImage: 'linear-gradient(90deg, transparent 0%, transparent 30%, #000 76%)',
+          }} />
+          <div aria-hidden style={{ position: 'absolute', inset: 0, zIndex: 0, background: 'radial-gradient(120% 90% at 84% 28%, rgba(255,95,54,0.55) 0%, rgba(255,95,54,0.18) 38%, rgba(43,23,0,0) 70%)' }} />
+          <div aria-hidden style={{ position: 'absolute', inset: 0, zIndex: 0, background: 'linear-gradient(180deg, rgba(43,23,0,0.1) 0%, rgba(43,23,0,0) 40%, rgba(43,23,0,0.55) 100%)' }} />
+
+          <div className="container-wide" style={{ position: 'relative', zIndex: 1, paddingTop: 'clamp(132px, 17vh, 200px)', paddingBottom: 'clamp(56px, 8vh, 96px)' }}>
+            <div className="ind-hero-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.4fr) minmax(0, 1fr)', gap: 'clamp(32px, 5vw, 80px)', alignItems: 'end' }}>
+              <div>
+                <div className="eyebrow" style={{ marginBottom: 22, color: 'var(--intigris-coral)' }}>{tx('INDUSTRIES WE SERVE', 'BRANCHES DIE WE BEDIENEN')}</div>
+                <h1 style={{ fontSize: 'clamp(42px, 5.8vw, 84px)', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 0.98, margin: 0, color: 'var(--intigris-off-white)', textWrap: 'balance' }}>
+                  {tx('Domain expertise for the sectors that run on ', 'Domein-expertise voor de sectoren die draaien op ')}
+                  <span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('service.', 'service.')}</span>
+                </h1>
+                <p style={{ marginTop: 26, maxWidth: 580, fontSize: 18, fontWeight: 400, lineHeight: 1.55, color: 'rgba(252,247,235,0.88)' }}>
+                  {tx(
+                    'Six sectors where we have done this before. Same platform, very different operations. We bring the patterns that worked and leave out the ones that only looked good in a demo.',
+                    'Zes sectoren waar we dit al eerder hebben gedaan. Hetzelfde platform, heel verschillende operaties. We brengen de patronen mee die werkten en laten de patronen weg die alleen in een demo goed leken.'
+                  )}
+                </p>
+                <div style={{ marginTop: 32, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                  <button className="btn btn-on-brown" onClick={onCta}>{tx('Talk about your sector', 'Praat over uw sector')} <span className="arrow">→</span></button>
+                  <a className="btn btn-outline-light" href="Services.html">{tx('What we implement', 'Wat we implementeren')} <span className="arrow">→</span></a>
+                </div>
+              </div>
+
+              {/* Sector index, the #01 #02 pattern, each a jump link. */}
+              <div style={{ justifySelf: 'end', width: '100%', maxWidth: 420 }}>
+                <div style={{ background: 'rgba(252,247,235,0.06)', border: '1px solid rgba(252,247,235,0.18)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', borderRadius: 20, padding: '6px 26px' }}>
+                  {INDUSTRIES.map((s, i) => (
+                    <a key={s.id} href={'#' + s.id} className="ind-index-row" style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '13px 0', borderBottom: i < INDUSTRIES.length - 1 ? '1px solid rgba(252,247,235,0.14)' : 'none', textDecoration: 'none' }}>
+                      <span style={{ fontSize: 12, fontWeight: 500, letterSpacing: '0.12em', color: 'var(--intigris-coral)', flex: 'none', width: 28 }}>#{String(i + 1).padStart(2, '0')}</span>
+                      <span style={{ fontSize: 15, fontWeight: 500, letterSpacing: '-0.005em', color: 'var(--intigris-off-white)', flex: 1 }}>{tx(s.name[0], s.name[1])}</span>
+                      <span aria-hidden className="ind-index-arrow" style={{ color: 'var(--intigris-coral)', fontSize: 14 }}>→</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function SubNav({ target }) {
+      return (
+        <nav className="ind-subnav" aria-label={tx('On this page', 'Op deze pagina')}>
+          <div className="container-wide ind-subnav-inner">
+            {INDUSTRIES.map(it => (
+              <a key={it.id} href={'#' + it.id} className={'ind-subnav-link' + (target === it.id ? ' is-active' : '')}>{tx(it.name[0], it.name[1])}</a>
+            ))}
+          </div>
+        </nav>
+      );
+    }
+
+    function SectorRow({ s, idx, target, onCta }) {
+      const flip = idx % 2 === 1;
+      const hit = target === s.id;
+      return (
+        <article id={s.id} className={'ind-row' + (flip ? ' ind-row--flip' : '') + (hit ? ' is-target' : '')} style={{ scrollMarginTop: 96 }}>
+          {/* Photo */}
+          <div className="ind-photo">
+            <img src={`assets/industries/${s.id}.jpg`} alt={tx(s.name[0], s.name[1])} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: s.photoPos }} />
+            <div className="ind-proof">
+              <div className="eyebrow eyebrow--bare" style={{ marginBottom: 4 }}>{tx('TRACK RECORD', 'TRACK RECORD')}</div>
+              <div style={{ fontSize: 14, fontWeight: 500, letterSpacing: '-0.005em', color: 'var(--intigris-dark-brown)' }}>{tx(s.proof[0], s.proof[1])}</div>
+            </div>
+          </div>
+
+          {/* Copy */}
+          <div className="ind-copy">
+            <div className="eyebrow">{String(idx + 1).padStart(2, '0')} · {tx(s.name[0], s.name[1]).toUpperCase()}</div>
+            <h2 style={{ fontSize: 'clamp(30px, 3.4vw, 46px)', fontWeight: 500, letterSpacing: '-0.024em', lineHeight: 1.06, margin: '14px 0 0', color: 'var(--intigris-dark-brown)', textWrap: 'balance' }}>{tx(s.headline[0], s.headline[1])}</h2>
+            <p style={{ margin: '18px 0 0', fontSize: 17, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 560 }}>{tx(s.body[0], s.body[1])}</p>
+
+            <div className="ind-two" style={{ marginTop: 28, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+              <div>
+                <div className="eyebrow eyebrow--bare" style={{ marginBottom: 12 }}>{tx('WHAT WE TYPICALLY ADDRESS', 'WAT WE VAAK OPLOSSEN')}</div>
+                <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {s.pains.map((p, i) => (
+                    <li key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontSize: 15, fontWeight: 400, lineHeight: 1.45, color: 'var(--intigris-dark-brown)' }}>
+                      <span aria-hidden style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--intigris-coral)', flex: 'none', marginTop: 7 }} />
+                      {tx(p[0], p[1])}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <div className="eyebrow eyebrow--bare" style={{ marginBottom: 12 }}>{tx('WHAT WE BRING', 'WAT WE MEEBRENGEN')}</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {s.products.map(([label, anchor]) => (
+                    <a key={anchor} href={'Services.html#' + anchor} className="chip ind-chip">{label} <span aria-hidden style={{ fontSize: 12 }}>→</span></a>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 30 }}>
+              <button className="link-arrow" onClick={onCta} style={{ background: 'none', border: 0, padding: 0, font: 'inherit', cursor: 'pointer', fontSize: 15 }}>
+                {tx('Discuss your ' + s.name[0].toLowerCase() + ' operation', 'Bespreek uw ' + s.name[1].toLowerCase() + '-operatie')} <span className="arrow">→</span>
+              </button>
+            </div>
+          </div>
+        </article>
+      );
+    }
+
+    function Sectors({ target, onCta }) {
+      return (
+        <section className="container-wide" style={{ paddingTop: 'clamp(24px, 3vw, 40px)', paddingBottom: 'clamp(40px, 5vw, 64px)' }}>
+          {INDUSTRIES.map((s, i) => <SectorRow key={s.id} s={s} idx={i} target={target} onCta={onCta} />)}
+        </section>
+      );
+    }
+
+    function NotListed({ onCta }) {
+      return (
+        <section className="container-wide" style={{ paddingBottom: 'clamp(64px, 8vw, 112px)' }}>
+          <div className="ind-callout" style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: 'clamp(28px, 4vw, 48px)', display: 'grid', gridTemplateColumns: 'minmax(0, 1.3fr) minmax(0, 1fr)', gap: 'clamp(24px, 4vw, 64px)', alignItems: 'center' }}>
+            <div>
+              <div className="eyebrow" style={{ marginBottom: 16 }}>{tx('NOT ON THE LIST?', 'NIET IN DE LIJST?')}</div>
+              <h2 style={{ fontSize: 'clamp(26px, 3vw, 40px)', fontWeight: 500, letterSpacing: '-0.022em', lineHeight: 1.08, margin: 0 }}>
+                {tx('Most of what we build travels well between sectors.', 'Het meeste van wat we bouwen reist goed tussen sectoren.')}
+              </h2>
+              <p style={{ margin: '16px 0 0', fontSize: 16.5, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 560 }}>
+                {tx(
+                  'Service, sales, field service and integrations behave the same whether you ship electrons, parts or software. Tell us about your operation and we will tell you candidly whether we have done it before.',
+                  'Service, sales, field service en integraties gedragen zich hetzelfde of u nu elektronen, onderdelen of software levert. Vertel ons over uw operatie en we zeggen u eerlijk of we het eerder hebben gedaan.'
+                )}
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+              <button className="btn btn-primary" onClick={onCta}>{tx('Book a 30-min call', 'Plan een gesprek van 30 minuten')} <span className="arrow">→</span></button>
+              <a className="btn btn-secondary" href="Services.html">{tx('Our services', 'Onze diensten')} <span className="arrow">→</span></a>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function IndustriesPage({ onCta }) {
+      const target = useHashTarget();
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+          <IndustriesHero onCta={onCta} />
+          <SubNav target={target} />
+          <Sectors target={target} onCta={onCta} />
+          <NotListed onCta={onCta} />
+          <SiteFinalCTA onCta={onCta} />
+          <style>{`
+            .ind-index-row .ind-index-arrow { transition: transform 220ms var(--ease-out); }
+            .ind-index-row:hover .ind-index-arrow { transform: translateX(4px); }
+            .ind-index-row:hover span:nth-child(2) { color: var(--intigris-coral) !important; }
+
+            .ind-subnav { position: sticky; top: 0; z-index: 30; background: rgba(252,247,235,0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+            .ind-subnav-inner { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding-top: 10px; padding-bottom: 10px; }
+            .ind-subnav-inner::-webkit-scrollbar { display: none; }
+            .ind-subnav-link { flex: none; font-size: 14px; font-weight: 500; letter-spacing: -0.005em; color: var(--intigris-dark-brown); text-decoration: none; padding: 8px 14px; border-radius: 999px; transition: background 160ms var(--ease-out), color 160ms var(--ease-out); }
+            .ind-subnav-link:hover { background: var(--intigris-off-white-200); }
+            .ind-subnav-link.is-active { background: var(--intigris-dark-brown); color: var(--intigris-off-white); }
+
+            .ind-row { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 80px); align-items: center; padding: clamp(40px, 5vw, 72px) 0; border-top: 1px solid var(--border); }
+            .ind-row:first-child { border-top: 0; }
+            .ind-row--flip .ind-photo { order: 2; }
+            .ind-row.is-target h2 { color: var(--intigris-coral); }
+            .ind-photo { position: relative; aspect-ratio: 4 / 5; max-height: 560px; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border); background: var(--intigris-off-white-200); }
+            .ind-proof { position: absolute; left: 16px; right: 16px; bottom: 16px; background: var(--intigris-off-white); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow-2); }
+            .ind-chip { text-decoration: none; cursor: pointer; transition: background 160ms var(--ease-out), color 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+            .ind-chip:hover { background: var(--intigris-coral); color: var(--intigris-dark-brown); border-color: var(--intigris-coral); }
+
+            @media (max-width: 980px) {
+              .ind-hero-grid { grid-template-columns: 1fr !important; align-items: start !important; }
+              .ind-hero-grid > div:last-child { justify-self: start !important; }
+              .ind-row { grid-template-columns: 1fr; gap: 24px; }
+              .ind-row--flip .ind-photo { order: 0; }
+              .ind-photo { aspect-ratio: 16 / 10; }
+              .ind-callout { grid-template-columns: 1fr !important; }
+              .ind-callout > div:last-child { justify-content: flex-start !important; }
+            }
+            @media (max-width: 620px) {
+              .ind-two { grid-template-columns: 1fr !important; }
+            }
+          `}</style>
+        </main>
+      );
+    }
+
+    function App() {
+      const [lang, setLang] = useState('en');
+      const [contactOpen, setContactOpen] = useState(false);
+      function changeLang(l){ window.__lang = l; document.documentElement.setAttribute('lang', l); setLang(l); }
+      function nav(r){
+        if (r === 'contact') return setContactOpen(true);
+        if (r === 'blog') return (window.location.href = 'Blog.html');
+        if (r === 'about') return (window.location.href = 'About.html');
+        if (r === 'home') return (window.location.href = 'index.html');
+        return (window.location.href = 'index.html');
+      }
+      return (
+        <>
+          <SiteHeader overlay={true} megaTheme="cream" lang={lang} onLang={changeLang} onNav={nav} />
+          <IndustriesPage key={'ind-' + lang} onCta={() => setContactOpen(true)} />
+          <SiteNewsletter key={'nl-' + lang} />
+          <SiteFooter key={'f-' + lang} />
+          <SiteCookieConsent />
+          <SiteContactSheet open={contactOpen} onClose={() => setContactOpen(false)} source="Industries.html" />
+        </>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+</body>
+</html>

@@ -123,132 +123,195 @@
     /*  On-brand UI illustrations (HTML/CSS, no screenshots)               */
     /* ------------------------------------------------------------------ */
 
-    const Illo = ({ kind }) => {
-      const chip = (label, filled) => (
-        <span className={'sc-ui-chip' + (filled ? ' sc-ui-chip--fill' : '')}>{label}</span>
-      );
-      const line = (w, dim) => <span className={'sc-ui-line' + (dim ? ' sc-ui-line--dim' : '')} style={{ width: w }} />;
+    /* Lightning-Experience-styled screens. Generic SLDS look: grey page, white cards,
+       Salesforce blue actions, coloured standard-object icon tiles. No logos. */
+    const SfIcon = ({ color, glyph }) => <span className="sf-icon" style={{ background: color }}>{glyph}</span>;
+    const SfFrame = ({ app, tabs, active, children, wide }) => (
+      <div className={'sf' + (wide ? ' sf--wide' : '')}>
+        <div className="sf-global"><span className="sf-waffle" /><span className="sf-app">{app}</span><span className="sf-search">Search…</span><span className="sf-avatar" /></div>
+        <div className="sf-nav">{tabs.map((t, i) => <span key={i} className={t === active ? 'is-on' : ''}>{t}</span>)}</div>
+        <div className="sf-page">{children}</div>
+      </div>
+    );
+    const TABS = ['Home', 'Leads', 'Accounts', 'Opportunities', 'Quotes', 'Dashboards'];
 
+    const Illo = ({ kind }) => {
       if (kind === 'lead') {
-        const leads = [
-          { init: 'NJ', name: 'Noor Jansen', co: 'Havenwerk BV', src: 'Web form', score: 92, hot: true },
-          { init: 'DV', name: 'Daan Visser', co: 'Brightline Energy', src: 'Event', score: 74 },
-          { init: 'IdG', name: 'Iris de Groot', co: 'Kade & Zonen', src: 'Inbound mail', score: 61 },
-          { init: 'SM', name: 'Sem Meijer', co: 'Polder Logistiek', src: 'Import', score: 38 },
+        const rows = [
+          ['Noor Jansen', 'Havenwerk BV', 'Web', 'Hot', 92],
+          ['Daan Visser', 'Brightline Energy', 'Event', 'Warm', 74],
+          ['Iris de Groot', 'Kade & Zonen', 'Email', 'Warm', 61],
+          ['Sem Meijer', 'Polder Logistiek', 'Import', 'Cold', 38],
         ];
         return (
-          <div className="sc-ui">
-            <div className="sc-ui-head"><span className="sc-ui-title">Leads · My queue</span>{chip('4 new', true)}</div>
-            {leads.map((l, i) => (
-              <div key={i} className="sc-ui-row">
-                <span className={'sc-ui-avatar' + (l.hot ? ' sc-ui-avatar--hot' : '')}>{l.init}</span>
-                <span className="sc-ui-cell sc-ui-cell--grow"><b>{l.name}</b><small>{l.co} · {l.src}</small></span>
-                <span className="sc-ui-score"><i style={{ width: l.score + '%' }} /><em>{l.score}</em></span>
+          <SfFrame app="Sales" tabs={TABS} active="Leads">
+            <div className="sf-card">
+              <div className="sf-card-head">
+                <SfIcon color="#F88962" glyph="L" />
+                <div className="sf-card-title"><small>Leads</small><b>My Open Leads ▾</b></div>
+                <span className="sf-btn sf-btn--brand">New</span>
               </div>
-            ))}
-            <div className="sc-ui-foot">Assignment rule: <b>NL Inbound → Sales team A</b></div>
-          </div>
+              <div className="sf-meta">4 items · Sorted by Score · Updated a few seconds ago</div>
+              <table className="sf-table">
+                <thead><tr><th>Name</th><th>Company</th><th>Source</th><th>Rating</th><th>Score</th></tr></thead>
+                <tbody>
+                  {rows.map((r, i) => (
+                    <tr key={i}><td><a>{r[0]}</a></td><td>{r[1]}</td><td>{r[2]}</td><td><span className={'sf-pill sf-pill--' + r[3].toLowerCase()}>{r[3]}</span></td><td><span className="sf-score"><i style={{ width: r[4] + '%' }} /></span>{r[4]}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </SfFrame>
         );
       }
 
       if (kind === 'account') {
         return (
-          <div className="sc-ui">
-            <div className="sc-ui-head">
-              <span className="sc-ui-logo">H</span>
-              <span className="sc-ui-cell sc-ui-cell--grow"><b>Havenwerk BV</b><small>Customer · Rotterdam · Since 2019</small></span>
-              {chip('Key account', true)}
+          <SfFrame app="Sales" tabs={TABS} active="Accounts">
+            <div className="sf-card sf-highlights">
+              <SfIcon color="#7F8DE1" glyph="A" />
+              <div className="sf-card-title"><small>Account</small><b>Havenwerk BV</b></div>
+              <div className="sf-fields">
+                <div><small>Type</small><span>Customer</span></div>
+                <div><small>Industry</small><span>Logistics</span></div>
+                <div><small>Owner</small><span><a>Lisa Vermeer</a></span></div>
+                <div><small>Open Opps</small><span>3 · €218k</span></div>
+              </div>
+              <div className="sf-actions"><span className="sf-btn">Follow</span><span className="sf-btn">New Contact</span><span className="sf-btn">New Opportunity</span><span className="sf-btn sf-btn--brand">Edit</span></div>
             </div>
-            <div className="sc-ui-tabs"><span className="is-on">Timeline</span><span>Contacts 12</span><span>Opportunities 3</span><span>Cases 1</span></div>
-            <div className="sc-ui-timeline">
-              {[
-                ['Today', 'Call · Renewal terms discussed', 'coral'],
-                ['Yesterday', 'Email · Quote Q-2041 sent to Noor', ''],
-                ['Mon', 'Case #4410 closed by Service team', ''],
-                ['Last week', 'Meeting · Integration roadmap review', ''],
-              ].map((t, i) => (
-                <div key={i} className="sc-ui-tl">
-                  <span className={'sc-ui-dot' + (t[2] ? ' sc-ui-dot--coral' : '')} />
-                  <small>{t[0]}</small><span>{t[1]}</span>
-                </div>
-              ))}
+            <div className="sf-card">
+              <div className="sf-tabs"><span className="is-on">Activity</span><span>Details</span><span>Related</span><span>Chatter</span></div>
+              <div className="sf-timeline">
+                {[
+                  ['📞', 'Call · Renewal terms discussed', 'Today · Lisa Vermeer'],
+                  ['✉️', 'Email · Quote Q-2041 sent to Noor Jansen', 'Yesterday'],
+                  ['✔︎', 'Case #4410 closed by Service', 'Mon'],
+                  ['📅', 'Meeting · Integration roadmap review', 'Last week'],
+                ].map((t, i) => (
+                  <div key={i} className="sf-tl"><span className="sf-tl-ic">{t[0]}</span><div><a>{t[1]}</a><small>{t[2]}</small></div></div>
+                ))}
+              </div>
             </div>
-          </div>
+          </SfFrame>
         );
       }
 
       if (kind === 'pipeline') {
         const cols = [
-          ['Qualify', ['Brightline · €48k', 'Bouwgroep · €22k']],
-          ['Propose', ['Kade & Zonen · €95k', 'Polder Logistiek · €31k', 'Capisoft · €18k']],
-          ['Negotiate', ['Havenwerk · €140k']],
-          ['Closed won', ['Nova Energy · €62k']],
+          ['Qualification', '€70k', ['Brightline Energy', '€48,000', '12 Oct'], ['Bouwgroep Zuid', '€22,000', '30 Oct']],
+          ['Proposal', '€144k', ['Kade & Zonen', '€95,000', '18 Oct'], ['Polder Logistiek', '€31,000', '25 Oct'], ['Capisoft', '€18,000', '3 Nov']],
+          ['Negotiation', '€140k', ['Havenwerk BV', '€140,000', '9 Oct']],
+          ['Closed Won', '€62k', ['Nova Energy', '€62,000', '2 Oct']],
         ];
         return (
-          <div className="sc-ui sc-ui--wide">
-            <div className="sc-ui-head"><span className="sc-ui-title">Opportunities · This quarter</span>{chip('€416k open')}</div>
-            <div className="sc-ui-kanban">
-              {cols.map((c, i) => (
-                <div key={i} className="sc-ui-col">
-                  <div className="sc-ui-colhead">{c[0]} <em>{c[1].length}</em></div>
-                  {c[1].map((card, j) => <div key={j} className={'sc-ui-card' + (i === 3 ? ' sc-ui-card--won' : '')}>{card}</div>)}
-                </div>
-              ))}
+          <SfFrame app="Sales" tabs={TABS} active="Opportunities" wide>
+            <div className="sf-card">
+              <div className="sf-card-head">
+                <SfIcon color="#FCB95B" glyph="O" />
+                <div className="sf-card-title"><small>Opportunities</small><b>This Quarter ▾</b></div>
+                <span className="sf-btn">Kanban ▾</span><span className="sf-btn sf-btn--brand">New</span>
+              </div>
+              <div className="sf-kanban">
+                {cols.map((c, i) => (
+                  <div key={i} className="sf-col">
+                    <div className="sf-colhead"><b>{c[0]}</b><small>{c[1]} · {c.length - 2}</small></div>
+                    {c.slice(2).map((card, j) => (
+                      <div key={j} className={'sf-kcard' + (i === 3 ? ' sf-kcard--won' : '')}><a>{card[0]}</a><span>{card[1]}</span><small>Close {card[2]}</small></div>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          </SfFrame>
         );
       }
 
       if (kind === 'forecast') {
-        const bars = [62, 74, 58, 88, 81, 95];
+        const rows = [['Lisa Vermeer', 310, 280, 390], ['Tom Bakker', 240, 260, 340], ['Amira Yildiz', 190, 220, 300]];
+        const max = 400;
         return (
-          <div className="sc-ui">
-            <div className="sc-ui-head"><span className="sc-ui-title">Forecast · Q4</span>{chip('Commit €1.2M', true)}</div>
-            <div className="sc-ui-chart">
-              <span className="sc-ui-quota"><em>Quota €1.4M</em></span>
-              {bars.map((h, i) => <div key={i} className="sc-ui-bar" style={{ height: h + '%' }}><i style={{ height: Math.min(100, h + 14) + '%' }} /></div>)}
+          <SfFrame app="Sales" tabs={TABS} active="Home">
+            <div className="sf-card">
+              <div className="sf-card-head">
+                <SfIcon color="#3BA755" glyph="F" />
+                <div className="sf-card-title"><small>Forecasts</small><b>Q4 FY26 · Team NL</b></div>
+                <span className="sf-btn">Adjust</span>
+              </div>
+              <div className="sf-fc-summary">
+                <div><small>Quota</small><b>€1.40M</b></div>
+                <div><small>Closed</small><b>€0.74M</b></div>
+                <div><small>Commit</small><b className="sf-blue">€1.21M</b></div>
+                <div><small>Best Case</small><b>€1.36M</b></div>
+              </div>
+              <div className="sf-fc-rows">
+                {rows.map((r, i) => (
+                  <div key={i} className="sf-fc-row">
+                    <a>{r[0]}</a>
+                    <div className="sf-fc-bar">
+                      <i className="closed" style={{ width: (r[1] / max) * 100 + '%' }} />
+                      <i className="commit" style={{ width: ((r[2] - r[1]) / max) * 100 + '%' }} />
+                      <i className="best" style={{ width: ((r[3] - r[2]) / max) * 100 + '%' }} />
+                      <em style={{ left: '87%' }} />
+                    </div>
+                    <span>€{r[2]}k</span>
+                  </div>
+                ))}
+              </div>
+              <div className="sf-legend"><span><i className="closed" />Closed</span><span><i className="commit" />Commit</span><span><i className="best" />Best case</span><span><em />Quota</span></div>
             </div>
-            <div className="sc-ui-legend"><span><i /> Commit</span><span><i className="dim" /> Best case</span></div>
-          </div>
+          </SfFrame>
         );
       }
 
       if (kind === 'quote') {
+        const path = ['Draft', 'Review', 'Approved', 'Sent', 'Accepted'];
         return (
-          <div className="sc-ui">
-            <div className="sc-ui-head"><span className="sc-ui-title">Quote Q-2041 · Havenwerk BV</span>{chip('Approved', true)}</div>
-            {[['Sales Cloud Enterprise · 40 users', '€ 72.000'], ['Implementation · Quickstart', '€ —'], ['Data migration', '€ 6.400'], ['Discount 8%', '− € 6.272']].map((r, i) => (
-              <div key={i} className="sc-ui-row sc-ui-row--thin"><span className="sc-ui-cell sc-ui-cell--grow">{r[0]}</span><span className="sc-ui-amt">{r[1]}</span></div>
-            ))}
-            <div className="sc-ui-total"><span>Total</span><b>€ 72.128</b></div>
-            <div className="sc-ui-foot">Approval: Discount &gt; 5% → <b>Sales Director</b> · approved 14:02</div>
-          </div>
+          <SfFrame app="Sales" tabs={TABS} active="Quotes">
+            <div className="sf-card sf-highlights">
+              <SfIcon color="#BF7CCC" glyph="Q" />
+              <div className="sf-card-title"><small>Quote</small><b>Q-2041 · Havenwerk BV renewal</b></div>
+              <span className="sf-btn">Create PDF</span><span className="sf-btn sf-btn--brand">Email Quote</span>
+            </div>
+            <div className="sf-path">
+              {path.map((st, i) => <span key={i} className={i < 2 ? 'done' : i === 2 ? 'current' : ''}>{st}</span>)}
+            </div>
+            <div className="sf-card">
+              <table className="sf-table sf-table--lines">
+                <thead><tr><th>Product</th><th>Qty</th><th>List</th><th>Disc.</th><th>Total</th></tr></thead>
+                <tbody>
+                  <tr><td>Sales Cloud Enterprise</td><td>40</td><td>€1,800</td><td>8%</td><td>€66,240</td></tr>
+                  <tr><td>Data migration</td><td>1</td><td>€6,400</td><td>—</td><td>€6,400</td></tr>
+                  <tr><td>Quickstart implementation</td><td>1</td><td>—</td><td>—</td><td>—</td></tr>
+                </tbody>
+              </table>
+              <div className="sf-total"><span>Grand Total</span><b>€72,640</b></div>
+              <div className="sf-approval"><span className="sf-check">✓</span> Discount &gt; 5% approved by <a>Sales Director</a> · today 14:02</div>
+            </div>
+          </SfFrame>
         );
       }
 
       if (kind === 'dashboard') {
         return (
-          <div className="sc-ui sc-ui--wide">
-            <div className="sc-ui-head"><span className="sc-ui-title">Sales dashboard · Team NL</span>{chip('Live')}</div>
-            <div className="sc-ui-kpis">
-              {[['Win rate', '34%', '+6'], ['Cycle time', '41 d', '−9'], ['Coverage', '3.2×', '+0.4'], ['Activities', '218', '+31']].map((k, i) => (
-                <div key={i} className="sc-ui-kpi"><small>{k[0]}</small><b>{k[1]}</b><em>{k[2]}</em></div>
+          <SfFrame app="Sales" tabs={TABS} active="Dashboards" wide>
+            <div className="sf-dash-head"><SfIcon color="#5867E8" glyph="D" /><div className="sf-card-title"><small>Dashboard</small><b>Sales Performance · Team NL</b></div><span className="sf-btn">Refresh</span></div>
+            <div className="sf-dash">
+              {[['Win Rate', '34%', '▲ 6 pts'], ['Avg. Cycle', '41 days', '▼ 9 days'], ['Pipeline Coverage', '3.2×', '▲ 0.4'], ['Activities / rep', '218', '▲ 31']].map((k, i) => (
+                <div key={i} className="sf-card sf-metric"><small>{k[0]}</small><b>{k[1]}</b><em>{k[2]}</em></div>
               ))}
+              <div className="sf-card sf-chart">
+                <small>Pipeline by Stage</small>
+                <div className="sf-bars">{[['Qual', 70], ['Prop', 144], ['Nego', 140], ['Won', 62]].map((b, i) => <div key={i}><i style={{ height: (b[1] / 150) * 100 + '%' }} /><span>{b[0]}</span></div>)}</div>
+              </div>
+              <div className="sf-card sf-chart">
+                <small>Won by Source</small>
+                <div className="sf-donut"><div className="sf-donut-ring" /><div className="sf-donut-legend"><span><i style={{ background: '#0176D3' }} />Inbound 46%</span><span><i style={{ background: '#1B96FF' }} />Partner 31%</span><span><i style={{ background: '#AACBFF' }} />Events 23%</span></div></div>
+              </div>
             </div>
-            <div className="sc-ui-spark">{[30, 42, 38, 55, 61, 58, 72, 80].map((h, i) => <i key={i} style={{ height: h + '%' }} />)}</div>
-          </div>
+          </SfFrame>
         );
       }
 
-      if (kind === 'agent') {
-        return (
-          <div className="sc-ui sc-ui--dark">
-            <div className="sc-ui-head"><span className="sc-ui-title">Agentforce · Deal summary</span>{chip('AI', true)}</div>
-            <p className="sc-ui-ai">Havenwerk renewal is at <b>Negotiate</b> with €140k committed. Last touch was a call today about terms. Risk: procurement contact has not replied in 9 days.</p>
-            <div className="sc-ui-actions"><span>Draft follow-up to procurement</span><span>Schedule exec check-in</span><span>Update close date</span></div>
-          </div>
-        );
-      }
       return null;
     };
 
@@ -265,13 +328,13 @@
           <div className="container-wide sc-hero-inner">
             <div className="sc-hero-grid">
               <div>
-                <div className="eyebrow" style={{ marginBottom: 22, color: 'var(--intigris-coral)' }}>SALES CLOUD · NOW AGENTFORCE SALES</div>
+                <div className="eyebrow eyebrow--dark" style={{ marginBottom: 22 }}>SALES CLOUD · NOW AGENTFORCE SALES</div>
                 <h1 className="sc-h1">Every deal, every rep, <span>one pipeline.</span></h1>
                 <p className="sc-lede-dark">
                   Salesforce Sales Cloud, implemented by people who have done it since 2010. Leads, accounts, opportunities, forecasts and quotes in one system your team will actually use. Live in four weeks with our Quickstart, or scoped properly for the long haul.
                 </p>
                 <div style={{ marginTop: 32, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                  <button className="btn btn-on-brown" onClick={onCta}>Book a 30-min call <span className="arrow">→</span></button>
+                  <button className="btn sc-btn-dark" onClick={onCta}>Book a 30-min call <span className="arrow">→</span></button>
                   <a className="btn btn-outline-light" href="#how">See how it works <span className="arrow">↓</span></a>
                 </div>
               </div>
@@ -289,109 +352,170 @@
       );
     }
 
+    /* What it is: benefit card on the left (checkmarks), image on the right.
+       IMAGE: swap the src below for the final photo. Recommended 4:5 or 3:4, at least 1200px wide. */
+    const WHAT_IMAGE = 'assets/glass-facade-clouds.jpg';
+
     function WhatItIs() {
       return (
         <section className="container-wide sc-section">
-          <div className="section-head">
+          <div className="section-head sc-head">
             <div>
               <div className="eyebrow" style={{ marginBottom: 20 }}>WHAT IT IS</div>
               <h2 className="display-md">The CRM your sales team <span style={{ color: 'var(--intigris-coral)' }}>runs on.</span></h2>
             </div>
-            <p className="lede">
-              Sales Cloud is Salesforce's platform for selling: the place where leads become opportunities, opportunities become revenue, and everyone from the newest rep to the CFO looks at the same numbers. Salesforce now sells it as Agentforce Sales, with AI agents built in. Same platform, more help.
-            </p>
           </div>
-          <div className="sc-benefits">
-            {BENEFITS.map((b, i) => (
-              <div key={i} className="sc-benefit">
-                <span className="sc-benefit-num">{String(i + 1).padStart(2, '0')}</span>
-                <h3>{b.t}</h3>
-                <p>{b.d}</p>
-              </div>
-            ))}
+          <div className="sc-what">
+            <div className="sc-ba-col sc-ba-col--after">
+              <div className="sc-ba-label">With Sales Cloud</div>
+              <ul>{BENEFITS.map((b, i) => <li key={i}><span className="sc-ba-check" aria-hidden>✓</span><div><b>{b.t}</b><span>{b.d}</span></div></li>)}</ul>
+            </div>
+            <div className="sc-what-photo">
+              <img src={WHAT_IMAGE} alt="" loading="lazy" />
+              <span className="sc-what-glow" aria-hidden />
+            </div>
           </div>
         </section>
       );
     }
 
-    function HowItWorks() {
+    function StepsHead() {
       return (
-        <section id="how" className="sc-section sc-section--soft">
-          <div className="container-wide">
-            <div className="section-head">
-              <div>
-                <div className="eyebrow" style={{ marginBottom: 20 }}>FROM LEAD TO CLOSED DEAL</div>
-                <h2 className="display-md">Six steps. <span style={{ color: 'var(--intigris-coral)' }}>One system.</span></h2>
-              </div>
-              <p className="lede">This is what a sales cycle looks like once it runs on Sales Cloud. Each step is something we configure with you in the first weeks, not a feature you discover later.</p>
-            </div>
+        <div className="section-head sc-head">
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 20 }}>FROM LEAD TO CLOSED DEAL</div>
+            <h2 className="display-md">Six steps. <span style={{ color: 'var(--intigris-coral)' }}>One system.</span></h2>
+          </div>
+        </div>
+      );
+    }
 
-            {STEPS.map((s, i) => (
-              <article key={s.num} className={'sc-step' + (i % 2 ? ' sc-step--flip' : '')}>
-                <div className="sc-step-illo"><Illo kind={s.illo} /></div>
-                <div className="sc-step-copy">
-                  <div className="sc-step-num">{s.num}</div>
+    /* Six steps: step list on the left, one large screen on the right. Click to switch; cycles every 6s. */
+    function HowItWorks() {
+      const [active, setActive] = useState(0);
+      const [paused, setPaused] = useState(false);
+      const s = STEPS[active];
+      useEffect(() => { if (paused) return; const t = setInterval(() => setActive(a => (a + 1) % STEPS.length), 6000); return () => clearInterval(t); }, [paused]);
+
+      const List = () => (
+        <div className="sc-show-list">
+          {STEPS.map((st, i) => (
+            <button key={st.num} type="button" className={'sc-show-item' + (i === active ? ' is-on' : '')} onClick={() => setActive(i)} aria-pressed={i === active}>
+              <span className="sc-show-num">{st.num}</span>
+              <span className="sc-show-copy"><b>{st.title}</b><small>{st.points[0]} · {st.points[1]}</small></span>
+              <span className="sc-show-arrow" aria-hidden>→</span>
+            </button>
+          ))}
+        </div>
+      );
+
+      return (
+        <section id="how" className="sc-section sc-section--rule">
+          <div className="container-wide">
+            <StepsHead />
+            <div className="sc-show" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+              <List />
+              <div className="sc-show-stage sc-show-stage--stack">
+                <div key={'h' + s.num} className="sc-show-detail sc-show-detail--stack">
                   <h3>{s.title}</h3>
-                  <p>{s.body}</p>
-                  <ul>
-                    {s.points.map((p, j) => <li key={j}><span aria-hidden className="sc-dot" />{p}</li>)}
-                  </ul>
+                  <div className="sc-show-detail--row">
+                    <p>{s.body}</p>
+                    <ul>{s.points.map((p, j) => <li key={j}><span aria-hidden className="sc-dot" />{p}</li>)}</ul>
+                  </div>
+                </div>
+                <div key={s.num} className="sc-show-screen"><Illo kind={s.illo} /></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    /* One entry per named customer. WeTransfer is real; the rest are placeholders marked TODO.
+       `logo`: drop the file in assets/clients/ and set the path here, e.g. 'assets/clients/wetransfer.svg'.
+       Leave null to show the initial placeholder. Logos render at up to 28px tall, any width. */
+    const CASES = [
+      { name: 'WeTransfer', logo: null, industry: 'Digital products', todo: false,
+        quote: 'Due to the work Intigris delivered we have taken an important step forward in automation and cleaning of data.',
+        who: 'Mathieu Kok', role: 'Advertising Systems Director',
+        blurb: 'Sales ran on spreadsheets that stopped scaling with the company. We implemented Sales Cloud, then connected it to NetSuite so orders flow to invoices without anyone retyping them.',
+        result: ['Excel → Sales Cloud → NetSuite', 'Order-to-cash, automated'] },
+      { name: 'Bedrocan', logo: null, industry: 'Pharma', todo: true,
+        quote: 'Placeholder quote for the Bedrocan Sales Cloud project. Replace with the real one.',
+        who: 'Name', role: 'Role, Bedrocan',
+        blurb: 'TODO: two sentences on the challenge and what we built.',
+        result: ['TODO', 'Headline result'] },
+      { name: 'VETkanaal', logo: null, industry: 'Veterinary', todo: true,
+        quote: 'Placeholder quote for the VETkanaal Sales Cloud project. Replace with the real one.',
+        who: 'Name', role: 'Role, VETkanaal',
+        blurb: 'TODO: two sentences on the challenge and what we built.',
+        result: ['TODO', 'Headline result'] },
+      { name: 'Straight-Line Leadership', logo: null, industry: 'Training', todo: true,
+        quote: 'Placeholder quote for the Straight-Line Leadership Sales Cloud project. Replace with the real one.',
+        who: 'Name', role: 'Role, Straight-Line Leadership',
+        blurb: 'TODO: two sentences on the challenge and what we built.',
+        result: ['TODO', 'Headline result'] },
+      { name: 'GoBright', logo: null, industry: 'Workplace tech', todo: true,
+        quote: 'Placeholder quote for the GoBright Sales Cloud project. Replace with the real one.',
+        who: 'Name', role: 'Role, GoBright',
+        blurb: 'TODO: two sentences on the challenge and what we built.',
+        result: ['TODO', 'Headline result'] },
+    ];
+
+    function useAutoIndex(n, ms) {
+      const [i, setI] = useState(0);
+      const [paused, setPaused] = useState(false);
+      useEffect(() => { if (paused) return; const t = setInterval(() => setI(x => (x + 1) % n), ms); return () => clearInterval(t); }, [paused, n, ms]);
+      return [i, setI, setPaused];
+    }
+
+    function WhoHead() {
+      return (
+        <div className="section-head sc-head">
+          <div>
+            <div className="eyebrow eyebrow--dark" style={{ marginBottom: 20 }}>WHO RUNS ON IT</div>
+            <h2 className="display-md">Built for teams that <span style={{ color: 'var(--intigris-off-white)', fontStyle: 'italic' }}>outgrew the spreadsheet.</span></h2>
+          </div>
+        </div>
+      );
+    }
+
+    /* Who runs on it: client tiles act as tabs (logo + name, progress bar), story below. Auto-advances every 5s, pauses on hover. */
+    function Customers() {
+      const [i, setI, setPaused] = useAutoIndex(CASES.length, 5000);
+      const c = CASES[i];
+      return (
+        <section className="sc-section sc-section--coral">
+          <div className="container-wide">
+            <WhoHead />
+            <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+              <div className="sc-railtabs">
+                {CASES.map((x, j) => (
+                  <button key={x.name} type="button" className={'sc-railtab' + (j === i ? ' is-on' : '')} onClick={() => setI(j)} aria-pressed={j === i}>
+                    <span className="sc-railtab-logo">
+                      {x.logo ? <img src={x.logo} alt={x.name + ' logo'} /> : <span className="sc-railtab-mono" aria-hidden>{x.name[0]}</span>}
+                    </span>
+                    <b>{x.name}</b><small>{x.industry}</small>
+                    <i className="sc-railtab-bar" key={j === i ? 'run-' + i : 'idle'} />
+                  </button>
+                ))}
+              </div>
+              <article key={c.name} className="sc-railstory">
+                {c.todo && <span className="sc-todo">TODO: real story</span>}
+                <div>
+                  <div className="sc-railstory-brand">
+                    {c.logo ? <img src={c.logo} alt="" /> : <span className="sc-railtab-mono" aria-hidden>{c.name[0]}</span>}
+                    <span className="eyebrow eyebrow--bare">CASE · {c.name.toUpperCase()} · {c.industry.toUpperCase()}</span>
+                  </div>
+                  <blockquote>“{c.quote}”</blockquote>
+                  <div className="sc-case-who"><b>{c.who}</b><span>{c.role}{c.role.includes(c.name) ? '' : ', ' + c.name}</span></div>
+                </div>
+                <div className="sc-railstory-side">
+                  <div className="sc-spot-result"><b>{c.result[0]}</b><small>{c.result[1]}</small></div>
+                  <p>{c.blurb}</p>
+                  <a className="link-arrow" href="#" aria-disabled="true">Read the case <span className="arrow">→</span></a>
                 </div>
               </article>
-            ))}
-          </div>
-        </section>
-      );
-    }
-
-    function AgentforceBand() {
-      return (
-        <section className="sc-agent">
-          <div className="container-wide sc-agent-grid">
-            <div>
-              <div className="eyebrow" style={{ marginBottom: 20, color: 'var(--intigris-coral)' }}>AND THEN THERE IS AGENTFORCE</div>
-              <h2 className="sc-h2-light">An AI colleague who has <span>read every record.</span></h2>
-              <p>
-                Since Dreamforce '25, Sales Cloud ships as Agentforce Sales. Agents summarise deals, draft follow-ups, flag risk and update records from a call transcript. Grounded in your data, with guardrails you set. We switch it on once the basics are solid, not before.
-              </p>
-              <ul className="sc-agent-list">
-                <li>Deal and account summaries on demand</li>
-                <li>Next-best-action and follow-up drafts</li>
-                <li>Call notes to CRM fields, automatically</li>
-              </ul>
-              <a className="link-arrow sc-link-light" href="Services.html#agentforce">Our Agentforce practice <span className="arrow">→</span></a>
-            </div>
-            <div><Illo kind="agent" /></div>
-          </div>
-        </section>
-      );
-    }
-
-    function Customers() {
-      return (
-        <section className="container-wide sc-section">
-          <div className="section-head">
-            <div>
-              <div className="eyebrow" style={{ marginBottom: 20 }}>WHO RUNS ON IT</div>
-              <h2 className="display-md">Built for teams that <span style={{ color: 'var(--intigris-coral)' }}>outgrew the spreadsheet.</span></h2>
-            </div>
-          </div>
-          <div className="sc-customers">
-            <article className="sc-case">
-              <div className="eyebrow eyebrow--bare" style={{ marginBottom: 14 }}>CASE · WETRANSFER</div>
-              <blockquote>“Due to the work Intigris delivered we have taken an important step forward in automation and cleaning of data.”</blockquote>
-              <div className="sc-case-who"><b>Mathieu Kok</b><span>Advertising Systems Director, WeTransfer</span></div>
-              <p>WeTransfer's sales ran on spreadsheets that stopped scaling with the company. We implemented Sales Cloud, then connected it to NetSuite so orders flow to invoices without anyone retyping them. Finance got its time back; leadership got dashboards it trusts.</p>
-              <a className="link-arrow" href="#" aria-disabled="true">Read the case <span className="arrow">→</span></a>
-              <span className="sc-todo">TODO: link to case page</span>
-            </article>
-            <div className="sc-logos">
-              {CUSTOMERS.slice(1).map((c, i) => (
-                <div key={i} className="sc-logo">
-                  <b>{c.name}</b>
-                  <span>{c.note}</span>
-                </div>
-              ))}
             </div>
           </div>
         </section>
@@ -400,14 +524,13 @@
 
     function Offers({ onCta }) {
       return (
-        <section id="offers" className="sc-section sc-section--soft">
+        <section id="offers" className="sc-section">
           <div className="container-wide">
-            <div className="section-head">
+            <div className="section-head sc-head">
               <div>
                 <div className="eyebrow" style={{ marginBottom: 20 }}>TWO WAYS TO START</div>
                 <h2 className="display-md">Fast, or <span style={{ color: 'var(--intigris-coral)' }}>thorough.</span></h2>
               </div>
-              <p className="lede">Both end with a Sales Cloud your team uses on Monday morning. The difference is how much we tailor before go-live.</p>
             </div>
             <div className="sc-offers">
               <article className="sc-offer sc-offer--hi">
@@ -457,27 +580,11 @@
       );
     }
 
-    function WorksWith() {
-      const items = [['Integrations', 'integrations'], ['Data 360', 'data'], ['Agentforce', 'agentforce'], ['Service Cloud', 'service'], ['Experience Cloud', 'experience']];
-      return (
-        <section className="container-wide sc-section sc-section--tight">
-          <div className="sc-works">
-            <div>
-              <div className="eyebrow" style={{ marginBottom: 12 }}>WORKS WITH</div>
-              <p>Sales Cloud rarely stands alone. These are the pieces we most often connect to it.</p>
-            </div>
-            <div className="sc-chips">
-              {items.map(([l, a]) => <a key={a} className="chip sc-chip" href={'Services.html#' + a}>{l} <span aria-hidden>→</span></a>)}
-            </div>
-          </div>
-        </section>
-      );
-    }
-
     function Faq() {
       const [open, setOpen] = useState(0);
       return (
-        <section className="container-wide sc-section">
+        <section id="faq" className="sc-section sc-section--rule">
+          <div className="container-wide">
           <div className="sc-faq-grid">
             <div>
               <div className="eyebrow" style={{ marginBottom: 20 }}>QUESTIONS WE GET</div>
@@ -494,6 +601,7 @@
               ))}
             </div>
           </div>
+          </div>
         </section>
       );
     }
@@ -504,145 +612,242 @@
           <Hero onCta={onCta} />
           <WhatItIs />
           <HowItWorks />
-          <AgentforceBand />
           <Customers />
           <Offers onCta={onCta} />
-          <WorksWith />
           <Faq />
-          <SiteFinalCTA onCta={onCta} />
           <style>{`
             /* ---------- layout ---------- */
             .sc-section { padding-top: clamp(64px, 8vw, 112px); padding-bottom: clamp(64px, 8vw, 112px); }
             .sc-section--soft { background: var(--intigris-off-white-200); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+            .sc-section--coral { background: var(--intigris-coral); color: var(--intigris-dark-brown); }
+            .sc-section--coral .display-md { color: var(--intigris-dark-brown); }
+            .sc-section--coral .sc-case { background: var(--intigris-off-white); border-color: transparent; }
+            .sc-section--coral .sc-logo { background: rgba(252,247,235,.92); border-color: transparent; }
+            .sc-section--coral .link-arrow { color: var(--intigris-dark-brown); border-color: var(--intigris-dark-brown); }
+            .sc-section--rule { position: relative; }
+            .sc-section--rule::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: var(--intigris-coral); }
             .sc-section--tight { padding-top: clamp(40px, 5vw, 64px); padding-bottom: clamp(40px, 5vw, 64px); }
 
+            .sc-head { grid-template-columns: 1fr; }
+            .sc-head .display-md { text-wrap: balance; max-width: none; }
             /* ---------- hero ---------- */
-            .sc-hero { position: relative; overflow: hidden; isolation: isolate; background: var(--intigris-brown-700); color: var(--intigris-off-white); border-bottom-left-radius: clamp(24px, 4vw, 56px); border-bottom-right-radius: clamp(24px, 4vw, 56px); }
-            .sc-hero-photo { position: absolute; inset: 0; z-index: 0; background: url("assets/hero-team.jpg") center right / cover; opacity: .38; mix-blend-mode: luminosity; -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 36%, #000 80%); mask-image: linear-gradient(90deg, transparent 0%, transparent 36%, #000 80%); }
-            .sc-hero-glow { position: absolute; inset: 0; z-index: 0; background: radial-gradient(120% 90% at 82% 30%, rgba(255,95,54,.55) 0%, rgba(255,95,54,.18) 38%, rgba(43,23,0,0) 70%); }
-            .sc-hero-fade { position: absolute; inset: 0; z-index: 0; background: linear-gradient(180deg, rgba(43,23,0,.1) 0%, rgba(43,23,0,0) 40%, rgba(43,23,0,.55) 100%); }
+            .sc-hero { position: relative; overflow: hidden; isolation: isolate; background: linear-gradient(90deg, #ff9166 0%, var(--intigris-coral) 44%, var(--intigris-coral-700) 80%, #9e300d 100%); color: var(--intigris-off-white); border-bottom-left-radius: clamp(24px, 4vw, 56px); border-bottom-right-radius: clamp(24px, 4vw, 56px); }
+            .sc-hero-photo { position: absolute; inset: 0; z-index: 0; background: url("assets/hero-team.jpg") center right / cover; mix-blend-mode: multiply; opacity: .5; -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%); mask-image: linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%); }
+            .sc-hero-glow { display: none; }
+            .sc-hero-fade { position: absolute; inset: 0; z-index: 0; background: linear-gradient(180deg, rgba(64,35,1,0) 40%, rgba(64,35,1,.28) 100%); }
             .sc-hero-inner { position: relative; z-index: 1; padding-top: clamp(132px, 17vh, 200px); padding-bottom: clamp(56px, 8vh, 96px); }
             .sc-hero-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: end; }
             .sc-h1 { font-size: clamp(42px, 5.8vw, 84px); font-weight: 500; letter-spacing: -.03em; line-height: .98; margin: 0; color: var(--intigris-off-white); text-wrap: balance; }
             .sc-h1 span { color: var(--intigris-coral); font-style: italic; }
-            .sc-lede-dark { margin-top: 26px; max-width: 600px; font-size: 18px; font-weight: 400; line-height: 1.55; color: rgba(252,247,235,.88); }
-            .sc-proof { justify-self: end; width: 100%; max-width: 420px; background: rgba(252,247,235,.06); border: 1px solid rgba(252,247,235,.18); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 20px; padding: 10px 26px; }
-            .sc-proof-row { display: flex; align-items: center; gap: 16px; padding: 15px 0; border-bottom: 1px solid rgba(252,247,235,.14); font-size: 15px; font-weight: 500; letter-spacing: -.005em; }
+            .sc-lede-dark { margin-top: 26px; max-width: 600px; font-size: 18px; font-weight: 400; line-height: 1.55; color: rgba(252,247,235,.94); }
+            .sc-h1 span { color: var(--intigris-dark-brown); }
+            .eyebrow--dark { color: var(--intigris-dark-brown); } .eyebrow--dark::before { background: var(--intigris-dark-brown); }
+            .sc-btn-dark { background: var(--intigris-dark-brown); color: var(--intigris-off-white); } .sc-btn-dark:hover { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
+            .sc-proof { justify-self: end; width: 100%; max-width: 420px; background: rgba(252,247,235,.14); border: 1px solid rgba(252,247,235,.34); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 20px; padding: 10px 26px; }
+            .sc-proof-row { display: flex; align-items: center; gap: 16px; padding: 15px 0; border-bottom: 1px solid rgba(252,247,235,.22); font-size: 15px; font-weight: 500; letter-spacing: -.005em; }
             .sc-proof-row:last-child { border-bottom: 0; }
-            .sc-proof-num { font-size: 12px; font-weight: 500; letter-spacing: .12em; color: var(--intigris-coral); flex: none; width: 28px; }
+            .sc-proof-num { font-size: 12px; font-weight: 500; letter-spacing: .12em; color: var(--intigris-dark-brown); flex: none; width: 28px; }
 
-            /* ---------- benefits ---------- */
-            .sc-benefits { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
-            .sc-benefit { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 20px; padding: 24px 22px 26px; }
-            .sc-benefit-num { font-size: 12px; font-weight: 600; letter-spacing: .14em; color: var(--intigris-coral-700); }
-            .sc-benefit h3 { font-size: 19px; font-weight: 500; letter-spacing: -.016em; line-height: 1.15; margin: 12px 0 8px; }
-            .sc-benefit p { margin: 0; font-size: 14.5px; line-height: 1.5; color: var(--fg-muted); }
+            /* ---------- Lightning-style screens ---------- */
+            .sf { width: 100%; max-width: 460px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 12px; color: #181818; background: #F3F3F3; border: 1px solid #C9C9C9; border-radius: 10px; overflow: hidden; box-shadow: 0 30px 60px -36px rgba(64,35,1,.45); letter-spacing: 0; }
+            .sf--wide { max-width: 580px; }
+            .sf a { color: #0176D3; text-decoration: none; cursor: default; }
+            .sf b { font-weight: 600; }
+            .sf small { color: #747474; font-size: 11px; }
+            .sf-global { display: flex; align-items: center; gap: 10px; padding: 7px 12px; background: #fff; border-bottom: 1px solid #E5E5E5; }
+            .sf-waffle { width: 14px; height: 14px; background: radial-gradient(#747474 1.4px, transparent 1.5px) 0 0 / 5px 5px; flex: none; }
+            .sf-app { font-weight: 700; font-size: 13px; }
+            .sf-search { flex: 1; margin: 0 8px; height: 22px; line-height: 22px; padding: 0 10px; border: 1px solid #C9C9C9; border-radius: 12px; color: #747474; background: #fff; font-size: 11px; }
+            .sf-avatar { width: 20px; height: 20px; border-radius: 50%; background: #9050E9; flex: none; }
+            .sf-nav { display: flex; gap: 2px; padding: 0 8px; background: #0176D3; }
+            .sf-nav span { padding: 7px 10px; color: rgba(255,255,255,.85); font-size: 11.5px; white-space: nowrap; }
+            .sf-nav span.is-on { color: #fff; font-weight: 600; box-shadow: inset 0 -3px 0 #fff; }
+            .sf-page { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+            .sf-card { background: #fff; border: 1px solid #E5E5E5; border-radius: 6px; padding: 10px 12px; box-shadow: 0 2px 2px rgba(0,0,0,.05); }
+            .sf-card-head { display: flex; align-items: center; gap: 10px; }
+            .sf-card-title { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
+            .sf-card-title b { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+            .sf-icon { width: 28px; height: 28px; border-radius: 6px; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 13px; flex: none; }
+            .sf-btn { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border: 1px solid #747474; border-radius: 4px; background: #fff; color: #0176D3; font-size: 11.5px; font-weight: 500; white-space: nowrap; }
+            .sf-btn--brand { background: #0176D3; border-color: #0176D3; color: #fff; }
+            .sf-meta { margin: 6px 0 4px 38px; font-size: 10.5px; color: #747474; }
+            .sf-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+            .sf-table th { text-align: left; font-weight: 600; font-size: 10.5px; color: #444; padding: 6px 6px; background: #FAFAF9; border-top: 1px solid #E5E5E5; border-bottom: 1px solid #E5E5E5; }
+            .sf-table td { padding: 7px 6px; border-bottom: 1px solid #F0F0F0; white-space: nowrap; font-size: 11.5px; }
+            .sf-table--lines td:nth-child(n+2), .sf-table--lines th:nth-child(n+2) { text-align: right; }
+            .sf-pill { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+            .sf-pill--hot { background: #FEDED8; color: #BA0517; } .sf-pill--warm { background: #FEF1E0; color: #8C4B02; } .sf-pill--cold { background: #EAF5FE; color: #014486; }
+            .sf-score { display: inline-block; width: 44px; height: 5px; border-radius: 3px; background: #E5E5E5; margin-right: 6px; vertical-align: middle; overflow: hidden; }
+            .sf-score i { display: block; height: 100%; background: #0176D3; }
+            .sf-highlights { display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; align-items: center; }
+            .sf-highlights .sf-card-title { grid-column: 2; }
+            .sf-fields { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding-top: 8px; border-top: 1px solid #E5E5E5; }
+            .sf-fields div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+            .sf-fields span { font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .sf-actions { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; }
+            .sf-highlights .sf-btn { grid-column: auto; }
+            .sf-tabs { display: flex; gap: 16px; border-bottom: 1px solid #E5E5E5; margin: -2px 0 8px; }
+            .sf-tabs span { padding: 4px 0 8px; font-size: 11.5px; color: #444; }
+            .sf-tabs span.is-on { color: #0176D3; font-weight: 600; box-shadow: inset 0 -3px 0 #0176D3; }
+            .sf-timeline { display: flex; flex-direction: column; gap: 8px; }
+            .sf-tl { display: flex; gap: 10px; align-items: flex-start; }
+            .sf-tl-ic { width: 22px; height: 22px; border-radius: 50%; background: #F3F3F3; display: grid; place-items: center; font-size: 11px; flex: none; }
+            .sf-tl div { display: flex; flex-direction: column; gap: 1px; }
+            .sf-tl a { font-size: 11.5px; }
+            .sf-kanban { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+            .sf-col { background: #F3F3F3; border-radius: 6px; padding: 6px; min-height: 120px; }
+            .sf-colhead { display: flex; flex-direction: column; gap: 1px; padding: 2px 4px 6px; }
+            .sf-colhead b { font-size: 11px; }
+            .sf-kcard { background: #fff; border: 1px solid #E5E5E5; border-left: 3px solid #0176D3; border-radius: 4px; padding: 6px 8px; margin-bottom: 6px; display: flex; flex-direction: column; gap: 2px; font-size: 11px; }
+            .sf-kcard--won { border-left-color: #2E844A; }
+            .sf-kcard span { font-weight: 600; }
+            .sf-fc-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0; padding: 8px 0; border-top: 1px solid #E5E5E5; border-bottom: 1px solid #E5E5E5; }
+            .sf-fc-summary div { display: flex; flex-direction: column; gap: 2px; }
+            .sf-fc-summary b { font-size: 15px; }
+            .sf-blue { color: #0176D3; }
+            .sf-fc-rows { display: flex; flex-direction: column; gap: 9px; }
+            .sf-fc-row { display: grid; grid-template-columns: 90px 1fr 48px; gap: 10px; align-items: center; font-size: 11.5px; }
+            .sf-fc-row span { text-align: right; font-weight: 600; }
+            .sf-fc-bar { position: relative; height: 14px; background: #F3F3F3; border-radius: 3px; display: flex; overflow: visible; }
+            .sf-fc-bar i, .sf-legend i { display: block; height: 100%; }
+            .sf-fc-bar i.closed, .sf-legend i.closed { background: #032D60; } .sf-fc-bar i.commit, .sf-legend i.commit { background: #0176D3; } .sf-fc-bar i.best, .sf-legend i.best { background: #AACBFF; }
+            .sf-fc-bar i:first-child { border-radius: 3px 0 0 3px; }
+            .sf-fc-bar em { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #BA0517; }
+            .sf-legend { display: flex; gap: 12px; margin-top: 10px; font-size: 10.5px; color: #444; }
+            .sf-legend span { display: inline-flex; align-items: center; gap: 5px; }
+            .sf-legend i { width: 10px; height: 10px; border-radius: 2px; }
+            .sf-legend em { width: 2px; height: 10px; background: #BA0517; display: inline-block; }
+            .sf-path { display: flex; gap: 2px; }
+            .sf-path span { flex: 1; text-align: center; font-size: 10.5px; font-weight: 600; padding: 6px 4px; background: #fff; color: #444; border: 1px solid #C9C9C9; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%, 8px 50%); white-space: nowrap; overflow: hidden; }
+            .sf-path span.done { background: #2E844A; color: #fff; border-color: #2E844A; }
+            .sf-path span.current { background: #0176D3; color: #fff; border-color: #0176D3; }
+            .sf-total { display: flex; justify-content: space-between; padding: 8px 6px 4px; font-size: 13px; }
+            .sf-approval { margin-top: 6px; padding: 7px 8px; background: #EBF7E6; border-radius: 4px; font-size: 11px; color: #2E844A; display: flex; align-items: center; gap: 6px; }
+            .sf-check { width: 16px; height: 16px; border-radius: 50%; background: #2E844A; color: #fff; display: grid; place-items: center; font-size: 10px; }
+            .sf-dash-head { display: flex; align-items: center; gap: 10px; }
+            .sf-dash { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+            .sf-metric { display: flex; flex-direction: column; gap: 2px; padding: 10px; }
+            .sf-metric b { font-size: 20px; letter-spacing: -.01em; }
+            .sf-metric em { font-style: normal; font-size: 10.5px; color: #2E844A; }
+            .sf-chart { grid-column: span 2; display: flex; flex-direction: column; gap: 8px; min-height: 120px; }
+            .sf-bars { display: flex; align-items: flex-end; gap: 12px; height: 84px; padding: 0 4px; }
+            .sf-bars div { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; }
+            .sf-bars i { display: block; width: 100%; background: #0176D3; border-radius: 3px 3px 0 0; }
+            .sf-bars span { font-size: 10px; color: #747474; }
+            .sf-donut { display: flex; align-items: center; gap: 14px; }
+            .sf-donut-ring { width: 76px; height: 76px; border-radius: 50%; background: conic-gradient(#0176D3 0 46%, #1B96FF 46% 77%, #AACBFF 77% 100%); -webkit-mask: radial-gradient(circle 24px, transparent 98%, #000 100%); mask: radial-gradient(circle 24px, transparent 98%, #000 100%); flex: none; }
+            .sf-donut-legend { display: flex; flex-direction: column; gap: 5px; font-size: 11px; }
+            .sf-donut-legend span { display: inline-flex; align-items: center; gap: 6px; }
+            .sf-donut-legend i { width: 9px; height: 9px; border-radius: 2px; }
 
-            /* ---------- steps ---------- */
-            .sc-step { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 80px); align-items: center; padding: clamp(36px, 4.5vw, 64px) 0; border-top: 1px solid var(--border); }
-            .sc-step:first-of-type { border-top: 0; }
-            .sc-step--flip .sc-step-illo { order: 2; }
-            .sc-step-num { font-size: 13px; font-weight: 600; letter-spacing: .14em; color: var(--intigris-coral-700); }
-            .sc-step-copy h3 { font-size: clamp(26px, 2.8vw, 38px); font-weight: 500; letter-spacing: -.022em; line-height: 1.08; margin: 12px 0 0; }
-            .sc-step-copy p { margin: 16px 0 0; font-size: 16.5px; line-height: 1.6; color: var(--fg-muted); max-width: 520px; }
-            .sc-step-copy ul { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
-            .sc-step-copy li { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; color: var(--intigris-dark-brown); }
+            /* ---------- what it is ---------- */
+            .sc-what { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 20px; align-items: stretch; }
+            .sc-what-photo { position: relative; border-radius: var(--radius-xl); overflow: hidden; min-height: 420px; background: var(--intigris-off-white-200); }
+            .sc-what-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+            .sc-what-glow { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(160deg, rgba(255,145,102,.55) 0%, rgba(255,95,54,.45) 45%, rgba(225,74,36,.6) 100%); mix-blend-mode: multiply; }
+            .sc-what-glow::after { content: ""; position: absolute; inset: 0; background: radial-gradient(90% 70% at 30% 20%, rgba(255,145,102,.5), transparent 70%); mix-blend-mode: screen; }
+            .sc-ba-col { border-radius: var(--radius-xl); padding: clamp(22px, 2.8vw, 34px); }
+            .sc-ba-col--after { position: relative; overflow: hidden; color: #fff; background: var(--intigris-coral); border: 1px solid var(--intigris-coral); box-shadow: 0 24px 60px -40px rgba(255,95,54,.55); }
+            .sc-ba-col--after > * { position: relative; z-index: 2; }
+            .sc-ba-label { font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 18px; color: var(--fg-muted); }
+            .sc-ba-col--after .sc-ba-label { color: rgba(255,255,255,.85); }
+            .sc-ba-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+            .sc-ba-col li { display: flex; gap: 12px; align-items: flex-start; font-size: 15.5px; line-height: 1.45; }
+            .sc-ba-check { width: 22px; height: 22px; border-radius: 999px; background: var(--intigris-coral); color: var(--intigris-dark-brown); display: grid; place-items: center; font-size: 12px; font-weight: 700; flex: none; margin-top: 3px; }
+            .sc-ba-col--after li div { display: flex; flex-direction: column; gap: 5px; }
+            .sc-ba-col--after li b { font-weight: 500; letter-spacing: -.015em; color: #fff; font-size: 21px; line-height: 1.25; }
+            .sc-ba-col--after li span { font-size: 14px; color: var(--intigris-dark-brown); }
+            .sc-ba-col--after li .sc-ba-check { background: rgba(255,255,255,.92); color: var(--intigris-coral-700); box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+
+            @media (max-width: 980px) { .sc-what { grid-template-columns: 1fr; } .sc-what-photo { min-height: 280px; } }
+
+            /* ---------- six steps showcase ---------- */
             .sc-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--intigris-coral); flex: none; margin-top: 7px; }
-            .sc-step-illo { display: flex; justify-content: center; }
+            .sc-show { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.5fr); gap: clamp(24px, 3vw, 48px); align-items: start; }
+            .sc-show-list { display: flex; flex-direction: column; gap: 10px; }
+            .sc-show-item { appearance: none; font: inherit; text-align: left; cursor: pointer; display: grid; grid-template-columns: 34px 1fr 20px; gap: 12px; align-items: center; padding: 14px 16px; background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 16px; color: var(--intigris-dark-brown); transition: background 200ms var(--ease-out), border-color 200ms var(--ease-out), transform 200ms var(--ease-out); }
+            .sc-show-item:hover { border-color: var(--intigris-coral); }
+            .sc-show-item.is-on { background: var(--intigris-coral); border-color: var(--intigris-coral); color: var(--intigris-dark-brown); transform: translateX(6px); }
+            .sc-show-num { font-size: 12px; font-weight: 600; letter-spacing: .12em; color: var(--intigris-coral-700); }
+            .sc-show-item.is-on .sc-show-num { color: var(--intigris-dark-brown); }
+            .sc-show-copy { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+            .sc-show-copy b { font-size: 17px; font-weight: 500; letter-spacing: -.014em; }
+            .sc-show-copy small { font-size: 12.5px; color: var(--fg-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .sc-show-item.is-on .sc-show-copy small { color: rgba(64,35,1,.75); }
+            .sc-show-arrow { color: var(--intigris-coral); transition: transform 200ms var(--ease-out); }
+            .sc-show-item.is-on .sc-show-arrow { color: var(--intigris-dark-brown); transform: translateX(3px); }
+            .sc-show-stage { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: clamp(20px, 2.5vw, 36px); }
+            /* stage: text row on top, screen below at full width */
+            .sc-show-stage--stack { display: flex; flex-direction: column; gap: clamp(20px, 2.5vw, 32px); }
+            .sc-show-detail--stack h3 { margin: 0 0 14px; }
+            .sc-show-detail--row { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .9fr); gap: clamp(16px, 3vw, 48px); align-items: start; }
+            .sc-show-detail--stack .sc-show-detail--row p { margin: 0; max-width: 620px; }
+            .sc-show-detail--stack .sc-show-detail--row ul { margin: 0; padding-left: 0; gap: 0; }
+            .sc-show-detail--stack .sc-show-detail--row li { font-size: 15.5px; line-height: 1.55; color: var(--fg-muted); }
+            .sc-show-detail--stack .sc-show-detail--row li .sc-dot { margin-top: 8.5px; }
+            .sc-show-stage--stack .sc-show-screen .sf { max-width: none; width: 100%; }
+            .sc-show-stage--stack .sc-show-screen .sf:not(.sf--wide) { max-width: 640px; }
+            .sc-show-screen { display: flex; justify-content: center; animation: fadeIn 400ms var(--ease-out) both; }
+            .sc-show-detail { animation: fadeIn 400ms var(--ease-out) both; }
+            .sc-show-detail h3 { font-size: clamp(24px, 2.4vw, 32px); font-weight: 500; letter-spacing: -.02em; line-height: 1.08; margin: 0; }
+            .sc-show-detail p { margin: 14px 0 0; font-size: 15.5px; line-height: 1.55; color: var(--fg-muted); }
+            .sc-show-detail ul { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+            .sc-show-detail li { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; }
 
-            /* ---------- UI illustrations ---------- */
-            .sc-ui { width: 100%; max-width: 440px; background: var(--intigris-off-white); border: 1px solid var(--border); border-radius: 18px; padding: 18px 18px 16px; box-shadow: 0 30px 60px -36px rgba(64,35,1,.45), 0 2px 0 rgba(64,35,1,.04); font-size: 13px; color: var(--intigris-dark-brown); }
-            .sc-ui--wide { max-width: 560px; }
-            .sc-ui--dark { background: var(--intigris-brown-700); color: var(--intigris-off-white); border-color: rgba(252,247,235,.16); box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
-            .sc-ui-head { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
-            .sc-ui--dark .sc-ui-head { border-color: rgba(252,247,235,.16); }
-            .sc-ui-title { font-weight: 500; letter-spacing: -.01em; flex: 1; }
-            .sc-ui-chip { font-size: 11px; font-weight: 500; letter-spacing: .02em; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--fg-muted); white-space: nowrap; }
-            .sc-ui-chip--fill { background: var(--intigris-coral); border-color: var(--intigris-coral); color: var(--intigris-dark-brown); }
-            .sc-ui-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid rgba(64,35,1,.06); }
-            .sc-ui-row:last-of-type { border-bottom: 0; }
-            .sc-ui-row--thin { padding: 7px 0; }
-            .sc-ui-avatar { width: 32px; height: 32px; border-radius: 999px; display: grid; place-items: center; font-size: 11px; font-weight: 600; background: var(--intigris-off-white-200); color: var(--intigris-dark-brown); flex: none; }
-            .sc-ui-avatar--hot { background: var(--intigris-coral); }
-            .sc-ui-cell { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-            .sc-ui-cell--grow { flex: 1; }
-            .sc-ui-cell b { font-weight: 500; }
-            .sc-ui-cell small { font-size: 11.5px; color: var(--fg-muted); }
-            .sc-ui-score { position: relative; width: 84px; height: 6px; border-radius: 999px; background: var(--intigris-off-white-200); flex: none; }
-            .sc-ui-score i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--intigris-coral); }
-            .sc-ui-score em { position: absolute; right: 0; top: -18px; font-size: 10.5px; font-style: normal; color: var(--fg-muted); }
-            .sc-ui-foot { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--fg-muted); }
-            .sc-ui-foot b { color: var(--intigris-dark-brown); font-weight: 500; }
-            .sc-ui-logo { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--intigris-dark-brown); color: var(--intigris-off-white); font-weight: 600; flex: none; }
-            .sc-ui-tabs { display: flex; gap: 14px; font-size: 12px; color: var(--fg-muted); padding: 2px 0 10px; border-bottom: 1px solid var(--border); }
-            .sc-ui-tabs .is-on { color: var(--intigris-dark-brown); font-weight: 500; position: relative; }
-            .sc-ui-tabs .is-on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -11px; height: 2px; background: var(--intigris-coral); }
-            .sc-ui-timeline { padding-top: 10px; display: flex; flex-direction: column; gap: 10px; }
-            .sc-ui-tl { display: grid; grid-template-columns: 10px 72px 1fr; gap: 10px; align-items: center; }
-            .sc-ui-tl small { font-size: 11px; color: var(--fg-muted); }
-            .sc-ui-dot { width: 8px; height: 8px; border-radius: 999px; background: var(--intigris-off-white-200); border: 1px solid var(--border); }
-            .sc-ui-dot--coral { background: var(--intigris-coral); border-color: var(--intigris-coral); }
-            .sc-ui-kanban { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-            .sc-ui-colhead { font-size: 11px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--fg-muted); display: flex; justify-content: space-between; margin-bottom: 8px; }
-            .sc-ui-colhead em { font-style: normal; }
-            .sc-ui-card { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 10px; padding: 9px 10px; font-size: 11.5px; margin-bottom: 8px; line-height: 1.3; }
-            .sc-ui-card--won { background: var(--intigris-coral); border-color: var(--intigris-coral); }
-            .sc-ui-chart { position: relative; height: 140px; display: flex; align-items: flex-end; gap: 12px; padding: 22px 6px 0; }
-            .sc-ui-bar { flex: 1; position: relative; background: var(--intigris-coral); border-radius: 6px 6px 0 0; }
-            .sc-ui-bar i { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(255,95,54,.28); border-radius: 6px 6px 0 0; z-index: -1; }
-            .sc-ui-quota { position: absolute; left: 0; right: 0; top: 26px; border-top: 1.5px dashed var(--intigris-dark-brown); }
-            .sc-ui-quota em { position: absolute; right: 0; top: -18px; font-size: 10.5px; font-style: normal; color: var(--fg-muted); }
-            .sc-ui-legend { display: flex; gap: 16px; margin-top: 12px; font-size: 11.5px; color: var(--fg-muted); }
-            .sc-ui-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: var(--intigris-coral); margin-right: 6px; vertical-align: -1px; }
-            .sc-ui-legend i.dim { background: rgba(255,95,54,.28); }
-            .sc-ui-amt { font-variant-numeric: tabular-nums; font-weight: 500; }
-            .sc-ui-total { display: flex; justify-content: space-between; padding: 10px 0 2px; margin-top: 4px; border-top: 1px solid var(--border); font-size: 14px; }
-            .sc-ui-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-            .sc-ui-kpi { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
-            .sc-ui-kpi small { font-size: 11px; color: var(--fg-muted); }
-            .sc-ui-kpi b { font-size: 20px; font-weight: 500; letter-spacing: -.02em; }
-            .sc-ui-kpi em { font-size: 11px; font-style: normal; color: var(--intigris-coral-700); }
-            .sc-ui-spark { display: flex; align-items: flex-end; gap: 8px; height: 80px; margin-top: 14px; padding: 0 4px; }
-            .sc-ui-spark i { flex: 1; background: var(--intigris-coral); border-radius: 5px 5px 0 0; opacity: .85; }
-            .sc-ui-ai { margin: 6px 0 12px; font-size: 14px; line-height: 1.5; color: rgba(252,247,235,.9); }
-            .sc-ui-ai b { color: var(--intigris-coral); font-weight: 500; }
-            .sc-ui-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-            .sc-ui-actions span { font-size: 11.5px; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(252,247,235,.3); }
+            /* ---------- who · shared ---------- */
+            .sc-spot-result { display: flex; flex-direction: column; gap: 4px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+            .sc-spot-result b { font-size: clamp(20px, 1.8vw, 24px); font-weight: 500; letter-spacing: -.018em; line-height: 1.15; }
+            .sc-spot-result small { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-muted); font-weight: 500; }
 
-            /* ---------- agentforce band ---------- */
-            .sc-agent { background: var(--intigris-chocolate); color: var(--intigris-off-white); padding: clamp(64px, 8vw, 112px) 0; }
-            .sc-agent-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
-            .sc-agent-grid > div:last-child { display: flex; justify-content: flex-end; }
-            .sc-h2-light { font-size: clamp(30px, 3.6vw, 50px); font-weight: 500; letter-spacing: -.024em; line-height: 1.04; margin: 0; color: var(--intigris-off-white); text-wrap: balance; }
-            .sc-h2-light span { color: var(--intigris-coral); font-style: italic; }
-            .sc-agent p { margin: 18px 0 0; font-size: 17px; line-height: 1.6; color: rgba(252,247,235,.88); max-width: 560px; }
-            .sc-agent-list { list-style: none; margin: 20px 0 24px; padding: 0; display: flex; flex-direction: column; gap: 9px; font-size: 15px; }
-            .sc-agent-list li::before { content: "→"; color: var(--intigris-coral); margin-right: 10px; }
-            .sc-link-light { color: var(--intigris-off-white); border-color: rgba(252,247,235,.4); }
+            /* ---------- who runs on it ---------- */
+            .sc-railtabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+            .sc-railtab { appearance: none; font: inherit; text-align: left; cursor: pointer; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 3px; padding: 16px 18px 20px; border-radius: 16px; border: 1px solid rgba(64,35,1,.18); background: rgba(252,247,235,.35); color: var(--intigris-dark-brown); transition: background 200ms var(--ease-out); }
+            .sc-railtab-logo { height: 28px; display: flex; align-items: center; margin-bottom: 10px; }
+            .sc-railtab-logo img { max-height: 28px; max-width: 140px; width: auto; height: auto; object-fit: contain; display: block; }
+            .sc-railtab-mono { width: 28px; height: 28px; border-radius: 8px; border: 1.5px dashed rgba(64,35,1,.35); display: grid; place-items: center; font-size: 13px; font-weight: 600; color: rgba(64,35,1,.6); }
+            .sc-railtab.is-on .sc-railtab-mono { border-color: var(--intigris-coral); color: var(--intigris-coral-700); }
+            .sc-railstory-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+            .sc-railstory-brand img { max-height: 28px; max-width: 140px; width: auto; height: auto; object-fit: contain; display: block; }
+            .sc-railtab b { font-size: 17px; font-weight: 500; letter-spacing: -.014em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .sc-railtab small { font-size: 12.5px; color: rgba(64,35,1,.7); }
+            .sc-railtab:hover { background: rgba(252,247,235,.6); }
+            .sc-railtab.is-on { background: var(--intigris-off-white); border-color: var(--intigris-off-white); }
+            .sc-railtab-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: var(--intigris-dark-brown); }
+            .sc-railtab.is-on .sc-railtab-bar { animation: railFill 5s linear both; }
+            @keyframes railFill { from { width: 0; } to { width: 100%; } }
+            .sc-railstory { position: relative; background: var(--intigris-off-white); border-radius: var(--radius-xl); padding: clamp(28px, 3.5vw, 48px); display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .8fr); gap: clamp(28px, 4vw, 64px); align-items: start; animation: fadeIn 420ms var(--ease-out) both; min-height: 300px; }
+            .sc-railstory blockquote { margin: 0; font-size: clamp(24px, 2.4vw, 34px); font-weight: 700; letter-spacing: -.02em; line-height: 1.2; color: var(--intigris-dark-brown); text-wrap: balance; }
+            .sc-railstory-side { display: flex; flex-direction: column; gap: 16px; padding-left: clamp(0px, 3vw, 40px); border-left: 1px solid var(--border); align-self: stretch; }
+            .sc-railstory-side p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--fg-muted); flex: 1; }
 
-            /* ---------- customers ---------- */
-            .sc-customers { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 18px; align-items: start; }
-            .sc-case { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: clamp(24px, 3vw, 40px); position: relative; }
-            .sc-case blockquote { margin: 0; font-size: clamp(20px, 2vw, 26px); font-weight: 700; letter-spacing: -.018em; line-height: 1.25; color: var(--intigris-dark-brown); }
-            .sc-case-who { margin: 16px 0 18px; display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
-            .sc-case-who b { font-weight: 500; }
-            .sc-case-who span { color: var(--fg-muted); }
-            .sc-case p { margin: 0 0 18px; font-size: 15.5px; line-height: 1.6; color: var(--fg-muted); }
-            .sc-todo { position: absolute; top: 14px; right: 16px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--intigris-off-white); background: var(--intigris-washed-green); padding: 3px 8px; border-radius: 999px; }
-            .sc-logos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-            .sc-logo { background: var(--intigris-off-white); border: 1px solid var(--border); border-radius: 16px; padding: 20px 18px; display: flex; flex-direction: column; gap: 6px; min-height: 120px; }
-            .sc-logo b { font-size: 17px; font-weight: 500; letter-spacing: -.014em; }
-            .sc-logo span { font-size: 13px; line-height: 1.45; color: var(--fg-muted); }
+            @media (max-width: 980px) {
+              .sc-railstory { grid-template-columns: 1fr; }
+              .sc-railstory-side { padding-left: 0; border-left: 0; padding-top: 18px; border-top: 1px solid var(--border); }
+              .sc-railtabs { grid-template-columns: repeat(2, 1fr); }
+            }
 
             /* ---------- offers ---------- */
             .sc-offers { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; }
-            .sc-offer { background: var(--intigris-off-white); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: clamp(24px, 3vw, 36px); display: flex; flex-direction: column; gap: 18px; }
-            .sc-offer--hi { border: 1.5px solid var(--intigris-coral); box-shadow: 0 24px 60px -36px rgba(255,95,54,.5); }
+            .sc-offer { background: var(--intigris-off-white-200); border: 1px solid var(--intigris-brown-100); border-radius: var(--radius-xl); padding: clamp(24px, 3vw, 36px); display: flex; flex-direction: column; gap: 18px; }
+            .sc-offer--hi { position: relative; overflow: hidden; color: #fff; background: var(--intigris-coral); border: 1px solid var(--intigris-coral); box-shadow: 0 24px 60px -40px rgba(255,95,54,.55); }
+            .sc-offer--hi > * { position: relative; z-index: 2; }
+            .sc-offer--hi .eyebrow { color: rgba(255,255,255,.85); }
+            .sc-offer--hi h3 { color: #fff; }
+            .sc-offer.sc-offer--hi > p { color: var(--intigris-dark-brown); }
+            .sc-offer--hi .sc-offer-badge { background: rgba(255,255,255,.92); color: var(--intigris-coral-700); }
+            .sc-offer--hi .sc-weeks li { background: #ff7a55; border-color: rgba(255,255,255,.35); }
+            .sc-offer--hi .sc-weeks small { color: rgba(255,255,255,.85); }
+            .sc-offer--hi .sc-weeks b { color: #fff; }
+            .sc-offer--hi .sc-weeks span { color: var(--intigris-dark-brown); }
+            .sc-offer--hi .sc-offer-inc { color: var(--intigris-dark-brown); }
+            .sc-offer--hi .sc-offer-inc small { color: rgba(255,255,255,.85); }
+            .sc-offer--hi .btn-primary { background: var(--intigris-dark-brown); color: var(--intigris-off-white); }
+            .sc-offer--hi .btn-primary:hover { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
             .sc-offer-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
             .sc-offer h3 { font-size: clamp(24px, 2.4vw, 32px); font-weight: 500; letter-spacing: -.02em; line-height: 1.1; margin: 10px 0 0; }
             .sc-offer > p { margin: 0; font-size: 15.5px; line-height: 1.6; color: var(--fg-muted); }
             .sc-offer-badge { flex: none; font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; background: var(--intigris-coral); color: var(--intigris-dark-brown); }
-            .sc-offer-badge--soft { background: var(--intigris-off-white-200); color: var(--fg-muted); }
+            .sc-offer-badge--soft { background: var(--intigris-paper); border: 1px solid var(--intigris-brown-100); color: var(--fg-muted); }
             .sc-weeks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
             .sc-weeks li { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 3px; }
             .sc-weeks small { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--intigris-coral-700); font-weight: 600; }
@@ -656,11 +861,6 @@
             .sc-offer .btn { align-self: flex-start; }
 
             /* ---------- works with ---------- */
-            .sc-works { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 32px; align-items: center; padding: 28px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-            .sc-works p { margin: 0; font-size: 15.5px; color: var(--fg-muted); }
-            .sc-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
-            .sc-chip { text-decoration: none; cursor: pointer; height: 38px; padding: 0 16px; font-size: 14px; transition: background 160ms var(--ease-out), color 160ms var(--ease-out), border-color 160ms var(--ease-out); }
-            .sc-chip:hover { background: var(--intigris-coral); color: var(--intigris-dark-brown); border-color: var(--intigris-coral); }
 
             /* ---------- faq ---------- */
             .sc-faq-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
@@ -672,16 +872,13 @@
             .sc-faq-item.is-open button { color: var(--intigris-coral); }
 
             /* ---------- responsive ---------- */
-            @media (max-width: 1180px) { .sc-benefits { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+            @media (max-width: 980px) { .sc-show, .sc-show-detail--row { grid-template-columns: 1fr; } }
             @media (max-width: 980px) {
-              .sc-hero-grid, .sc-step, .sc-agent-grid, .sc-customers, .sc-offers, .sc-works, .sc-faq-grid { grid-template-columns: 1fr; }
+              .sc-hero-grid, .sc-customers, .sc-offers, .sc-faq-grid { grid-template-columns: 1fr; }
               .sc-hero-grid { align-items: start; } .sc-proof { justify-self: start; }
-              .sc-step--flip .sc-step-illo { order: 0; }
-              .sc-agent-grid > div:last-child { justify-content: flex-start; }
-              .sc-chips { justify-content: flex-start; }
             }
             @media (max-width: 620px) {
-              .sc-benefits, .sc-logos, .sc-weeks { grid-template-columns: 1fr; }
+              .sc-logos, .sc-weeks { grid-template-columns: 1fr; }
               .sc-process { grid-template-columns: repeat(2, 1fr); }
               .sc-ui-kanban, .sc-ui-kpis { grid-template-columns: repeat(2, minmax(0,1fr)); }
             }
