@@ -1,0 +1,417 @@
+/* ==================================================================== */
+/*  CLOUD KIT v3 — blocks for the cloud service pages (round 3).         */
+/*  Builds on CloudKit.jsx (stories, FAQ, talk, steps, route, styles).   */
+/*  Scroll effects use GSAP + ScrollTrigger (window.gsap) when loaded;   */
+/*  without it, or with reduced motion, every block shows its final      */
+/*  state. Exposes the blocks on window (see the bottom).                */
+/* ==================================================================== */
+
+const { useState: v3State, useEffect: v3Effect, useRef: v3Ref } = React;
+const V3_REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (window.gsap && window.ScrollTrigger) window.gsap.registerPlugin(window.ScrollTrigger);
+
+/* Run a GSAP setup function scoped to a ref; reverted on unmount. */
+function useGsap(ref, setup, deps = []) {
+  v3Effect(() => {
+    if (!window.gsap || V3_REDUCE || !ref.current) return;
+    const ctx = window.gsap.context(() => setup(window.gsap, ref.current), ref.current);
+    return () => ctx.revert();
+  }, deps);
+}
+
+/* ---------- SALES HERO: loose notes, mails and tabs snap into one customer record ---------- */
+function V3ChaosHero({ eyebrow, a, b, lede, onCta, secondary, chaos, record }) {
+  const ref = v3Ref(null);
+  useGsap(ref, (gsap, root) => {
+    const items = root.querySelectorAll('.v3-chaos-item');
+    const card = root.querySelector('.v3-record');
+    const tl = gsap.timeline({ scrollTrigger: { trigger: root, start: 'top top', end: '+=110%', scrub: 0.6, pin: root.querySelector('.v3-chaos-pin') } });
+    tl.from(card, { opacity: 0, scale: 0.92, duration: 0.6 }, 0.35);
+    items.forEach((el, i) => {
+      tl.to(el, { x: () => (card.offsetLeft + card.offsetWidth / 2) - (el.offsetLeft + el.offsetWidth / 2), y: () => (card.offsetTop + 120 + i * 6) - (el.offsetTop + el.offsetHeight / 2), rotate: 0, scale: 0.35, opacity: 0, duration: 0.55, ease: 'power2.in' }, i * 0.06);
+    });
+    tl.from(root.querySelectorAll('.v3-record-row'), { opacity: 0, y: 10, stagger: 0.08, duration: 0.25 }, 0.7);
+  });
+  return (
+    <section className="v3-chaos" ref={ref}>
+      <div className="v3-chaos-pin">
+        <div className="container-wide v3-chaos-grid">
+          <div className="v3-chaos-copy">
+            <div className="eyebrow eyebrow--dark" style={{ marginBottom: 22 }}>{eyebrow}</div>
+            <h1 className="ck-h1">{a} <span>{b}</span></h1>
+            <p className="ck-hero-lede">{lede}</p>
+            <div className="ck-actions">
+              <button className="btn ck-btn-dark" onClick={onCta}>{tx('Book a 30-min call', 'Plan een gesprek van 30 min')} <span className="arrow">→</span></button>
+              {secondary && <a className="btn btn-outline-light" href={secondary.href}>{secondary.label} <span className="arrow">↓</span></a>}
+            </div>
+            <p className="v3-scroll-hint" aria-hidden>{tx('Scroll: watch the chaos land in one place', 'Scroll: zie de chaos op één plek landen')} ↓</p>
+          </div>
+          <div className="v3-chaos-stage">
+            {chaos.map((c, i) => (
+              <div key={i} className={'v3-chaos-item v3-chaos-item--' + c.kind} style={{ left: c.x + '%', top: c.y + '%', transform: 'rotate(' + c.r + 'deg)' }}>
+                <small>{c.label}</small><b>{c.text}</b>
+              </div>
+            ))}
+            <div className="v3-record">
+              <div className="v3-record-head"><span className="v3-record-icon">{record.initial}</span><div><small>{tx('Account', 'Account')}</small><b>{record.name}</b></div><span className="v3-record-stage">{record.stage}</span></div>
+              {record.rows.map((r, i) => <div key={i} className="v3-record-row"><small>{r[0]}</small><span>{r[1]}</span></div>)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- WHAT IT IS: benefits card + photo (from the current Sales Cloud page) ---------- */
+function V3WhatItIs({ head, label, benefits, image }) {
+  return (
+    <section className="container-wide ck-section">
+      <CkHead {...head} />
+      <div className="v3-what">
+        <div className="v3-what-card ck-rv">
+          <div className="v3-what-label">{label}</div>
+          <ul>{benefits.map((b, i) => <li key={i}><span className="v3-check" aria-hidden>✓</span><div><b>{b.t}</b><span>{b.d}</span></div></li>)}</ul>
+        </div>
+        <div className="v3-what-photo ck-rv"><img src={image} alt="" loading="lazy" /><span aria-hidden /></div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- COMPACT WORD SWAP: half-height sticky line ---------- */
+function V3Statement({ lead, words }) {
+  const ref = v3Ref(null);
+  const [i, setI] = v3State(0);
+  v3Effect(() => {
+    let raf = 0;
+    const on = () => {
+      raf = 0; const el = ref.current; if (!el) return;
+      const r = el.getBoundingClientRect();
+      const p = Math.max(0, Math.min(0.999, (window.innerHeight * 0.35 - r.top) / (r.height - window.innerHeight * 0.55)));
+      setI(Math.floor(p * words.length));
+    };
+    const tick = () => { if (!raf) raf = requestAnimationFrame(on); };
+    on(); window.addEventListener('scroll', tick, { passive: true });
+    return () => { window.removeEventListener('scroll', tick); cancelAnimationFrame(raf); };
+  }, []);
+  return (
+    <section className="v3-statement" ref={ref} style={{ height: (55 + words.length * 22) + 'vh' }}>
+      <div className="v3-statement-stick">
+        <div className="container-wide">
+          <p className="v3-statement-line">{lead} <span key={i}>{words[i].w}</span></p>
+          <p className="v3-statement-sub" key={'s' + i}>{words[i].d}</p>
+          <div className="ck-statement-dots" aria-hidden>{words.map((_, k) => <i key={k} className={k === i ? 'on' : ''} />)}</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- PROBLEM CARDS that flip to the solution as they scroll in ---------- */
+function V3FlipProblems({ head, items }) {
+  const ref = v3Ref(null);
+  const [flipped, setFlipped] = v3State(() => items.map(() => V3_REDUCE));
+  useGsap(ref, (gsap, root) => {
+    root.querySelectorAll('.v3-flip').forEach((el, i) => {
+      window.ScrollTrigger.create({ trigger: el, start: 'top 62%', onEnter: () => setFlipped(f => f.map((v, k) => k === i ? true : v)), onLeaveBack: () => setFlipped(f => f.map((v, k) => k === i ? false : v)) });
+    });
+  });
+  return (
+    <section className="ck-section ck-section--dark" ref={ref}>
+      <div className="container-wide">
+        <CkHead {...head} />
+        <div className="v3-flips">
+          {items.map((it, i) => (
+            <button key={i} type="button" className={'v3-flip' + (flipped[i] ? ' is-on' : '')} onClick={() => setFlipped(f => f.map((v, k) => k === i ? !v : v))} aria-pressed={flipped[i]}>
+              <span className="v3-flip-inner">
+                <span className="v3-flip-face v3-flip-front"><small>{tx('THE PROBLEM', 'HET PROBLEEM')}</small><b>{it.pain}</b><i>{tx('Scroll or tap', 'Scroll of tik')} ↻</i></span>
+                <span className="v3-flip-face v3-flip-back"><small>{tx('WITH FIELD SERVICE', 'MET FIELD SERVICE')}</small><b>{it.gain}</b><span>{it.d}</span></span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- FIELD SERVICE HERO: what it is + the route that untangles ---------- */
+function V3RouteHero({ eyebrow, a, b, lede, onCta, secondary }) {
+  return (
+    <section className="ck-hero ck-hero--dark v3-route-hero">
+      <div className="container-wide ck-hero-inner">
+        <div className="v3-route-hero-grid">
+          <div>
+            <div className="eyebrow eyebrow--dark" style={{ marginBottom: 22 }}>{eyebrow}</div>
+            <h1 className="ck-h1">{a} <span>{b}</span></h1>
+            <p className="ck-hero-lede">{lede}</p>
+            <div className="ck-actions">
+              <button className="btn ck-btn-coral" onClick={onCta}>{tx('Book a 30-min call', 'Plan een gesprek van 30 min')} <span className="arrow">→</span></button>
+              {secondary && <a className="btn btn-outline-light" href={secondary.href}>{secondary.label} <span className="arrow">↓</span></a>}
+            </div>
+          </div>
+          <CkRoute />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- COMPACT ENGINEER'S DAY: a clickable timeline + phone, auto-advancing ---------- */
+function V3DayCompact({ head, steps }) {
+  const [i, setI] = v3State(0);
+  const [mode, setMode] = v3State('after');
+  const [paused, setPaused] = v3State(false);
+  v3Effect(() => { if (paused || V3_REDUCE) return; const t = setInterval(() => setI(x => (x + 1) % steps.length), 4200); return () => clearInterval(t); }, [paused]);
+  const s = steps[i];
+  return (
+    <section className="ck-section ck-section--soft">
+      <div className="container-wide">
+        <CkHead {...head} />
+        <div className="v3-day" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+          <div className="v3-day-main">
+            <div className="ck-pills ck-pills--sm" role="group" aria-label={tx('Compare', 'Vergelijk')}>
+              <button type="button" className={mode === 'before' ? 'on' : ''} aria-pressed={mode === 'before'} onClick={() => setMode('before')}>{tx('Without', 'Zonder')}</button>
+              <button type="button" className={mode === 'after' ? 'on' : ''} aria-pressed={mode === 'after'} onClick={() => setMode('after')}>{tx('With Field Service', 'Met Field Service')}</button>
+            </div>
+            <ol className="v3-day-line">
+              {steps.map((st, k) => (
+                <li key={k}><button type="button" className={k === i ? 'on' : (k < i ? 'done' : '')} onClick={() => { setI(k); setPaused(true); }}>
+                  <time>{st.time}</time><span>{st.t}</span>
+                  {k === i && !paused && !V3_REDUCE && <i className="v3-day-bar" key={'b' + i} />}
+                </button></li>
+              ))}
+            </ol>
+            <div className="v3-day-text" key={'t' + i}><h3>{s.t}</h3><p>{s.d}</p></div>
+          </div>
+          <div className="ck-phone v3-day-phone"><div className="ck-screen">
+            <div className="ck-screen-top"><span>{s.time}</span><span>Mark · {tx('engineer', 'monteur')}</span></div>
+            <div className="ck-screen-body" key={i + mode}>
+              <div className="ck-screen-title">{mode === 'after' ? tx('Everything on your phone', 'Alles op je telefoon') : tx('Paper, phone calls, searching', 'Papier, bellen, zoeken')}</div>
+              {s[mode].map((c, k) => <div key={k} className={'ck-screen-card ' + (mode === 'after' ? 'good' : 'bad')}><b>{c[0]}</b>{c[1] && <span>{c[1]}</span>}</div>)}
+            </div>
+          </div></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- INTEGRATIONS: what a full implementation connects ---------- */
+function V3Integrations({ head, items }) {
+  return (
+    <section className="ck-section ck-section--rule">
+      <div className="container-wide">
+        <CkHead {...head} />
+        <div className="v3-integrations">
+          {items.map((it, i) => (
+            <div key={i} className="v3-int ck-rv"><b>{it.n}</b><small>{it.k}</small><span>{it.d}</span></div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- TWO WAYS TO START: Quickstart (fixed) vs full implementation (+ optional third) ---------- */
+function V3WaysToStart({ head, quick, full, extra, onCta }) {
+  return (
+    <section id="start" className="ck-section">
+      <div className="container-wide">
+        <CkHead {...head} />
+        <div className={'v3-ways' + (extra ? ' v3-ways--3' : '')}>
+          <article className="v3-way v3-way--quick ck-rv">
+            <div className="v3-way-top"><span className="eyebrow eyebrow--bare">{quick.eyebrow}</span><span className="v3-badge">{tx('Fixed price', 'Vaste prijs')}</span></div>
+            <h3>{quick.title}</h3>
+            <div className="v3-way-price">{quick.price}<small>{quick.priceNote}</small></div>
+            <p>{quick.d}</p>
+            <ul>{quick.items.map((x, i) => <li key={i}>{x}</li>)}</ul>
+            <button className="btn ck-btn-dark" onClick={onCta}>{quick.cta} <span className="arrow">→</span></button>
+          </article>
+          <article className="v3-way ck-rv">
+            <div className="v3-way-top"><span className="eyebrow eyebrow--bare">{full.eyebrow}</span><span className="v3-badge v3-badge--soft">{tx('Scoped with you', 'Samen gescoped')}</span></div>
+            <h3>{full.title}</h3>
+            <p>{full.d}</p>
+            <ul>{full.items.map((x, i) => <li key={i}>{x}</li>)}</ul>
+            <button className="btn btn-secondary" onClick={onCta}>{full.cta} <span className="arrow">→</span></button>
+          </article>
+          {extra && (
+            <a className="v3-way v3-way--extra ck-rv" href={extra.href}>
+              <div className="v3-way-top"><span className="eyebrow eyebrow--bare">{extra.eyebrow}</span></div>
+              <h3>{extra.title}</h3>
+              <p>{extra.d}</p>
+              <span className="link-arrow">{extra.cta} <span className="arrow">→</span></span>
+            </a>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- CALCULATOR with visible assumptions (low / likely range) ---------- */
+function V3Calculator({ head, inputs, compute, note }) {
+  const [vals, setVals] = v3State(() => Object.fromEntries(inputs.map(x => [x.id, x.v])));
+  const out = compute(vals);
+  const fmt = (x) => Math.round(x).toLocaleString(window.__lang === 'nl' ? 'nl-NL' : 'en-GB');
+  return (
+    <section id="calculator" className="ck-section ck-section--rule">
+      <div className="container-wide">
+        <CkHead {...head} />
+        <div className="ck-calc">
+          <div className="ck-calc-in">
+            {inputs.map(x => (
+              <div key={x.id} className="ck-field">
+                <label htmlFor={'v3-' + x.id}>{x.label} <output>{x.fmt ? x.fmt(vals[x.id]) : vals[x.id]}</output></label>
+                <input id={'v3-' + x.id} type="range" min={x.min} max={x.max} step={x.step || 1} value={vals[x.id]} onChange={e => setVals(v => ({ ...v, [x.id]: +e.target.value }))} />
+                {x.hint && <small className="v3-hint">{x.hint}</small>}
+              </div>
+            ))}
+          </div>
+          <div className="ck-calc-out">
+            <small>{out.label}</small>
+            <div className="ck-calc-big">€ {fmt(out.euro)}</div>
+            <p>{out.line(fmt)}</p>
+            <small>{note}</small>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function V3Styles() {
+  return (
+    <style>{`
+      /* chaos hero */
+      .v3-chaos { position: relative; background: linear-gradient(90deg, #ff9166 0%, var(--intigris-coral) 44%, var(--intigris-coral-700) 80%, #9e300d 100%); color: var(--intigris-off-white); border-bottom-left-radius: clamp(24px, 4vw, 56px); border-bottom-right-radius: clamp(24px, 4vw, 56px); overflow: hidden; }
+      .v3-chaos-pin { min-height: 100vh; display: flex; align-items: center; padding-block: 120px 56px; }
+      .v3-chaos-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(28px, 4vw, 64px); align-items: center; width: 100%; }
+      .v3-scroll-hint { margin: 26px 0 0; font-size: 13px; color: rgba(252,247,235,.8); letter-spacing: .02em; }
+      .v3-chaos-stage { position: relative; height: clamp(380px, 46vw, 540px); }
+      .v3-chaos-item { position: absolute; width: clamp(150px, 15vw, 210px); padding: 12px 14px; border-radius: 12px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 18px 40px -22px rgba(43,23,0,.6); font-size: 13px; line-height: 1.35; color: var(--intigris-dark-brown); }
+      .v3-chaos-item small { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; opacity: .7; }
+      .v3-chaos-item b { font-weight: 500; }
+      .v3-chaos-item--note { background: #ffe9a8; }
+      .v3-chaos-item--mail { background: var(--intigris-paper); }
+      .v3-chaos-item--sheet { background: #e8eee3; font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+      .v3-chaos-item--chat { background: #dff3d6; border-radius: 14px 14px 14px 4px; }
+      .v3-chaos-item--card { background: var(--intigris-off-white-200); }
+      .v3-record { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(380px, 92%); background: var(--intigris-paper); color: var(--intigris-dark-brown); border-radius: 20px; padding: 18px; box-shadow: 0 40px 80px -40px rgba(43,23,0,.7); display: flex; flex-direction: column; gap: 10px; }
+      .v3-record-head { display: flex; align-items: center; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+      .v3-record-head small { font-size: 11px; color: var(--fg-muted); text-transform: uppercase; letter-spacing: .08em; }
+      .v3-record-head b { display: block; font-size: 19px; font-weight: 500; letter-spacing: -.015em; }
+      .v3-record-icon { width: 40px; height: 40px; border-radius: 12px; background: var(--intigris-coral); color: var(--intigris-dark-brown); display: grid; place-items: center; font-weight: 600; flex: none; }
+      .v3-record-stage { margin-left: auto; font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--intigris-coral-100); color: var(--intigris-coral-700); white-space: nowrap; }
+      .v3-record-row { display: grid; grid-template-columns: 110px 1fr; gap: 10px; font-size: 13.5px; padding: 6px 0; border-bottom: 1px dashed var(--border); }
+      .v3-record-row:last-child { border-bottom: 0; }
+      .v3-record-row small { color: var(--fg-muted); font-size: 12px; }
+
+      /* what it is */
+      .v3-what { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 20px; }
+      .v3-what-card { border-radius: var(--radius-xl); padding: clamp(22px, 2.8vw, 34px); background: var(--intigris-coral); color: #fff; }
+      .v3-what-label { font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.85); margin-bottom: 18px; }
+      .v3-what-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+      .v3-what-card li { display: flex; gap: 12px; align-items: flex-start; }
+      .v3-what-card li div { display: flex; flex-direction: column; gap: 4px; }
+      .v3-what-card li b { font-size: 20px; font-weight: 500; letter-spacing: -.015em; line-height: 1.25; }
+      .v3-what-card li span { font-size: 14.5px; color: var(--intigris-dark-brown); line-height: 1.5; }
+      .v3-check { width: 22px; height: 22px; border-radius: 999px; background: rgba(255,255,255,.92); color: var(--intigris-coral-700); display: grid; place-items: center; font-size: 12px; font-weight: 700; flex: none; margin-top: 3px; }
+      .v3-what-photo { position: relative; border-radius: var(--radius-xl); overflow: hidden; min-height: 380px; }
+      .v3-what-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .v3-what-photo span { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,145,102,.5), rgba(225,74,36,.55)); mix-blend-mode: multiply; }
+
+      /* compact statement */
+      .v3-statement { position: relative; background: var(--intigris-brown-700); color: var(--intigris-off-white); }
+      .v3-statement-stick { position: sticky; top: 0; height: 55vh; min-height: 360px; display: flex; align-items: center; }
+      .v3-statement-stick > .container-wide { width: 100%; }
+      .v3-statement-line { margin: 0; font-size: clamp(38px, 5.6vw, 80px); font-weight: 500; letter-spacing: -.04em; line-height: 1; }
+      .v3-statement-line span { color: var(--intigris-coral); font-style: italic; display: inline-block; animation: ckSwap 450ms var(--ease-out) both; }
+      .v3-statement-sub { margin: 18px 0 0; font-size: 18px; color: rgba(252,247,235,.78); animation: ckFade 450ms var(--ease-out) both; }
+
+      /* flip cards */
+      .v3-flips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+      .v3-flip { appearance: none; border: 0; padding: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; perspective: 1200px; min-height: 240px; }
+      .v3-flip-inner { position: relative; display: block; width: 100%; height: 100%; min-height: 240px; transition: transform 700ms cubic-bezier(.2,.7,.2,1); transform-style: preserve-3d; }
+      .v3-flip.is-on .v3-flip-inner { transform: rotateY(180deg); }
+      .v3-flip-face { position: absolute; inset: 0; border-radius: var(--radius-xl); padding: 22px; display: flex; flex-direction: column; gap: 10px; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+      .v3-flip-front { background: rgba(252,247,235,.06); border: 1px solid rgba(252,247,235,.18); }
+      .v3-flip-back { background: var(--intigris-coral); color: var(--intigris-dark-brown); transform: rotateY(180deg); }
+      .v3-flip-face small { font-size: 11px; font-weight: 600; letter-spacing: .14em; color: var(--intigris-coral); }
+      .v3-flip-back small { color: var(--intigris-dark-brown); }
+      .v3-flip-face b { font-size: 22px; font-weight: 500; letter-spacing: -.02em; line-height: 1.2; }
+      .v3-flip-front i { margin-top: auto; font-style: normal; font-size: 12.5px; color: rgba(252,247,235,.55); }
+      .v3-flip-back span { font-size: 14.5px; line-height: 1.5; }
+
+      /* route hero */
+      .v3-route-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(28px, 4vw, 64px); align-items: center; }
+      .v3-route-hero .ck-route { grid-template-columns: 1fr; }
+      .v3-route-hero .ck-h1 { font-size: clamp(38px, 4.6vw, 66px); }
+      .v3-route-hero .ck-hero-inner { padding-top: clamp(112px, 14vh, 160px); }
+      .v3-route-hero .ck-route-stats { flex-direction: row; flex-wrap: wrap; gap: 18px; }
+      .v3-route-hero .ck-route-stats div { flex: 1 1 120px; }
+      .v3-route-hero .ck-route-stats b { font-size: clamp(26px, 2.6vw, 36px); }
+
+      /* compact day */
+      .v3-day { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, .8fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
+      .v3-day-line { list-style: none; margin: 0 0 22px; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+      .v3-day-line button { appearance: none; font: inherit; text-align: left; cursor: pointer; width: 100%; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: 14px; border: 1px solid var(--border); background: var(--intigris-paper); color: var(--intigris-dark-brown); min-height: 92px; }
+      .v3-day-line time { font-size: 12px; font-weight: 600; letter-spacing: .08em; color: var(--intigris-coral-700); font-variant-numeric: tabular-nums; }
+      .v3-day-line span { font-size: 13px; line-height: 1.3; }
+      .v3-day-line button.done { background: var(--intigris-off-white); }
+      .v3-day-line button.on { background: var(--intigris-coral); border-color: var(--intigris-coral); }
+      .v3-day-line button.on time { color: var(--intigris-dark-brown); }
+      .v3-day-bar { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--intigris-dark-brown); animation: v3Bar 4.2s linear both; }
+      @keyframes v3Bar { from { width: 0; } to { width: 100%; } }
+      .v3-day-text { animation: ckFade 350ms var(--ease-out) both; }
+      .v3-day-text h3 { font-size: clamp(24px, 2.6vw, 34px); font-weight: 500; letter-spacing: -.02em; margin: 0 0 8px; }
+      .v3-day-text p { margin: 0; font-size: 16px; color: var(--fg-muted); max-width: 560px; }
+      .v3-day-phone { justify-self: center; max-width: 300px; }
+
+      /* integrations */
+      .v3-integrations { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+      .v3-int { border-radius: 18px; padding: 18px; background: var(--intigris-paper); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; transition: border-color 200ms, transform 200ms; }
+      .v3-int:hover { border-color: var(--intigris-coral); transform: translateY(-2px); }
+      .v3-int b { font-size: 18px; font-weight: 500; }
+      .v3-int small { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; color: var(--intigris-coral-700); }
+      .v3-int span { font-size: 13.5px; color: var(--fg-muted); line-height: 1.45; }
+
+      /* ways to start */
+      .v3-ways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+      .v3-ways--3 { grid-template-columns: 1.1fr 1.1fr .8fr; }
+      .v3-way { border-radius: var(--radius-xl); padding: clamp(24px, 3vw, 36px); background: var(--intigris-off-white-200); border: 1px solid var(--intigris-brown-100); display: flex; flex-direction: column; gap: 14px; color: var(--intigris-dark-brown); text-decoration: none; }
+      .v3-way--quick { background: var(--intigris-coral); border-color: var(--intigris-coral); }
+      .v3-way--quick .eyebrow { color: var(--intigris-dark-brown); }
+      .v3-way--extra { background: var(--intigris-brown-700); color: var(--intigris-off-white); border-color: var(--intigris-brown-700); }
+      .v3-way--extra p { color: rgba(252,247,235,.78) !important; }
+      .v3-way--extra h3 { color: var(--intigris-off-white); }
+      .v3-way--extra .eyebrow { color: var(--intigris-coral); }
+      .v3-way--extra .link-arrow { color: var(--intigris-coral); margin-top: auto; }
+      .v3-way-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+      .v3-way h3 { margin: 0; font-size: clamp(24px, 2.4vw, 32px); font-weight: 500; letter-spacing: -.02em; line-height: 1.1; }
+      .v3-way-price { font-size: clamp(36px, 3.6vw, 48px); font-weight: 500; letter-spacing: -.03em; line-height: 1; }
+      .v3-way-price small { display: block; font-size: 13px; letter-spacing: 0; font-weight: 400; margin-top: 6px; }
+      .v3-way p { margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--fg-muted); }
+      .v3-way--quick p { color: var(--intigris-dark-brown); }
+      .v3-way ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; font-size: 14.5px; flex: 1; }
+      .v3-way li::before { content: "✓"; font-weight: 700; margin-right: 8px; color: var(--intigris-coral-700); }
+      .v3-way--quick li::before { color: var(--intigris-dark-brown); }
+      .v3-way .btn { align-self: flex-start; }
+      .v3-badge { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; background: var(--intigris-dark-brown); color: var(--intigris-off-white); white-space: nowrap; }
+      .v3-badge--soft { background: var(--intigris-paper); color: var(--fg-muted); border: 1px solid var(--border); }
+      .v3-hint { font-size: 12px; color: var(--fg-muted); }
+
+      @media (max-width: 1100px) { .v3-flips { grid-template-columns: repeat(2, minmax(0, 1fr)); } .v3-integrations { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 980px) {
+        .v3-chaos-grid, .v3-what, .v3-route-hero-grid, .v3-day, .v3-ways, .v3-ways--3 { grid-template-columns: 1fr; }
+        .v3-chaos-pin { min-height: 0; }
+        .v3-day-line { grid-template-columns: repeat(5, minmax(120px, 1fr)); overflow-x: auto; }
+      }
+      @media (max-width: 560px) { .v3-flips, .v3-integrations { grid-template-columns: 1fr; } .v3-chaos-item { width: 140px; font-size: 12px; } }
+      @media (prefers-reduced-motion: reduce) { .v3-flip-inner { transition: none; } .v3-statement-line span, .v3-statement-sub, .v3-day-text { animation: none; } }
+    `}</style>
+  );
+}
+
+Object.assign(window, { V3ChaosHero, V3WhatItIs, V3Statement, V3FlipProblems, V3RouteHero, V3DayCompact, V3Integrations, V3WaysToStart, V3Calculator, V3Styles });
