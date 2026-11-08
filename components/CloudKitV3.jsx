@@ -83,10 +83,17 @@ function V3WhatItIs({ head, label, benefits, image }) {
 function V3Statement({ lead, words }) {
   const ref = v3Ref(null);
   const [i, setI] = v3State(0);
+  /* With GSAP: the band stops in the middle of the screen (pin), scrolling switches
+     the last word, and after the last word the page scrolls on. */
+  useGsap(ref, (gsap, root) => {
+    window.ScrollTrigger.create({ trigger: root, start: 'center center', end: '+=' + (words.length * 38) + '%', pin: true,
+      onUpdate: st => setI(Math.min(words.length - 1, Math.floor(st.progress * words.length))) });
+  });
   v3Effect(() => {
+    if (window.gsap && !V3_REDUCE) return;
     let raf = 0;
-    /* No pinning: the band scrolls past like any section, and the last word flips
-       as the band travels from the lower to the upper part of the screen. */
+    /* Fallback without GSAP / reduced motion: no pin, the word flips as the band
+       travels from the lower to the upper part of the screen. */
     const on = () => {
       raf = 0; const el = ref.current; if (!el) return;
       const r = el.getBoundingClientRect();
@@ -379,18 +386,18 @@ function V3LogoHub({ head, center, items }) {
   const [landed, setLanded] = v3State(V3_REDUCE || !window.gsap);
   /* Once everything has landed, the highlight walks from tool to tool. */
   v3Effect(() => { if (!landed || paused || V3_REDUCE) return; const t = setInterval(() => setActive(a => (a + 1) % items.length), 2600); return () => clearInterval(t); }, [landed, paused, items.length]);
-  const n = items.length, W = 1000, H = 560;
-  const pts = items.map((_, i) => { const a = (-90 + (360 / n) * i) * Math.PI / 180; return [50 + 39 * Math.cos(a), 50 + 39 * Math.sin(a)]; });
+  const n = items.length, W = 1000, H = 820;
+  const pts = items.map((_, i) => { const a = (-90 + (360 / n) * i) * Math.PI / 180; return [50 + 37 * Math.cos(a), 50 + 41 * Math.sin(a)]; });
   v3Effect(() => {
     if (!window.gsap || V3_REDUCE) return;
     const gsap = window.gsap;
     const mm = gsap.matchMedia();
-    mm.add('(min-width: 761px)', () => {
+    mm.add('(min-width: 1000px)', () => {
       const root = ref.current;
       const stage = root.querySelector('.lh-stage');
       const nodes = root.querySelectorAll('.lh-node');
       const lines = root.querySelectorAll('.lh-line');
-      const tl = gsap.timeline({ scrollTrigger: { trigger: root.querySelector('.lh-pin'), start: 'center center', end: '+=110%', scrub: 0.8, pin: true,
+      const tl = gsap.timeline({ scrollTrigger: { trigger: root.querySelector('.lh-grid'), start: 'center center', end: '+=110%', scrub: 0.8, pin: true,
         onUpdate: st => setLanded(st.progress > 0.92) } });
       tl.fromTo(root.querySelector('.lh-center'), { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.6)' }, 0);
       nodes.forEach((el, i) => {
@@ -411,8 +418,11 @@ function V3LogoHub({ head, center, items }) {
   return (
     <section className="ck-section ck-section--dark lh" ref={ref}>
       <div className="container-wide">
-        <CkHead {...head} />
-        <div className="lh-pin">
+        <div className="lh-grid">
+          <div className="lh-text">
+            <CkHead {...head} />
+            <div className="lh-caption" key={active} aria-live="polite"><small>{a.k}</small><b>{a.n}</b><span>{a.d}</span></div>
+          </div>
           <div className="lh-stage" onMouseLeave={() => setPaused(false)}>
             <svg className="lh-lines" viewBox={'0 0 ' + W + ' ' + H} aria-hidden>
               {pts.map(([x, y], i) => <line key={i} x1={W / 2} y1={H / 2} x2={x / 100 * W} y2={y / 100 * H} pathLength="1" className={'lh-line' + (i === active ? ' on' : '')} />)}
@@ -428,7 +438,6 @@ function V3LogoHub({ head, center, items }) {
               </button>
             ))}
           </div>
-          <div className="lh-caption" key={active} aria-live="polite"><small>{a.k}</small><b>{a.n}</b><span>{a.d}</span></div>
         </div>
         <div className="lh-fallback">
           {items.map((it, i) => <div key={i} className="lh-fb"><span className="lh-fb-logo"><LhTile it={it} /></span><small>{it.k}</small><span className="lh-fb-d">{it.d}</span></div>)}
@@ -436,28 +445,30 @@ function V3LogoHub({ head, center, items }) {
       </div>
       <style>{`
         .lh { overflow-x: clip; }
-        .lh-pin { padding-top: 8px; }
-        .lh-stage { position: relative; width: 100%; max-width: min(1000px, calc((100vh - 230px) * 1.7857)); margin: 0 auto; aspect-ratio: 1000 / 560; }
+        .lh-grid { display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
+        .lh-text .ck-head { margin-bottom: 28px; }
+        .lh-stage { position: relative; width: 100%; max-width: min(760px, calc((100vh - 140px) * 1.2195)); margin: 0 auto; aspect-ratio: 1000 / 820; }
         .lh-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
         .lh-line { stroke: rgba(252,247,235,.28); stroke-width: 2; stroke-dasharray: 1 1; stroke-dashoffset: 0; transition: stroke 300ms, stroke-width 300ms; }
         .lh-line.on { stroke: var(--intigris-coral); stroke-width: 4; }
         .lh-center { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
         .lh-center::before { content: ''; position: absolute; left: 50%; top: 42%; width: 150%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,161,224,.28), rgba(0,161,224,0)); z-index: -1; }
-        .lh-center img { width: clamp(130px, 19vw, 200px); height: auto; filter: drop-shadow(0 18px 30px rgba(0,0,0,.4)); }
+        .lh-center img { width: clamp(120px, 12vw, 172px); height: auto; filter: drop-shadow(0 18px 30px rgba(0,0,0,.4)); }
         .lh-center span { font-size: 14px; font-weight: 500; letter-spacing: .02em; padding: 6px 14px; border-radius: 999px; background: #3a2108; border: 1px solid rgba(252,247,235,.22); color: var(--intigris-off-white); white-space: nowrap; }
-        .lh-node { position: absolute; translate: -50% -50%; appearance: none; font: inherit; cursor: pointer; z-index: 3; display: grid; place-items: center; min-width: 150px; height: 66px; padding: 10px 18px; border-radius: 16px; border: 0; background: #fff; box-shadow: 0 14px 30px -14px rgba(0,0,0,.6), 0 0 0 0 var(--intigris-coral); transition: box-shadow 300ms, scale 300ms; }
+        .lh-node { position: absolute; translate: -50% -50%; appearance: none; font: inherit; cursor: pointer; z-index: 3; display: grid; place-items: center; min-width: 136px; height: 60px; padding: 8px 16px; border-radius: 16px; border: 0; background: #fff; box-shadow: 0 14px 30px -14px rgba(0,0,0,.6), 0 0 0 0 var(--intigris-coral); transition: box-shadow 300ms, scale 300ms; }
         .lh-node.on { box-shadow: 0 14px 30px -14px rgba(0,0,0,.6), 0 0 0 4px var(--intigris-coral); scale: 1.06; }
         .lh-tile-logos { display: flex; align-items: center; gap: 10px; }
-        .lh-tile-logos img { height: 30px; width: auto; max-width: 128px; object-fit: contain; display: block; }
-        .lh-tile-logos.is-sf img { height: 24px; }
-        .lh-tile-text { font-size: 15px; font-weight: 500; color: var(--intigris-brown-700); white-space: nowrap; letter-spacing: -.01em; }
-        .lh-caption { margin: 22px auto 0; max-width: 640px; min-height: 90px; text-align: center; display: flex; flex-direction: column; gap: 4px; animation: ckFade 350ms var(--ease-out) both; }
+        .lh-tile-logos img { height: 26px; width: auto; max-width: 116px; object-fit: contain; display: block; }
+        .lh-tile-logos.is-sf img { height: 22px; }
+        .lh-tile-text { font-size: 14.5px; font-weight: 500; color: var(--intigris-brown-700); white-space: nowrap; letter-spacing: -.01em; }
+        .lh-caption { max-width: 440px; min-height: 96px; padding-left: 16px; border-left: 2px solid var(--intigris-coral); display: flex; flex-direction: column; gap: 4px; animation: ckFade 350ms var(--ease-out) both; }
         .lh-caption small { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--intigris-coral); }
         .lh-caption b { font-size: 24px; font-weight: 500; letter-spacing: -.02em; }
         .lh-caption span { font-size: 16px; color: rgba(252,247,235,.78); }
         .lh-fallback { display: none; }
-        @media (max-width: 760px) {
-          .lh-pin { display: none; }
+        @media (max-width: 999px) {
+          .lh-grid { grid-template-columns: 1fr; }
+          .lh-stage, .lh-caption { display: none; }
           .lh-fallback { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
           .lh-fb { min-width: 0; background: rgba(252,247,235,.06); border: 1px solid rgba(252,247,235,.14); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
           .lh-fb-logo { background: #fff; border-radius: 10px; min-height: 52px; display: grid; place-items: center; padding: 6px 8px; overflow: hidden; }
