@@ -85,10 +85,13 @@ function V3Statement({ lead, words }) {
   const [i, setI] = v3State(0);
   v3Effect(() => {
     let raf = 0;
+    /* No pinning: the band scrolls past like any section, and the last word flips
+       as the band travels from the lower to the upper part of the screen. */
     const on = () => {
       raf = 0; const el = ref.current; if (!el) return;
       const r = el.getBoundingClientRect();
-      const p = Math.max(0, Math.min(0.999, (window.innerHeight * 0.35 - r.top) / (r.height - window.innerHeight * 0.55)));
+      const mid = r.top + r.height / 2;
+      const p = Math.max(0, Math.min(0.999, (window.innerHeight * 0.82 - mid) / (window.innerHeight * 0.6)));
       setI(Math.floor(p * words.length));
     };
     const tick = () => { if (!raf) raf = requestAnimationFrame(on); };
@@ -96,10 +99,13 @@ function V3Statement({ lead, words }) {
     return () => { window.removeEventListener('scroll', tick); cancelAnimationFrame(raf); };
   }, []);
   return (
-    <section className="v3-statement" ref={ref} style={{ height: (55 + words.length * 22) + 'vh' }}>
-      <div className="v3-statement-stick">
-        <div className="container-wide">
-          <p className="v3-statement-line">{lead} <span key={i}>{words[i].w}</span></p>
+    <section className="v3-statement" ref={ref}>
+      <div className="container-wide v3-statement-inner">
+        <p className="v3-statement-line">
+          <span className="v3-statement-lead">{lead}</span>{' '}
+          <span className="v3-statement-word" aria-live="polite"><span key={i}>{words[i].w}</span></span>
+        </p>
+        <div className="v3-statement-side">
           <p className="v3-statement-sub" key={'s' + i}>{words[i].d}</p>
           <div className="ck-statement-dots" aria-hidden>{words.map((_, k) => <i key={k} className={k === i ? 'on' : ''} />)}</div>
         </div>
@@ -281,6 +287,63 @@ function V3Calculator({ head, inputs, compute, note }) {
   );
 }
 
+/* ---------- CONNECT HUB: the cloud in the middle, lines to every tool ---------- */
+/* Lines draw in when the section scrolls into view (GSAP), pulses travel along them,
+   and the highlight moves from tool to tool; hover or click picks one. On phones the
+   hub is replaced by the plain integration tiles. */
+function V3ConnectHub({ head, center, items }) {
+  const ref = v3Ref(null);
+  const [active, setActive] = v3State(0);
+  const [paused, setPaused] = v3State(false);
+  v3Effect(() => { if (paused || V3_REDUCE) return; const t = setInterval(() => setActive(a => (a + 1) % items.length), 2600); return () => clearInterval(t); }, [paused, items.length]);
+  /* Draw once the hub is on screen; pulses start after the lines are drawn. */
+  const [drawn, setDrawn] = v3State(V3_REDUCE || !('IntersectionObserver' in window));
+  const [live, setLive] = v3State(false);
+  v3Effect(() => {
+    if (drawn) { const t = setTimeout(() => setLive(true), 1400); return () => clearTimeout(t); }
+    const el = ref.current && ref.current.querySelector('.v3-hub'); if (!el) return;
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { setDrawn(true); io.disconnect(); } }, { threshold: 0.25 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [drawn]);
+  const W = 1000, H = 560, cx = 500, cy = 280, rx = 400, ry = 215;
+  const pts = items.map((_, i) => { const a = (-90 + (360 / items.length) * i) * Math.PI / 180; return [cx + rx * Math.cos(a), cy + ry * Math.sin(a)]; });
+  const curve = ([x, y]) => { const mx = (cx + x) / 2, my = (cy + y) / 2; const bend = (x - cx) * 0.12; return 'M' + cx + ' ' + cy + ' Q' + (mx - bend * 0.3) + ' ' + (my + bend) + ' ' + x + ' ' + y; };
+  const a = items[active];
+  return (
+    <section className="ck-section ck-section--dark" ref={ref}>
+      <div className="container-wide">
+        <CkHead {...head} />
+        <div className={'v3-hub' + (drawn ? ' is-drawn' : '')} onMouseLeave={() => setPaused(false)}>
+          <svg viewBox={'0 0 ' + W + ' ' + H} className="v3-hub-svg" aria-hidden>
+            {pts.map((p, i) => <path key={'l' + i} id={'v3hub-' + i} d={curve(p)} pathLength="1" style={{ transitionDelay: (i * 90) + 'ms' }} className={'v3-hub-line' + (i === active ? ' on' : '')} fill="none" />)}
+            {live && !V3_REDUCE && pts.map((p, i) => (
+              <circle key={'d' + i} r={i === active ? 6 : 4} className={'v3-hub-pulse' + (i === active ? ' on' : '')}>
+                <animateMotion dur={(2.4 + (i % 3) * 0.5) + 's'} repeatCount="indefinite" begin={(i * 0.35) + 's'} keyPoints={i % 2 ? '0;1' : '1;0'} keyTimes="0;1" calcMode="linear"><mpath href={'#v3hub-' + i} /></animateMotion>
+              </circle>
+            ))}
+            <g className="v3-hub-center">
+              {[[-62, 18, 40], [-22, -16, 54], [38, -6, 50], [78, 22, 34], [10, 24, 44], [-92, 34, 26]].map(([dx, dy, r], k) => <circle key={k} cx={cx + dx} cy={cy + dy} r={r} />)}
+              <rect x={cx - 104} y={cy + 20} width={208} height={40} rx={20} />
+              <text x={cx} y={cy + 8} textAnchor="middle">{center}</text>
+            </g>
+          </svg>
+          {items.map((it, i) => (
+            <button key={i} type="button" className={'v3-hub-node' + (i === active ? ' on' : '')} style={{ left: (pts[i][0] / W * 100) + '%', top: (pts[i][1] / H * 100) + '%', transitionDelay: drawn && !live ? (300 + i * 90) + 'ms' : '0ms' }}
+              onMouseEnter={() => { setActive(i); setPaused(true); }} onFocus={() => { setActive(i); setPaused(true); }} onClick={() => { setActive(i); setPaused(true); }} aria-pressed={i === active}>
+              <b>{it.n}</b><small>{it.k}</small>
+            </button>
+          ))}
+        </div>
+        <div className="v3-hub-caption" key={active} aria-live="polite"><small>{a.k}</small><b>{a.n}</b><span>{a.d}</span></div>
+        <div className="v3-hub-fallback">
+          {items.map((it, i) => <div key={i} className="v3-int"><b>{it.n}</b><small>{it.k}</small><span>{it.d}</span></div>)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function V3Styles() {
   return (
     <style>{`
@@ -323,12 +386,15 @@ function V3Styles() {
       .v3-what-photo span { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,145,102,.5), rgba(225,74,36,.55)); mix-blend-mode: multiply; }
 
       /* compact statement */
-      .v3-statement { position: relative; background: var(--intigris-brown-700); color: var(--intigris-off-white); }
-      .v3-statement-stick { position: sticky; top: 0; height: 55vh; min-height: 360px; display: flex; align-items: center; }
-      .v3-statement-stick > .container-wide { width: 100%; }
-      .v3-statement-line { margin: 0; font-size: clamp(38px, 5.6vw, 80px); font-weight: 500; letter-spacing: -.04em; line-height: 1; }
-      .v3-statement-line span { color: var(--intigris-coral); font-style: italic; display: inline-block; animation: ckSwap 450ms var(--ease-out) both; }
-      .v3-statement-sub { margin: 18px 0 0; font-size: 18px; color: rgba(252,247,235,.78); animation: ckFade 450ms var(--ease-out) both; }
+      .v3-statement { background: var(--intigris-brown-700); color: var(--intigris-off-white); padding-block: clamp(44px, 6vw, 72px); }
+      .v3-statement-inner { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 56px); align-items: center; }
+      .v3-statement-line { margin: 0; font-size: clamp(34px, 4.6vw, 64px); font-weight: 500; letter-spacing: -.04em; line-height: 1.05; }
+      .v3-statement-word { display: inline-block; min-width: 6ch; }
+      .v3-statement-word span { color: var(--intigris-coral); font-style: italic; display: inline-block; animation: ckSwap 380ms var(--ease-out) both; }
+      .v3-statement-side { border-left: 1px solid rgba(252,247,235,.18); padding-left: clamp(16px, 2.5vw, 32px); }
+      .v3-statement-sub { margin: 0; font-size: 17px; line-height: 1.5; color: rgba(252,247,235,.8); animation: ckFade 380ms var(--ease-out) both; }
+      .v3-statement-side .ck-statement-dots { margin-top: 16px; }
+      @media (max-width: 760px) { .v3-statement-inner { grid-template-columns: 1fr; } .v3-statement-side { border-left: 0; padding-left: 0; } }
 
       /* flip cards */
       .v3-flips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
@@ -377,6 +443,36 @@ function V3Styles() {
       .v3-int small { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; color: var(--intigris-coral-700); }
       .v3-int span { font-size: 13.5px; color: var(--fg-muted); line-height: 1.45; }
 
+      /* connect hub */
+      .v3-hub { position: relative; width: 100%; max-width: 1080px; margin: 0 auto; aspect-ratio: 1000 / 560; }
+      .v3-hub-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+      .v3-hub-line { stroke: rgba(252,247,235,.22); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 900ms cubic-bezier(.2,.7,.2,1), stroke 300ms, stroke-width 300ms; }
+      .v3-hub.is-drawn .v3-hub-line { stroke-dashoffset: 0; }
+      .v3-hub-node { opacity: 0; }
+      .v3-hub.is-drawn .v3-hub-node { opacity: 1; }
+      .v3-hub-line.on { stroke: var(--intigris-coral); stroke-width: 3; }
+      .v3-hub-pulse { fill: rgba(252,247,235,.55); }
+      .v3-hub-pulse.on { fill: var(--intigris-coral); }
+      .v3-hub-center { filter: drop-shadow(0 18px 30px rgba(0,0,0,.35)); }
+      .v3-hub-center circle, .v3-hub-center rect { fill: var(--intigris-soft-blue); }
+      .v3-hub-center text { fill: var(--intigris-brown-700); font-family: var(--font-sans); font-size: 21px; font-weight: 600; letter-spacing: -.01em; }
+      .v3-hub-node { position: absolute; transform: translate(-50%, -50%); appearance: none; font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 16px; min-width: 128px; border-radius: 16px; border: 1px solid rgba(252,247,235,.2); background: #3a2108; color: var(--intigris-off-white); transition: opacity 500ms, background 250ms, border-color 250ms, transform 250ms; white-space: nowrap; }
+      .v3-hub-node b { font-size: 14.5px; font-weight: 500; }
+      .v3-hub-node small { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: rgba(252,247,235,.55); font-weight: 600; }
+      .v3-hub-node.on { background: var(--intigris-coral); border-color: var(--intigris-coral); color: var(--intigris-brown-700); transform: translate(-50%, -50%) scale(1.06); }
+      .v3-hub-node.on small { color: rgba(43,23,0,.7); }
+      .v3-hub-caption { margin: 24px auto 0; max-width: 640px; text-align: center; display: flex; flex-direction: column; gap: 4px; animation: ckFade 350ms var(--ease-out) both; }
+      .v3-hub-caption small { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--intigris-coral); }
+      .v3-hub-caption b { font-size: 24px; font-weight: 500; letter-spacing: -.02em; }
+      .v3-hub-caption span { font-size: 16px; color: rgba(252,247,235,.78); }
+      .v3-hub-fallback { display: none; }
+      .ck-section--dark .v3-int { background: rgba(252,247,235,.06); border-color: rgba(252,247,235,.16); }
+      .ck-section--dark .v3-int span { color: rgba(252,247,235,.75); }
+      @media (max-width: 760px) {
+        .v3-hub, .v3-hub-caption { display: none; }
+        .v3-hub-fallback { display: grid; grid-template-columns: 1fr; gap: 10px; }
+      }
+
       /* ways to start */
       .v3-ways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
       .v3-ways--3 { grid-template-columns: 1.1fr 1.1fr .8fr; }
@@ -409,9 +505,9 @@ function V3Styles() {
         .v3-day-line { grid-template-columns: repeat(5, minmax(120px, 1fr)); overflow-x: auto; }
       }
       @media (max-width: 560px) { .v3-flips, .v3-integrations { grid-template-columns: 1fr; } .v3-chaos-item { width: 140px; font-size: 12px; } }
-      @media (prefers-reduced-motion: reduce) { .v3-flip-inner { transition: none; } .v3-statement-line span, .v3-statement-sub, .v3-day-text { animation: none; } }
+      @media (prefers-reduced-motion: reduce) { .v3-flip-inner { transition: none; } .v3-statement-word span, .v3-statement-sub, .v3-day-text, .v3-hub-caption { animation: none; } .v3-hub-line, .v3-hub-node { transition: none; } }
     `}</style>
   );
 }
 
-Object.assign(window, { V3ChaosHero, V3WhatItIs, V3Statement, V3FlipProblems, V3RouteHero, V3DayCompact, V3Integrations, V3WaysToStart, V3Calculator, V3Styles });
+Object.assign(window, { V3ConnectHub, V3ChaosHero, V3WhatItIs, V3Statement, V3FlipProblems, V3RouteHero, V3DayCompact, V3Integrations, V3WaysToStart, V3Calculator, V3Styles });
