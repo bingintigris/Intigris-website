@@ -26,6 +26,9 @@ function AIScanGlyph() {
 function ServicesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
   const items = window.PRODUCTS || [];
   const copy = window.productCopy ? window.productCopy(tx) : {};
+  // Products that have their own page link there; the rest go to the anchor on Services.html.
+  const PRODUCT_PAGES = { sales: 'SalesCloud.html' };
+  const productHref = (id) => PRODUCT_PAGES[id] || `Services.html#${id}`;
   const Glyph = window.ProductGlyph || (() => null);
   return (
     <div className={'svc-mega' + (theme === 'coral' ? ' svc-mega--coral' : theme === 'cream' ? ' svc-mega--cream' : '')} onMouseEnter={onEnter} onMouseLeave={onLeave}>
@@ -38,13 +41,13 @@ function ServicesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
                 <div className="svc-mega-eyebrow">{tx('WHAT WE DO', 'WAT WIJ DOEN')}</div>
                 <div className="svc-mega-title">{tx('Across the Salesforce stack.', 'Op de hele Salesforce-stack.')}</div>
               </div>
-              <a className="svc-mega-all" onClick={() => onNav?.('services')}>
+              <a className="svc-mega-all" href="Services.html">
                 {tx('All services', 'Alle diensten')} <span aria-hidden>→</span>
               </a>
             </div>
             <div className="svc-mega-grid">
               {items.map((p) => (
-                <a key={p.id} className="svc-mega-item" onClick={() => onNav?.('services')}>
+                <a key={p.id} className="svc-mega-item" href={productHref(p.id)}>
                   <div className="svc-mega-icon"><Glyph id={p.id} /></div>
                   <div className="svc-mega-copy">
                     <div className="svc-mega-name">
@@ -192,13 +195,13 @@ function IndustriesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
             <div className="ind-mega-eyebrow">{tx('INDUSTRIES WE SERVE', 'BRANCHES DIE WE BEDIENEN')}</div>
             <div className="ind-mega-title">{tx('Which sector are you in?', 'In welke sector zit u?')}</div>
           </div>
-          <a className="ind-mega-all" onClick={() => onNav?.('industries')}>
+          <a className="ind-mega-all" href="Industries.html">
             {tx('View all industries', 'Alle branches')} <span aria-hidden>→</span>
           </a>
         </div>
         <div className="ind-mega-grid">
           {HEADER_INDUSTRIES.map((i) => (
-            <a key={i.id} className="ind-mega-item" onClick={() => onNav?.('industries')}>
+            <a key={i.id} className="ind-mega-item" href={`Industries.html#${i.id}`}>
               <img className="ind-mega-img" src={`assets/industries/${i.id}.jpg`} alt={tx(i.en, i.nl)} loading="lazy" />
               <span className="ind-mega-scrim" aria-hidden></span>
               <div className="ind-mega-overlay">
@@ -557,7 +560,7 @@ function SiteHeader({ onNav, theme, overlay = false, lang = 'en', onLang, megaTh
             onMouseEnter={() => openMenu('services')}
             onMouseLeave={scheduleClose}
           >
-            <a style={{ ...linkStyle, display: 'inline-flex', alignItems: 'center' }}>
+            <a href="Services.html" style={{ ...linkStyle, display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>
               {tx('Services', 'Diensten')}<Caret />
             </a>
             {open === 'services' && <ServicesMega onNav={onNav} tx={tx} theme={megaTheme} onEnter={() => openMenu('services')} onLeave={scheduleClose} />}
@@ -568,14 +571,14 @@ function SiteHeader({ onNav, theme, overlay = false, lang = 'en', onLang, megaTh
             onMouseEnter={() => openMenu('industries')}
             onMouseLeave={scheduleClose}
           >
-            <a style={{ ...linkStyle, display: 'inline-flex', alignItems: 'center' }}>
+            <a href="Industries.html" style={{ ...linkStyle, display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>
               {tx('Industries', 'Branches')}<Caret />
             </a>
             {open === 'industries' && <IndustriesMega onNav={onNav} tx={tx} theme={megaTheme} onEnter={() => openMenu('industries')} onLeave={scheduleClose} />}
           </div>
 
-          <a className="header-navlink" style={linkStyle} onClick={() => onNav?.('about')}>{tx('About', 'Over ons')}</a>
-          <a className="header-navlink" style={linkStyle} onClick={() => onNav?.('blog')}>{tx('Blog', 'Blog')}</a>
+          <a className="header-navlink" href="About.html" style={{ ...linkStyle, textDecoration: 'none' }}>{tx('About', 'Over ons')}</a>
+          <a className="header-navlink" href="Blog.html" style={{ ...linkStyle, textDecoration: 'none' }}>{tx('Blog', 'Blog')}</a>
 
           <div
             style={{ position: 'static' }}

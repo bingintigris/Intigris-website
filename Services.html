@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Services | Intigris</title>
+  <meta name="description" content="Salesforce consulting, field service, integrations, platform development and support. One certified team across the whole Salesforce stack, since 2010.">
+  <link rel="stylesheet" href="design-system/site.css?v=1788863018000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = 'en';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+    window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script type="text/babel" src="components/Services.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/Header.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/Newsletter.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/ContactSheet.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/CookieConsent.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=1788863018000"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    /* ------------------------------------------------------------------ */
+    /*  Content                                                            */
+    /* ------------------------------------------------------------------ */
+
+    /* The five ways to work with us. Substance from the live Services page,
+       rewritten to the design direction. Each has an anchor (id). */
+    const ENGAGEMENTS = [
+      {
+        id: 'consulting', num: '01',
+        name: ['Salesforce Consulting', 'Salesforce Consulting'], short: ['Consulting', 'Consulting'],
+        tagline: ['Greater success with better customer relationships, on one platform.', 'Meer succes met betere klantrelaties, op één platform.'],
+        body: [
+          'Salesforce touches every process where a customer is involved: marketing, sales, commerce and service. We help you decide what to build, configure it properly and keep it aligned with how your business actually runs. Strategy first, then hands on the keyboard.',
+          'Salesforce raakt elk proces waarin een klant een rol speelt: marketing, sales, commerce en service. We helpen u bepalen wat u bouwt, richten het goed in en houden het in lijn met hoe uw organisatie écht werkt. Eerst strategie, daarna handen aan het toetsenbord.'
+        ],
+        bullets: [
+          ['Discovery, design, build, optimise', 'Discovery, design, build, optimaliseren'],
+          ['Sales, Service, Marketing, Experience', 'Sales, Service, Marketing, Experience'],
+          ['Roadmaps designed to deliver', 'Roadmaps gericht op resultaat'],
+        ],
+        products: ['sales', 'service', 'experience', 'data'],
+      },
+      {
+        id: 'field-service-consulting', num: '02',
+        name: ['Field Service Consulting', 'Field Service Consulting'], short: ['Field Service', 'Field Service'],
+        tagline: ['Field service that performs in the field.', 'Field service die in het veld presteert.'],
+        body: [
+          'Our deepest specialism. With Salesforce Field Service or FieldBuddy we schedule, dispatch and support your engineers so downtime drops and customers know what is happening. Routing, mobile, parts: designed by people who have shipped more than forty rollouts.',
+          'Ons grootste specialisme. Met Salesforce Field Service of FieldBuddy plannen, dispatchen en ondersteunen we uw monteurs, zodat stilstand daalt en klanten weten waar ze aan toe zijn. Routing, mobile, parts: ontworpen door mensen die ruim veertig implementaties hebben opgeleverd.'
+        ],
+        bullets: [
+          ['Routing, dispatch, mobile, parts', 'Routing, dispatch, mobile, parts'],
+          ['Salesforce Field Service or FieldBuddy', 'Salesforce Field Service of FieldBuddy'],
+          ['40+ field service rollouts delivered', '40+ field service-implementaties opgeleverd'],
+        ],
+        products: ['field-service', 'fieldbuddy', 'service'],
+      },
+      {
+        id: 'integration', num: '03',
+        name: ['Integration Development', 'Integration Development'], short: ['Integrations', 'Integraties'],
+        tagline: ['Salesforce connected to everything that matters.', 'Salesforce gekoppeld aan alles wat ertoe doet.'],
+        body: [
+          'ERP, data warehouse, billing, MES, TMS: Salesforce is rarely alone. We build integrations with patterns that scale and stay maintainable. Event-driven where it counts, batch where it makes sense, on AWS-native services or MuleSoft.',
+          'ERP, data warehouse, billing, MES, TMS: Salesforce staat zelden alleen. We bouwen integraties met patronen die schalen en onderhoudbaar blijven. Event-driven waar het telt, batch waar het logisch is, op AWS-native services of MuleSoft.'
+        ],
+        bullets: [
+          ['Event-driven and batch architectures', 'Event-driven en batch-architecturen'],
+          ['AWS Partner Network and MuleSoft', 'AWS Partner Network en MuleSoft'],
+          ['Built to scale, designed to maintain', 'Gebouwd om te schalen, ontworpen om te onderhouden'],
+        ],
+        products: ['integrations', 'data'],
+      },
+      {
+        id: 'platform', num: '04',
+        name: ['Platform Development', 'Platform Development'], short: ['Platform', 'Platform'],
+        tagline: ['Business ideas turned into Salesforce apps.', 'Van business-idee naar Salesforce-app.'],
+        body: [
+          'When configuration stops and your process keeps going, we build. Custom apps on the Salesforce platform for industry-specific functionality, or sharper versions of what you already do. AppExchange-ready when you want to take it to market.',
+          'Waar configuratie stopt en uw proces doorgaat, bouwen wij. Custom apps op het Salesforce-platform voor branchespecifieke functionaliteit, of scherpere versies van wat u al doet. AppExchange-ready als u ermee de markt op wilt.'
+        ],
+        bullets: [
+          ['Custom apps on the Salesforce platform', 'Custom apps op het Salesforce-platform'],
+          ['Apex, Lightning Web Components, Flow', 'Apex, Lightning Web Components, Flow'],
+          ['AppExchange-ready products', 'AppExchange-ready producten'],
+        ],
+        products: ['experience', 'agentforce', 'fieldbuddy'],
+      },
+      {
+        id: 'support', num: '05',
+        name: ['Technical Support', 'Technical Support'], short: ['Support', 'Support'],
+        tagline: ['Unwavering support for lasting success.', 'Onwrikbare support voor blijvend succes.'],
+        body: [
+          'Delivery is not the end. We keep things running, help your teams adopt what was built and are ready when the next project comes around. Three ways to keep us close:',
+          'Oplevering is niet het einde. We houden alles draaiend, helpen uw teams het gebouwde te adopteren en staan klaar als het volgende project zich aandient. Drie manieren om ons dichtbij te houden:'
+        ],
+        bullets: [
+          ['A dedicated team or consultant for a fixed period', 'Een vast team of consultant voor een bepaalde periode'],
+          ['Minor changes on prepaid hours', 'Kleine aanpassingen op basis van vooruitbetaalde uren'],
+          ['Adoption support for better system use', 'Adoptiebegeleiding voor beter gebruik van het systeem'],
+        ],
+        products: [],
+      },
+    ];
+
+    /* Localised long copy for the eight products (window.PRODUCTS comes from
+       components/Services.jsx and carries the ids, order and glyphs). */
+    const PRODUCT_COPY = {
+      sales: {
+        blurb: ['The core CRM for pipeline, forecasting and account management, configured to match how your team actually sells.', 'Het hart van uw CRM voor pipeline, forecasting en accountmanagement, ingericht op hoe uw team écht verkoopt.'],
+        bullets: [['Pipeline, forecast, opportunities', 'Pipeline, forecast, opportunities'], ['Accounts, contacts, activity', 'Accounts, contacten, activiteiten'], ['Sales productivity and reporting', 'Salesproductiviteit en rapportage']],
+      },
+      'field-service': {
+        blurb: ['Our deepest specialism. Salesforce Field Service from dispatch and routing to mobile, parts and assets.', 'Ons grootste specialisme. Salesforce Field Service van dispatch en routing tot mobile, parts en assets.'],
+        bullets: [['Dispatch, scheduling, routing', 'Dispatch, planning, routing'], ['Mobile, offline, work orders', 'Mobile, offline, werkorders'], ['Parts, assets, maintenance', 'Parts, assets, onderhoud']],
+      },
+      service: {
+        blurb: ['Case management and omnichannel service across email, chat, voice and self-service, in one agent console.', 'Casemanagement en omnichannel service via e-mail, chat, telefonie en self-service, in één agentconsole.'],
+        bullets: [['Cases, queues, omni-routing', 'Cases, wachtrijen, omni-routing'], ['Knowledge and self-service', 'Kennisbank en self-service'], ['Console, macros, SLAs', 'Console, macro’s, SLA’s']],
+      },
+      integrations: {
+        blurb: ['Connect Salesforce to your ERP, data warehouse and core systems with patterns built to scale and to maintain.', 'Koppel Salesforce aan uw ERP, data warehouse en kernsystemen met patronen die schalen en onderhoudbaar blijven.'],
+        bullets: [['Event-driven and batch architectures', 'Event-driven en batch-architecturen'], ['AWS-native services and MuleSoft', 'AWS-native services en MuleSoft'], ['Built to scale, designed to maintain', 'Gebouwd om te schalen, ontworpen om te onderhouden']],
+      },
+      agentforce: {
+        blurb: ['Salesforce AI agents grounded in your data, designed, deployed and governed for real customer-facing work.', 'Salesforce AI-agents op basis van uw data, ontworpen, uitgerold en beheerd voor echt klantcontact.'],
+        bullets: [['Agents on your trusted data', 'Agents op uw vertrouwde data'], ['Guardrails and approvals built in', 'Guardrails en goedkeuringen ingebouwd'], ['For service, sales and operations', 'Voor service, sales en operatie']],
+      },
+      data: {
+        blurb: ['Unify customer data from every system into one profile, then activate it across Sales, Service and Marketing.', 'Breng klantdata uit elk systeem samen in één profiel en activeer het in Sales, Service en Marketing.'],
+        bullets: [['Unified customer profile', 'Eén uniform klantprofiel'], ['Identity resolution at scale', 'Identity resolution op schaal'], ['Activation across clouds', 'Activatie over alle clouds']],
+      },
+      fieldbuddy: {
+        blurb: ['Our in-house service-ops app on the Salesforce platform, extended and integrated for your operation.', 'Onze eigen service-ops app op het Salesforce-platform, uitgebreid en geïntegreerd voor uw operatie.'],
+        bullets: [['Service-ops on the platform', 'Service-ops op het platform'], ['Pre-built integration patterns', 'Kant-en-klare integratiepatronen'], ['Built and maintained by us', 'Gebouwd en onderhouden door ons']],
+      },
+      experience: {
+        blurb: ['Customer, partner and self-service portals on the platform. Branded, secure and easy to evolve.', 'Klant-, partner- en self-serviceportalen op het platform. In uw huisstijl, veilig en makkelijk door te ontwikkelen.'],
+        bullets: [['Customer and partner portals', 'Klant- en partnerportalen'], ['Self-service and case deflection', 'Self-service en case deflection'], ['B2B commerce surfaces', 'B2B commerce']],
+      },
+    };
+
+    /* The proven process, from the live site. */
+    const PROCESS = [
+      { en: 'Discover',    nl: 'Discover',    dEn: 'We identify the requirements, discuss your business goals and give expert recommendations on the best way to implement. The step that decides how the rest of the project goes.', dNl: 'We brengen de requirements in kaart, bespreken uw doelen en adviseren over de beste manier van implementeren. De stap die bepaalt hoe de rest van het project verloopt.' },
+      { en: 'Analyse',     nl: 'Analyse',     dEn: 'Key requirements and pain points become a clear global scope agreement. From there we determine the Salesforce solutions that align strategy with results.', dNl: 'Kernvereisten en pijnpunten worden een heldere globale scope. Van daaruit bepalen we de Salesforce-oplossingen die strategie aan resultaat koppelen.' },
+      { en: 'Design',      nl: 'Design',      dEn: 'A future-proof foundation and a global solution blueprint. Budget, timeline and key functionality are set, with room left for detail during realisation.', dNl: 'Een toekomstbestendige basis en een globale blauwdruk. Budget, planning en kernfunctionaliteit staan vast, met ruimte voor detail tijdens de realisatie.' },
+      { en: 'Realisation', nl: 'Realisatie',  dEn: 'We build in sprints and demo the result after each one. Testing and acceptance follow, so the work meets expectations before it moves on.', dNl: 'We bouwen in sprints en demonstreren na elke sprint het resultaat. Testen en acceptatie volgen, zodat het werk aan de verwachtingen voldoet voordat het verdergaat.' },
+      { en: 'Deploy',      nl: 'Deploy',      dEn: 'Together we plan and execute the release. Training for end users and administrators is available to make adoption stick.', dNl: 'Samen plannen en voeren we de release uit. Training voor eindgebruikers en beheerders is beschikbaar, zodat adoptie blijft hangen.' },
+      { en: 'Support',     nl: 'Support',     dEn: 'After delivery you can still count on us, in several ways. And when the next project comes up, we go through this cycle again.', dNl: 'Ook na oplevering kunt u op ons rekenen, op verschillende manieren. En als het volgende project zich aandient, doorlopen we deze cyclus opnieuw.' },
+    ];
+
+    const PROOF = [
+      ['Salesforce partner since 2010', 'Salesforce-partner sinds 2010'],
+      ['AWS Partner Network member', 'Lid van het AWS Partner Network'],
+      ['40+ field service rollouts', '40+ field service-implementaties'],
+      ['Certified team, Amsterdam-Noord', 'Gecertificeerd team, Amsterdam-Noord'],
+    ];
+
+    /* ------------------------------------------------------------------ */
+    /*  Helpers                                                            */
+    /* ------------------------------------------------------------------ */
+
+    function productName(id) {
+      const copy = window.productCopy ? window.productCopy(tx) : {};
+      const p = (window.PRODUCTS || []).find(x => x.id === id);
+      return (copy[id] && copy[id].name) || (p && p.name) || id;
+    }
+
+    function ProductChips({ ids }) {
+      if (!ids || !ids.length) return null;
+      return (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {ids.map(id => (
+            <a key={id} href={'#' + id} className="chip svc-chip">
+              {productName(id)} <span aria-hidden style={{ fontSize: 12 }}>→</span>
+            </a>
+          ))}
+        </div>
+      );
+    }
+
+    /* Smooth-scroll to the hash once React has painted, and mark the target
+       so the eye lands on it. Native anchor jumps happen before <main> exists. */
+    function useHashTarget() {
+      const [target, setTarget] = useState(() => (window.location.hash || '').slice(1));
+      useEffect(() => {
+        const go = () => {
+          const id = (window.location.hash || '').slice(1);
+          setTarget(id);
+          if (!id) return;
+          const el = document.getElementById(id);
+          if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+        };
+        go();
+        window.addEventListener('hashchange', go);
+        return () => window.removeEventListener('hashchange', go);
+      }, []);
+      return target;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Sections                                                           */
+    /* ------------------------------------------------------------------ */
+
+    function ServicesHero({ onCta }) {
+      return (
+        <section className="svc-hero" style={{
+          position: 'relative', overflow: 'hidden', isolation: 'isolate',
+          background: 'var(--intigris-brown-700)', color: 'var(--intigris-off-white)',
+          borderBottomLeftRadius: 'clamp(24px, 4vw, 56px)', borderBottomRightRadius: 'clamp(24px, 4vw, 56px)',
+        }}>
+          {/* Warm-lit photography fading into dark brown, per the design direction. */}
+          <div aria-hidden style={{
+            position: 'absolute', inset: 0, zIndex: 0,
+            backgroundImage: 'url("assets/hero-team.jpg")', backgroundSize: 'cover', backgroundPosition: 'center right',
+            opacity: 0.42, mixBlendMode: 'luminosity',
+            WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, transparent 34%, #000 78%)', maskImage: 'linear-gradient(90deg, transparent 0%, transparent 34%, #000 78%)',
+          }} />
+          <div aria-hidden style={{
+            position: 'absolute', inset: 0, zIndex: 0,
+            background: 'radial-gradient(120% 90% at 82% 30%, rgba(255,95,54,0.55) 0%, rgba(255,95,54,0.18) 38%, rgba(43,23,0,0) 70%)',
+          }} />
+          <div aria-hidden style={{ position: 'absolute', inset: 0, zIndex: 0, background: 'linear-gradient(180deg, rgba(43,23,0,0.1) 0%, rgba(43,23,0,0) 40%, rgba(43,23,0,0.55) 100%)' }} />
+
+          <div className="container-wide" style={{ position: 'relative', zIndex: 1, paddingTop: 'clamp(132px, 17vh, 200px)', paddingBottom: 'clamp(56px, 8vh, 96px)' }}>
+            <div className="svc-hero-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.4fr) minmax(0, 1fr)', gap: 'clamp(32px, 5vw, 80px)', alignItems: 'end' }}>
+              <div>
+                <div className="eyebrow" style={{ marginBottom: 22, color: 'var(--intigris-coral)' }}>{tx('OUR SERVICES', 'ONZE DIENSTEN')}</div>
+                <h1 style={{ fontSize: 'clamp(42px, 5.8vw, 84px)', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 0.98, margin: 0, color: 'var(--intigris-off-white)', textWrap: 'balance' }}>
+                  {tx('We design systems so you can move ', 'Wij ontwerpen systemen zodat u ')}
+                  <span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('forward.', 'vooruit kunt.')}</span>
+                </h1>
+                <p style={{ marginTop: 26, maxWidth: 580, fontSize: 18, fontWeight: 400, lineHeight: 1.55, color: 'rgba(252,247,235,0.88)' }}>
+                  {tx(
+                    'From first advice to long-term support, one certified team across the whole Salesforce stack. Five ways to work with us, eight products we implement, one proven process.',
+                    'Van het eerste advies tot langdurige support, één gecertificeerd team op de hele Salesforce-stack. Vijf manieren om met ons te werken, acht producten die we implementeren, één bewezen aanpak.'
+                  )}
+                </p>
+                <div style={{ marginTop: 32, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                  <button className="btn btn-on-brown" onClick={onCta}>{tx('Book a 30-min call', 'Plan een gesprek van 30 minuten')} <span className="arrow">→</span></button>
+                  <a className="btn btn-outline-light" href="#products">{tx('See what we implement', 'Bekijk wat we implementeren')} <span className="arrow">↓</span></a>
+                </div>
+              </div>
+
+              {/* Numbered proof rows, the signature #01 #02 pattern. */}
+              <div style={{ justifySelf: 'end', width: '100%', maxWidth: 420 }}>
+                <div style={{ background: 'rgba(252,247,235,0.06)', border: '1px solid rgba(252,247,235,0.18)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', borderRadius: 20, padding: '10px 26px' }}>
+                  {PROOF.map((s, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '15px 0', borderBottom: i < PROOF.length - 1 ? '1px solid rgba(252,247,235,0.14)' : 'none' }}>
+                      <span style={{ fontSize: 12, fontWeight: 500, letterSpacing: '0.12em', color: 'var(--intigris-coral)', flex: 'none', width: 28 }}>#{String(i + 1).padStart(2, '0')}</span>
+                      <span style={{ fontSize: 15, fontWeight: 500, letterSpacing: '-0.005em', color: 'var(--intigris-off-white)' }}>{tx(s[0], s[1])}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    /* In-page navigation. Sticks to the top once you pass the hero. */
+    function SubNav({ target }) {
+      const items = [
+        ...ENGAGEMENTS.map(e => ({ id: e.id, label: tx(e.short[0], e.short[1]) })),
+        { id: 'products', label: tx('Products', 'Producten') },
+        { id: 'process',  label: tx('Process', 'Aanpak') },
+      ];
+      return (
+        <nav className="svc-subnav" aria-label={tx('On this page', 'Op deze pagina')}>
+          <div className="container-wide svc-subnav-inner">
+            {items.map(it => (
+              <a key={it.id} href={'#' + it.id} className={'svc-subnav-link' + (target === it.id ? ' is-active' : '')}>{it.label}</a>
+            ))}
+          </div>
+        </nav>
+      );
+    }
+
+    function Engagements({ onCta, target }) {
+      return (
+        <section className="container-wide" style={{ paddingTop: 'clamp(64px, 8vw, 112px)', paddingBottom: 'clamp(48px, 6vw, 88px)' }}>
+          <div className="section-head">
+            <div>
+              <div className="eyebrow" style={{ marginBottom: 20 }}>{tx('HOW WE WORK WITH YOU', 'HOE WE MET U WERKEN')}</div>
+              <h2 className="display-md">
+                {tx('Five ways to ', 'Vijf manieren om ')}<span style={{ color: 'var(--intigris-coral)' }}>{tx('engage.', 'samen te werken.')}</span>
+              </h2>
+            </div>
+            <p className="lede">
+              {tx(
+                'Each one ends in the same place: a Salesforce platform that advances your business. Pick the closest fit and we shape the engagement from there.',
+                'Elke vorm eindigt op dezelfde plek: een Salesforce-platform dat uw business vooruit helpt. Kies wat het beste past en we vormen het traject samen.'
+              )}
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {ENGAGEMENTS.map((e) => {
+              const hit = target === e.id;
+              return (
+                <article key={e.id} id={e.id} className={'svc-row' + (hit ? ' is-target' : '')} style={{
+                  display: 'grid', gridTemplateColumns: 'minmax(0, 0.42fr) minmax(0, 1fr) minmax(0, 0.5fr)', gap: 'clamp(24px, 4vw, 64px)',
+                  padding: 'clamp(32px, 4vw, 52px) 0', borderTop: '1px solid var(--border)', scrollMarginTop: 112,
+                }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.14em', color: 'var(--intigris-coral-700)' }}>{e.num}</div>
+                    <h3 style={{ fontSize: 'clamp(26px, 2.6vw, 36px)', fontWeight: 500, letterSpacing: '-0.022em', lineHeight: 1.08, margin: '12px 0 0' }}>{tx(e.name[0], e.name[1])}</h3>
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, fontSize: 'clamp(19px, 1.5vw, 23px)', fontWeight: 500, letterSpacing: '-0.014em', lineHeight: 1.25, color: 'var(--intigris-dark-brown)' }}>{tx(e.tagline[0], e.tagline[1])}</p>
+                    <p style={{ margin: '16px 0 0', fontSize: 16.5, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 620 }}>{tx(e.body[0], e.body[1])}</p>
+                    {e.products.length > 0 && (
+                      <div style={{ marginTop: 22 }}>
+                        <div className="eyebrow eyebrow--bare" style={{ marginBottom: 10, color: 'var(--fg-muted)' }}>{tx('WHAT WE USE', 'WAARMEE WE WERKEN')}</div>
+                        <ProductChips ids={e.products} />
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 20, padding: '22px 24px', alignSelf: 'start' }}>
+                    <div className="eyebrow eyebrow--bare" style={{ marginBottom: 12 }}>{e.id === 'support' ? tx('THREE OPTIONS', 'DRIE OPTIES') : tx('WHAT YOU GET', 'WAT U KRIJGT')}</div>
+                    <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {e.bullets.map((b, i) => (
+                        <li key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontSize: 15, fontWeight: 400, lineHeight: 1.45, color: 'var(--intigris-dark-brown)' }}>
+                          <span aria-hidden style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--intigris-coral)', flex: 'none', marginTop: 7 }} />
+                          {tx(b[0], b[1])}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          <div style={{ marginTop: 'clamp(32px, 4vw, 48px)', paddingTop: 32, borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
+            <p style={{ margin: 0, fontSize: 16, fontWeight: 400, color: 'var(--fg-muted)', maxWidth: 560 }}>
+              {tx(
+                'Not sure which one fits? Most programmes begin with a 30-minute call where we work that out together.',
+                'Niet zeker welke vorm past? De meeste trajecten beginnen met een gesprek van 30 minuten waarin we dat samen bepalen.'
+              )}
+            </p>
+            <button className="btn btn-primary" onClick={onCta}>{tx('Book a 30-min call', 'Plan een gesprek van 30 minuten')} <span className="arrow">→</span></button>
+          </div>
+        </section>
+      );
+    }
+
+    function Products({ target }) {
+      const list = window.PRODUCTS || [];
+      const Glyph = window.ProductGlyph || (() => null);
+      return (
+        <section id="products" style={{ background: 'var(--intigris-chocolate)', color: 'var(--intigris-off-white)', paddingTop: 'clamp(64px, 8vw, 112px)', paddingBottom: 'clamp(64px, 8vw, 112px)', scrollMarginTop: 72 }}>
+          <div className="container-wide">
+            <div className="section-head">
+              <div>
+                <div className="eyebrow" style={{ marginBottom: 20, color: 'var(--intigris-coral)' }}>{tx('WHAT WE IMPLEMENT', 'WAT WE IMPLEMENTEREN')}</div>
+                <h2 className="display-md" style={{ color: 'var(--intigris-off-white)' }}>
+                  {tx('Across the ', 'Op de hele ')}<span style={{ color: 'var(--intigris-coral)' }}>{tx('Salesforce stack.', 'Salesforce-stack.')}</span>
+                </h2>
+              </div>
+              <p className="lede" style={{ color: 'rgba(252,247,235,0.82)' }}>
+                {tx(
+                  'The products we deliver most often. Configured, integrated and running in production at our clients, not just on a slide.',
+                  'De producten die we het vaakst opleveren. Geconfigureerd, geïntegreerd en in productie bij onze klanten, niet alleen op een slide.'
+                )}
+              </p>
+            </div>
+
+            <div className="svc-products">
+              {list.map((p) => {
+                const c = PRODUCT_COPY[p.id] || {};
+                const hit = target === p.id;
+                return (
+                  <article key={p.id} id={p.id} className={'svc-product' + (hit ? ' is-target' : '')} style={{ scrollMarginTop: 112 }}>
+                    <div className="svc-product-head">
+                      <div className="svc-product-icon"><Glyph id={p.id} /></div>
+                      <span className="svc-product-num">{p.num}</span>
+                    </div>
+                    <h3 style={{ fontSize: 24, fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1.1, margin: '18px 0 0', color: 'var(--intigris-off-white)' }}>{productName(p.id)}</h3>
+                    <p style={{ margin: '10px 0 0', fontSize: 15, fontWeight: 400, lineHeight: 1.5, color: 'rgba(252,247,235,0.8)' }}>{c.blurb ? tx(c.blurb[0], c.blurb[1]) : p.blurb}</p>
+                    <ul style={{ listStyle: 'none', margin: '18px 0 0', padding: '16px 0 0', borderTop: '1px solid rgba(252,247,235,0.14)', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {(c.bullets || p.bullets.map(b => [b, b])).map((b, i) => (
+                        <li key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 14, fontWeight: 400, lineHeight: 1.45, color: 'rgba(252,247,235,0.9)' }}>
+                          <span aria-hidden style={{ color: 'var(--intigris-coral)', flex: 'none', lineHeight: 1.45 }}>→</span>{tx(b[0], b[1])}
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Process() {
+      return (
+        <section id="process" className="container-wide" style={{ paddingTop: 'clamp(64px, 8vw, 112px)', paddingBottom: 'clamp(64px, 8vw, 112px)', scrollMarginTop: 72 }}>
+          <div className="section-head">
+            <div>
+              <div className="eyebrow" style={{ marginBottom: 20 }}>{tx('OUR PROCESS', 'ONZE AANPAK')}</div>
+              <h2 className="display-md">
+                {tx('Waterfall to agree. ', 'Waterval om af te spreken. ')}<span style={{ color: 'var(--intigris-coral)' }}>{tx('Agile to deliver.', 'Agile om op te leveren.')}</span>
+              </h2>
+            </div>
+            <p className="lede">
+              {tx(
+                'We start like waterfall: analysis and a global design that pins down cost, lead time and solution while leaving room for detail. Then we build and deliver agile, in sprints. Expectations stay clear and we stay flexible.',
+                'We starten als waterval: analyse en een globaal ontwerp dat kosten, doorlooptijd en oplossing vastlegt en ruimte laat voor detail. Daarna bouwen en leveren we agile, in sprints. Verwachtingen blijven helder en wij blijven wendbaar.'
+              )}
+            </p>
+          </div>
+
+          <ol className="svc-process" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+            {PROCESS.map((s, i) => (
+              <li key={i} className="svc-step">
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.14em', color: 'var(--intigris-coral-700)' }}>{String(i + 1).padStart(2, '0')}</span>
+                  {i < PROCESS.length - 1 && <span aria-hidden className="svc-step-arrow">→</span>}
+                </div>
+                <h3 style={{ fontSize: 24, fontWeight: 500, letterSpacing: '-0.018em', margin: '14px 0 10px' }}>{tx(s.en, s.nl)}</h3>
+                <p style={{ margin: 0, fontSize: 15, fontWeight: 400, lineHeight: 1.55, color: 'var(--fg-muted)' }}>{tx(s.dEn, s.dNl)}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      );
+    }
+
+    function ServicesPage({ onCta }) {
+      const target = useHashTarget();
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+          <ServicesHero onCta={onCta} />
+          <SubNav target={target} />
+          <Engagements onCta={onCta} target={target} />
+          <Products target={target} />
+          <Process />
+          <SiteFinalCTA onCta={onCta} />
+          <style>{`
+            .svc-chip { text-decoration: none; cursor: pointer; transition: background 160ms var(--ease-out), color 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+            .svc-chip:hover { background: var(--intigris-coral); color: var(--intigris-dark-brown); border-color: var(--intigris-coral); }
+
+            .svc-subnav { position: sticky; top: 0; z-index: 30; background: rgba(252,247,235,0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+            .svc-subnav-inner { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding-top: 10px; padding-bottom: 10px; }
+            .svc-subnav-inner::-webkit-scrollbar { display: none; }
+            .svc-subnav-link { flex: none; font-size: 14px; font-weight: 500; letter-spacing: -0.005em; color: var(--intigris-dark-brown); text-decoration: none; padding: 8px 14px; border-radius: 999px; transition: background 160ms var(--ease-out), color 160ms var(--ease-out); }
+            .svc-subnav-link:hover { background: var(--intigris-off-white-200); }
+            .svc-subnav-link.is-active { background: var(--intigris-dark-brown); color: var(--intigris-off-white); }
+
+            .svc-row.is-target h3 { color: var(--intigris-coral); }
+
+            .svc-products { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+            .svc-product { background: rgba(252,247,235,0.05); border: 1px solid rgba(252,247,235,0.16); border-radius: var(--radius-xl); padding: 26px 24px; transition: border-color 220ms var(--ease-out), background 220ms var(--ease-out), transform 220ms var(--ease-out); }
+            .svc-product:hover { border-color: rgba(252,247,235,0.36); transform: translateY(-3px); }
+            .svc-product.is-target { border-color: var(--intigris-coral); background: rgba(255,95,54,0.1); }
+            .svc-product-head { display: flex; align-items: center; justify-content: space-between; }
+            .svc-product-icon { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; background: var(--intigris-coral); color: var(--intigris-dark-brown); }
+            .svc-product-num { font-size: 13px; font-weight: 600; letter-spacing: 0.14em; color: rgba(252,247,235,0.55); }
+
+            .svc-process { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+            .svc-step { background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 20px; padding: 26px 26px 28px; }
+            .svc-step-arrow { color: var(--intigris-coral); font-size: 16px; }
+
+            @media (max-width: 1100px) { .svc-products { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+            @media (max-width: 980px) {
+              .svc-hero-grid { grid-template-columns: 1fr !important; align-items: start !important; }
+              .svc-hero-grid > div:last-child { justify-self: start !important; }
+              .svc-row { grid-template-columns: 1fr !important; gap: 20px !important; }
+              .svc-process { grid-template-columns: repeat(2, minmax(0,1fr)); }
+            }
+            @media (max-width: 620px) {
+              .svc-products, .svc-process { grid-template-columns: 1fr; }
+            }
+          `}</style>
+        </main>
+      );
+    }
+
+    function App() {
+      const [lang, setLang] = useState('en');
+      const [contactOpen, setContactOpen] = useState(false);
+      function changeLang(l){ window.__lang = l; document.documentElement.setAttribute('lang', l); setLang(l); }
+      function nav(r){
+        if (r === 'contact') return setContactOpen(true);
+        if (r === 'blog') return (window.location.href = 'Blog.html');
+        if (r === 'about') return (window.location.href = 'About.html');
+        if (r === 'home') return (window.location.href = 'index.html');
+        return (window.location.href = 'index.html');
+      }
+      return (
+        <>
+          <SiteHeader overlay={true} megaTheme="cream" lang={lang} onLang={changeLang} onNav={nav} />
+          <ServicesPage key={'svc-' + lang} onCta={() => setContactOpen(true)} />
+          <SiteNewsletter key={'nl-' + lang} />
+          <SiteFooter key={'f-' + lang} />
+          <SiteCookieConsent />
+          <SiteContactSheet open={contactOpen} onClose={() => setContactOpen(false)} source="Services.html" />
+        </>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+</body>
+</html>
