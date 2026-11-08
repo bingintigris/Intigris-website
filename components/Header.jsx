@@ -27,7 +27,7 @@ function ServicesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
   const items = window.PRODUCTS || [];
   const copy = window.productCopy ? window.productCopy(tx) : {};
   // Products that have their own page link there; the rest go to the anchor on Services.html.
-  const PRODUCT_PAGES = { sales: 'SalesCloud.html' };
+  const PRODUCT_PAGES = { sales: 'SalesCloud.html', agentforce: 'Agentforce.html' };
   const productHref = (id) => PRODUCT_PAGES[id] || `Services.html#${id}`;
   const Glyph = window.ProductGlyph || (() => null);
   return (

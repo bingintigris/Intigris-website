@@ -212,7 +212,7 @@ function SiteFooter({ divider }) {
             </div>
           </div>
 
-          {COL(tx('SERVICES', 'DIENSTEN'), ['Sales Cloud', 'Field Service', 'Service Cloud', 'Integrations', 'Agentforce', 'Data 360', 'FieldBuddy', 'Experience Cloud'])}
+          {COL(tx('SERVICES', 'DIENSTEN'), [{ label: 'Sales Cloud', href: 'SalesCloud.html' }, 'Field Service', 'Service Cloud', 'Integrations', { label: 'Agentforce', href: 'Agentforce.html' }, 'Data 360', 'FieldBuddy', 'Experience Cloud'])}
           {COL(tx('SOLUTIONS', 'OPLOSSINGEN'), ['Salesforce Consulting', 'Integration Development', 'Field Service Consulting', tx('Salesforce Quickstarts', 'Salesforce Quickstarts'), 'ISA Academy'])}
           {COL(tx('COMPANY', 'BEDRIJF'), [tx('About', 'Over ons'), 'Blog', tx('Careers', 'Werken bij'), tx('Contact', 'Contact'), 'LinkedIn', { label: tx('Admin', 'Admin'), href: 'https://intigris-admin.netlify.app' }])}
         </div>
