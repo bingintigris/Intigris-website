@@ -386,9 +386,9 @@ function V3Styles() {
       .v3-what-photo span { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,145,102,.5), rgba(225,74,36,.55)); mix-blend-mode: multiply; }
 
       /* compact statement */
-      .v3-statement { background: var(--intigris-brown-700); color: var(--intigris-off-white); padding-block: clamp(44px, 6vw, 72px); }
+      .v3-statement { background: var(--intigris-brown-700); color: var(--intigris-off-white); padding-block: clamp(80px, 11vw, 150px); }
       .v3-statement-inner { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 56px); align-items: center; }
-      .v3-statement-line { margin: 0; font-size: clamp(34px, 4.6vw, 64px); font-weight: 500; letter-spacing: -.04em; line-height: 1.05; }
+      .v3-statement-line { margin: 0; font-size: clamp(46px, 6.6vw, 96px); font-weight: 500; letter-spacing: -.045em; line-height: 1; }
       .v3-statement-word { display: inline-block; min-width: 6ch; }
       .v3-statement-word span { color: var(--intigris-coral); font-style: italic; display: inline-block; animation: ckSwap 380ms var(--ease-out) both; }
       .v3-statement-side { border-left: 1px solid rgba(252,247,235,.18); padding-left: clamp(16px, 2.5vw, 32px); }
