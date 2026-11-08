@@ -344,6 +344,136 @@ function V3ConnectHub({ head, center, items }) {
   );
 }
 
+/* ---------- LOGO HUB (chosen variation A, round 4) ----------
+   The Salesforce logo sits in the middle. As you scroll, every tool glides in from
+   further out along its own spoke, lands in its slot, and its line connects to the
+   logo (GSAP pin + scrub). Tool tiles show the real logos; tools without a brand
+   logo show their name. Phones get a simple logo grid, reduced motion the end state. */
+const LH_DIR = 'assets/logos/tools/';
+const LH_LOGOS = {
+  'Exact Online / Globe': { src: ['exact.svg'] },
+  'AFAS': { src: ['afas.png'] },
+  'Business Central': { src: ['business-central.svg'], text: true },
+  'NetSuite': { src: ['netsuite.png'] },
+  'Outlook & Gmail': { src: ['outlook.svg', 'gmail.svg'] },
+  'Marketing Cloud': { src: ['salesforce.svg'], text: true, sf: true },
+  'Service Cloud': { src: ['salesforce.svg'], text: true, sf: true },
+  'Agentforce': { src: ['salesforce.svg'], text: true, sf: true },
+};
+
+function LhTile({ it }) {
+  const L = LH_LOGOS[it.n];
+  if (!L) return <span className="lh-tile-text">{it.n}</span>;
+  return (
+    <span className={'lh-tile-logos' + (L.sf ? ' is-sf' : '')}>
+      {L.src.map((s, k) => <img key={k} src={LH_DIR + s} alt={L.text ? '' : it.n} />)}
+      {L.text && <span className="lh-tile-text">{it.n}</span>}
+    </span>
+  );
+}
+
+function V3LogoHub({ head, center, items }) {
+  const ref = v3Ref(null);
+  const [active, setActive] = v3State(0);
+  const [paused, setPaused] = v3State(false);
+  const [landed, setLanded] = v3State(V3_REDUCE || !window.gsap);
+  /* Once everything has landed, the highlight walks from tool to tool. */
+  v3Effect(() => { if (!landed || paused || V3_REDUCE) return; const t = setInterval(() => setActive(a => (a + 1) % items.length), 2600); return () => clearInterval(t); }, [landed, paused, items.length]);
+  const n = items.length, W = 1000, H = 560;
+  const pts = items.map((_, i) => { const a = (-90 + (360 / n) * i) * Math.PI / 180; return [50 + 39 * Math.cos(a), 50 + 39 * Math.sin(a)]; });
+  v3Effect(() => {
+    if (!window.gsap || V3_REDUCE) return;
+    const gsap = window.gsap;
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 761px)', () => {
+      const root = ref.current;
+      const stage = root.querySelector('.lh-stage');
+      const nodes = root.querySelectorAll('.lh-node');
+      const lines = root.querySelectorAll('.lh-line');
+      const tl = gsap.timeline({ scrollTrigger: { trigger: root.querySelector('.lh-pin'), start: 'center center', end: '+=110%', scrub: 0.8, pin: true,
+        onUpdate: st => setLanded(st.progress > 0.92) } });
+      tl.fromTo(root.querySelector('.lh-center'), { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.6)' }, 0);
+      nodes.forEach((el, i) => {
+        /* Start further out along the node's own spoke: straight outside-in. */
+        const dx = () => (pts[i][0] - 50) / 100 * stage.offsetWidth * 1.15;
+        const dy = () => (pts[i][1] - 50) / 100 * stage.offsetHeight * 1.15;
+        const t0 = 0.15 + i * 0.07;
+        tl.fromTo(el, { x: dx, y: dy, opacity: 0, scale: 0.85 }, { x: 0, y: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'power3.out' }, t0)
+          .fromTo(lines[i], { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.35, ease: 'none' }, t0 + 0.7);
+      });
+      tl.to({}, { duration: 0.25 });
+      return () => setLanded(true);
+    });
+    return () => mm.revert();
+  }, []);
+  const a = items[active];
+  const pick = i => () => { setActive(i); setPaused(true); };
+  return (
+    <section className="ck-section ck-section--dark lh" ref={ref}>
+      <div className="container-wide">
+        <CkHead {...head} />
+        <div className="lh-pin">
+          <div className="lh-stage" onMouseLeave={() => setPaused(false)}>
+            <svg className="lh-lines" viewBox={'0 0 ' + W + ' ' + H} aria-hidden>
+              {pts.map(([x, y], i) => <line key={i} x1={W / 2} y1={H / 2} x2={x / 100 * W} y2={y / 100 * H} pathLength="1" className={'lh-line' + (i === active ? ' on' : '')} />)}
+            </svg>
+            <div className="lh-center">
+              <img src={LH_DIR + 'salesforce.svg'} alt="Salesforce" />
+              {center && <span>{center}</span>}
+            </div>
+            {items.map((it, i) => (
+              <button key={i} type="button" className={'lh-node' + (i === active ? ' on' : '')} style={{ left: pts[i][0] + '%', top: pts[i][1] + '%' }}
+                onMouseEnter={pick(i)} onFocus={pick(i)} onClick={pick(i)} aria-pressed={i === active} aria-label={it.n}>
+                <LhTile it={it} />
+              </button>
+            ))}
+          </div>
+          <div className="lh-caption" key={active} aria-live="polite"><small>{a.k}</small><b>{a.n}</b><span>{a.d}</span></div>
+        </div>
+        <div className="lh-fallback">
+          {items.map((it, i) => <div key={i} className="lh-fb"><span className="lh-fb-logo"><LhTile it={it} /></span><small>{it.k}</small><span className="lh-fb-d">{it.d}</span></div>)}
+        </div>
+      </div>
+      <style>{`
+        .lh { overflow-x: clip; }
+        .lh-pin { padding-top: 8px; }
+        .lh-stage { position: relative; width: 100%; max-width: min(1000px, calc((100vh - 230px) * 1.7857)); margin: 0 auto; aspect-ratio: 1000 / 560; }
+        .lh-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+        .lh-line { stroke: rgba(252,247,235,.28); stroke-width: 2; stroke-dasharray: 1 1; stroke-dashoffset: 0; transition: stroke 300ms, stroke-width 300ms; }
+        .lh-line.on { stroke: var(--intigris-coral); stroke-width: 4; }
+        .lh-center { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
+        .lh-center::before { content: ''; position: absolute; left: 50%; top: 42%; width: 150%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,161,224,.28), rgba(0,161,224,0)); z-index: -1; }
+        .lh-center img { width: clamp(130px, 19vw, 200px); height: auto; filter: drop-shadow(0 18px 30px rgba(0,0,0,.4)); }
+        .lh-center span { font-size: 14px; font-weight: 500; letter-spacing: .02em; padding: 6px 14px; border-radius: 999px; background: #3a2108; border: 1px solid rgba(252,247,235,.22); color: var(--intigris-off-white); white-space: nowrap; }
+        .lh-node { position: absolute; translate: -50% -50%; appearance: none; font: inherit; cursor: pointer; z-index: 3; display: grid; place-items: center; min-width: 150px; height: 66px; padding: 10px 18px; border-radius: 16px; border: 0; background: #fff; box-shadow: 0 14px 30px -14px rgba(0,0,0,.6), 0 0 0 0 var(--intigris-coral); transition: box-shadow 300ms, scale 300ms; }
+        .lh-node.on { box-shadow: 0 14px 30px -14px rgba(0,0,0,.6), 0 0 0 4px var(--intigris-coral); scale: 1.06; }
+        .lh-tile-logos { display: flex; align-items: center; gap: 10px; }
+        .lh-tile-logos img { height: 30px; width: auto; max-width: 128px; object-fit: contain; display: block; }
+        .lh-tile-logos.is-sf img { height: 24px; }
+        .lh-tile-text { font-size: 15px; font-weight: 500; color: var(--intigris-brown-700); white-space: nowrap; letter-spacing: -.01em; }
+        .lh-caption { margin: 22px auto 0; max-width: 640px; min-height: 90px; text-align: center; display: flex; flex-direction: column; gap: 4px; animation: ckFade 350ms var(--ease-out) both; }
+        .lh-caption small { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--intigris-coral); }
+        .lh-caption b { font-size: 24px; font-weight: 500; letter-spacing: -.02em; }
+        .lh-caption span { font-size: 16px; color: rgba(252,247,235,.78); }
+        .lh-fallback { display: none; }
+        @media (max-width: 760px) {
+          .lh-pin { display: none; }
+          .lh-fallback { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+          .lh-fb { min-width: 0; background: rgba(252,247,235,.06); border: 1px solid rgba(252,247,235,.14); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+          .lh-fb-logo { background: #fff; border-radius: 10px; min-height: 52px; display: grid; place-items: center; padding: 6px 8px; overflow: hidden; }
+          .lh-fb-logo .lh-tile-logos { flex-wrap: wrap; justify-content: center; gap: 4px 6px; max-width: 100%; }
+          .lh-fb-logo img { height: 20px; max-width: 100%; }
+          .lh-fb-logo .lh-tile-logos.is-sf img { height: 16px; }
+          .lh-fb-logo .lh-tile-text { font-size: 12.5px; white-space: normal; text-align: center; }
+          .lh-fb small { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--intigris-coral); font-weight: 600; }
+          .lh-fb-d { font-size: 13.5px; color: rgba(252,247,235,.78); }
+        }
+        @media (prefers-reduced-motion: reduce) { .lh-caption { animation: none; } }
+      `}</style>
+    </section>
+  );
+}
+
 function V3Styles() {
   return (
     <style>{`
@@ -510,4 +640,4 @@ function V3Styles() {
   );
 }
 
-Object.assign(window, { V3ConnectHub, V3ChaosHero, V3WhatItIs, V3Statement, V3FlipProblems, V3RouteHero, V3DayCompact, V3Integrations, V3WaysToStart, V3Calculator, V3Styles });
+Object.assign(window, { V3ConnectHub, V3LogoHub, V3ChaosHero, V3WhatItIs, V3Statement, V3FlipProblems, V3RouteHero, V3DayCompact, V3Integrations, V3WaysToStart, V3Calculator, V3Styles });
