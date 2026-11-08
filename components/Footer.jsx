@@ -199,7 +199,7 @@ function SiteFooter({ divider }) {
               marginTop: 28,
               fontSize: 16, color: 'rgba(64,35,1,0.9)', lineHeight: 1.6, fontWeight: 400,
             }}>
-              Kraanspoor 42, 1033 SE,<br/>
+              Asterweg 71, 1031 HM,<br/>
               Amsterdam, Noord-Holland<br/>
               {tx('The Netherlands', 'Nederland')}
             </div>
