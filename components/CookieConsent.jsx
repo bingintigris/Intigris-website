@@ -204,7 +204,7 @@ function SiteCookieConsent() {
             <p className="cc-body">
               {tx(
                 'We keep this simple. Nothing is measured or tracked unless you say yes. The only thing we store either way is your choice below, so we do not have to ask again.',
-                'We houden het simpel. We meten of volgen niets tenzij u ja zegt. Het enige dat we hoe dan ook opslaan is uw keuze hieronder, zodat we het niet opnieuw hoeven te vragen.'
+                'We houden het simpel. We meten of volgen niets tenzij je ja zegt. Het enige dat we hoe dan ook opslaan is je keuze hieronder, zodat we het niet opnieuw hoeven te vragen.'
               )}{' '}
               <a href="Cookies.html">{tx('Read our cookie notice', 'Lees ons cookiebeleid')}</a>.
             </p>
@@ -216,7 +216,7 @@ function SiteCookieConsent() {
                 {tx('Necessary only', 'Alleen noodzakelijk')}
               </button>
               <button className="cc-link" onClick={() => { setAnalytics(false); setMarketing(false); setPanel(true); }}>
-                {tx('Choose what you share', 'Kies wat u deelt')}
+                {tx('Choose what you share', 'Kies wat je deelt')}
               </button>
             </div>
           </div>
@@ -234,7 +234,7 @@ function SiteCookieConsent() {
             <p style={{ margin: '0 0 6px', fontSize: 14.5, lineHeight: 1.6, color: 'var(--fg-muted)' }}>
               {tx(
                 'Turn on only what you are comfortable with. You can change this at any time from the link in our footer.',
-                'Zet alleen aan waar u zich prettig bij voelt. U kunt dit altijd wijzigen via de link in onze footer.'
+                'Zet alleen aan waar je je prettig bij voelt. Je kunt dit altijd wijzigen via de link in onze footer.'
               )}
             </p>
 
@@ -243,7 +243,7 @@ function SiteCookieConsent() {
                 <h4>{tx('Strictly necessary', 'Strikt noodzakelijk')}</h4>
                 <p>{tx(
                   'Needed for the site to work: remembering this choice, keeping forms secure, and signing you in to our portal. Never used to track you.',
-                  'Nodig om de site te laten werken: deze keuze bewaren, formulieren beveiligen en inloggen op ons portaal. Nooit gebruikt om u te volgen.'
+                  'Nodig om de site te laten werken: deze keuze bewaren, formulieren beveiligen en inloggen op ons portaal. Nooit gebruikt om je te volgen.'
                 )}</p>
               </div>
               <button className="cc-sw" data-on="1" data-locked="1" disabled
@@ -267,7 +267,7 @@ function SiteCookieConsent() {
                 <h4>{tx('Marketing', 'Marketing')}</h4>
                 <p>{tx(
                   'Lets us measure whether our ads reach the right people, and show you relevant ones elsewhere. Off by default.',
-                  'Laat ons meten of onze advertenties de juiste mensen bereiken en u elders relevante advertenties tonen. Standaard uit.'
+                  'Laat ons meten of onze advertenties de juiste mensen bereiken en je elders relevante advertenties tonen. Standaard uit.'
                 )}</p>
               </div>
               <button className="cc-sw" data-on={marketing ? '1' : '0'} onClick={() => setMarketing((v) => !v)}

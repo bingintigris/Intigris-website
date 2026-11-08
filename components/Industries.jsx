@@ -152,7 +152,7 @@ function SiteIndustries() {
     },
     technology: {
       name: tx('Technology', 'Technologie'),
-      headline: tx('A revenue platform that scales as fast as your product.', 'Een revenue-platform dat meegroeit met uw product.'),
+      headline: tx('A revenue platform that scales as fast as your product.', 'Een revenue-platform dat meegroeit met je product.'),
       description: tx(
         'For SaaS, fintech, and platform businesses, we build Salesforce environments that keep up with product launches, pricing changes, and a constantly evolving go-to-market motion.',
         'Voor SaaS-, fintech- en platformbedrijven bouwen we Salesforce-omgevingen die meebewegen met productlanceringen, prijswijzigingen en een continu evoluerende go-to-market.'
@@ -416,7 +416,7 @@ function SiteIndustriesGrid() {
     },
     technology: {
       name: tx('Technology', 'Technologie'),
-      headline: tx('A revenue platform that scales as fast as your product.', 'Een revenue-platform dat meegroeit met uw product.'),
+      headline: tx('A revenue platform that scales as fast as your product.', 'Een revenue-platform dat meegroeit met je product.'),
     },
   };
 
@@ -435,7 +435,7 @@ function SiteIndustriesGrid() {
           <div>
             <div className="eyebrow" style={{ marginBottom: 20 }}>{tx('INDUSTRIES WE THRIVE IN', 'BRANCHES WAARIN WIJ EXCELLEREN')}</div>
             <h2 className="display-md" style={{ color: 'var(--intigris-dark-brown)', whiteSpace: 'nowrap' }}>
-              {tx('Choose your ', 'Kies uw ')}
+              {tx('Choose your ', 'Kies je ')}
               <span style={{ color: 'var(--intigris-coral)' }}>{tx('industry.', 'branche.')}</span>
             </h2>
           </div>
@@ -463,7 +463,7 @@ function SiteIndustriesGrid() {
           }}>
             {tx(
               'Don’t see your industry?',
-              'Staat uw branche er niet bij?'
+              'Staat je branche er niet bij?'
             )}
           </span>
           <a

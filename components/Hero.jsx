@@ -125,7 +125,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
               {tx('Salesforce Implementation Partner', 'Salesforce Implementation Partner')}
             </div>
             <h1 className="display-stack" style={{ color: 'var(--intigris-off-white)' }}>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>{tx('Smarten up', 'Maak uw')}</span>
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>{tx('Smarten up', 'Maak je')}</span>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>
                 {tx('your ', '')}
                 <RotatingWord words={HERO_INDUSTRIES} idx={idx} color={dark ? 'var(--intigris-coral)' : 'var(--intigris-dark-brown)'} />
@@ -266,7 +266,7 @@ function HeroSplit({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
               )}
             </div>
             <h1 className="display-stack">
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>{tx('Smarten up', 'Maak uw')}</span>
+              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>{tx('Smarten up', 'Maak je')}</span>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>
                 {tx('your ', '')}
                 <RotatingWord words={HERO_INDUSTRIES} idx={idx} />
@@ -279,7 +279,7 @@ function HeroSplit({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
             }}>
               {tx(
                 'The Salesforce implementation partner for ambitious organisations in the Netherlands. We bring into focus what you need, then implement it so your business can move forward.',
-                'Dé Salesforce-implementatiepartner voor ambitieuze organisaties in Nederland. We brengen scherp in beeld wat u nodig heeft en implementeren het, zodat uw business vooruit kan.'
+                'Dé Salesforce-implementatiepartner voor ambitieuze organisaties in Nederland. We brengen scherp in beeld wat je nodig hebt en implementeren het, zodat je business vooruit kan.'
               )}
             </p>
 
@@ -343,7 +343,7 @@ function HeroTypographic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
           margin: 0,
           color: 'var(--intigris-dark-brown)',
         }}>
-          {tx('Smarten up', 'Maak uw business')}<br/>
+          {tx('Smarten up', 'Maak je business')}<br/>
           {tx('your ', '')}
           <span style={{ position: 'relative', display: 'inline-block' }}>
             <span style={{ color: 'var(--intigris-coral)' }}>{tx('business', 'slimmer')}</span>
@@ -369,7 +369,7 @@ function HeroTypographic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
           }}>
             {tx(
               'The Salesforce implementation partner for ambitious organisations in the Netherlands. From Sales Cloud to Field Service, we deliver Salesforce programmes that move your business forward.',
-              'Dé Salesforce-implementatiepartner voor ambitieuze organisaties in Nederland. Van Sales Cloud tot Field Service: wij leveren Salesforce-programma’s die uw business meetbaar vooruit helpen.'
+              'Dé Salesforce-implementatiepartner voor ambitieuze organisaties in Nederland. Van Sales Cloud tot Field Service: wij leveren Salesforce-programma’s die je business meetbaar vooruit helpen.'
             )}
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
@@ -424,7 +424,7 @@ function HeroEditorial({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
               <em style={{
                 fontStyle: 'italic', fontWeight: 500,
                 color: 'var(--intigris-coral)',
-              }}>{tx('up', 'slim')}</em> {tx('your', 'uw')}<br/>
+              }}>{tx('up', 'slim')}</em> {tx('your', 'je')}<br/>
               {tx('business.', 'business.')}
             </h1>
             <p style={{
@@ -434,7 +434,7 @@ function HeroEditorial({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
             }}>
               {tx(
                 'We bring into focus what you need, then we implement it so you can move forward.',
-                'We brengen scherp in beeld wat u nodig heeft en implementeren het, zodat u vooruit kunt.'
+                'We brengen scherp in beeld wat je nodig hebt en implementeren het, zodat je vooruit kunt.'
               )}
             </p>
             <div style={{ marginTop: 28, display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>

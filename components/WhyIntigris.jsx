@@ -15,21 +15,21 @@ function SiteWhy() {
       t: tx('Best quality.', 'Hoogste kwaliteit.'),
       d: tx(
         'We are committed to delivering the highest quality in our products and services to best support your business.',
-        'We zijn toegewijd aan het leveren van de hoogste kwaliteit in onze producten en diensten om uw bedrijf optimaal te ondersteunen.'
+        'We zijn toegewijd aan het leveren van de hoogste kwaliteit in onze producten en diensten om je bedrijf optimaal te ondersteunen.'
       ),
     },
     {
       t: tx('On time delivery.', 'Op tijd geleverd.'),
       d: tx(
         'We understand the importance of meeting deadlines, and our team is committed to delivering your projects on schedule.',
-        'We begrijpen het belang van deadlines, en ons team is toegewijd aan het op schema opleveren van uw projecten.'
+        'We begrijpen het belang van deadlines, en ons team is toegewijd aan het op schema opleveren van je projecten.'
       ),
     },
     {
       t: tx('Continuous support.', 'Continue ondersteuning.'),
       d: tx(
         'Our dedicated support team is always ready to assist you, providing the guidance and assistance you need for a seamless experience.',
-        'Ons toegewijde supportteam staat altijd voor u klaar met de begeleiding en ondersteuning die u nodig heeft voor een soepele ervaring.'
+        'Ons toegewijde supportteam staat altijd voor je klaar met de begeleiding en ondersteuning die je nodig hebt voor een soepele ervaring.'
       ),
     },
   ];
