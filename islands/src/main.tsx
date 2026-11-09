@@ -2,11 +2,15 @@ import './index.css';
 import type { ComponentType } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { Demo } from './islands/Demo';
+import { PlatformZoom } from './islands/PlatformZoom';
+import { PlatformMission } from './islands/PlatformMission';
 
 /* Registry of islands. Add a new island here and it can be placed on any page with
    the <Island name="..." props={...} /> host component (components/Island.jsx). */
 const ISLANDS: Record<string, ComponentType<any>> = {
   demo: Demo,
+  platformZoom: PlatformZoom,
+  platformMission: PlatformMission,
 };
 
 const roots = new WeakMap<Element, Root>();

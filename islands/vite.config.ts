@@ -19,9 +19,11 @@ export default defineConfig({
       fileName: () => 'islands.js',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react-dom/client'],
+      /* GSAP too: one GSAP + ScrollTrigger instance per page (loaded from the CDN by the page),
+         so pinned sections from islands and from the classic components share one timeline. */
+      external: ['react', 'react-dom', 'react-dom/client', 'gsap', 'gsap/ScrollTrigger'],
       output: {
-        globals: { react: 'React', 'react-dom': 'ReactDOM', 'react-dom/client': 'ReactDOM' },
+        globals: { react: 'React', 'react-dom': 'ReactDOM', 'react-dom/client': 'ReactDOM', gsap: 'gsap', 'gsap/ScrollTrigger': 'ScrollTrigger' },
         assetFileNames: (a) => (a.name && a.name.endsWith('.css') ? 'islands.css' : 'assets/[name][extname]'),
       },
     },

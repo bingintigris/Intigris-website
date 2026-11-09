@@ -6,6 +6,7 @@
   <title>Homepage Salesforce: varianten | Intigris</title>
   <meta name="robots" content="noindex">
   <link rel="stylesheet" href="design-system/site.css?v=1789080000002">
+  <link rel="stylesheet" href="islands-dist/islands.css?v=5">
   <link rel="icon" href="assets/logo-coral.png">
   <script>
     window.__lang = new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'nl';
@@ -19,6 +20,8 @@
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="islands-dist/islands.js?v=5"></script>
+  <script type="text/babel" src="components/Island.jsx?v=2"></script>
   <script type="text/babel" src="components/CloudKit.jsx?v=1789080000002"></script>
   <script type="text/babel" src="components/HomePlatform.jsx?v=1789080000002"></script>
   <script type="text/babel">
@@ -33,19 +36,22 @@
     );
     function App() {
       const head = { eyebrow: tx('THE PLATFORM', 'HET PLATFORM'), a: tx('Everything Salesforce,', 'Alles van Salesforce,'), b: tx('built up layer by layer.', 'laag voor laag opgebouwd.') };
-      const show = k => !ONLY || ONLY === k;
+      const ROUND = Q.get('round') || '2';
+      const show = k => (!ONLY && ({ 1: 'abc', 2: 'zm' }[ROUND] || 'zm').includes(k)) || ONLY === k;
       return (
         <main>
           {!ONLY && (
             <header className="container-wide" style={{ paddingBlock: '72px 40px', color: 'var(--intigris-off-white)' }}>
               <div className="eyebrow">{tx('HOMEPAGE · SALESFORCE · SECTION 3', 'HOMEPAGE · SALESFORCE · SECTIE 3')}</div>
-              <h1 style={{ color: 'var(--intigris-off-white)', fontSize: 'clamp(40px, 6vw, 80px)', fontWeight: 500, letterSpacing: '-.035em', lineHeight: 1, margin: '18px 0 14px' }}>{tx('The platform.', 'Het platform.')} <span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('Pick one.', 'Kies er één.')}</span></h1>
-              <p style={{ fontSize: 18, color: 'rgba(252,247,235,.8)', maxWidth: 720, margin: 0 }}>{tx('Five layers, from your own systems up to Slack. Scroll slowly through each version.', 'Vijf lagen, van je eigen systemen tot en met Slack. Scroll rustig door elke versie.')}</p>
+              <h1 style={{ color: 'var(--intigris-off-white)', fontSize: 'clamp(40px, 6vw, 80px)', fontWeight: 500, letterSpacing: '-.035em', lineHeight: 1, margin: '18px 0 14px' }}>{ROUND === '1' ? tx('The platform.', 'Het platform.') : tx('Pulled into Salesforce.', 'Het platform, ronde 2.')} <span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('Pick one.', 'Kies er één.')}</span></h1>
+              <p style={{ fontSize: 18, color: 'rgba(252,247,235,.8)', maxWidth: 720, margin: 0 }}>{ROUND === '1' ? tx('Five layers, from your own systems up to Slack. Scroll slowly through each version.', 'Vijf lagen, van je eigen systemen tot en met Slack. Scroll rustig door elke versie.') : tx('Two immersive concepts, built with the new islands setup. Scroll slowly; click a chapter to jump.', 'Twee meeslepende concepten, gebouwd met de nieuwe islands-opzet. Scroll rustig; klik op een hoofdstuk om te springen.')} <a href={ROUND === '1' ? '?round=2' : '?round=1'} style={{ color: 'var(--intigris-coral)' }}>{ROUND === '1' ? tx('Round 2', 'Ronde 2') : tx('Round 1', 'Ronde 1')}</a></p>
             </header>
           )}
           {show('a') && <HomePlatformStack head={head} label={<Label n="A" text={tx('Stack: layers drop in and stack up', 'Stapel: de lagen vallen op hun plek en stapelen op')} />} />}
           {show('b') && <HomePlatformRings head={head} label={<Label n="B" light text={tx('Rings: Data 360 at the core, rings light up outwards', 'Ringen: Data 360 in de kern, ringen lichten naar buiten op')} />} />}
           {show('c') && <HomePlatformRide head={head} label={<Label n="C" text={tx('Ride: a horizontal journey through the layers', 'Rit: een horizontale reis door de lagen')} />} />}
+          {show('z') && (<><div className="container-wide" style={{ paddingTop: 64 }}><Label n="A" light text={tx('Zoom into Salesforce: every scroll zooms deeper', 'Zoom in Salesforce: elke scroll zoomt dieper')} /></div><Island name="platformZoom" /></>)}
+          {show('m') && (<><div className="container-wide" style={{ paddingTop: 64 }}><Label n="B" light text={tx('Mission Control: one screen, one day, everything', 'Mission Control: één scherm, één dag, alles')} /></div><Island name="platformMission" /></>)}
           <div style={{ height: '60vh', background: 'var(--intigris-brown-700)' }} />
           <CkStyles /><HpStyles />
         </main>
