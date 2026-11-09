@@ -11,7 +11,8 @@
        Components call window.tx('English', 'Nederlands') and get the
        string matching window.__lang (default 'en'). The App state
        owns __lang; changing it re-keys <main> so children re-render. */
-    window.__lang = 'en';
+    /* ?lang=nl and ?mode=salesforce make a view shareable (review links). */
+    window.__lang = new URLSearchParams(window.location.search).get('lang') === 'nl' ? 'nl' : 'en';
     window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
     /* Public Supabase config (anon key is safe in the browser), used by the
        newsletter sign-up to save subscribers. */
@@ -29,7 +30,7 @@
 
   <script type="text/babel" src="components/tweaks-panel.jsx?v=1788863018000"></script>
   <script type="text/babel" src="components/Header.jsx?v=1788863018000"></script>
-  <script type="text/babel" src="components/Hero.jsx?v=1788863018000"></script>
+  <script type="text/babel" src="components/Hero.jsx?v=1789070000000"></script>
   <script type="text/babel" src="components/Showcase.jsx?v=1788863018000"></script>
   <script type="text/babel" src="components/Offerings.jsx?v=1788863018000"></script>
   <script type="text/babel" src="components/ClientStories.jsx?v=1788863018000"></script>
@@ -45,6 +46,14 @@
   <script type="text/babel" src="components/ContactSheet.jsx?v=1788863018000"></script>
   <script type="text/babel" src="components/CookieConsent.jsx?v=1788863018000"></script>
   <script type="text/babel" src="components/Footer.jsx?v=1788863018000"></script>
+  <!-- Salesforce Solutions view: GSAP scroll animations + the section kit from the Sales Cloud page -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script type="text/babel" src="components/CloudKit.jsx?v=1789070000000"></script>
+  <script type="text/babel" src="components/CloudKitV3.jsx?v=1789070000000"></script>
+  <script type="text/babel" src="components/StorySpotlight.jsx?v=1789070000000"></script>
+  <script type="text/babel" src="components/SalesShowcase.jsx?v=1789070000000"></script>
+  <script type="text/babel" src="components/HomeSalesforce.jsx?v=1789070000000"></script>
 
   <script type="text/babel">
     const { useState, useEffect } = React;
@@ -65,8 +74,9 @@
     function App() {
       const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
       const [contactOpen, setContactOpen] = useState(false);
-      const [lang, setLang] = useState('en');
-      const [mode, setMode] = useState('ai'); // 'ai' (default) | 'salesforce'
+      const [lang, setLang] = useState(window.__lang);
+      const [mode, setMode] = useState(() => new URLSearchParams(window.location.search).get('mode') === 'salesforce' ? 'salesforce' : 'ai'); // 'ai' (default) | 'salesforce'
+      useEffect(() => { document.documentElement.setAttribute('lang', lang); if (window.gsap && window.ScrollTrigger) window.gsap.registerPlugin(window.ScrollTrigger); }, []);
 
       // Set window.__lang SYNCHRONOUSLY so the same render's tx() reads the new value.
       const changeLang = (next) => {
@@ -108,16 +118,9 @@
                 {t.showISA && <SiteISA />}
               </React.Fragment>
             ) : (
-              /* ---------- SALESFORCE SOLUTIONS view (copy of AI for now, edit freely) ---------- */
+              /* ---------- SALESFORCE SOLUTIONS view: components/HomeSalesforce.jsx (redesign 2026-11) ---------- */
               <React.Fragment key="view-salesforce">
-                <SiteShowcase onCta={openContact} />
-                <SiteOfferings />
-                <SiteClientStories />
-                <SiteWhy />
-                {t.showPricing && <SitePricing onCta={openContact} />}
-                {t.showCases && <SiteCases />}
-                {t.showTestimonial && <SiteTestimonial lang={lang} />}
-                {t.showISA && <SiteISA />}
+                <SiteSalesforceHome onCta={openContact} />
               </React.Fragment>
             )}
 
