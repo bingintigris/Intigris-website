@@ -20,7 +20,29 @@ function useGsap(ref, setup, deps = []) {
 }
 
 /* ---------- SALES HERO: loose notes, mails and tabs snap into one customer record ---------- */
-function V3ChaosHero({ eyebrow, a, b, lede, onCta, secondary, chaos, record }) {
+/* Switching word, as in the homepage hero: all words share the widest word's width,
+   so the line never jumps; the active word slides in, the others fade out. */
+function V3RotWord({ words, idx }) {
+  const widest = words.reduce((x, y) => (y.length > x.length ? y : x), '');
+  return (
+    <span className="v3-rot">
+      <span className="v3-rot-ghost" aria-hidden>{widest}</span>
+      {words.map((w, i) => (
+        <span key={w} className="v3-rot-word" aria-hidden={i !== idx}
+          style={{ opacity: i === idx ? 1 : 0, transform: i === idx ? 'translateY(0)' : (i < idx ? 'translateY(-18%)' : 'translateY(18%)') }}>{w}</span>
+      ))}
+    </span>
+  );
+}
+
+function V3ChaosHero({ eyebrow, a, b, rotate, lede, onCta, secondary, chaos, record }) {
+  /* rotate = { lead, words, line2 }: "lead <switching word>" on line 1, line2 underneath */
+  const [rotIdx, setRotIdx] = v3State(0);
+  v3Effect(() => {
+    if (!rotate) return;
+    const t = setTimeout(() => setRotIdx(i => (i + 1) % rotate.words.length), rotIdx === 0 ? 4800 : 2400);
+    return () => clearTimeout(t);
+  }, [rotIdx, rotate && rotate.words.length]);
   const ref = v3Ref(null);
   useGsap(ref, (gsap, root) => {
     const items = root.querySelectorAll('.v3-chaos-item');
@@ -48,15 +70,26 @@ function V3ChaosHero({ eyebrow, a, b, lede, onCta, secondary, chaos, record }) {
     if (ro) ro.observe(h1Ref.current); window.addEventListener('resize', fit);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
     return () => { if (ro) ro.disconnect(); window.removeEventListener('resize', fit); };
-  }, [a, b]);
+  }, [a, b, rotate && rotate.words.join()]);
   return (
     <section className="v3-chaos" ref={ref}>
       <div className="v3-chaos-pin">
         <div className="container-wide v3-chaos-grid">
           <div className="v3-chaos-copy">
             <div className="eyebrow eyebrow--dark" style={{ marginBottom: 22 }}>{eyebrow}</div>
-            <div className="v3-h1-measure" ref={h1Measure} aria-hidden><span className="ck-h1">{a}</span><span className="ck-h1"><span>{b}</span></span></div>
-            <h1 className={'ck-h1' + (h1Size ? ' v3-h1-fit' : '')} ref={h1Ref} style={h1Size ? { fontSize: h1Size + 'px' } : null}>{a}{h1Size ? <br /> : ' '}<span>{b}</span></h1>
+            {rotate ? (<>
+              <div className="v3-h1-measure" ref={h1Measure} aria-hidden>
+                <span className="ck-h1">{rotate.lead} {rotate.words.reduce((x, y) => (y.length > x.length ? y : x), '')}</span>
+                <span className="ck-h1">{rotate.line2}</span>
+              </div>
+              <h1 className={'ck-h1 v3-h1-rot' + (h1Size ? ' v3-h1-fit' : '')} ref={h1Ref} style={h1Size ? { fontSize: h1Size + 'px' } : null}
+                aria-label={rotate.lead + ' ' + rotate.words.join(', ') + ' ' + rotate.line2}>
+                {rotate.lead} <V3RotWord words={rotate.words} idx={rotIdx} />{h1Size ? <br /> : ' '}{rotate.line2}
+              </h1>
+            </>) : (<>
+              <div className="v3-h1-measure" ref={h1Measure} aria-hidden><span className="ck-h1">{a}</span><span className="ck-h1"><span>{b}</span></span></div>
+              <h1 className={'ck-h1' + (h1Size ? ' v3-h1-fit' : '')} ref={h1Ref} style={h1Size ? { fontSize: h1Size + 'px' } : null}>{a}{h1Size ? <br /> : ' '}<span>{b}</span></h1>
+            </>)}
             <p className="ck-hero-lede">{lede}</p>
             <div className="ck-actions">
               <button className="btn ck-btn-dark" onClick={onCta}>{tx('Book a 30-min call', 'Plan een gesprek van 30 min')} <span className="arrow">→</span></button>
@@ -763,6 +796,11 @@ function V3Styles() {
       .v3-h1-measure { position: absolute; left: 0; top: 0; height: 0; overflow: hidden; visibility: hidden; pointer-events: none; }
       .v3-h1-measure .ck-h1 { display: inline-block; font-size: 100px; white-space: nowrap; text-wrap: nowrap; }
       .v3-h1-fit { white-space: nowrap; text-wrap: nowrap; }
+      .v3-rot { position: relative; display: inline-block; vertical-align: baseline; white-space: nowrap; }
+      .v3-h1-rot .v3-rot span { font-style: normal; color: var(--intigris-dark-brown); }
+      .v3-h1-rot .v3-rot .v3-rot-ghost { visibility: hidden; display: inline-block; }
+      .v3-rot-word { position: absolute; left: 0; top: 0; white-space: nowrap; transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out); }
+      @media (prefers-reduced-motion: reduce) { .v3-rot-word { transition: none; } }
       .v3-route-hero .ck-hero-inner { padding-top: clamp(112px, 14vh, 160px); }
       .v3-route-hero .ck-route-stats { flex-direction: row; flex-wrap: wrap; gap: 18px; }
       .v3-route-hero .ck-route-stats div { flex: 1 1 120px; }
