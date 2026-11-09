@@ -89,7 +89,7 @@ function SalesCloudV3({ onCta }) {
           items: [tx('ERP and finance integration', 'ERP- en finance-koppeling'), tx('Data migration and cleaning', 'Datamigratie en opschoning'), tx('CPQ and approvals', 'CPQ en goedkeuringen'), tx('Territories, partners, Agentforce', 'Regio\'s, partners, Agentforce')], cta: tx('Talk to a consultant', 'Praat met een consultant') }} />
       <CkStories head={{ eyebrow: tx('CUSTOMER SUCCESS STORIES', 'KLANTSUCCESVERHALEN'), a: tx('Teams that run on it.', 'Teams die erop draaien.'), b: '' }} stories={[S.wetransfer, S.evbox, S.zon365, S.opcharge, S.alpha]} />
       <V3Calculator {...sc3.calc()} />
-      <CkFaqTabs head={{ eyebrow: tx('QUESTIONS WE GET', 'VRAGEN DIE WE KRIJGEN'), a: tx('Before you', 'Voordat je'), b: tx('book the call.', 'het gesprek plant.') }} groups={sc3.faq()} />
+      <V3FaqChat head={{ eyebrow: tx('QUESTIONS WE GET', 'VRAGEN DIE WE KRIJGEN'), a: tx('Before you', 'Voordat je'), b: tx('book the call.', 'het gesprek plant.') }} items={sc3.faq()} onCta={onCta} />
       <CkTalk onCta={onCta} line={tx('30 minutes, and you know if Sales Cloud fits.', 'In 30 minuten weet je of Sales Cloud past.')} />
       <CkStyles />
       <V3Styles />
@@ -163,7 +163,7 @@ function FieldServiceV3({ onCta }) {
         extra={{ eyebrow: 'FIELDBUDDY', title: tx('Or FieldBuddy?', 'Of FieldBuddy?'), d: tx('A Dutch field service app on Salesforce, quick to set up for installers. We implement both.', 'Een Nederlandse field service-app op Salesforce, snel ingericht voor installateurs. Wij implementeren beide.'), href: 'FieldBuddy.html', cta: tx('Go to FieldBuddy', 'Naar FieldBuddy') }} />
       <CkStories head={{ eyebrow: tx('CUSTOMER SUCCESS STORIES', 'KLANTSUCCESVERHALEN'), a: tx('Service teams', 'Serviceteams'), b: tx('that run on it.', 'die erop draaien.') }} stories={[S.ridder, S.atag, S.zon365, S.opcharge, S.alpha, S.solar]} />
       <V3Calculator {...fs3.calc()} />
-      <CkFaqTabs head={{ eyebrow: tx('QUESTIONS WE GET', 'VRAGEN DIE WE KRIJGEN'), a: tx('Before you', 'Voordat je'), b: tx('book the call.', 'het gesprek plant.') }} groups={fs3.faq()} />
+      <V3FaqChat head={{ eyebrow: tx('QUESTIONS WE GET', 'VRAGEN DIE WE KRIJGEN'), a: tx('Before you', 'Voordat je'), b: tx('book the call.', 'het gesprek plant.') }} items={fs3.faq()} onCta={onCta} />
       <CkTalk onCta={onCta} line={tx('Tell us how your engineers work today. We show you tomorrow.', 'Vertel hoe je monteurs nu werken. Wij laten je morgen zien.')} />
       <CkStyles />
       <V3Styles />

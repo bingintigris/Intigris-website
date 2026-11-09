@@ -16,51 +16,9 @@ function FvLabel({ letter, text }) {
   return <div className="fv-label"><span>{letter}</span> {text}</div>;
 }
 
-/* ---------- A · CHAT ---------- */
-function FaqChat({ head, items, onCta }) {
-  /* thread: list of { who: 'me' | 'frank', text } ; the first answer is preloaded */
-  const [thread, setThread] = fvState([
-    { who: 'frank', text: tx('Hi, I am Frank. These are the questions I hear most. Tap one.', 'Hoi, ik ben Frank. Dit zijn de vragen die ik het vaakst hoor. Tik er een aan.') },
-    { who: 'me', text: items[0].q },
-    { who: 'frank', text: items[0].a },
-  ]);
-  const [asked, setAsked] = fvState([0]);
-  const [typing, setTyping] = fvState(false);
-  const box = fvRef(null);
-  fvEffect(() => { const el = box.current; if (el) el.scrollTo({ top: el.scrollHeight, behavior: FV_REDUCE ? 'auto' : 'smooth' }); }, [thread, typing]);
-  const ask = i => {
-    if (typing) return;
-    setAsked(a => a.concat(i));
-    setThread(t => t.concat({ who: 'me', text: items[i].q }));
-    if (FV_REDUCE) { setThread(t => t.concat({ who: 'frank', text: items[i].a })); return; }
-    setTyping(true);
-    setTimeout(() => { setTyping(false); setThread(t => t.concat({ who: 'frank', text: items[i].a })); }, 1100);
-  };
-  const left = items.map((_, i) => i).filter(i => !asked.includes(i));
-  return (
-    <section className="ck-section ck-section--soft fv-a">
-      <div className="container-wide">
-        <FvLabel letter="A" text={tx('Chat: ask Frank', 'Chat: vraag het Frank')} />
-        <div className="fv-a-grid">
-          <CkHead {...head} lede={tx('No FAQ wall. Ask what you would ask in the first call, and get the answer you would get there.', 'Geen FAQ-muur. Vraag wat je in het eerste gesprek zou vragen, en krijg het antwoord dat je daar zou krijgen.')} />
-          <div className="fv-chat">
-            <div className="fv-chat-top">
-              <span className="fv-av">FT</span>
-              <div><b>Frank Timmer</b><small><i /> {tx('Sales Manager · usually replies within a day', 'Sales Manager · reageert meestal binnen een dag')}</small></div>
-            </div>
-            <div className="fv-chat-body" ref={box} aria-live="polite">
-              {thread.map((m, k) => <div key={k} className={'fv-msg fv-msg--' + m.who}>{m.text}</div>)}
-              {typing && <div className="fv-msg fv-msg--frank fv-typing" aria-label={tx('Frank is typing', 'Frank is aan het typen')}><i /><i /><i /></div>}
-            </div>
-            <div className="fv-chips">
-              {left.length ? left.map(i => <button key={i} type="button" onClick={() => ask(i)} disabled={typing}>{items[i].q}</button>)
-                : <button type="button" className="fv-chip-cta" onClick={onCta}>{tx('Ask me something else in 30 minutes →', 'Vraag me iets anders in 30 minuten →')}</button>}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+/* ---------- A · CHAT (chosen; the real component is V3FaqChat in CloudKitV3.jsx) ---------- */
+function FaqChat(props) {
+  return <V3FaqChat {...props} label={<FvLabel letter="A" text={tx('Chat: ask Frank (chosen)', 'Chat: vraag het Frank (gekozen)')} />} />;
 }
 
 /* ---------- B · STICKY NOTES ---------- */

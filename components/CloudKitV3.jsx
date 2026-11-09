@@ -488,6 +488,94 @@ function V3LogoHub({ head, center, items }) {
   );
 }
 
+/* ---------- FAQ AS A CHAT WITH FRANK (chosen FAQ variant A, round 4) ----------
+   The first question is already asked and answered. Tap a question chip: it appears
+   as your message, Frank "types" for a moment and answers. When every question has
+   been asked, the last chip becomes the booking button. items: [{ label, q, a }]. */
+const V3_FRANK = { name: 'Frank Timmer', photo: 'assets/team/frank-timmer.jpg' };
+function V3FaqChat({ head, items, onCta, label }) {
+  const [thread, setThread] = v3State(() => [
+    { who: 'frank', text: tx('Hi, I am Frank. These are the questions I hear most. Tap one.', 'Hoi, ik ben Frank. Dit zijn de vragen die ik het vaakst hoor. Tik er een aan.') },
+    { who: 'me', text: items[0].q },
+    { who: 'frank', text: items[0].a },
+  ]);
+  const [asked, setAsked] = v3State([0]);
+  const [typing, setTyping] = v3State(false);
+  const box = v3Ref(null);
+  const first = v3Ref(true);
+  v3Effect(() => {
+    if (first.current) { first.current = false; return; } /* don't scroll the page on load */
+    const el = box.current; if (el) el.scrollTo({ top: el.scrollHeight, behavior: V3_REDUCE ? 'auto' : 'smooth' });
+  }, [thread, typing]);
+  const ask = i => {
+    if (typing) return;
+    setAsked(a => a.concat(i));
+    setThread(t => t.concat({ who: 'me', text: items[i].q }));
+    if (V3_REDUCE) { setThread(t => t.concat({ who: 'frank', text: items[i].a })); return; }
+    setTyping(true);
+    setTimeout(() => { setTyping(false); setThread(t => t.concat({ who: 'frank', text: items[i].a })); }, 1100);
+  };
+  const left = items.map((_, i) => i).filter(i => !asked.includes(i));
+  const Av = ({ small }) => <img className={'fc-av' + (small ? ' fc-av--s' : '')} src={V3_FRANK.photo} alt={small ? '' : V3_FRANK.name} />;
+  return (
+    <section id="faq" className="ck-section ck-section--soft fc">
+      <div className="container-wide">
+        {label}
+        <div className="fc-grid">
+          <CkHead {...head} lede={head.lede || tx('No FAQ wall. Ask what you would ask in the first call, and get the answer you would get there.', 'Geen FAQ-muur. Vraag wat je in het eerste gesprek zou vragen, en krijg het antwoord dat je daar zou krijgen.')} />
+          <div className="fc-chat">
+            <div className="fc-top">
+              <Av />
+              <div><b>{V3_FRANK.name}</b><small><i /> {tx('Sales Manager · usually replies within a day', 'Sales Manager · reageert meestal binnen een dag')}</small></div>
+            </div>
+            <div className="fc-body" ref={box} aria-live="polite">
+              {thread.map((m, k) => (
+                <div key={k} className={'fc-row fc-row--' + m.who}>
+                  {m.who === 'frank' && <Av small />}
+                  <div className={'fc-msg fc-msg--' + m.who}>{m.text}</div>
+                </div>
+              ))}
+              {typing && <div className="fc-row fc-row--frank"><Av small /><div className="fc-msg fc-msg--frank fc-typing" aria-label={tx('Frank is typing', 'Frank is aan het typen')}><i /><i /><i /></div></div>}
+            </div>
+            <div className="fc-chips">
+              {left.length ? left.map(i => <button key={i} type="button" onClick={() => ask(i)} disabled={typing}>{items[i].q}</button>)
+                : <button type="button" className="fc-chip-cta" onClick={onCta}>{tx('Ask me something else in 30 minutes →', 'Vraag me iets anders in 30 minuten →')}</button>}
+            </div>
+          </div>
+        </div>
+      </div>
+      <style>{`
+        .fc-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
+        .fc-chat { background: #fff; border-radius: 24px; box-shadow: 0 30px 60px -30px rgba(43,23,0,.35); overflow: hidden; display: flex; flex-direction: column; }
+        .fc-top { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid rgba(43,23,0,.08); }
+        .fc-top b { display: block; font-weight: 500; color: var(--intigris-brown-700); }
+        .fc-top small { font-size: 12.5px; color: rgba(43,23,0,.6); display: inline-flex; align-items: center; gap: 6px; }
+        .fc-top small i { width: 8px; height: 8px; border-radius: 50%; background: #3fae5a; }
+        .fc-av { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; flex: none; display: block; box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(43,23,0,.1); }
+        .fc-av--s { width: 28px; height: 28px; box-shadow: none; }
+        .fc-body { height: 380px; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; background: var(--intigris-off-white); }
+        .fc-row { display: flex; align-items: flex-end; gap: 8px; animation: fcPop 320ms var(--ease-out) both; }
+        .fc-row--me { justify-content: flex-end; }
+        .fc-msg { max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 15.5px; line-height: 1.5; }
+        .fc-msg--frank { background: #fff; color: var(--intigris-brown-700); border-bottom-left-radius: 6px; box-shadow: 0 2px 6px rgba(43,23,0,.06); }
+        .fc-msg--me { background: var(--intigris-coral); color: var(--intigris-brown-700); border-bottom-right-radius: 6px; font-weight: 500; }
+        .fc-typing { display: inline-flex; gap: 5px; padding: 16px 18px; }
+        .fc-typing i { width: 7px; height: 7px; border-radius: 50%; background: rgba(43,23,0,.4); animation: fcDot 1s infinite; }
+        .fc-typing i:nth-child(2) { animation-delay: .15s; } .fc-typing i:nth-child(3) { animation-delay: .3s; }
+        .fc-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 20px 20px; border-top: 1px solid rgba(43,23,0,.08); }
+        .fc-chips button { appearance: none; font: inherit; font-size: 14px; cursor: pointer; padding: 9px 14px; border-radius: 999px; border: 1px solid rgba(43,23,0,.18); background: #fff; color: var(--intigris-brown-700); text-align: left; transition: background 200ms, border-color 200ms; }
+        .fc-chips button:hover:not(:disabled) { background: var(--intigris-coral-100, #ffe3da); border-color: var(--intigris-coral); }
+        .fc-chips button:disabled { opacity: .5; cursor: default; }
+        .fc-chips .fc-chip-cta { background: var(--intigris-brown-700); color: var(--intigris-off-white); border-color: transparent; }
+        @keyframes fcPop { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: none; } }
+        @keyframes fcDot { 0%, 60%, 100% { transform: none; opacity: .4; } 30% { transform: translateY(-4px); opacity: 1; } }
+        @media (max-width: 860px) { .fc-grid { grid-template-columns: 1fr; } .fc-body { height: 340px; } .fc-msg { max-width: 88%; font-size: 15px; } }
+        @media (prefers-reduced-motion: reduce) { .fc-row { animation: none; } }
+      `}</style>
+    </section>
+  );
+}
+
 function V3Styles() {
   return (
     <style>{`
@@ -654,4 +742,4 @@ function V3Styles() {
   );
 }
 
-Object.assign(window, { V3ConnectHub, V3LogoHub, V3ChaosHero, V3WhatItIs, V3Statement, V3FlipProblems, V3RouteHero, V3DayCompact, V3Integrations, V3WaysToStart, V3Calculator, V3Styles });
+Object.assign(window, { V3ConnectHub, V3LogoHub, V3FaqChat, V3ChaosHero, V3WhatItIs, V3Statement, V3FlipProblems, V3RouteHero, V3DayCompact, V3Integrations, V3WaysToStart, V3Calculator, V3Styles });

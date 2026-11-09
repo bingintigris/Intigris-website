@@ -332,7 +332,7 @@ function CkTalk({ onCta, line }) {
   return (
     <section className="ck-section ck-section--dark ck-talk">
       <div className="container-wide ck-talk-grid">
-        <div className="ck-talk-avatar" aria-hidden>FT</div>
+        <img className="ck-talk-avatar" src="assets/team/frank-timmer.jpg" alt="Frank Timmer" />
         <div>
           <div className="eyebrow">{tx("LET'S TALK", 'ZULLEN WE PRATEN?')}</div>
           <h2 className="ck-h2" style={{ marginTop: 14 }}>{line}</h2>
@@ -689,7 +689,7 @@ function CkStyles() {
 
       /* talk */
       .ck-talk-grid { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: clamp(20px, 3vw, 40px); align-items: center; }
-      .ck-talk-avatar { width: 96px; height: 96px; border-radius: 50%; background: var(--intigris-coral); color: var(--intigris-dark-brown); display: grid; place-items: center; font-size: 30px; font-weight: 600; letter-spacing: -.02em; }
+      .ck-talk-avatar { object-fit: cover; box-shadow: 0 0 0 4px var(--intigris-coral); width: 96px; height: 96px; border-radius: 50%; background: var(--intigris-coral); color: var(--intigris-dark-brown); display: grid; place-items: center; font-size: 30px; font-weight: 600; letter-spacing: -.02em; }
       .ck-talk .ck-h2 { font-size: clamp(30px, 3.6vw, 48px); }
 
       /* statement */
