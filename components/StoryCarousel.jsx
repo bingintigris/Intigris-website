@@ -24,6 +24,13 @@ function scStyle(variant, d) {
     const rot = Math.max(-1, Math.min(1, d)) * -32;
     return { ...base, transform: `translateX(${d * 52}%) translateZ(${-a * 160}px) rotateY(${rot}deg) scale(${1 - c * .06})` };
   }
+  /* round 2: one main card and two behind it (one each side) */
+  if (variant === 'peek' || variant === 'swing' || variant === 'shuffle') {
+    const three = { opacity: a <= 1.35 ? 1 : 0, zIndex: 20 - Math.round(a * 4) };
+    if (variant === 'peek') return { ...three, '--dim': Math.min(.4, c * .3), transform: `translateX(${d * 34}%) scale(${1 - Math.min(a, 1.5) * .14})` };
+    if (variant === 'swing') return { ...three, '--dim': Math.min(.3, c * .2), transform: `rotate(${d * 10}deg) translateY(${a * 8}px) scale(${1 - Math.min(a, 1.5) * .05})` };
+    return { ...three, '--dim': 0, transform: `translateX(${d * 22}%) translateY(${a * 22}px) rotate(${d * 4}deg) scale(${1 - Math.min(a, 1.5) * .07})` };
+  }
   if (variant === 'fan') {
     return { ...base, '--dim': Math.min(.45, c * .2), transform: `translateX(${d * 46}%) translateY(${a * a * 14}px) rotate(${d * 7}deg) scale(${1 - c * .1})`, filter: `blur(${c * .5}px)` };
   }
@@ -59,11 +66,12 @@ function StoryCarousel({ head, stories, variant = 'cover', label, auto = 4800, d
 
   const cardW = () => (stage.current && stage.current.querySelector('.sc-card') || { offsetWidth: 500 }).offsetWidth;
   const onDown = e => { start.current = e.clientX; moved.current = false; };
+  const DRAG_UNIT = { depth: .64, peek: .45, swing: .5, shuffle: .4 };
   const onMove = e => {
     if (start.current === null) return;
     const dx = e.clientX - start.current;
     if (!moved.current && Math.abs(dx) > 6) { moved.current = true; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {} }
-    if (moved.current) setDrag(dx / (cardW() * (variant === 'depth' ? .64 : .5)));
+    if (moved.current) setDrag(dx / (cardW() * (DRAG_UNIT[variant] || .5)));
   };
   const onUp = () => { if (start.current === null) return; start.current = null; setPos(p => Math.round(p - drag)); setDrag(0); };
   const onKey = e => { if (e.key === 'ArrowRight') { e.preventDefault(); go(1); } if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); } };
@@ -71,11 +79,11 @@ function StoryCarousel({ head, stories, variant = 'cover', label, auto = 4800, d
   const p = pos - drag;
   const active = ((Math.round(pos) % stories.length) + stories.length) % stories.length;
   return (
-    <section className={'ck-section sc sc--' + variant + (variant === 'cover' ? ' ck-section--dark' : variant === 'fan' ? ' ck-section--coral' : '')}>
+    <section className={'ck-section sc sc--' + variant + (variant === 'cover' ? ' ck-section--dark' : variant !== 'depth' ? ' ck-section--coral' : '')}>
       <div className="container-wide">
         {label}
         <div className="sc-head">
-          <CkHead {...head} dark={variant === 'fan'} />
+          <CkHead {...head} dark={variant !== 'cover' && variant !== 'depth'} />
           <div className="sc-nav">
             <button type="button" onClick={() => go(-1)} aria-label={tx('Previous story', 'Vorig verhaal')}>←</button>
             <button type="button" onClick={() => go(1)} aria-label={tx('Next story', 'Volgend verhaal')}>→</button>
@@ -159,6 +167,23 @@ function ScStyles() {
       .sc--depth .sc-card { box-shadow: 0 30px 50px -32px rgba(43,23,0,.5); }
       .sc--depth .sc-card:not(.is-center) .sc-more { opacity: 0; }
       .sc--depth .sc-nav button:hover { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
+      /* round 2 · one main card, two behind (all on coral) */
+      .sc--peek, .sc--swing, .sc--shuffle { --sc-dim: #ff5f36; }
+      .sc--peek .sc-card, .sc--swing .sc-card, .sc--shuffle .sc-card { width: min(600px, 80vw); margin-left: calc(min(600px, 80vw) / -2); }
+      .sc--peek .sc-card { background: var(--intigris-off-white); color: var(--intigris-brown-700); box-shadow: 0 30px 60px -30px rgba(43,23,0,.6); }
+      .sc--peek .sc-card:not(.is-center) .sc-more { opacity: 0; }
+      .sc--swing .sc-stage { height: 520px; }
+      .sc--swing .sc-card { transform-origin: 50% 190%; background: #fff; color: var(--intigris-brown-700); padding-top: 0; overflow: hidden; box-shadow: 0 30px 50px -28px rgba(43,23,0,.6); }
+      .sc--swing .sc-card-top { margin: 0 -32px 6px; padding: 22px 32px 18px; background: var(--intigris-brown-700); color: var(--intigris-off-white); }
+      .sc--swing .sc-card-top small { color: var(--intigris-coral); opacity: 1; }
+      .sc--shuffle .sc-stage { height: 500px; }
+      .sc--shuffle .sc-card { background: var(--intigris-off-white); color: var(--intigris-brown-700); box-shadow: 0 24px 44px -24px rgba(43,23,0,.55); transition-duration: 900ms; }
+      .sc--shuffle .sc-card:not(.is-center) { background: var(--intigris-soft-blue); }
+      .sc--shuffle .sc-card:not(.is-center) .sc-more, .sc--shuffle .sc-card:not(.is-center) blockquote { opacity: .0; }
+      .sc--peek .sc-card-top small, .sc--shuffle .sc-card-top small { color: var(--intigris-coral-700, #d9451f); opacity: 1; }
+      .sc--peek .sc-card .ck-chips span, .sc--swing .sc-card .ck-chips span, .sc--shuffle .sc-card .ck-chips span { background: rgba(43,23,0,.06); color: var(--intigris-brown-700); border-color: rgba(43,23,0,.12); }
+      .sc--peek .sc-nav button:hover, .sc--swing .sc-nav button:hover, .sc--shuffle .sc-nav button:hover { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
+
       .sc-card--coral { background: var(--intigris-coral); color: var(--intigris-brown-700); }
       .sc-card--blue { background: var(--intigris-soft-blue); color: var(--intigris-brown-700); }
       .sc-card--green { background: var(--intigris-washed-green, #4c693a); color: var(--intigris-off-white); }
