@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Klantverhalen carrousel: 3 varianten | Intigris</title>
   <meta name="robots" content="noindex">
-  <link rel="stylesheet" href="design-system/site.css?v=1789000000003">
+  <link rel="stylesheet" href="design-system/site.css?v=1789000000006">
   <link rel="icon" href="assets/logo-coral.png">
   <script>
     window.__lang = new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'nl';
@@ -17,8 +17,8 @@
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
-  <script type="text/babel" src="components/CloudKit.jsx?v=1789000000003"></script>
-  <script type="text/babel" src="components/StoryCarousel.jsx?v=1789000000003"></script>
+  <script type="text/babel" src="components/CloudKit.jsx?v=1789000000006"></script>
+  <script type="text/babel" src="components/StoryCarousel.jsx?v=1789000000006"></script>
   <script type="text/babel">
     const ONLY = new URLSearchParams(window.location.search).get('only'); /* ?only=1|2|3 */
     const Label = ({ n, text, light }) => (
@@ -30,15 +30,17 @@
       const S = CK_STORIES();
       const stories = [S.wetransfer, S.evbox, S.zon365, S.opcharge, S.alpha];
       const head = { eyebrow: tx('CUSTOMER SUCCESS STORIES', 'KLANTSUCCESVERHALEN'), a: tx('Teams that run on it.', 'Teams die erop draaien.'), b: '' };
-      const ROUND1 = new URLSearchParams(window.location.search).get('round') === '1';
-      const show = k => (!ONLY && (ROUND1 ? '123' : 'abc').includes(k)) || ONLY === k;
+      const ROUND = new URLSearchParams(window.location.search).get('round') || '3';
+      const ROUND1 = ROUND === '1';
+      const show = k => (!ONLY && ({ 1: '123', 2: 'abc', 3: 'xyz' }[ROUND] || 'xyz').includes(k)) || ONLY === k;
+      const headSplit = { ...head, lede: tx('Real quotes from teams we helped. Click a name, drag the card or just watch.', 'Echte quotes van teams die we hebben geholpen. Klik op een naam, sleep de kaart of kijk gewoon mee.') };
       return (
         <main>
           {!ONLY && (
             <header className="container-wide" style={{ paddingBlock: '72px 40px', color: 'var(--intigris-off-white)' }}>
               <div className="eyebrow">{tx('SALES CLOUD · CUSTOMER STORIES', 'SALES CLOUD · KLANTSUCCESVERHALEN')}</div>
-              <h1 style={{ color: 'var(--intigris-off-white)', fontSize: 'clamp(40px, 6vw, 80px)', fontWeight: 500, letterSpacing: '-.035em', lineHeight: 1, margin: '18px 0 14px' }}>{ROUND1 ? tx('One carousel, three looks.', 'Eén carrousel, drie looks.') : tx('One main card, two behind.', 'Eén hoofdkaart, twee erachter.')} <span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('Pick one.', 'Kies er één.')}</span></h1>
-              <p style={{ fontSize: 18, color: 'rgba(252,247,235,.8)', maxWidth: 700, margin: 0 }}>{tx('Each one moves on slowly by itself. Hover to pause; drag, click a side card or use the arrows to browse.', 'Elke variant schuift langzaam vanzelf door. Ga erop staan om te pauzeren; sleep, klik op een kaart aan de zijkant of gebruik de pijlen.')} {ROUND1 ? '' : <a href="?round=1" style={{ color: 'var(--intigris-coral)' }}>{tx('See round 1', 'Bekijk ronde 1')}</a>}</p>
+              <h1 style={{ color: 'var(--intigris-off-white)', fontSize: 'clamp(40px, 6vw, 80px)', fontWeight: 500, letterSpacing: '-.035em', lineHeight: 1, margin: '18px 0 14px' }}>{ROUND1 ? tx('One carousel, three looks.', 'Eén carrousel, drie looks.') : ROUND === '2' ? tx('One main card, two behind.', 'Eén hoofdkaart, twee erachter.') : tx('Text left, stories right.', 'Tekst links, verhalen rechts.')} <span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('Pick one.', 'Kies er één.')}</span></h1>
+              <p style={{ fontSize: 18, color: 'rgba(252,247,235,.8)', maxWidth: 700, margin: 0 }}>{tx('Each one moves on slowly by itself. Hover to pause; drag, click a side card or use the arrows to browse.', 'Elke variant schuift langzaam vanzelf door. Ga erop staan om te pauzeren; sleep, klik op een kaart aan de zijkant of gebruik de pijlen.')} <a href="?round=1" style={{ color: 'var(--intigris-coral)' }}>{tx('Round 1', 'Ronde 1')}</a> · <a href="?round=2" style={{ color: 'var(--intigris-coral)' }}>{tx('Round 2', 'Ronde 2')}</a> · <a href="?round=3" style={{ color: 'var(--intigris-coral)' }}>{tx('Round 3', 'Ronde 3')}</a></p>
             </header>
           )}
           {show('1') && <StoryCarousel variant="cover" head={head} stories={stories} label={<Label n="1" light text={tx('Coverflow: side cards turn away in 3D', 'Coverflow: kaarten aan de zijkant draaien weg in 3D')} />} />}
@@ -47,6 +49,9 @@
           {show('a') && <StoryCarousel variant="peek" head={head} stories={stories} label={<Label n="A" text={tx('Peek: two cards straight behind, peeking out', 'Peek: twee kaarten recht erachter die net uitsteken')} />} />}
           {show('b') && <StoryCarousel variant="swing" head={head} stories={stories} label={<Label n="B" text={tx('Swing: three cards hinged like a hand of cards', 'Swing: drie kaarten die scharnieren als een hand kaarten')} />} />}
           {show('c') && <StoryCarousel variant="shuffle" head={head} stories={stories} label={<Label n="C" text={tx('Shuffle: a loose stack, the next card comes forward', 'Shuffle: een losse stapel, de volgende kaart komt naar voren')} />} />}
+          {show('x') && <StoryCarousel variant="deck" head={headSplit} stories={stories} label={<Label n="1" text={tx('Deck: the next cards wait behind, the main one slides off', 'Stapel: de volgende kaarten wachten erachter, de bovenste schuift weg')} />} />}
+          {show('y') && <StoryCarousel variant="fanR" head={headSplit} stories={stories} label={<Label n="2" text={tx('Fan: a compact hand of three cards', 'Waaier: een compacte hand van drie kaarten')} />} />}
+          {show('z') && <StoryCarousel variant="stackUp" head={headSplit} stories={stories} label={<Label n="3" text={tx('Stack: the next cards peek out above', 'Stapel omhoog: de volgende kaarten steken erboven uit')} />} />}
           <CkStyles /><ScStyles />
         </main>
       );

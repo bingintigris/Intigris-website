@@ -24,6 +24,18 @@ function scStyle(variant, d) {
     const rot = Math.max(-1, Math.min(1, d)) * -32;
     return { ...base, transform: `translateX(${d * 52}%) translateZ(${-a * 160}px) rotateY(${rot}deg) scale(${1 - c * .06})` };
   }
+  /* round 3 (split layout: text left, cards right) */
+  if (variant === 'deck') {
+    if (d < 0) return { opacity: d < -0.9 ? 0 : 1, zIndex: 30, '--dim': 0, transform: `translateX(${-d * 85}%) translateY(${-d * 4}%) rotate(${-d * 12}deg)` };
+    return { opacity: d > 2.4 ? 0 : 1, zIndex: 20 - Math.round(d * 4), '--dim': Math.min(.36, d * .18), transform: `translate(${d * 10}%, ${-d * 11}%) scale(${1 - Math.min(d, 2.5) * .06})` };
+  }
+  if (variant === 'fanR') {
+    return { opacity: a <= 1.35 ? 1 : 0, zIndex: 20 - Math.round(a * 4), '--dim': Math.min(.3, c * .2), transform: `rotate(${d * 9}deg) translateY(${a * 6}px) scale(${1 - Math.min(a, 1.5) * .06})` };
+  }
+  if (variant === 'stackUp') {
+    if (d < 0) return { opacity: 0, zIndex: 30, '--dim': 0, transform: `translateY(${-d * 45}%) rotate(${-d * 3}deg)` };
+    return { opacity: d > 2.4 ? 0 : 1, zIndex: 20 - Math.round(d * 4), '--dim': Math.min(.34, d * .17), transform: `translateY(${-d * 15}%) scale(${1 - Math.min(d, 2.5) * .06})` };
+  }
   /* round 2: one main card and two behind it (one each side) */
   if (variant === 'peek' || variant === 'swing' || variant === 'shuffle') {
     const three = { opacity: a <= 1.35 ? 1 : 0, zIndex: 20 - Math.round(a * 4) };
@@ -38,7 +50,12 @@ function scStyle(variant, d) {
   return { ...base, transform: `translateX(${d * 64}%) scale(${1 - c * .17})` };
 }
 
-function StoryCarousel({ head, stories, variant = 'cover', label, auto = 4800, direction = -1 }) {
+const SC_SPLIT = { deck: 1, fanR: 1, stackUp: 1 };
+const SC_FORWARD = { deck: 1, stackUp: 1 }; /* deck-like: the main card leaves, the next comes forward */
+
+function StoryCarousel({ head, stories, variant = 'cover', label, auto = 4800, direction: dirProp }) {
+  const direction = dirProp || (SC_FORWARD[variant] ? 1 : -1);
+  const split = !!SC_SPLIT[variant];
   /* repeat the list so there are always hidden cards behind the visible five */
   const reps = Math.max(1, Math.ceil(8 / stories.length));
   const items = Array.from({ length: reps }, () => stories).flat();
@@ -66,30 +83,27 @@ function StoryCarousel({ head, stories, variant = 'cover', label, auto = 4800, d
 
   const cardW = () => (stage.current && stage.current.querySelector('.sc-card') || { offsetWidth: 500 }).offsetWidth;
   const onDown = e => { start.current = e.clientX; moved.current = false; };
-  const DRAG_UNIT = { depth: .64, peek: .45, swing: .5, shuffle: .4 };
+  const DRAG_UNIT = { depth: .64, peek: .45, swing: .5, shuffle: .4, deck: .85, fanR: .5, stackUp: .6 };
   const onMove = e => {
     if (start.current === null) return;
     const dx = e.clientX - start.current;
     if (!moved.current && Math.abs(dx) > 6) { moved.current = true; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {} }
-    if (moved.current) setDrag(dx / (cardW() * (DRAG_UNIT[variant] || .5)));
+    /* deck-like: dragging right throws the main card away (= forward) */
+    if (moved.current) setDrag((SC_FORWARD[variant] ? -1 : 1) * dx / (cardW() * (DRAG_UNIT[variant] || .5)));
   };
   const onUp = () => { if (start.current === null) return; start.current = null; setPos(p => Math.round(p - drag)); setDrag(0); };
   const onKey = e => { if (e.key === 'ArrowRight') { e.preventDefault(); go(1); } if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); } };
 
   const p = pos - drag;
   const active = ((Math.round(pos) % stories.length) + stories.length) % stories.length;
-  return (
-    <section className={'ck-section sc sc--' + variant + (variant === 'cover' ? ' ck-section--dark' : variant !== 'depth' ? ' ck-section--coral' : '')}>
-      <div className="container-wide">
-        {label}
-        <div className="sc-head">
-          <CkHead {...head} dark={variant !== 'cover' && variant !== 'depth'} />
-          <div className="sc-nav">
-            <button type="button" onClick={() => go(-1)} aria-label={tx('Previous story', 'Vorig verhaal')}>←</button>
-            <button type="button" onClick={() => go(1)} aria-label={tx('Next story', 'Volgend verhaal')}>→</button>
-          </div>
-        </div>
-      </div>
+  const goTo = i => { let d = (i - active) % stories.length; if (d > stories.length / 2) d -= stories.length; if (d < -stories.length / 2) d += stories.length; go(d); };
+  const nav = (
+    <div className="sc-nav">
+      <button type="button" onClick={() => go(-1)} aria-label={tx('Previous story', 'Vorig verhaal')}>←</button>
+      <button type="button" onClick={() => go(1)} aria-label={tx('Next story', 'Volgend verhaal')}>→</button>
+    </div>
+  );
+  const stageEl = (
       <div className={'sc-stage' + (drag ? ' is-dragging' : '')} ref={stage} tabIndex={0} onKeyDown={onKey}
         onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
         onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}
@@ -109,9 +123,38 @@ function StoryCarousel({ head, stories, variant = 'cover', label, auto = 4800, d
           );
         })}
       </div>
+  );
+  if (split) return (
+    <section className={'ck-section ck-section--coral sc sc--split sc--' + variant}>
+      <div className="container-wide sc-split">
+        <div className="sc-split-text">
+          {label}
+          <CkHead {...head} dark />
+          {nav}
+          <ol className="sc-names">
+            {stories.map((s, i) => (
+              <li key={s.name}><button type="button" className={i === active ? 'on' : ''} aria-current={i === active} onClick={() => goTo(i)}>
+                <span>{String(i + 1).padStart(2, '0')}</span>{s.name}<small>{s.sector}</small>
+              </button></li>
+            ))}
+          </ol>
+        </div>
+        {stageEl}
+      </div>
+    </section>
+  );
+  return (
+    <section className={'ck-section sc sc--' + variant + (variant === 'cover' ? ' ck-section--dark' : variant !== 'depth' ? ' ck-section--coral' : '')}>
+      <div className="container-wide">
+        {label}
+        <div className="sc-head">
+          <CkHead {...head} dark={variant !== 'cover' && variant !== 'depth'} />
+          {nav}
+        </div>
+      </div>
+      {stageEl}
       <div className="sc-dots" role="tablist">
-        {stories.map((s, i) => <button key={s.name} type="button" role="tab" aria-selected={i === active} aria-label={s.name} className={i === active ? 'on' : ''}
-          onClick={() => { let d = (i - active) % stories.length; if (d > stories.length / 2) d -= stories.length; if (d < -stories.length / 2) d += stories.length; go(d); }} />)}
+        {stories.map((s, i) => <button key={s.name} type="button" role="tab" aria-selected={i === active} aria-label={s.name} className={i === active ? 'on' : ''} onClick={() => goTo(i)} />)}
       </div>
     </section>
   );
@@ -183,6 +226,39 @@ function ScStyles() {
       .sc--peek .sc-card-top small, .sc--shuffle .sc-card-top small { color: var(--intigris-coral-700, #d9451f); opacity: 1; }
       .sc--peek .sc-card .ck-chips span, .sc--swing .sc-card .ck-chips span, .sc--shuffle .sc-card .ck-chips span { background: rgba(43,23,0,.06); color: var(--intigris-brown-700); border-color: rgba(43,23,0,.12); }
       .sc--peek .sc-nav button:hover, .sc--swing .sc-nav button:hover, .sc--shuffle .sc-nav button:hover { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
+
+      /* round 3 · split: text left, cards right */
+      .sc--split { --sc-dim: #ff5f36; }
+      .sc-split { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
+      .sc-split-text .ck-head { margin-bottom: 22px; }
+      .sc-split-text .sc-nav { padding-bottom: 0; margin-bottom: 22px; }
+      .sc-names { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(43,23,0,.25); }
+      .sc-names li { border-bottom: 1px solid rgba(43,23,0,.25); }
+      .sc-names button { appearance: none; border: 0; background: none; font: inherit; width: 100%; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: baseline; gap: 10px; padding: 11px 0; cursor: pointer; text-align: left; color: rgba(43,23,0,.62); font-size: 18px; transition: color 250ms, padding 300ms var(--ease-out); }
+      .sc-names button span { font-size: 12px; font-variant-numeric: tabular-nums; }
+      .sc-names button small { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; opacity: .8; }
+      .sc-names button:hover { color: var(--intigris-brown-700); }
+      .sc-names button.on { color: var(--intigris-brown-700); font-weight: 600; padding-left: 8px; }
+      .sc--split .sc-stage { height: 500px; perspective: none; overflow: visible; }
+      .sc--split .sc-card { width: min(500px, 100%); left: 50%; margin-left: calc(min(500px, 100%) / -2); top: 60px; height: 400px; background: var(--intigris-off-white); color: var(--intigris-brown-700); box-shadow: 0 30px 60px -30px rgba(43,23,0,.6); }
+      .sc--split .sc-card:not(.is-center) .sc-more { opacity: 0; }
+      .sc--split .sc-card-top small { color: var(--intigris-coral-700, #d9451f); opacity: 1; }
+      .sc--split .sc-card .ck-chips span { background: rgba(43,23,0,.06); color: var(--intigris-brown-700); border-color: rgba(43,23,0,.12); }
+      .sc--split .sc-nav button:hover { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
+      .sc--deck .sc-card { transform-origin: 50% 100%; }
+      .sc--fanR .sc-card { transform-origin: 50% 175%; top: 50px; }
+      .sc--stackUp .sc-stage { height: 560px; }
+      .sc--stackUp .sc-card { transform-origin: 50% 0%; top: 135px; }
+      .sc--stackUp .sc-card:not(.is-center) blockquote, .sc--stackUp .sc-card:not(.is-center) .sc-who { opacity: 0; }
+      .sc--deck .sc-card { top: 90px; }
+      .sc--deck .sc-card > * { transition: opacity 500ms; }
+      .sc--deck .sc-card:not(.is-center) > * { opacity: 0; }
+      .sc--split .ck-lede { color: rgba(43,23,0,.82); }
+      @media (max-width: 960px) {
+        .sc-split { grid-template-columns: 1fr; }
+        .sc-names { display: none; }
+        .sc--split .sc-stage { height: 480px; }
+      }
 
       .sc-card--coral { background: var(--intigris-coral); color: var(--intigris-brown-700); }
       .sc-card--blue { background: var(--intigris-soft-blue); color: var(--intigris-brown-700); }
