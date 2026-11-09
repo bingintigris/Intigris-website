@@ -105,10 +105,30 @@ function V3Statement({ lead, words }) {
     on(); window.addEventListener('scroll', tick, { passive: true });
     return () => { window.removeEventListener('scroll', tick); cancelAnimationFrame(raf); };
   }, []);
+  /* Fit: one font size for all words, chosen so the longest "lead + word" stays on
+     one line in the left column (max 96px). Re-measured on resize and font load. */
+  const lineRef = v3Ref(null), measureRef = v3Ref(null);
+  const [size, setSize] = v3State(null);
+  v3Effect(() => {
+    const fit = () => {
+      const cell = lineRef.current, m = measureRef.current; if (!cell || !m) return;
+      const widest = Math.max(...Array.from(m.children).map(c => c.getBoundingClientRect().width));
+      if (!widest) return;
+      setSize(Math.max(22, Math.min(96, Math.floor(100 * cell.clientWidth / widest * 0.98))));
+    };
+    fit();
+    const ro = 'ResizeObserver' in window ? new ResizeObserver(fit) : null;
+    if (ro) ro.observe(lineRef.current); else window.addEventListener('resize', fit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    return () => { if (ro) ro.disconnect(); else window.removeEventListener('resize', fit); };
+  }, [words]);
   return (
     <section className="v3-statement" ref={ref}>
+      <div className="v3-statement-measure" ref={measureRef} aria-hidden>
+        {words.map((x, k) => <span key={k} className="v3-statement-line">{lead} <i>{x.w}</i></span>)}
+      </div>
       <div className="container-wide v3-statement-inner">
-        <p className="v3-statement-line">
+        <p className="v3-statement-line" ref={lineRef} style={size ? { fontSize: size + 'px' } : null}>
           <span className="v3-statement-lead">{lead}</span>{' '}
           <span className="v3-statement-word" aria-live="polite"><span key={i}>{words[i].w}</span></span>
         </p>
@@ -619,8 +639,12 @@ function V3Styles() {
 
       /* compact statement */
       .v3-statement { background: var(--intigris-brown-700); color: var(--intigris-off-white); padding-block: clamp(80px, 11vw, 150px); }
-      .v3-statement-inner { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 56px); align-items: center; }
-      .v3-statement-line { margin: 0; font-size: clamp(46px, 6.6vw, 96px); font-weight: 500; letter-spacing: -.045em; line-height: 1; }
+      .v3-statement { position: relative; }
+      .v3-statement-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 290px); gap: clamp(24px, 4vw, 64px); align-items: center; }
+      .v3-statement-line { margin: 0; font-size: clamp(34px, 5.6vw, 96px); font-weight: 500; letter-spacing: -.045em; line-height: 1; white-space: nowrap; }
+      .v3-statement-measure { position: absolute; left: 0; top: 0; visibility: hidden; pointer-events: none; height: 0; overflow: hidden; }
+      .v3-statement-measure .v3-statement-line { display: inline-block; font-size: 100px; }
+      .v3-statement-measure i { font-style: italic; }
       .v3-statement-word { display: inline-block; min-width: 6ch; }
       .v3-statement-word span { color: var(--intigris-coral); font-style: italic; display: inline-block; animation: ckSwap 380ms var(--ease-out) both; }
       .v3-statement-side { border-left: 1px solid rgba(252,247,235,.18); padding-left: clamp(16px, 2.5vw, 32px); }
