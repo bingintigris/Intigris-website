@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Islands test | Intigris</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="design-system/site.css">
+  <link rel="stylesheet" href="islands-dist/islands.css?v=1">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'nl';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+  </script>
+</head>
+<body style="margin: 0;">
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script src="islands-dist/islands.js?v=1"></script>
+  <script type="text/babel" src="components/Island.jsx?v=1"></script>
+  <script type="text/babel">
+    /* Pipeline test: an island next to normal site markup, to check that Tailwind stays scoped. */
+    function App() {
+      return (
+        <main>
+          <section className="container-wide" style={{ paddingBlock: 48 }}>
+            <div className="eyebrow">{tx('NORMAL SITE MARKUP (site.css)', 'GEWONE SITE-MARKUP (site.css)')}</div>
+            <h2 className="display-md" style={{ margin: '12px 0 0' }}>{tx('This heading must look exactly as before.', 'Deze kop moet er precies zo uitzien als voorheen.')}</h2>
+          </section>
+          <Island name="demo" />
+        </main>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

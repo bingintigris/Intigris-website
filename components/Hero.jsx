@@ -403,8 +403,8 @@ function HeroEditorial({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
               fontSize: 14, fontWeight: 400, color: 'var(--fg-muted)', lineHeight: 1.5,
             }}>
               {tx(
-                'Salesforce Implementation Partner serving ambitious organisations across the Netherlands. 250+ projects delivered since 2010.',
-                'Salesforce-implementatiepartner voor ambitieuze organisaties in heel Nederland. 250+ projecten geleverd sinds 2010.'
+                'Salesforce Implementation Partner serving ambitious organisations across the Netherlands. 300+ projects delivered since 2010.',
+                'Salesforce-implementatiepartner voor ambitieuze organisaties in heel Nederland. 300+ projecten geleverd sinds 2010.'
               )}
             </div>
             <div className="photo photo--blue" style={{ aspectRatio: '3/4', marginTop: 12 }}>
@@ -478,8 +478,8 @@ function HeroEditorial({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
 function HeroStats({ tx, glass = false }) {
   const STATS = [
     { num: '15+',  label: tx('Years Salesforce partner', 'Jaar Salesforce-partner') },
-    { num: '250+', label: tx('Projects completed',       'Projecten opgeleverd') },
-    { num: '4.8',  star: true, label: tx('Customer satisfaction', 'Klanttevredenheid') },
+    { num: '300+', label: tx('Projects completed',       'Projecten opgeleverd') },
+    { num: '4.5',  star: true, label: tx('Customer satisfaction', 'Klanttevredenheid') },
   ];
   const numColor   = glass ? 'var(--intigris-off-white)' : 'var(--intigris-coral)';
   const labelColor = glass ? 'rgba(252,247,235,0.85)' : 'var(--intigris-dark-brown)';
@@ -575,7 +575,7 @@ function ProofMarquee() {
     { src: 'assets/logos/feenstra.png',                alt: 'Feenstra',                h: 36 },
     { src: 'assets/logos/direct-healthcare-group.png', alt: 'Direct Healthcare Group', h: 44 },
     { src: 'assets/logos/customs-support-group.png',   alt: 'Customs Support Group',   h: 46 },
-    { src: 'assets/logos/wetransfer.png',              alt: 'WeTransfer',              h: 30 },
+    { src: 'assets/logos/wetransfer.svg',              alt: 'WeTransfer',              h: 30 },
     { src: 'assets/logos/cyclovriend.svg',             alt: 'Cyclovriend',             h: 40 },
     { src: 'assets/logos/bouwgroep-schrijver.svg',     alt: 'Bouwgroep Schrijver',     h: 40 },
   ];
