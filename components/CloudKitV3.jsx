@@ -83,14 +83,72 @@ function V3WhatItIs({ head, label, benefits, image }) {
 function V3Statement({ lead, words }) {
   const ref = v3Ref(null);
   const [i, setI] = v3State(0);
-  /* With GSAP: the band stops in the middle of the screen (pin), scrolling switches
-     the last word, and after the last word the page scrolls on. */
-  useGsap(ref, (gsap, root) => {
-    window.ScrollTrigger.create({ trigger: root, start: 'center center', end: '+=' + (words.length * 38) + '%', pin: true,
-      onUpdate: st => setI(Math.min(words.length - 1, Math.floor(st.progress * words.length))) });
-  });
+  /* Scroll lock: when the band reaches the middle of the screen the whole page holds
+     still. Each scroll gesture (wheel/trackpad swipe, touch swipe, arrow/space key)
+     switches one word; after the last word the page scrolls on, with the next section
+     right below. Coming back up works the same way in reverse. One gesture = one step,
+     so trackpad momentum doesn't race through the words. */
   v3Effect(() => {
-    if (window.gsap && !V3_REDUCE) return;
+    if (V3_REDUCE) return;
+    const el = ref.current; if (!el) return;
+    const last = words.length - 1;
+    let locked = false, armed = true, idx = 0, prevMid = null, lastWheel = 0, used = true, acc = 0, ty = null;
+    const mid = () => { const r = el.getBoundingClientRect(); return r.top + r.height / 2; };
+    const lock = dir => {
+      locked = true; used = true; acc = 0;
+      window.scrollTo(0, window.scrollY + mid() - window.innerHeight / 2);
+      idx = dir > 0 ? 0 : last; setI(idx);
+    };
+    const step = d => {
+      const n = idx + d;
+      if (n > last || n < 0) { locked = false; armed = false; prevMid = mid(); return false; }
+      idx = n; setI(idx); return true;
+    };
+    const onScroll = () => {
+      const m = mid(), c = window.innerHeight / 2;
+      /* after a release, only re-arm once the band has moved well away from the middle */
+      if (!armed && Math.abs(m - c) > window.innerHeight * 0.25) armed = true;
+      if (!locked && armed && prevMid !== null) {
+        if (prevMid > c && m <= c) lock(1);
+        else if (prevMid < c && m >= c) lock(-1);
+      }
+      prevMid = locked ? c : m;
+    };
+    const onWheel = e => {
+      if (!locked) return;
+      e.preventDefault();
+      const now = performance.now();
+      if (now - lastWheel > 160) { used = false; acc = 0; }
+      lastWheel = now; acc += e.deltaY;
+      if (!used && Math.abs(acc) > 30) { used = true; step(acc > 0 ? 1 : -1); }
+    };
+    const onTouchStart = e => { ty = e.touches[0].clientY; };
+    const onTouchMove = e => {
+      if (!locked || ty === null) return;
+      e.preventDefault();
+      const dy = ty - e.touches[0].clientY;
+      if (Math.abs(dy) > 50) { ty = null; step(dy > 0 ? 1 : -1); }
+    };
+    const onKey = e => {
+      if (!locked) return;
+      const down = ['ArrowDown', 'PageDown', ' ', 'Spacebar'].includes(e.key), up = ['ArrowUp', 'PageUp'].includes(e.key);
+      if (!down && !up) return;
+      e.preventDefault(); step(down ? 1 : -1);
+    };
+    prevMid = mid();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('scroll', onScroll); window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onTouchStart); window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [words.length]);
+  v3Effect(() => {
+    if (!V3_REDUCE) return;
     let raf = 0;
     /* Fallback without GSAP / reduced motion: no pin, the word flips as the band
        travels from the lower to the upper part of the screen. */
@@ -638,7 +696,9 @@ function V3Styles() {
       .v3-what-photo span { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,145,102,.5), rgba(225,74,36,.55)); mix-blend-mode: multiply; }
 
       /* compact statement */
-      .v3-statement { background: var(--intigris-brown-700); color: var(--intigris-off-white); padding-block: clamp(80px, 11vw, 150px); }
+      .v3-statement { background: var(--intigris-coral); color: var(--intigris-brown-700); padding-block: clamp(80px, 11vw, 150px); }
+      .v3-statement .ck-statement-dots i { background: rgba(43,23,0,.22); }
+      .v3-statement .ck-statement-dots i.on { background: var(--intigris-brown-700); }
       .v3-statement { position: relative; }
       .v3-statement-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 290px); gap: clamp(24px, 4vw, 64px); align-items: center; }
       .v3-statement-line { margin: 0; font-size: clamp(34px, 5.6vw, 96px); font-weight: 500; letter-spacing: -.045em; line-height: 1; white-space: nowrap; }
@@ -646,9 +706,9 @@ function V3Styles() {
       .v3-statement-measure .v3-statement-line { display: inline-block; font-size: 100px; }
       .v3-statement-measure i { font-style: italic; }
       .v3-statement-word { display: inline-block; min-width: 6ch; }
-      .v3-statement-word span { color: var(--intigris-coral); font-style: italic; display: inline-block; animation: ckSwap 380ms var(--ease-out) both; }
-      .v3-statement-side { border-left: 1px solid rgba(252,247,235,.18); padding-left: clamp(16px, 2.5vw, 32px); }
-      .v3-statement-sub { margin: 0; font-size: 17px; line-height: 1.5; color: rgba(252,247,235,.8); animation: ckFade 380ms var(--ease-out) both; }
+      .v3-statement-word span { color: var(--intigris-off-white); font-style: italic; display: inline-block; animation: ckSwap 380ms var(--ease-out) both; }
+      .v3-statement-side { border-left: 1px solid rgba(43,23,0,.28); padding-left: clamp(16px, 2.5vw, 32px); }
+      .v3-statement-sub { margin: 0; font-size: 17px; line-height: 1.5; color: rgba(43,23,0,.86); animation: ckFade 380ms var(--ease-out) both; }
       .v3-statement-side .ck-statement-dots { margin-top: 16px; }
       @media (max-width: 760px) { .v3-statement-inner { grid-template-columns: 1fr; } .v3-statement-side { border-left: 0; padding-left: 0; } }
 
