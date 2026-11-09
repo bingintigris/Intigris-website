@@ -32,13 +32,31 @@ function V3ChaosHero({ eyebrow, a, b, lede, onCta, secondary, chaos, record }) {
     });
     tl.from(root.querySelectorAll('.v3-record-row'), { opacity: 0, y: 10, stagger: 0.08, duration: 0.25 }, 0.7);
   });
+  /* Title on exactly two lines (a / b): one font size, fitted so the longer line
+     fits the column (max 88px; if that would drop below 28px it wraps normally). */
+  const h1Ref = v3Ref(null), h1Measure = v3Ref(null);
+  const [h1Size, setH1Size] = v3State(null);
+  v3Effect(() => {
+    const fit = () => {
+      const h = h1Ref.current, m = h1Measure.current; if (!h || !m) return;
+      const widest = Math.max(...Array.from(m.children).map(c => c.getBoundingClientRect().width));
+      const size = widest ? Math.min(88, Math.floor(100 * h.clientWidth / widest * 0.97)) : 0;
+      setH1Size(size >= 28 ? size : null); /* below 28px let it wrap instead */
+    };
+    fit();
+    const ro = 'ResizeObserver' in window ? new ResizeObserver(fit) : null;
+    if (ro) ro.observe(h1Ref.current); window.addEventListener('resize', fit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    return () => { if (ro) ro.disconnect(); window.removeEventListener('resize', fit); };
+  }, [a, b]);
   return (
     <section className="v3-chaos" ref={ref}>
       <div className="v3-chaos-pin">
         <div className="container-wide v3-chaos-grid">
           <div className="v3-chaos-copy">
             <div className="eyebrow eyebrow--dark" style={{ marginBottom: 22 }}>{eyebrow}</div>
-            <h1 className="ck-h1">{a} <span>{b}</span></h1>
+            <div className="v3-h1-measure" ref={h1Measure} aria-hidden><span className="ck-h1">{a}</span><span className="ck-h1"><span>{b}</span></span></div>
+            <h1 className={'ck-h1' + (h1Size ? ' v3-h1-fit' : '')} ref={h1Ref} style={h1Size ? { fontSize: h1Size + 'px' } : null}>{a}{h1Size ? <br /> : ' '}<span>{b}</span></h1>
             <p className="ck-hero-lede">{lede}</p>
             <div className="ck-actions">
               <button className="btn ck-btn-dark" onClick={onCta}>{tx('Book a 30-min call', 'Plan een gesprek van 30 min')} <span className="arrow">→</span></button>
@@ -741,6 +759,10 @@ function V3Styles() {
       .v3-route-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(28px, 4vw, 64px); align-items: center; }
       .v3-route-hero .ck-route { grid-template-columns: 1fr; }
       .v3-route-hero .ck-h1 { font-size: clamp(38px, 4.6vw, 66px); }
+      .v3-chaos-copy { position: relative; }
+      .v3-h1-measure { position: absolute; left: 0; top: 0; height: 0; overflow: hidden; visibility: hidden; pointer-events: none; }
+      .v3-h1-measure .ck-h1 { display: inline-block; font-size: 100px; white-space: nowrap; text-wrap: nowrap; }
+      .v3-h1-fit { white-space: nowrap; text-wrap: nowrap; }
       .v3-route-hero .ck-hero-inner { padding-top: clamp(112px, 14vh, 160px); }
       .v3-route-hero .ck-route-stats { flex-direction: row; flex-wrap: wrap; gap: 18px; }
       .v3-route-hero .ck-route-stats div { flex: 1 1 120px; }

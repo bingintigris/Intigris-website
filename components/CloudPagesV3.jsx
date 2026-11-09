@@ -70,7 +70,7 @@ function SalesCloudV3({ onCta }) {
     <main style={{ background: 'var(--intigris-off-white)' }}>
       <CkProgress />
       <V3ChaosHero eyebrow={tx('SALES CLOUD · NOW AGENTFORCE SALES', 'SALES CLOUD · NU AGENTFORCE SALES')}
-        a={tx('All your customers and deals.', 'Al je klanten en deals.')} b={tx('One place.', 'Eén plek.')}
+        a={tx('All your clients and deals,', 'Al je klanten en deals,')} b={tx('in one pipeline.', 'in één pipeline.')}
         lede={tx('Salesforce Sales Cloud is the CRM where your team keeps every lead, customer, deal and forecast. No more post-its, inboxes and spreadsheets that only one person understands. We implement it, connected to the systems you already use.', 'Salesforce Sales Cloud is het CRM waarin je team elke lead, klant, deal en forecast bijhoudt. Geen post-its, inboxen en spreadsheets meer die maar één persoon snapt. Wij implementeren het, gekoppeld aan de systemen die je al gebruikt.')}
         onCta={onCta} secondary={{ href: '#start', label: tx('Ways to start', 'Manieren om te starten') }} chaos={sc3.chaos()} record={sc3.record()} />
       <V3WhatItIs head={{ eyebrow: tx('WHAT IT IS', 'WAT HET IS'), a: tx('The CRM your sales team', 'Het CRM waar je salesteam'), b: tx('runs on.', 'op draait.') }} label={tx('With Sales Cloud', 'Met Sales Cloud')} benefits={sc3.benefits()} image="assets/glass-facade-clouds.jpg" />
