@@ -1,0 +1,5 @@
+/* No @tailwind base: the site keeps its own reset and typography (design-system/site.css). */
+@tailwind components;
+@tailwind utilities;
+
+.tw, .tw * { box-sizing: border-box; }
