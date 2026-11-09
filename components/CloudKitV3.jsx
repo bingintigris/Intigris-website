@@ -92,10 +92,10 @@ function V3Statement({ lead, words }) {
     if (V3_REDUCE) return;
     const el = ref.current; if (!el) return;
     const last = words.length - 1;
-    let locked = false, armed = true, idx = 0, prevMid = null, lastWheel = 0, used = true, acc = 0, ty = null;
+    let locked = false, armed = true, idx = 0, prevMid = null, lastWheel = 0, lastStep = 0, used = true, acc = 0, ty = null;
     const mid = () => { const r = el.getBoundingClientRect(); return r.top + r.height / 2; };
     const lock = dir => {
-      locked = true; used = true; acc = 0;
+      locked = true; used = true; acc = 0; lastStep = performance.now();
       window.scrollTo(0, window.scrollY + mid() - window.innerHeight / 2);
       idx = dir > 0 ? 0 : last; setI(idx);
     };
@@ -108,19 +108,30 @@ function V3Statement({ lead, words }) {
       const m = mid(), c = window.innerHeight / 2;
       /* after a release, only re-arm once the band has moved well away from the middle */
       if (!armed && Math.abs(m - c) > window.innerHeight * 0.25) armed = true;
-      if (!locked && armed && prevMid !== null) {
+      /* moved by something else while locked (scrollbar drag, anchor link): let go */
+      if (locked && Math.abs(m - c) > 40) { locked = false; armed = false; }
+      /* only catch normal scrolling, not big jumps (anchor links, scrollbar jumps) */
+      const jump = prevMid !== null && Math.abs(m - prevMid) > window.innerHeight * 0.75;
+      if (!locked && armed && !jump && prevMid !== null) {
         if (prevMid > c && m <= c) lock(1);
         else if (prevMid < c && m >= c) lock(-1);
       }
       prevMid = locked ? c : m;
     };
     const onWheel = e => {
+      /* Track gestures even while unlocked: the scroll that brings the band to the
+         middle must not count as a new gesture once the page locks. */
+      const now = performance.now();
+      const fresh = now - lastWheel > 160;
+      lastWheel = now;
       if (!locked) return;
       e.preventDefault();
-      const now = performance.now();
-      if (now - lastWheel > 160) { used = false; acc = 0; }
-      lastWheel = now; acc += e.deltaY;
-      if (!used && Math.abs(acc) > 30) { used = true; step(acc > 0 ? 1 : -1); }
+      if (fresh) { used = false; acc = 0; }
+      acc += e.deltaY;
+      /* one step per gesture; someone who keeps spinning without pausing still
+         advances, but at most one word per 900ms */
+      if (!used && Math.abs(acc) > 30) { used = true; lastStep = now; acc = 0; step(e.deltaY > 0 ? 1 : -1); }
+      else if (used && now - lastStep > 900 && Math.abs(acc) > 240) { lastStep = now; acc = 0; step(e.deltaY > 0 ? 1 : -1); }
     };
     const onTouchStart = e => { ty = e.touches[0].clientY; };
     const onTouchMove = e => {
