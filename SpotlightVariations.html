@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Klantverhaal: 3 concepten | Intigris</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="design-system/site.css?v=1789010000001">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'nl';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+  </script>
+</head>
+<body style="background: var(--intigris-brown-700); margin: 0;">
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script type="text/babel" src="components/CloudKit.jsx?v=1789010000001"></script>
+  <script type="text/babel" src="components/StorySpotlight.jsx?v=1789010000001"></script>
+  <script type="text/babel">
+    const ONLY = new URLSearchParams(window.location.search).get('only'); /* ?only=a|b|c */
+    const Label = ({ n, text }) => (
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, fontSize: 15, marginBottom: 24, color: 'var(--intigris-brown-700)' }}>
+        <span style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--intigris-brown-700)', color: 'var(--intigris-off-white)', display: 'grid', placeItems: 'center', fontWeight: 700 }}>{n}</span> {text}
+      </div>
+    );
+    function App() {
+      const S = CK_STORIES();
+      const stories = [S.wetransfer, S.evbox, S.opcharge];
+      const head = { eyebrow: tx('CUSTOMER SUCCESS STORIES', 'KLANTSUCCESVERHALEN'), a: tx('Teams that run on it.', 'Teams die erop draaien.'), b: '',
+        lede: tx('What we built, in their own words. Pick a company or let it play.', 'Wat we bouwden, in hun eigen woorden. Kies een bedrijf of laat het vanzelf lopen.') };
+      const show = k => !ONLY || ONLY === k;
+      return (
+        <main>
+          {!ONLY && (
+            <header className="container-wide" style={{ paddingBlock: '72px 40px', color: 'var(--intigris-off-white)' }}>
+              <div className="eyebrow">{tx('SALES CLOUD · CUSTOMER STORIES', 'SALES CLOUD · KLANTSUCCESVERHALEN')}</div>
+              <h1 style={{ color: 'var(--intigris-off-white)', fontSize: 'clamp(40px, 6vw, 80px)', fontWeight: 500, letterSpacing: '-.035em', lineHeight: 1, margin: '18px 0 14px' }}>{tx('Three companies, one card.', 'Drie bedrijven, één kaart.')} <span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('Pick one.', 'Kies er één.')}</span></h1>
+              <p style={{ fontSize: 18, color: 'rgba(252,247,235,.8)', maxWidth: 700, margin: 0 }}>{tx('Each one switches by itself every 7 seconds; hover to pause, or pick a company.', 'Elke variant wisselt elke 7 seconden vanzelf; ga erop staan om te pauzeren, of kies een bedrijf.')}</p>
+            </header>
+          )}
+          {show('a') && <StorySpotlight variant="pills" head={head} stories={stories} label={<Label n="A" text={tx('Segmented switch; the card fades up', 'Schakelaar; de kaart komt zacht omhoog')} />} />}
+          {show('b') && <StorySpotlight variant="logos" head={head} stories={stories} label={<Label n="B" text={tx('Logo tiles; card with a dark quote band, flips', 'Logotegels; kaart met donkere quoteband, draait om')} />} />}
+          {show('c') && <StorySpotlight variant="tabs" head={head} stories={stories} label={<Label n="C" text={tx('Name tabs; the card slides in from the left', 'Naamtabs; de kaart schuift van links binnen')} />} />}
+          <CkStyles /><SsStyles />
+        </main>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
