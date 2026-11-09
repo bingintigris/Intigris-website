@@ -123,6 +123,7 @@ function SsStyles() {
       .ss-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 5vw, 80px); align-items: center; }
       .ss-text .ck-head { margin-bottom: 28px; }
       .ss .ck-lede { color: rgba(43,23,0,.82); }
+      .ss .ck-h2, .ss .ck-h2 span { color: var(--intigris-off-white); }
       .ss-stage { position: relative; min-height: 460px; display: grid; align-items: center; perspective: 1400px; }
       .ss-logo { display: block; height: 30px; width: auto; max-width: 170px; object-fit: contain; }
       .ss-logo--text { height: auto; font-size: 22px; font-weight: 600; letter-spacing: -.02em; }
