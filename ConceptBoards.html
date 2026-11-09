@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Platform-sectie: 5 concepten | Intigris</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="design-system/site.css">
+  <link rel="icon" href="assets/logo-coral.png">
+  <style>
+    /* Storyboard page: each concept as a short looping preview (no scroll needed).
+       These are sketches of the idea, not the final design. */
+    :root { --c: #ff5f36; --b: #2b1700; --w: #fcf7eb; --blue: #9ab8e2; --green: #4c693a; --sf: #0176d3; }
+    body { margin: 0; background: var(--b); color: var(--w); font-family: var(--font-sans, 'Inter Tight', sans-serif); }
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 64px 24px 120px; }
+    h1, h2 { color: var(--w); }
+    h1 { font-size: clamp(38px, 5.4vw, 72px); font-weight: 500; letter-spacing: -.035em; line-height: 1; margin: 16px 0 12px; }
+    h1 em { color: var(--c); }
+    .intro { font-size: 18px; color: rgba(252,247,235,.8); max-width: 760px; margin: 0 0 48px; }
+    .eyebrow { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; color: rgba(252,247,235,.6); }
+    .concept { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 40px; align-items: center; padding: 44px 0; border-top: 1px solid rgba(252,247,235,.14); }
+    .concept h2 { font-size: 34px; font-weight: 500; letter-spacing: -.025em; margin: 6px 0 6px; }
+    .concept .pitch { font-size: 19px; color: var(--c); margin: 0 0 14px; font-style: italic; }
+    .concept ol { margin: 0 0 16px; padding-left: 20px; font-size: 15px; line-height: 1.6; color: rgba(252,247,235,.85); }
+    .refs { font-size: 14px; color: rgba(252,247,235,.65); }
+    .refs a { color: var(--w); }
+    .tag { display: inline-block; font-size: 11px; letter-spacing: .12em; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--c); color: var(--b); }
+    .tag--rec { background: var(--w); }
+    .stage { position: relative; aspect-ratio: 16 / 10; border-radius: 22px; overflow: hidden; background: #3a2108; box-shadow: 0 40px 70px -40px rgba(0,0,0,.8); }
+    .stage small.cap { position: absolute; left: 14px; bottom: 12px; z-index: 50; font-size: 12px; background: rgba(43,23,0,.75); padding: 5px 10px; border-radius: 999px; }
+    /* tiny "Salesforce UI" building blocks */
+    .win { position: absolute; background: #fff; color: #181818; border-radius: 10px; box-shadow: 0 18px 30px -16px rgba(0,0,0,.6); overflow: hidden; font-size: 11px; }
+    .win .bar { height: 22px; background: var(--sf); color: #fff; display: flex; align-items: center; padding: 0 9px; font-weight: 600; font-size: 10.5px; gap: 6px; }
+    .win .bar i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.6); }
+    .win .body { padding: 8px; }
+    .row { height: 7px; border-radius: 4px; background: #e5e5e5; margin: 6px 0; }
+    .row.s { width: 60%; } .row.m { width: 80%; }
+    .chip { display: inline-block; padding: 3px 8px; border-radius: 999px; background: #eef4ff; color: var(--sf); font-size: 10px; font-weight: 600; margin: 2px; }
+    .kan { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .kan > div { background: #f3f3f3; border-radius: 6px; padding: 5px; min-height: 90px; }
+    .kc { background: #fff; border-left: 3px solid var(--sf); border-radius: 4px; height: 22px; margin: 4px 0; }
+    .kc.hot { border-left-color: var(--c); box-shadow: 0 0 0 2px var(--c); }
+    .erp { position: absolute; padding: 6px 12px; border-radius: 999px; background: var(--w); color: var(--b); font-size: 12px; font-weight: 600; }
+
+    /* ---------- A · ZOOM ---------- */
+    .zoom .scene { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; animation: zoomScene 15s infinite; }
+    .zoom .scene:nth-child(2) { animation-delay: 3s; } .zoom .scene:nth-child(3) { animation-delay: 6s; } .zoom .scene:nth-child(4) { animation-delay: 9s; } .zoom .scene:nth-child(5) { animation-delay: 12s; }
+    @keyframes zoomScene { 0% { opacity: 0; transform: scale(.35); } 4% { opacity: 1; transform: scale(.9); } 17% { opacity: 1; transform: scale(1.05); } 20% { opacity: 0; transform: scale(3.2); } 100% { opacity: 0; transform: scale(3.2); } }
+    .laptop { width: 62%; } .laptop .screen { background: #fff; border-radius: 10px 10px 0 0; border: 8px solid #1d1d1f; padding: 8px; } .laptop .base { height: 12px; background: #c9c9cf; border-radius: 0 0 14px 14px; margin: 0 -6%; }
+    .phone { width: 23%; aspect-ratio: 9/18; background: #1d1d1f; border-radius: 22px; padding: 8px; } .phone .scr { background: #fff; height: 100%; border-radius: 15px; padding: 8px; color: #181818; font-size: 10.5px; }
+    .bubble { background: #eef4ff; border-radius: 10px; padding: 6px 8px; margin: 6px 0; } .bubble.me { background: var(--c); color: var(--b); margin-left: 20%; }
+    .map { width: 70%; aspect-ratio: 16/10; border-radius: 14px; background: linear-gradient(135deg, #dfe9d4, #f1efe6); position: relative; overflow: hidden; }
+    .map::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 46px, rgba(0,0,0,.06) 46px 48px), repeating-linear-gradient(0deg, transparent 0 46px, rgba(0,0,0,.06) 46px 48px); }
+    .pin { position: absolute; width: 22px; height: 22px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--c); }
+    .streams { width: 74%; display: grid; gap: 8px; } .streams div { height: 14px; border-radius: 8px; background: linear-gradient(90deg, transparent, var(--blue), transparent); background-size: 200% 100%; animation: flow 1.6s linear infinite; }
+    .streams div:nth-child(2) { animation-delay: .3s; } .streams div:nth-child(3) { animation-delay: .6s; } .streams div:nth-child(4) { animation-delay: .9s; }
+    @keyframes flow { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+    /* ---------- B · MISSION CONTROL ---------- */
+    .mc { background: linear-gradient(160deg, #1b2a44, #0e1626); }
+    .mc .win { opacity: 0; animation: pop 12s infinite; }
+    .mc .w1 { left: 5%; top: 8%; width: 36%; animation-delay: .2s; } .mc .w2 { left: 46%; top: 6%; width: 30%; animation-delay: 2.2s; }
+    .mc .w3 { left: 8%; top: 50%; width: 34%; animation-delay: 4.2s; } .mc .w4 { left: 47%; top: 44%; width: 26%; animation-delay: 6.2s; }
+    .mc .w5 { left: 76%; top: 20%; width: 20%; animation-delay: 8.2s; }
+    @keyframes pop { 0% { opacity: 0; transform: translateY(14px) scale(.96); } 4% { opacity: 1; transform: none; } 88% { opacity: 1; } 94%, 100% { opacity: 0; } }
+    .cursor { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 6px rgba(255,95,54,.3); animation: cur 12s infinite; z-index: 20; }
+    @keyframes cur { 0% { left: 20%; top: 20%; } 20% { left: 58%; top: 18%; } 40% { left: 24%; top: 62%; } 60% { left: 58%; top: 56%; } 80% { left: 84%; top: 32%; } 100% { left: 20%; top: 20%; } }
+    .slackmsg { background: #4a154b; color: #fff; }
+    .slackmsg .bar { background: #3f0e40; }
+
+    /* ---------- C · JOURNEY ---------- */
+    .jr { background: var(--w); }
+    .jr svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .jr .track { fill: none; stroke: var(--blue); stroke-width: 10; stroke-linecap: round; }
+    .jr .branch { fill: none; stroke: rgba(43,23,0,.25); stroke-width: 6; stroke-dasharray: 2 12; stroke-linecap: round; }
+    .jr .st { fill: #fff; stroke: var(--b); stroke-width: 4; }
+    .jr .dot { fill: var(--c); filter: drop-shadow(0 0 8px rgba(255,95,54,.9)); }
+    .jr .lbl { position: absolute; font-size: 12.5px; font-weight: 600; color: var(--b); background: #fff; padding: 5px 10px; border-radius: 8px; box-shadow: 0 8px 18px -10px rgba(0,0,0,.4); animation: lbl 10s infinite; opacity: .35; }
+    @keyframes lbl { 0%, 100% { opacity: .35; transform: none; } }
+    .jr .l1 { animation: hl 10s infinite 0s; } .jr .l2 { animation: hl 10s infinite 2s; } .jr .l3 { animation: hl 10s infinite 4s; } .jr .l4 { animation: hl 10s infinite 6s; } .jr .l5 { animation: hl 10s infinite 8s; }
+    @keyframes hl { 0% { opacity: .35; } 3% { opacity: 1; transform: scale(1.12); background: var(--c); } 18% { opacity: 1; transform: scale(1.12); background: var(--c); } 22%, 100% { opacity: .35; transform: none; background: #fff; } }
+
+    /* ---------- D · EXPLODED ---------- */
+    .ex { background: radial-gradient(circle at 50% 40%, #4a2a0c, var(--b)); perspective: 1200px; }
+    .ex .iso { position: absolute; left: 50%; top: 56%; width: 46%; aspect-ratio: 1; transform: translate(-50%, -50%) rotateX(58deg) rotateZ(-42deg); transform-style: preserve-3d; }
+    .ex .ly { position: absolute; inset: 0; border-radius: 18px; display: grid; place-items: center; font-weight: 700; font-size: 15px; box-shadow: 0 0 0 1px rgba(0,0,0,.1); animation: explode 8s ease-in-out infinite; }
+    .ex .ly span { transform: rotateZ(42deg); }
+    .ex .ly:nth-child(1) { background: #6b7280; color: #fff; --z: 0px; } .ex .ly:nth-child(2) { background: var(--blue); color: var(--b); --z: 70px; }
+    .ex .ly:nth-child(3) { background: var(--c); color: var(--b); --z: 140px; } .ex .ly:nth-child(4) { background: #1d1d1f; color: #fff; --z: 210px; } .ex .ly:nth-child(5) { background: var(--green); color: #fff; --z: 280px; }
+    @keyframes explode { 0%, 12% { transform: translateZ(calc(var(--z) * .12)); } 45%, 75% { transform: translateZ(var(--z)); } 100% { transform: translateZ(calc(var(--z) * .12)); } }
+    .ex .port { position: absolute; padding: 6px 12px; border-radius: 999px; background: var(--w); color: var(--b); font-size: 12px; font-weight: 600; animation: plug 8s infinite; }
+    @keyframes plug { 0%, 70% { opacity: 0; transform: translateX(-30px); } 85%, 100% { opacity: 1; transform: none; } }
+
+    /* ---------- E · AGENT DAY ---------- */
+    .ag { background: #121212; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; padding: 22px; box-sizing: border-box; }
+    .ag .line { opacity: 0; font-size: 13px; line-height: 1.55; margin: 0 0 10px; animation: type 14s infinite; white-space: nowrap; overflow: hidden; }
+    .ag .t { color: var(--c); margin-right: 10px; } .ag .k { color: var(--blue); } .ag .ok { color: #7bd389; }
+    .ag .line:nth-child(1) { animation-delay: 0s; } .ag .line:nth-child(2) { animation-delay: 1.8s; } .ag .line:nth-child(3) { animation-delay: 3.6s; } .ag .line:nth-child(4) { animation-delay: 5.4s; } .ag .line:nth-child(5) { animation-delay: 7.2s; } .ag .line:nth-child(6) { animation-delay: 9s; } .ag .line:nth-child(7) { animation-delay: 10.8s; }
+    @keyframes type { 0% { opacity: 0; max-width: 0; } 2% { opacity: 1; } 9% { max-width: 100%; opacity: 1; } 92% { opacity: 1; max-width: 100%; } 96%, 100% { opacity: 0; } }
+    .ag .human { display: inline-block; background: var(--c); color: var(--b); padding: 2px 8px; border-radius: 6px; font-weight: 700; }
+
+    @media (max-width: 900px) { .concept { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: reduce) { * { animation-duration: 0s !important; } }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Homepage · Salesforce · sectie 3 · schetsen</div>
+  <h1>Vijf concepten. <em>Zo voelt het.</em></h1>
+  <p class="intro">Elke preview hieronder speelt in een loop wat je ziet terwijl je scrolt. Het zijn schetsen van het idee, nog niet het eindontwerp. Bij elk concept staan echte sites die hetzelfde soort effect gebruiken.</p>
+
+  <!-- A -->
+  <section class="concept">
+    <div>
+      <span class="tag tag--rec">AANBEVOLEN</span>
+      <h2>A · Zoom in Salesforce</h2>
+      <p class="pitch">"Scroll in, en je zit ín Salesforce."</p>
+      <ol><li>Laptop met je sales-pipeline</li><li>Inzoomen op een deal → de servicecase erachter</li><li>Inzoomen op het adres → Field Service-kaart</li><li>Inzoomen op de telefoon van de monteur → Agentforce aan het werk</li><li>In de agent: datastromen (Data 360) → uitzoomen naar Slack + Exact/AFAS</li></ol>
+      <p class="refs">Voelt als: <a href="https://www.youtube.com/watch?v=0fKBhvDjuy0" target="_blank">"Powers of Ten" (film)</a> · <a href="https://www.apple.com/airpods-pro/" target="_blank">apple.com/airpods-pro</a> (scrollen = inzoomen)</p>
+    </div>
+    <div class="stage zoom">
+      <div class="scene"><div class="laptop"><div class="screen"><div class="kan"><div><div class="kc"></div><div class="kc"></div></div><div><div class="kc hot"></div><div class="kc"></div></div><div><div class="kc"></div></div><div><div class="kc"></div></div></div></div><div class="base"></div></div></div>
+      <div class="scene"><div class="win" style="position:relative;width:58%"><div class="bar"><i></i>Service · Case #4410</div><div class="body"><b>Storing warmtepomp · Havenwerk BV</b><div class="row"></div><div class="row m"></div><span class="chip">Hoog</span><span class="chip">Monteur nodig</span></div></div></div>
+      <div class="scene"><div class="map"><span class="pin" style="left:30%;top:40%"></span><span class="pin" style="left:62%;top:58%;background:#0176d3"></span><span class="pin" style="left:48%;top:24%;background:#0176d3"></span></div></div>
+      <div class="scene"><div class="phone"><div class="scr"><b>Agentforce</b><div class="bubble">Klant belde 2× over storing. Onderdeel #A-208 zit in je bus.</div><div class="bubble me">Top, ik ga erheen</div><div class="bubble">Werkbon klaargezet ✓</div></div></div></div>
+      <div class="scene"><div class="streams"><div></div><div></div><div></div><div></div></div></div>
+      <small class="cap">Loop: pipeline → case → kaart → agent → data</small>
+    </div>
+  </section>
+
+  <!-- B -->
+  <section class="concept">
+    <div>
+      <span class="tag tag--rec">AANBEVOLEN</span>
+      <h2>B · Mission Control</h2>
+      <p class="pitch">"Je hele bedrijf, op één scherm."</p>
+      <ol><li>Mail komt binnen → wordt een lead</li><li>Deal gewonnen → Slack laat het team weten</li><li>Klacht → servicecase opent</li><li>Monteur ingepland → kaart + telefoon</li><li>Agent werkt zelf door · factuur gaat naar Exact</li></ol>
+      <p class="refs">Voelt als: <a href="https://www.raycast.com" target="_blank">raycast.com</a> · <a href="https://linear.app" target="_blank">linear.app</a> (echte schermen die bewegen)</p>
+    </div>
+    <div class="stage mc">
+      <div class="win w1"><div class="bar"><i></i>Sales · Nieuwe lead</div><div class="body"><b>Noor Jansen · Havenwerk BV</b><div class="row"></div><span class="chip">Web</span><span class="chip">Score 92</span></div></div>
+      <div class="win w2 slackmsg"><div class="bar"><i></i>#deals</div><div class="body">🎉 Deal gewonnen: Havenwerk BV · € 48.000</div></div>
+      <div class="win w3"><div class="bar"><i></i>Service · Case #4410</div><div class="body"><div class="row"></div><div class="row s"></div><span class="chip">Monteur nodig</span></div></div>
+      <div class="win w4"><div class="bar"><i></i>Field Service</div><div class="body"><div class="map" style="width:100%;aspect-ratio:16/9"><span class="pin" style="left:40%;top:30%"></span></div></div></div>
+      <div class="win w5"><div class="bar" style="background:#e4252b"><i></i>Exact</div><div class="body">Factuur F-2041 ✓</div></div>
+      <span class="cursor" aria-hidden></span>
+      <small class="cap">Loop: lead → Slack → case → monteur → factuur</small>
+    </div>
+  </section>
+
+  <!-- C -->
+  <section class="concept">
+    <div>
+      <span class="tag">LICHTSTE BOUW</span>
+      <h2>C · De reis van je klant</h2>
+      <p class="pitch">"Volg één klant door Salesforce."</p>
+      <ol><li>Een gloeiende stip (de klant) rijdt een metrolijn af</li><li>Bij elke halte opent een klein scherm: Sales, Service, Field Service, Agentforce</li><li>Het spoor zelf is Data 360; Slack-berichtjes ploppen op langs de route</li><li>Zijtakken naar 'ERP-stations': Exact, AFAS, NetSuite</li></ol>
+      <p class="refs">Voelt als: <a href="https://stripe.com" target="_blank">stripe.com</a> (lijnen die producten verbinden)</p>
+    </div>
+    <div class="stage jr">
+      <svg viewBox="0 0 800 500" aria-hidden>
+        <path id="route" class="track" d="M60 110 C 220 110, 220 250, 380 250 S 560 390, 740 390" />
+        <path class="branch" d="M380 250 L 520 120" /><path class="branch" d="M560 330 L 660 210" />
+        <circle class="st" cx="60" cy="110" r="14" /><circle class="st" cx="215" cy="180" r="14" /><circle class="st" cx="380" cy="250" r="14" /><circle class="st" cx="560" cy="330" r="14" /><circle class="st" cx="740" cy="390" r="14" />
+        <circle class="dot" r="12"><animateMotion dur="10s" repeatCount="indefinite"><mpath href="#route" /></animateMotion></circle>
+      </svg>
+      <span class="lbl l1" style="left:4%;top:12%">Lead · Sales</span>
+      <span class="lbl l2" style="left:22%;top:42%">Klant · Data 360</span>
+      <span class="lbl l3" style="left:42%;top:56%">Case · Service</span>
+      <span class="lbl l4" style="left:66%;top:72%">Monteur · Field Service</span>
+      <span class="lbl l5" style="left:80%;top:86%">Agent · Agentforce</span>
+      <span class="erp" style="left:62%;top:18%">Exact</span><span class="erp" style="left:79%;top:36%">AFAS</span>
+      <small class="cap">Loop: de klant rijdt de lijn af</small>
+    </div>
+  </section>
+
+  <!-- D -->
+  <section class="concept">
+    <div>
+      <span class="tag">SALESFORCE-VERHAAL</span>
+      <h2>D · Salesforce uit elkaar</h2>
+      <p class="pitch">"Haal Salesforce laag voor laag uit elkaar."</p>
+      <ol><li>Eén massief 'Salesforce-apparaat' in 3D</li><li>Scrollen = het valt uit elkaar in de lagen: basis, Data 360, je processen, Agentforce, Slack</li><li>Elke laag toont een live scherm als hij loskomt</li><li>Aan het eind klikt alles weer in elkaar en pluggen Exact/AFAS/NetSuite in als kabels</li></ol>
+      <p class="refs">Voelt als: Apple-productpagina's waar een apparaat 'ontploft' in onderdelen</p>
+    </div>
+    <div class="stage ex">
+      <div class="iso"><div class="ly"><span>Basis</span></div><div class="ly"><span>Data 360</span></div><div class="ly"><span>Sales · Service · Field Service</span></div><div class="ly"><span>Agentforce</span></div><div class="ly"><span>Slack</span></div></div>
+      <span class="port" style="left:8%;top:62%">Exact</span><span class="port" style="left:8%;top:72%;animation-delay:.2s">AFAS</span><span class="port" style="left:8%;top:82%;animation-delay:.4s">NetSuite</span>
+      <small class="cap">Loop: dicht → uit elkaar → weer dicht</small>
+    </div>
+  </section>
+
+  <!-- E -->
+  <section class="concept">
+    <div>
+      <span class="tag">AI-VERHAAL</span>
+      <h2>E · Een dag als AI-agent</h2>
+      <p class="pitch">"Maak kennis met je nieuwe collega."</p>
+      <ol><li>Je volgt een Agentforce-agent door zijn werkdag</li><li>Per tijdstip één taak in een ander deel van Salesforce</li><li>Je ziet zijn 'denken' als getypte tekst</li><li>Moment waarop hij overdraagt aan een mens</li></ol>
+      <p class="refs">Voelt als: een terminal / chat die je meeleest</p>
+    </div>
+    <div class="stage ag">
+      <p class="line"><span class="t">08:00</span><span class="k">Data 360</span> · klantprofiel Havenwerk BV geladen</p>
+      <p class="line"><span class="t">09:00</span><span class="k">Sales</span> · 4 nieuwe leads gescoord, 1 hot <span class="ok">✓</span></p>
+      <p class="line"><span class="t">11:00</span><span class="k">Service</span> · case #4410 opgelost met kennisartikel <span class="ok">✓</span></p>
+      <p class="line"><span class="t">13:00</span><span class="k">Field Service</span> · bezoek ingepland, onderdeel gereserveerd <span class="ok">✓</span></p>
+      <p class="line"><span class="t">14:30</span>korting &gt; 10% gevraagd → <span class="human">overdragen aan mens</span></p>
+      <p class="line"><span class="t">15:00</span><span class="k">Slack</span> · samenvatting gepost in #havenwerk <span class="ok">✓</span></p>
+      <p class="line"><span class="t">17:00</span><span class="k">Exact</span> · factuur F-2041 verstuurd <span class="ok">✓</span></p>
+    </div>
+  </section>
+</div>
+</body>
+</html>
