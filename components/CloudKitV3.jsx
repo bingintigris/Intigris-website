@@ -363,16 +363,17 @@ const LH_LOGOS = {
   'Business Central': { src: ['business-central.svg'], text: true },
   'NetSuite': { src: ['netsuite.png'] },
   'Outlook & Gmail': { src: ['outlook.svg', 'gmail.svg'] },
-  'Marketing Cloud': { src: ['salesforce.svg'], text: true, sf: true },
-  'Service Cloud': { src: ['salesforce.svg'], text: true, sf: true },
-  'Agentforce': { src: ['salesforce.svg'], text: true, sf: true },
+  'PDF Butler': { src: ['pdf-butler.svg'], tall: true },
+  'DocuSign': { src: ['docusign.svg'] },
+  /* No downloadable Twinfield logo: Wolters Kluwer mark + product name. */
+  'Twinfield': { src: ['twinfield-wolters-kluwer.svg'], text: true },
 };
 
 function LhTile({ it }) {
   const L = LH_LOGOS[it.n];
   if (!L) return <span className="lh-tile-text">{it.n}</span>;
   return (
-    <span className={'lh-tile-logos' + (L.sf ? ' is-sf' : '')}>
+    <span className={'lh-tile-logos' + (L.sf ? ' is-sf' : '') + (L.tall ? ' is-tall' : '')}>
       {L.src.map((s, k) => <img key={k} src={LH_DIR + s} alt={L.text ? '' : it.n} />)}
       {L.text && <span className="lh-tile-text">{it.n}</span>}
     </span>
@@ -460,6 +461,7 @@ function V3LogoHub({ head, center, items }) {
         .lh-tile-logos { display: flex; align-items: center; gap: 10px; }
         .lh-tile-logos img { height: 26px; width: auto; max-width: 116px; object-fit: contain; display: block; }
         .lh-tile-logos.is-sf img { height: 22px; }
+        .lh-tile-logos.is-tall img { height: 44px; }
         .lh-tile-text { font-size: 14.5px; font-weight: 500; color: var(--intigris-brown-700); white-space: nowrap; letter-spacing: -.01em; }
         .lh-caption { max-width: 440px; min-height: 96px; padding-left: 16px; border-left: 2px solid var(--intigris-coral); display: flex; flex-direction: column; gap: 4px; animation: ckFade 350ms var(--ease-out) both; }
         .lh-caption small { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--intigris-coral); }
@@ -475,6 +477,7 @@ function V3LogoHub({ head, center, items }) {
           .lh-fb-logo .lh-tile-logos { flex-wrap: wrap; justify-content: center; gap: 4px 6px; max-width: 100%; }
           .lh-fb-logo img { height: 20px; max-width: 100%; }
           .lh-fb-logo .lh-tile-logos.is-sf img { height: 16px; }
+          .lh-fb-logo .lh-tile-logos.is-tall img { height: 36px; }
           .lh-fb-logo .lh-tile-text { font-size: 12.5px; white-space: normal; text-align: center; }
           .lh-fb small { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--intigris-coral); font-weight: 600; }
           .lh-fb-d { font-size: 13.5px; color: rgba(252,247,235,.78); }
