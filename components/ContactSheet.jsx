@@ -45,7 +45,7 @@ function SiteContactSheet({ open, onClose, subject = '', message = '', source })
   async function submit(e) {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim()) {
-      setErr(tx('Please add your name and email.', 'Vul uw naam en e-mailadres in.'));
+      setErr(tx('Please add your name and email.', 'Vul je naam en e-mailadres in.'));
       return;
     }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) {
@@ -123,14 +123,14 @@ function SiteContactSheet({ open, onClose, subject = '', message = '', source })
 
         {!sent ? (
           <>
-            <div className="eyebrow" style={{ marginBottom: 16 }}>{tx('CONTACT · WE GOT YOU', 'CONTACT · WE ZIJN ER VOOR U')}</div>
+            <div className="eyebrow" style={{ marginBottom: 16 }}>{tx('CONTACT · WE GOT YOU', 'CONTACT · WE ZIJN ER VOOR JE')}</div>
             <h3 style={{ fontSize: 44, fontWeight: 500, letterSpacing: '-0.022em', lineHeight: 1.04, margin: 0 }}>
               {tx("Let's ", 'Laten we ')}<span style={{ color: 'var(--intigris-coral)' }}>{tx('talk.', 'praten.')}</span>
             </h3>
             <p style={{ marginTop: 14, fontSize: 16, fontWeight: 400, color: 'var(--fg-muted)' }}>
               {tx(
                 "Tell us briefly what you're working on. We'll get back within a working day.",
-                'Vertel ons kort waar u mee bezig bent. We reageren binnen één werkdag.'
+                'Vertel ons kort waar je mee bezig bent. We reageren binnen één werkdag.'
               )}
             </p>
 
@@ -144,17 +144,17 @@ function SiteContactSheet({ open, onClose, subject = '', message = '', source })
               <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <span className="eyebrow eyebrow--bare">{tx('Work email', 'Zakelijk e-mailadres')}</span>
                 <input type="email" value={form.email} onChange={(e) => set('email', e.target.value)}
-                  placeholder="u@uwbedrijf.nl" style={fieldStyle(false)} />
+                  placeholder="jij@jouwbedrijf.nl" style={fieldStyle(false)} />
               </label>
 
               <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <span className="eyebrow eyebrow--bare">{tx('Subject', 'Onderwerp')}</span>
                 <input value={form.subject} onChange={(e) => set('subject', e.target.value)}
-                  placeholder={tx('What is your message about?', 'Waar gaat uw bericht over?')} style={fieldStyle(false)} />
+                  placeholder={tx('What is your message about?', 'Waar gaat je bericht over?')} style={fieldStyle(false)} />
               </label>
 
               <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <span className="eyebrow eyebrow--bare">{tx('What can we help with?', 'Waar kunnen we u mee helpen?')}</span>
+                <span className="eyebrow eyebrow--bare">{tx('What can we help with?', 'Waar kunnen we je mee helpen?')}</span>
                 <textarea rows={4} value={form.message} onChange={(e) => set('message', e.target.value)}
                   placeholder={tx('Salesforce implementation, integration, field service…', 'Salesforce-implementatie, integratie, field service…')}
                   style={fieldStyle(true)} />
@@ -174,12 +174,12 @@ function SiteContactSheet({ open, onClose, subject = '', message = '', source })
           <>
             <div className="eyebrow" style={{ marginBottom: 16 }}>{tx('THANK YOU', 'BEDANKT')}</div>
             <h3 style={{ fontSize: 44, fontWeight: 500, letterSpacing: '-0.022em', lineHeight: 1.04, margin: 0 }}>
-              {tx('We got you.', 'We zijn er voor u.')} <span style={{ color: 'var(--intigris-coral)' }}>→</span>
+              {tx('We got you.', 'We zijn er voor je.')} <span style={{ color: 'var(--intigris-coral)' }}>→</span>
             </h3>
             <p style={{ marginTop: 14, fontSize: 16, fontWeight: 400, color: 'var(--fg-muted)' }}>
               {tx(
                 'Your submission has been received. An Intigrant will reach out within a working day.',
-                'We hebben uw bericht ontvangen. Een Intigrant neemt binnen één werkdag contact met u op.'
+                'We hebben je bericht ontvangen. Een Intigrant neemt binnen één werkdag contact met je op.'
               )}
             </p>
             <button onClick={onClose} className="btn btn-secondary" style={{ marginTop: 28 }}>

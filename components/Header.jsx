@@ -27,7 +27,7 @@ function ServicesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
   const items = window.PRODUCTS || [];
   const copy = window.productCopy ? window.productCopy(tx) : {};
   // Products that have their own page link there; the rest go to the anchor on Services.html.
-  const PRODUCT_PAGES = { sales: 'SalesCloud.html' };
+  const PRODUCT_PAGES = { sales: 'SalesCloud.html', service: 'ServiceCloud.html', 'field-service': 'FieldService.html', agentforce: 'Agentforce.html' };
   const productHref = (id) => PRODUCT_PAGES[id] || `Services.html#${id}`;
   const Glyph = window.ProductGlyph || (() => null);
   return (
@@ -83,7 +83,7 @@ function ServicesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
                     {tx('AI readiness scan', 'AI-readiness scan')}
                     <span className="svc-mega-arrow" aria-hidden>→</span>
                   </div>
-                  <div className="svc-mega-desc">{tx('See where AI can move the needle in your business.', 'Ontdek waar AI het verschil kan maken in uw business.')}</div>
+                  <div className="svc-mega-desc">{tx('See where AI can move the needle in your business.', 'Ontdek waar AI het verschil kan maken in je business.')}</div>
                 </div>
               </a>
             </div>
@@ -193,7 +193,7 @@ function IndustriesMega({ onNav, tx, onEnter, onLeave, theme = 'brown' }) {
         <div className="ind-mega-head">
           <div>
             <div className="ind-mega-eyebrow">{tx('INDUSTRIES WE SERVE', 'BRANCHES DIE WE BEDIENEN')}</div>
-            <div className="ind-mega-title">{tx('Which sector are you in?', 'In welke sector zit u?')}</div>
+            <div className="ind-mega-title">{tx('Which sector are you in?', 'In welke sector zit je?')}</div>
           </div>
           <a className="ind-mega-all" href="Industries.html">
             {tx('View all industries', 'Alle branches')} <span aria-hidden>→</span>

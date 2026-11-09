@@ -170,7 +170,7 @@ function SiteServices() {
           <p className="lede">
             {tx(
               'Four engagement models, each with the same outcome: a Salesforce platform that advances your business. Choose the closest fit, and we will shape the engagement from there.',
-              'Vier engagement-modellen met hetzelfde doel: een Salesforce-platform dat uw business vooruit helpt. Kies wat het beste past en we bouwen het traject samen.'
+              'Vier engagement-modellen met hetzelfde doel: een Salesforce-platform dat je business vooruit helpt. Kies wat het beste past en we bouwen het traject samen.'
             )}
           </p>
         </div>
@@ -585,11 +585,11 @@ window.SiteServices = SiteServices;
 /* ---------- Localized short copy shared by header mega + compact grid ---------- */
 function productCopy(tx) {
   return {
-    sales:          { name: tx('Sales Cloud', 'Sales Cloud'),               short: tx('Pipeline, forecasting & CRM that fits how you sell.', 'Pipeline, forecasting & CRM die past bij hoe u verkoopt.') },
+    sales:          { name: tx('Sales Cloud', 'Sales Cloud'),               short: tx('Pipeline, forecasting & CRM that fits how you sell.', 'Pipeline, forecasting & CRM die past bij hoe je verkoopt.') },
     'field-service':{ name: tx('Field Service', 'Field Service'),           short: tx('Dispatch, routing, mobile & parts, our deepest specialism.', 'Dispatch, routing, mobile & parts, ons grootste specialisme.') },
     service:        { name: tx('Service Cloud', 'Service Cloud'),           short: tx('Omnichannel case management in one console.', 'Omnichannel casemanagement in één console.') },
     integrations:   { name: tx('Integrations', 'Integraties'),              short: tx('Salesforce connected to ERP, data & core systems.', 'Salesforce gekoppeld aan ERP, data & kernsystemen.') },
-    agentforce:     { name: tx('Agentforce', 'Agentforce'),                 short: tx('Salesforce AI agents grounded in your data.', 'Salesforce AI-agents op basis van uw data.') },
+    agentforce:     { name: tx('Agentforce', 'Agentforce'),                 short: tx('Salesforce AI agents grounded in your data.', 'Salesforce AI-agents op basis van je data.') },
     data:           { name: tx('Data 360', 'Data 360'),                     short: tx('One unified customer profile, activated everywhere.', 'Één uniform klantprofiel, overal geactiveerd.') },
     fieldbuddy:     { name: tx('FieldBuddy', 'FieldBuddy'),                 short: tx('Our in-house service-ops app on the platform.', 'Onze eigen service-ops app op het platform.') },
     experience:     { name: tx('Experience Cloud', 'Experience Cloud'),     short: tx('Customer, partner & self-service portals.', 'Klant-, partner- & self-serviceportalen.') },

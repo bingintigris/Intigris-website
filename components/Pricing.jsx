@@ -34,7 +34,7 @@ function SitePricing({ onCta }) {
       unit: tx('fixed scope', 'vaste scope'),
       blurb: tx(
         'A focused audit and quick-win setup to get your Salesforce org healthy and pointed in the right direction.',
-        'Een gerichte audit en quick-win setup om uw Salesforce-org gezond te maken en de juiste kant op te zetten.'
+        'Een gerichte audit en quick-win setup om je Salesforce-org gezond te maken en de juiste kant op te zetten.'
       ),
       features: [
         tx('Org & data health check', 'Org- & datacheck'),
@@ -53,7 +53,7 @@ function SitePricing({ onCta }) {
       highlight: true,
       blurb: tx(
         'A full implementation across your priority clouds, configured, integrated, and adopted by your team.',
-        'Een volledige implementatie op uw belangrijkste clouds, ingericht, geïntegreerd en geadopteerd door uw team.'
+        'Een volledige implementatie op je belangrijkste clouds, ingericht, geïntegreerd en geadopteerd door je team.'
       ),
       features: [
         tx('Multi-cloud implementation', 'Multi-cloud implementatie'),
@@ -71,7 +71,7 @@ function SitePricing({ onCta }) {
       unit: tx('retainer', 'retainer'),
       blurb: tx(
         'Ongoing partnership, we stay close as your managed Salesforce team, releasing improvements every sprint.',
-        'Doorlopend partnerschap, we blijven dichtbij als uw managed Salesforce-team en leveren elke sprint verbeteringen.'
+        'Doorlopend partnerschap, we blijven dichtbij als je managed Salesforce-team en leveren elke sprint verbeteringen.'
       ),
       features: [
         tx('Managed service & support', 'Managed service & support'),
@@ -98,7 +98,7 @@ function SitePricing({ onCta }) {
           <p className="lede">
             {tx(
               'No mystery quotes. Pick the engagement that fits where you are, and we scope the rest together.',
-              'Geen vage offertes. Kies het traject dat past bij waar u nu staat, de rest bepalen we samen.'
+              'Geen vage offertes. Kies het traject dat past bij waar je nu staat, de rest bepalen we samen.'
             )}
           </p>
         </div>

@@ -48,7 +48,7 @@ function SiteFinalCTA({ onCta }) {
             }}>
               {tx(
                 'A 30-minute conversation with a senior consultant. We listen, ask precise questions, and give you a candid view on whether we are the right partner.',
-                'Een gesprek van 30 minuten met een senior consultant. We luisteren, stellen scherpe vragen en geven u een eerlijk beeld of we de juiste partner zijn.'
+                'Een gesprek van 30 minuten met een senior consultant. We luisteren, stellen scherpe vragen en geven je een eerlijk beeld of we de juiste partner zijn.'
               )}
             </p>
           </div>
@@ -191,7 +191,7 @@ function SiteFooter({ divider }) {
             }}>
               {tx(
                 'We bring into focus what you need, then we implement it so you can move forward.',
-                'We brengen scherp in beeld wat u nodig heeft en implementeren het, zodat u vooruit kunt.'
+                'We brengen scherp in beeld wat je nodig hebt en implementeren het, zodat je vooruit kunt.'
               )}
             </p>
             {/* 16px, matching the tagline above it. */}
@@ -199,7 +199,7 @@ function SiteFooter({ divider }) {
               marginTop: 28,
               fontSize: 16, color: 'rgba(64,35,1,0.9)', lineHeight: 1.6, fontWeight: 400,
             }}>
-              Kraanspoor 42, 1033 SE,<br/>
+              Asterweg 71, 1031 HM,<br/>
               Amsterdam, Noord-Holland<br/>
               {tx('The Netherlands', 'Nederland')}
             </div>
@@ -212,8 +212,8 @@ function SiteFooter({ divider }) {
             </div>
           </div>
 
-          {COL(tx('SERVICES', 'DIENSTEN'), ['Sales Cloud', 'Field Service', 'Service Cloud', 'Integrations', 'Agentforce', 'Data 360', 'FieldBuddy', 'Experience Cloud'])}
-          {COL(tx('SOLUTIONS', 'OPLOSSINGEN'), ['Salesforce Consulting', 'Integration Development', 'Field Service Consulting', tx('Salesforce Quickstarts', 'Salesforce Quickstarts'), 'ISA Academy'])}
+          {COL(tx('SERVICES', 'DIENSTEN'), [{ label: 'Sales Cloud', href: 'SalesCloud.html' }, { label: 'Field Service', href: 'FieldService.html' }, { label: 'Service Cloud', href: 'ServiceCloud.html' }, 'Integrations', { label: 'Agentforce', href: 'Agentforce.html' }, 'Data 360', 'FieldBuddy', 'Experience Cloud'])}
+          {COL(tx('SOLUTIONS', 'OPLOSSINGEN'), ['Salesforce Consulting', 'Integration Development', 'Field Service Consulting', { label: tx('Salesforce Quickstarts', 'Salesforce Quickstarts'), href: 'Quickstarts.html' }, 'ISA Academy'])}
           {COL(tx('COMPANY', 'BEDRIJF'), [tx('About', 'Over ons'), 'Blog', tx('Careers', 'Werken bij'), tx('Contact', 'Contact'), 'LinkedIn', { label: tx('Admin', 'Admin'), href: 'https://intigris-admin.netlify.app' }])}
         </div>
 

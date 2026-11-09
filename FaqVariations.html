@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FAQ: 3 varianten | Intigris</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="design-system/site.css?v=1788980000000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'nl';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+  </script>
+</head>
+<body style="background: var(--intigris-brown-700); margin: 0;">
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script type="text/babel" src="components/CloudKit.jsx?v=1788980000000"></script>
+  <script type="text/babel" src="components/CloudKitV3.jsx?v=1788980000000"></script>
+  <script type="text/babel" src="components/FieldServiceV2.jsx?v=1788980000000"></script>
+  <script type="text/babel" src="components/CloudPagesV3.jsx?v=1788980000000"></script>
+  <script type="text/babel" src="components/FaqVariants.jsx?v=1788980000000"></script>
+  <script type="text/babel">
+    const ONLY = new URLSearchParams(window.location.search).get('only'); /* ?only=a|b|c */
+    const onCta = () => alert(tx('Here the booking form opens.', 'Hier opent het afspraakformulier.'));
+    function App() {
+      const items = sc3.faq();
+      const head = { eyebrow: tx('QUESTIONS WE GET', 'VRAGEN DIE WE KRIJGEN'), a: tx('Before you', 'Voordat je'), b: tx('book the call.', 'het gesprek plant.') };
+      const show = k => !ONLY || ONLY === k;
+      return (
+        <main>
+          {!ONLY && (
+            <header className="container-wide" style={{ paddingBlock: '72px 40px', color: 'var(--intigris-off-white)' }}>
+              <div className="eyebrow">{tx('SALES CLOUD · FAQ SECTION', 'SALES CLOUD · FAQ-SECTIE')}</div>
+              <h1 style={{ color: 'var(--intigris-off-white)', fontSize: 'clamp(40px, 6vw, 80px)', fontWeight: 500, letterSpacing: '-.035em', lineHeight: 1, margin: '18px 0 14px' }}>{tx('Three ways to answer.', 'Drie manieren om te antwoorden.')} <span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('Pick one.', 'Kies er één.')}</span></h1>
+              <p style={{ fontSize: 18, color: 'rgba(252,247,235,.8)', maxWidth: 680, margin: 0 }}>{tx('Same five questions, three designs. Click around in each one.', 'Dezelfde vijf vragen, drie ontwerpen. Klik in elke variant rond.')}</p>
+            </header>
+          )}
+          {show('a') && <FaqChat head={head} items={items} onCta={onCta} />}
+          {show('b') && <FaqNotes head={head} items={items} />}
+          {show('c') && <FaqBigType head={head} items={items} onCta={onCta} />}
+          <CkStyles /><FvStyles />
+        </main>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

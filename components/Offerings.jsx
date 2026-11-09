@@ -36,7 +36,7 @@ function SiteOfferings() {
           <p className="lede">
             {tx(
               'From business automation to bespoke AI, we design, build, and improve the systems your teams run on.',
-              'Van bedrijfsautomatisering tot AI op maat, we ontwerpen, bouwen en verbeteren de systemen waarop uw teams draaien.'
+              'Van bedrijfsautomatisering tot AI op maat, we ontwerpen, bouwen en verbeteren de systemen waarop je teams draaien.'
             )}
           </p>
         </div>
@@ -93,7 +93,7 @@ function SiteOfferings() {
               <h3 className="off-title">{tx('App development', 'App-ontwikkeling')}</h3>
               <p className="off-desc">{tx(
                 'Custom-built applications that fit your business goals exactly.',
-                'Applicaties op maat die perfect aansluiten bij uw bedrijfsdoelen.'
+                'Applicaties op maat die perfect aansluiten bij je bedrijfsdoelen.'
               )}</p>
               <InfoButton label={tx('More info', 'Meer info')} tone="light" />
             </div>
@@ -109,7 +109,7 @@ function SiteOfferings() {
                 <h3 className="off-title">{tx('Improving existing systems', 'Verbetering van bestaande systemen')}</h3>
                 <p className="off-desc">{tx(
                   'Give your current systems an AI upgrade. We build AI features on top of what you run, that meet your exact needs, even without APIs.',
-                  'Geef uw huidige systemen een AI-upgrade. We bouwen AI-functies bovenop uw systemen die exact aansluiten, ook zonder API-mogelijkheden.'
+                  'Geef je huidige systemen een AI-upgrade. We bouwen AI-functies bovenop je systemen die exact aansluiten, ook zonder API-mogelijkheden.'
                 )}</p>
                 <InfoButton label={tx('More info', 'Meer info')} tone="dark" />
               </div>

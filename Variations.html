@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page variations | Intigris</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="design-system/site.css?v=1788863018000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <style>
+    body { background: var(--intigris-brown-700); color: var(--intigris-off-white); font-family: var(--font-sans); margin: 0; }
+    .v-wrap { max-width: 1120px; margin: 0 auto; padding: 72px max(20px, env(safe-area-inset-left, 0px)) 80px; }
+    .v-wrap h1 { font-size: clamp(40px, 6vw, 80px); font-weight: 500; letter-spacing: -.035em; line-height: .98; margin: 18px 0 18px; }
+    .v-wrap h1 span { color: var(--intigris-coral); font-style: italic; }
+    .v-lede { font-size: 18px; color: rgba(252,247,235,.8); max-width: 680px; margin: 0 0 44px; line-height: 1.55; }
+    .v-group { margin-top: 44px; }
+    .v-group h2 { font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--intigris-coral); font-weight: 600; margin: 0 0 14px; }
+    .v-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .v-card { display: flex; flex-direction: column; gap: 10px; padding: 26px; border-radius: 24px; background: rgba(252,247,235,.06); border: 1px solid rgba(252,247,235,.16); color: var(--intigris-off-white); text-decoration: none; transition: border-color 200ms, transform 200ms; }
+    .v-card:hover { border-color: var(--intigris-coral); transform: translateY(-2px); }
+    .v-card b { font-size: 26px; font-weight: 500; letter-spacing: -.02em; }
+    .v-card p { margin: 0; font-size: 15px; line-height: 1.55; color: rgba(252,247,235,.78); }
+    .v-card ul { margin: 4px 0 0; padding-left: 18px; font-size: 14px; color: rgba(252,247,235,.78); display: flex; flex-direction: column; gap: 4px; }
+    .v-links { display: flex; gap: 10px; margin-top: auto; padding-top: 10px; }
+    .v-links span { font-size: 13px; padding: 7px 12px; border-radius: 999px; background: var(--intigris-coral); color: var(--intigris-brown-700); font-weight: 600; }
+    .v-links span.nl { background: transparent; border: 1px solid rgba(252,247,235,.35); color: var(--intigris-off-white); }
+    .v-note { margin-top: 48px; font-size: 13.5px; color: rgba(252,247,235,.6); }
+    @media (max-width: 760px) { .v-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="v-wrap">
+    <div class="eyebrow">Intigris · new website · page variations</div>
+    <h1>Pick a direction. <span>Mix freely.</span></h1>
+    <p class="v-lede">Two variations each of the new Sales Cloud and Field Service pages, built on the research. They are real pages: scroll, drag and click. Every block can move between variations, so "the hero of B with the story of A" is a fine answer.</p>
+
+    <div class="v-group">
+      <h2>Round 3 · service pages (new)</h2>
+      <div class="v-grid">
+        <a class="v-card" href="SalesCloud-v3.html?lang=nl" style="border-color:var(--intigris-coral)">
+          <b>Sales Cloud · v3</b>
+          <p>The whole cloud; the Quickstart is one way to start, near the bottom.</p>
+          <ul><li>Hero: post-its, mails, WhatsApp and Excel snap into one customer record as you scroll</li><li>"What it is" from the current page</li><li>Compact "Stop met gokken / overtypen…"</li><li>Six steps, one system · stories · integrations</li><li>Two ways to start: Quickstart vanaf € 7.000 or full implementation</li><li>Calculator with your own assumptions · FAQ</li></ul>
+          <div class="v-links"><span class="nl">Nederlands</span></div>
+        </a>
+        <a class="v-card" href="FieldService-v3.html?lang=nl" style="border-color:var(--intigris-coral)">
+          <b>Field Service · v3</b>
+          <p>What Field Service is, with the route as the hero visual.</p>
+          <ul><li>Hero with the route that untangles + counters</li><li>Four problem cards that flip to the solution</li><li>Compact "Geen papieren werkbonnen / tweede bezoeken…"</li><li>Stories (De Ridder 3×) · compact monteur's day</li><li>Ways to start: Quickstart vanaf € 13.000, full implementation, or FieldBuddy</li><li>Calculator (driving + repeat visits) · FAQ</li></ul>
+          <div class="v-links"><span class="nl">Nederlands</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="v-group">
+      <h2>Round 2 · Sales Cloud</h2>
+      <div class="v-grid">
+        <a class="v-card" href="SalesCloud-A.html">
+          <b>A · The story</b>
+          <p>Classic coral hero with the "from €7,000" card. Calm and complete.</p>
+          <ul><li>Role switch: director / sales manager / account manager</li><li>Drag from spreadsheet to pipeline</li><li>"From lead to closed deal" six steps, line fills on scroll</li><li>Customer success stories · package · calculator · FAQ</li></ul>
+          <div class="v-links"><span>English</span></div>
+        </a>
+        <a class="v-card" href="SalesCloud-B.html?lang=nl">
+          <b>B · Bold</b>
+          <p>Dark hero with the calculator built in. Shorter and punchier.</p>
+          <ul><li>Live time-back calculator in the hero</li><li>"Stop gokken / overtypen / zoeken": the word swaps as you scroll</li><li>Drag from spreadsheet to pipeline</li><li>Stories · package · FAQ</li></ul>
+          <div class="v-links"><span class="nl">Nederlands</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="v-group">
+      <h2>Round 2 · Field Service</h2>
+      <div class="v-grid">
+        <a class="v-card" href="FieldService-A.html?lang=nl">
+          <b>A · The monteur's day</b>
+          <p>Coral hero with the "from €13,000" card, then the story of one engineer's Tuesday.</p>
+          <ul><li>Route untangles as you scroll</li><li>Sector switch: installatie / HVAC / energie / machinebouw</li><li>Monteur's day 07:30 → 16:30, with and without</li><li>De Ridder 3× · package · Exact/AFAS strip · FieldBuddy link · FAQ</li></ul>
+          <div class="v-links"><span class="nl">Nederlands</span></div>
+        </a>
+        <a class="v-card" href="FieldService-B.html">
+          <b>B · Route first</b>
+          <p>Dark hero, then the route pinned full-screen while it untangles.</p>
+          <ul><li>Pinned route with live counters</li><li>Without / with switch over six topics</li><li>Monteur's day</li><li>Stories · pilot-first package · FieldBuddy link · FAQ</li></ul>
+          <div class="v-links"><span>English</span></div>
+        </a>
+      </div>
+    </div>
+
+    <p class="v-note">Each page has the EN/NL switch top right. Prices are the Quickstart prices from the sales notes (Field Service €13,000 still to confirm). Customer quotes are verbatim from the 2023 customer stories; the "3×" is from the De Ridder story. Calculator and route figures are labelled as examples.</p>
+  </div>
+</body>
+</html>

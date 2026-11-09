@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Klantverhalen: 5 varianten | Intigris</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="design-system/site.css?v=1788990000000">
+  <link rel="icon" href="assets/logo-coral.png">
+  <script>
+    window.__lang = new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'nl';
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+  </script>
+</head>
+<body style="background: var(--intigris-brown-700); margin: 0;">
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <script type="text/babel" src="components/CloudKit.jsx?v=1788990000000"></script>
+  <script type="text/babel" src="components/StoryVariants.jsx?v=1788990000000"></script>
+  <script type="text/babel">
+    const ONLY = new URLSearchParams(window.location.search).get('only'); /* ?only=a|b|c|d|e */
+    const onCta = () => alert(tx('Here the booking form opens.', 'Hier opent het afspraakformulier.'));
+    function App() {
+      const S = CK_STORIES();
+      const stories = [S.wetransfer, S.evbox, S.zon365, S.opcharge, S.alpha];
+      const head = { eyebrow: tx('CUSTOMER SUCCESS STORIES', 'KLANTSUCCESVERHALEN'), a: tx('Teams that run on it.', 'Teams die erop draaien.'), b: '' };
+      const show = k => !ONLY || ONLY === k;
+      return (
+        <main>
+          {!ONLY && (
+            <header className="container-wide" style={{ paddingBlock: '72px 40px', color: 'var(--intigris-off-white)' }}>
+              <div className="eyebrow">{tx('SALES CLOUD · CUSTOMER STORIES', 'SALES CLOUD · KLANTSUCCESVERHALEN')}</div>
+              <h1 style={{ color: 'var(--intigris-off-white)', fontSize: 'clamp(40px, 6vw, 80px)', fontWeight: 500, letterSpacing: '-.035em', lineHeight: 1, margin: '18px 0 14px' }}>{tx('Five ways to tell it.', 'Vijf manieren om het te vertellen.')} <span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('Pick one.', 'Kies er één.')}</span></h1>
+              <p style={{ fontSize: 18, color: 'rgba(252,247,235,.8)', maxWidth: 680, margin: 0 }}>{tx('Same five stories, same verbatim quotes, five designs. Hover, click, drag.', 'Dezelfde vijf verhalen, dezelfde letterlijke quotes, vijf ontwerpen. Hover, klik en sleep.')}</p>
+            </header>
+          )}
+          {show('a') && <StoriesWall head={head} stories={stories} />}
+          {show('b') && <StoriesSpotlight head={head} stories={stories} />}
+          {show('c') && <StoriesBento head={head} stories={stories} onCta={onCta} />}
+          {show('d') && <StoriesDeck head={head} stories={stories} />}
+          {show('e') && <StoriesNames head={head} stories={stories} />}
+          <CkStyles /><SvStyles />
+        </main>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

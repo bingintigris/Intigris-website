@@ -34,13 +34,13 @@ function SiteShowcase({ onCta }) {
             <p style={{ margin: 0, fontSize: 'clamp(19px, 1.6vw, 22px)', fontWeight: 400, lineHeight: 1.4, color: 'var(--intigris-dark-brown)' }}>
               {tx(
                 'We bring focus to what your business needs, then build it on Salesforce so your teams can move forward.',
-                'We brengen focus aan in wat uw bedrijf nodig heeft en bouwen het op Salesforce, zodat uw teams verder kunnen.'
+                'We brengen focus aan in wat je bedrijf nodig heeft en bouwen het op Salesforce, zodat je teams verder kunnen.'
               )}
             </p>
             <div className="showcase-cta-row">
               <span style={{ fontSize: 14, fontWeight: 400, color: 'var(--fg-muted)', lineHeight: 1.35 }}>
                 {tx('Curious what we can do', 'Benieuwd wat we kunnen doen')}<br/>
-                {tx('for your team?', 'voor uw team?')}
+                {tx('for your team?', 'voor je team?')}
               </span>
               <button className="btn btn-primary showcase-cta" onClick={onCta}>
                 {tx("Let's talk", 'Neem contact op')}

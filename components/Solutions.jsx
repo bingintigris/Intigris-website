@@ -145,7 +145,7 @@ function SiteSolutions() {
               fontSize: 14, color: 'rgba(252,247,235,0.7)', fontWeight: 400, maxWidth: 460,
               lineHeight: 1.5,
             }}>
-              {tx('Working with another cloud, or in need of a custom build?', 'Werkt u met een andere cloud, of heeft u een custom build nodig?')}
+              {tx('Working with another cloud, or in need of a custom build?', 'Werk je met een andere cloud, of heb je een custom build nodig?')}
               <a className="txt-link" style={{ color: 'var(--intigris-coral)', textDecoration: 'underline', marginLeft: 6 }}>
                 {tx('We very likely cover that as well →', 'Daar dekken we vrijwel zeker ook →')}
               </a>
