@@ -115,6 +115,9 @@ export function PlatformZoom() {
       });
       const st = ScrollTrigger.create({ trigger: stage, start: 'top top', end: '+=' + n * 85 + '%', pin: true, scrub: 0.8, animation: tl });
       stRef.current = st;
+      /* this island mounts after the page's own sections: re-sort all triggers by page order
+         so sections further down are measured including this pin's spacing */
+      ScrollTrigger.sort();
       ScrollTrigger.refresh();
       return () => { stRef.current = null; };
     });
@@ -124,7 +127,10 @@ export function PlatformZoom() {
   const pick = (i: number) => {
     const st = stRef.current; if (!st) return;
     const time = i === 0 ? 0.1 : HOLD + (i - 1) * SEG + ZOOM + 0.15;
-    window.scrollTo({ top: st.start + (st.end - st.start) * (time / total), behavior: 'smooth' });
+    const top = st.start + (st.end - st.start) * (time / total);
+    /* glide with Lenis when the page uses it (components/SmoothScroll.js), else native smooth scroll */
+    const lenis = (window as unknown as { lenis?: { scrollTo: (y: number, o?: { duration?: number }) => void } }).lenis;
+    if (lenis) lenis.scrollTo(top, { duration: 1.2 }); else window.scrollTo({ top, behavior: 'smooth' });
   };
 
   return (

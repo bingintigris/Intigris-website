@@ -26,7 +26,8 @@ function SiteSalesforceHome({ onCta }) {
   return (
     <React.Fragment>
       {/* 2 · Proof strip: TODO (variant round) */}
-      {/* 3 · The platform: TODO (variant round) */}
+      {/* 3 · The platform: concept B "Mission Control" (chosen 2026-11-11), island in islands/src/islands/PlatformMission.tsx */}
+      <Island name="platformMission" />
       {/* 4 · Where do you start: TODO (variant round) */}
 
       {/* 5 · Integrations (approved on the Sales Cloud page) */}

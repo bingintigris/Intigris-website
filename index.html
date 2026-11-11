@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="design-system/site.css?v=1788863018000">
   <link rel="icon" href="assets/logo-coral.png">
   <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.20/dist/lenis.css">
+  <link rel="stylesheet" href="islands-dist/islands.css?v=7">
   <script>
     /* Tiny i18n bootstrap, defined before component scripts load.
        Components call window.tx('English', 'Nederlands') and get the
@@ -53,11 +54,14 @@
   <!-- Smooth scrolling (Lenis), synced with ScrollTrigger; off for reduced motion and touch devices -->
   <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
   <script src="components/SmoothScroll.js?v=1789080000000"></script>
+  <!-- Islands: interactive sections built in /islands (Vite + React + TS + Tailwind); use the page's React and GSAP -->
+  <script src="islands-dist/islands.js?v=7"></script>
+  <script type="text/babel" src="components/Island.jsx?v=2"></script>
   <script type="text/babel" src="components/CloudKit.jsx?v=1789070000000"></script>
   <script type="text/babel" src="components/CloudKitV3.jsx?v=1789070000000"></script>
   <script type="text/babel" src="components/StorySpotlight.jsx?v=1789070000000"></script>
   <script type="text/babel" src="components/SalesShowcase.jsx?v=1789070000000"></script>
-  <script type="text/babel" src="components/HomeSalesforce.jsx?v=1789070000000"></script>
+  <script type="text/babel" src="components/HomeSalesforce.jsx?v=1789080000000"></script>
 
   <script type="text/babel">
     const { useState, useEffect } = React;

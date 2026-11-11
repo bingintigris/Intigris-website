@@ -117,6 +117,9 @@ export function PlatformMission() {
       tl.eventCallback('onUpdate', () => setActive(Math.min(n - 1, Math.floor(tl.time()))));
       const st = ScrollTrigger.create({ trigger: q('.mc-stage'), start: 'top top', end: '+=' + n * 80 + '%', pin: true, scrub: 0.8, animation: tl });
       stRef.current = st;
+      /* this island mounts after the page's own sections: re-sort all triggers by page order
+         so sections further down are measured including this pin's spacing */
+      ScrollTrigger.sort();
       ScrollTrigger.refresh();
       return () => { stRef.current = null; };
     });
@@ -125,7 +128,10 @@ export function PlatformMission() {
 
   const pick = (i: number) => {
     const st = stRef.current; if (!st) return;
-    window.scrollTo({ top: st.start + (st.end - st.start) * ((i + 0.85) / 7), behavior: 'smooth' });
+    const top = st.start + (st.end - st.start) * ((i + 0.85) / 7);
+    /* glide with Lenis when the page uses it (components/SmoothScroll.js), else native smooth scroll */
+    const lenis = (window as unknown as { lenis?: { scrollTo: (y: number, o?: { duration?: number }) => void } }).lenis;
+    if (lenis) lenis.scrollTo(top, { duration: 1.2 }); else window.scrollTo({ top, behavior: 'smooth' });
   };
   const s = steps[active];
   const [dx, dy] = [262, 352];
