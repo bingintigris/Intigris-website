@@ -49,8 +49,15 @@
   <script type="text/babel" src="components/CookieConsent.jsx?v=1788863018000"></script>
   <script type="text/babel" src="components/Footer.jsx?v=1788863018000"></script>
   <!-- Salesforce Solutions view: GSAP scroll animations + the section kit from the Sales Cloud page -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- GSAP 3.13 (all plugins free since 3.13): ScrollTrigger + text, line, morph, path and layout effects -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/DrawSVGPlugin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/MorphSVGPlugin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/MotionPathPlugin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Flip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
   <!-- Smooth scrolling (Lenis), synced with ScrollTrigger; off for reduced motion and touch devices -->
   <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
   <script src="components/SmoothScroll.js?v=1789080000000"></script>
@@ -84,7 +91,7 @@
       const [contactOpen, setContactOpen] = useState(false);
       const [lang, setLang] = useState(window.__lang);
       const [mode, setMode] = useState(() => new URLSearchParams(window.location.search).get('mode') === 'salesforce' ? 'salesforce' : 'ai'); // 'ai' (default) | 'salesforce'
-      useEffect(() => { document.documentElement.setAttribute('lang', lang); if (window.gsap && window.ScrollTrigger) window.gsap.registerPlugin(window.ScrollTrigger); }, []);
+      useEffect(() => { document.documentElement.setAttribute('lang', lang); if (window.gsap) window.gsap.registerPlugin(...['ScrollTrigger', 'SplitText', 'DrawSVGPlugin', 'MorphSVGPlugin', 'MotionPathPlugin', 'Flip', 'ScrambleTextPlugin'].map(n => window[n]).filter(Boolean)); }, []);
 
       // Set window.__lang SYNCHRONOUSLY so the same render's tx() reads the new value.
       const changeLang = (next) => {
