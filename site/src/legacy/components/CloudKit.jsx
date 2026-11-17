@@ -555,7 +555,7 @@ function CkStyles() {
       .ck-hero { position: relative; overflow: hidden; isolation: isolate; color: var(--intigris-off-white); border-bottom-left-radius: clamp(24px, 4vw, 56px); border-bottom-right-radius: clamp(24px, 4vw, 56px); }
       .ck-hero--coral { background: linear-gradient(90deg, #ff9166 0%, var(--intigris-coral) 44%, var(--intigris-coral-700) 80%, #9e300d 100%); }
       .ck-hero--dark { background: radial-gradient(110% 90% at 85% 10%, #ff7a50 0%, var(--intigris-coral-700) 28%, var(--intigris-chocolate) 62%, var(--intigris-brown-700) 100%); }
-      .ck-hero-photo { position: absolute; inset: 0; z-index: -1; background: url("assets/hero-team.jpg") center right / cover; mix-blend-mode: multiply; opacity: .45; -webkit-mask-image: linear-gradient(90deg, transparent 30%, #000 72%); mask-image: linear-gradient(90deg, transparent 30%, #000 72%); }
+      .ck-hero-photo { position: absolute; inset: 0; z-index: -1; background: url("/assets/hero-team.jpg") center right / cover; mix-blend-mode: multiply; opacity: .45; -webkit-mask-image: linear-gradient(90deg, transparent 30%, #000 72%); mask-image: linear-gradient(90deg, transparent 30%, #000 72%); }
       .ck-hero--dark .ck-hero-photo { opacity: .25; }
       .ck-hero-inner { padding-top: clamp(132px, 17vh, 200px); padding-bottom: clamp(56px, 8vh, 96px); }
       .ck-hero-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: end; }

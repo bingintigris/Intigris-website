@@ -152,7 +152,7 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
         }}>
           <div aria-hidden style={{
             position: 'absolute', inset: 0, zIndex: 0,
-            backgroundImage: 'url("assets/industries/pexels-tima-miroshnichenko-6196229.jpg")', backgroundSize: 'cover', backgroundPosition: 'center',
+            backgroundImage: 'url("/assets/industries/pexels-tima-miroshnichenko-6196229.jpg")', backgroundSize: 'cover', backgroundPosition: 'center',
             opacity: 0.4, mixBlendMode: 'luminosity',
             WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, transparent 30%, #000 76%)', maskImage: 'linear-gradient(90deg, transparent 0%, transparent 30%, #000 76%)',
           }} />

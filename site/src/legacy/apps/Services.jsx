@@ -205,7 +205,7 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
           {/* Warm-lit photography fading into dark brown, per the design direction. */}
           <div aria-hidden style={{
             position: 'absolute', inset: 0, zIndex: 0,
-            backgroundImage: 'url("assets/hero-team.jpg")', backgroundSize: 'cover', backgroundPosition: 'center right',
+            backgroundImage: 'url("/assets/hero-team.jpg")', backgroundSize: 'cover', backgroundPosition: 'center right',
             opacity: 0.42, mixBlendMode: 'luminosity',
             WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, transparent 34%, #000 78%)', maskImage: 'linear-gradient(90deg, transparent 0%, transparent 34%, #000 78%)',
           }} />

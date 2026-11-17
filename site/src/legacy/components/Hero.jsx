@@ -92,7 +92,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
       {/* Photo layer, warm silhouette emerging from the right */}
       <div aria-hidden style={{
         position: 'absolute', inset: 0, zIndex: 0,
-        backgroundImage: 'url("assets/hero-team.jpg")',
+        backgroundImage: 'url("/assets/hero-team.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center right',
         mixBlendMode: dark ? 'overlay' : 'multiply',
@@ -245,7 +245,7 @@ function HeroSplit({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
       backgroundImage: [
         'linear-gradient(180deg, rgba(252,247,235,0.78) 0%, rgba(252,247,235,0.62) 60%, rgba(252,247,235,0.82) 100%)',
         'linear-gradient(90deg, rgba(252,247,235,0.55) 0%, rgba(252,247,235,0.15) 55%, rgba(252,247,235,0.0) 100%)',
-        'url("assets/hero-team.jpg")',
+        'url("/assets/hero-team.jpg")',
       ].join(', '),
       backgroundSize: 'cover, cover, cover',
       backgroundPosition: 'center, center, center right',

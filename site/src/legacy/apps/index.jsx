@@ -38,7 +38,9 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
       const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
       const [contactOpen, setContactOpen] = useState(false);
       const [lang, setLang] = useState(getLang());
-      const [mode, setMode] = useState(() => new URLSearchParams(win.location.search).get('mode') === 'salesforce' ? 'salesforce' : 'ai'); // 'ai' (default) | 'salesforce'
+      /* 'ai' (default) | 'salesforce'. The page is pre-rendered in AI mode; ?mode=salesforce switches after hydration */
+      const [mode, setMode] = useState('ai');
+      useEffect(() => { if (new URLSearchParams(win.location.search).get('mode') === 'salesforce') setMode('salesforce'); }, []);
       useEffect(() => { doc.documentElement.setAttribute('lang', lang); if (win.gsap) win.gsap.registerPlugin(...['ScrollTrigger', 'SplitText', 'DrawSVGPlugin', 'MorphSVGPlugin', 'MotionPathPlugin', 'Flip', 'ScrambleTextPlugin'].map(n => win[n]).filter(Boolean)); }, []);
 
       // Set window.__lang SYNCHRONOUSLY so the same render's tx() reads the new value.

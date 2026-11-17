@@ -38,7 +38,7 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
           background: 'linear-gradient(90deg, #ff9166 0%, var(--intigris-coral) 44%, var(--intigris-coral-700) 80%, #9e300d 100%)',
           borderBottomLeftRadius: 'clamp(24px, 4vw, 56px)', borderBottomRightRadius: 'clamp(24px, 4vw, 56px)', isolation: 'isolate',
         }}>
-          <div aria-hidden style={{ position: 'absolute', inset: 0, zIndex: 0, backgroundImage: 'url("assets/hero-team.jpg")', backgroundSize: 'cover', backgroundPosition: 'center right', mixBlendMode: 'multiply', opacity: 0.5, WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%)', maskImage: 'linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%)' }} />
+          <div aria-hidden style={{ position: 'absolute', inset: 0, zIndex: 0, backgroundImage: 'url("/assets/hero-team.jpg")', backgroundSize: 'cover', backgroundPosition: 'center right', mixBlendMode: 'multiply', opacity: 0.5, WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%)', maskImage: 'linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%)' }} />
           <div aria-hidden style={{ position: 'absolute', inset: 0, zIndex: 0, background: 'linear-gradient(180deg, rgba(64,35,1,0) 40%, rgba(64,35,1,0.28) 100%)' }} />
           <div className="container-wide" style={{ position: 'relative', zIndex: 1, paddingTop: 'clamp(128px, 16vh, 190px)', paddingBottom: 'clamp(48px, 7vh, 84px)' }}>
             <div className="ab-hero-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.35fr) minmax(0,1fr)', gap: 'clamp(32px, 5vw, 72px)', alignItems: 'end' }}>

@@ -212,7 +212,7 @@ function QuickstartStyles() {
       .sc-head { grid-template-columns: 1fr; }
       .sc-head .display-md { text-wrap: balance; max-width: none; }
       .sc-hero { position: relative; overflow: hidden; isolation: isolate; background: linear-gradient(90deg, #ff9166 0%, var(--intigris-coral) 44%, var(--intigris-coral-700) 80%, #9e300d 100%); color: var(--intigris-off-white); border-bottom-left-radius: clamp(24px, 4vw, 56px); border-bottom-right-radius: clamp(24px, 4vw, 56px); }
-      .sc-hero-photo { position: absolute; inset: 0; z-index: 0; background: url("assets/hero-team.jpg") center right / cover; mix-blend-mode: multiply; opacity: .5; -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%); mask-image: linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%); }
+      .sc-hero-photo { position: absolute; inset: 0; z-index: 0; background: url("/assets/hero-team.jpg") center right / cover; mix-blend-mode: multiply; opacity: .5; -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%); mask-image: linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%); }
       .sc-hero-fade { position: absolute; inset: 0; z-index: 0; background: linear-gradient(180deg, rgba(64,35,1,0) 40%, rgba(64,35,1,.28) 100%); }
       .sc-hero-inner { position: relative; z-index: 1; padding-top: clamp(132px, 17vh, 200px); padding-bottom: clamp(56px, 8vh, 96px); }
       .sc-hero-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: end; }
