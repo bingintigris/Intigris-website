@@ -1,0 +1,23 @@
+{
+  "name": "intigris-site",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "intigris.nl built with Astro (static, EN + /nl/). React components render at build time and hydrate in the browser.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.2",
+    "astro": "5.18.1",
+    "clsx": "2.1.1",
+    "gsap": "3.13.0",
+    "motion": "11.18.2",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "tailwind-merge": "2.6.1"
+  }
+}

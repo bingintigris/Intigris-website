@@ -1,0 +1,136 @@
+/* Converted from ApplicationProcedure.html (inline page script) by scripts/convert-legacy.mjs */
+import React from 'react';
+import { lp, switchLang, tx, getLang } from '../../lib/i18n.js';
+import { win } from '../../lib/env.js';
+import { SiteHeader } from '../components/Header.jsx';
+import { SiteNewsletter } from '../components/Newsletter.jsx';
+import { SiteFooter } from '../components/Footer.jsx';
+import { SiteCookieConsent } from '../components/CookieConsent.jsx';
+
+    const { useState } = React;
+
+    const STEPS = [
+      { en: 'Application', nl: 'Sollicitatie',
+        dEn: 'After you’ve applied, we’ll contact you within 5 business days, by phone or email. If we see a potential match, we’ll invite you for an introductory interview.',
+        dNl: 'Nadat je hebt gesolliciteerd, nemen we binnen 5 werkdagen contact met je op, telefonisch of per e-mail. Zien we een mogelijke match, dan nodigen we je uit voor een kennismakingsgesprek.' },
+      { en: 'Zoom introduction interview', nl: 'Kennismaking via Zoom',
+        dEn: 'In this first interview you’ll meet Patricia, our HR Director. It’s held over Zoom and lasts about 45 minutes, an introductory conversation to get to know each other. Who are you and what are you looking for? Who are we at Intigris? If there’s a mutual click, we’ll continue the conversation.',
+        dNl: 'In dit eerste gesprek ontmoet je Patricia, onze HR-directeur. Het vindt plaats via Zoom en duurt ongeveer 45 minuten, een kennismaking om elkaar beter te leren kennen. Wie ben jij en wat zoek je? Wie zijn wij bij Intigris? Bij een wederzijdse klik zetten we het gesprek voort.' },
+      { en: 'Second interview at the office', nl: 'Tweede gesprek op kantoor',
+        dEn: 'During a second interview at our office (about an hour) you’ll speak with two colleagues about the specifics of the role, what your workweek looks like and more about your knowledge and experience. If you’ll work with Salesforce, expect some technical questions. If both sides are still positive and we align on salary expectations, we move on to a case study.',
+        dNl: 'Tijdens een tweede gesprek op kantoor (ongeveer een uur) spreek je met twee collega’s over de details van de rol, hoe je werkweek eruitziet en meer over je kennis en ervaring. Ga je met Salesforce werken, verwacht dan enkele technische vragen. Zijn beide partijen nog positief en zijn we het eens over salaris, dan volgt een case.' },
+      { en: 'Case presentation', nl: 'Casepresentatie',
+        dEn: 'You’ll visit our office again, this time to present a case we provide in advance. We explain it thoroughly and are available for any questions beforehand. You’ll meet the same colleagues from the second interview, plus Dick, our Chief Operating Officer. If your presentation impresses us and you’re still excited, we’ll extend an offer.',
+        dNl: 'Je bezoekt ons kantoor opnieuw, dit keer om een case te presenteren die we vooraf aanleveren. We lichten deze uitgebreid toe en staan klaar voor vragen. Je ontmoet dezelfde collega’s als in het tweede gesprek, plus Dick, onze Chief Operating Officer. Maakt je presentatie indruk en ben je nog steeds enthousiast, dan doen we je een aanbod.' },
+      { en: 'Offer stage', nl: 'Aanbod',
+        dEn: 'We prepare your contract, which you receive digitally. It’s typically a one-year agreement with a salary that matches your experience. After you’ve reviewed it, we schedule a call to go through it together and answer any questions. Want to meet more colleagues first? Absolutely, we’ll gladly introduce you. We hope our offer brings you joy.',
+        dNl: 'We stellen je contract op, dat je digitaal ontvangt. Meestal is het een jaarcontract met een salaris passend bij je ervaring. Na je review plannen we een gesprek om het samen door te nemen en vragen te beantwoorden. Wil je eerst meer collega’s spreken? Zeker, we stellen je graag voor. We hopen dat ons aanbod je blij maakt.' },
+      { en: 'Onboarding', nl: 'Onboarding',
+        dEn: 'Congratulations, you’ve landed a new job, and we’ve gained a new colleague! On your first day we ensure a smooth start and guide you through the world of Intigris during your first few weeks.',
+        dNl: 'Gefeliciteerd, jij hebt een nieuwe baan en wij een nieuwe collega! Op je eerste dag zorgen we voor een soepele start en gidsen we je door de wereld van Intigris in je eerste weken.' },
+    ];
+
+    const EXPLORE = [
+      { id: 'culture',   href: lp("/culture"),   en: 'Our culture', nl: 'Onze cultuur', dEn: 'Feel at home from the moment you step in.', dNl: 'Voel je thuis vanaf het eerste moment.' },
+      { id: 'benefits',  href: lp("/benefits"),  en: 'Benefits', nl: 'Arbeidsvoorwaarden', dEn: 'What makes working at Intigris worthwhile.', dNl: 'Wat werken bij Intigris de moeite waard maakt.' },
+      { id: 'isa',       href: lp("/isa"),       en: 'ISA', nl: 'ISA', dEn: 'Join as a consultant with little or no Salesforce experience.', dNl: 'Start als consultant met weinig of geen Salesforce-ervaring.' },
+    ];
+
+    function ApplicationProcedure() {
+      return (
+        <main style={{ background: 'var(--intigris-off-white)' }}>
+
+          {/* HERO */}
+          <section className="container-wide" style={{ paddingTop: 128, paddingBottom: 'clamp(40px, 5vw, 64px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('APPLICATION PROCEDURE', 'SOLLICITATIEPROCEDURE')}</div>
+            <h1 style={{ fontSize: 'clamp(38px,5vw,68px)', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 1.02, margin: '14px 0 0', maxWidth: 820 }}>
+              {tx('From first contact ', 'Van eerste contact ')}<span style={{ color: 'var(--intigris-coral)', fontStyle: 'italic' }}>{tx('to hired.', 'tot aangenomen.')}</span>
+            </h1>
+            <p style={{ marginTop: 22, fontSize: 18, fontWeight: 400, lineHeight: 1.6, color: 'var(--intigris-dark-brown)', maxWidth: 680 }}>
+              {tx(
+                'Interested in joining our team? We look forward to receiving your application. Here’s what you can expect when you apply with us.',
+                'Interesse om ons team te versterken? We kijken uit naar je sollicitatie. Dit is wat je kunt verwachten wanneer je bij ons solliciteert.'
+              )}
+            </p>
+          </section>
+
+          {/* STEPS TIMELINE */}
+          <section className="container-wide" style={{ paddingBottom: 'clamp(56px, 7vw, 96px)' }}>
+            <div className="ap-timeline">
+              {STEPS.map((s, i) => (
+                <div key={i} className="ap-step">
+                  <div className="ap-rail">
+                    <div className="ap-num">{String(i + 1).padStart(2, '0')}</div>
+                    {i < STEPS.length - 1 && <div className="ap-line" aria-hidden />}
+                  </div>
+                  <div className="ap-body">
+                    <h3 style={{ fontSize: 23, fontWeight: 500, letterSpacing: '-0.016em', margin: 0 }}>{tx(s.en, s.nl)}</h3>
+                    <p style={{ margin: '10px 0 0', fontSize: 16, fontWeight: 400, lineHeight: 1.6, color: 'var(--fg-muted)', maxWidth: 720 }}>{tx(s.dEn, s.dNl)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop: 44 }}>
+              <a className="btn btn-primary btn-lg" href={lp("/vacancies")} style={{ color: 'var(--intigris-off-white)' }}>
+                {tx('See open roles', 'Bekijk openstaande functies')} <span className="arrow">→</span>
+              </a>
+            </div>
+          </section>
+
+          {/* EXPLORE MORE */}
+          <section className="container-wide" style={{ paddingBottom: 'clamp(64px, 8vw, 104px)' }}>
+            <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('EXPLORE MORE', 'ONTDEK MEER')}</div>
+            <div className="ap-explore" style={{ marginTop: 22, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+              {EXPLORE.map((c) => (
+                <a key={c.id} href={c.href} className="ap-linkcard" style={{ display: 'flex', flexDirection: 'column', gap: 8, textDecoration: 'none', color: 'inherit', background: 'var(--intigris-paper)', border: '1px solid var(--border)', borderRadius: 18, padding: '26px 26px 22px' }}>
+                  <h3 style={{ fontSize: 21, fontWeight: 500, letterSpacing: '-0.014em', margin: 0 }}>{tx(c.en, c.nl)}</h3>
+                  <p style={{ margin: 0, fontSize: 15, fontWeight: 400, lineHeight: 1.5, color: 'var(--fg-muted)', flex: 1 }}>{tx(c.dEn, c.dNl)}</p>
+                  <span className="ap-more" style={{ marginTop: 6, fontSize: 14, fontWeight: 500, color: 'var(--intigris-coral-700)' }}>{tx('Read more', 'Lees meer')} <span aria-hidden>→</span></span>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <style dangerouslySetInnerHTML={{ __html: `
+            .ap-timeline { display: flex; flex-direction: column; }
+            .ap-step { display: grid; grid-template-columns: 64px 1fr; gap: 24px; }
+            .ap-rail { display: flex; flex-direction: column; align-items: center; }
+            .ap-num {
+              flex: none; width: 52px; height: 52px; border-radius: 999px;
+              display: grid; place-items: center;
+              background: var(--intigris-coral); color: var(--intigris-off-white);
+              font-size: 16px; font-weight: 600; letter-spacing: 0.02em;
+            }
+            .ap-line { flex: 1; width: 2px; background: var(--intigris-brown-100); margin: 8px 0; min-height: 24px; }
+            .ap-body { padding-bottom: 40px; padding-top: 6px; }
+            .ap-step:last-child .ap-body { padding-bottom: 0; }
+            .ap-linkcard { transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+            .ap-linkcard:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(64,35,1,0.10); border-color: var(--intigris-coral); }
+            .ap-linkcard:hover .ap-more span { transform: translateX(3px); display:inline-block; }
+            @media (max-width: 960px) { .ap-explore { grid-template-columns: 1fr !important; } }
+            @media (max-width: 560px) {
+              .ap-step { grid-template-columns: 46px 1fr; gap: 16px; }
+              .ap-num { width: 40px; height: 40px; font-size: 14px; }
+            }
+          ` }} />
+        </main>
+      );
+    }
+
+    function App() {
+      const [lang, setLang] = useState(getLang());
+      function changeLang(l){ switchLang(l); setLang(l); }
+      function nav(r){ if (r === 'blog') return (win.location.href = lp("/blog")); return (win.location.href = lp("/")); }
+      return (
+        <>
+          <SiteHeader overlay={false} megaTheme="cream" lang={lang} onLang={changeLang} onNav={nav} />
+          <ApplicationProcedure key={'ap-' + lang} />
+          <SiteNewsletter key={'nl-' + lang} />
+          <SiteFooter />
+          <SiteCookieConsent />
+        </>
+      );
+    }
+
+export default App;

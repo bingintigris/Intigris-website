@@ -1,0 +1,19 @@
+---
+/* NL /vacancies/<slug> — one pre-built page per open job */
+import Layout from '../../../layouts/Layout.astro';
+import App from '../../../legacy/apps/Vacancies.jsx';
+import meta from '../../../legacy/pages.json';
+import { setLang } from '../../../lib/i18n.js';
+import { getJobs } from '../../../lib/content.js';
+export async function getStaticPaths() {
+  const jobs = (await getJobs()) || [];
+  return jobs.filter((j) => j.slug).map((job) => ({ params: { slug: job.slug }, props: { job } }));
+}
+const lang = 'nl';
+setLang(lang);
+const m = meta['Vacancies'];
+const { job } = Astro.props;
+---
+<Layout lang={lang} title={`${job.title} | Intigris`} description={m.description} route={`/vacancies/${job.slug}`} headExtra={m.head} bodyExtra={m.body}>
+  <App client:load slug={job.slug} job={job} />
+</Layout>

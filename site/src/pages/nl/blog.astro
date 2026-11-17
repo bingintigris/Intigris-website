@@ -1,0 +1,16 @@
+---
+/* NL /blog — posts are fetched from Supabase at build time (admin publish → rebuild) */
+import Layout from '../../layouts/Layout.astro';
+import App from '../../legacy/apps/Blog.jsx';
+import meta from '../../legacy/pages.json';
+import { setLang } from '../../lib/i18n.js';
+import { getPosts } from '../../lib/content.js';
+const lang = 'nl';
+setLang(lang);
+const m = meta['Blog'];
+const all = await getPosts();
+const posts = all && all.map(({ id, title, slug, excerpt, cover_image_url, category, author_name, read_minutes, published_at }) => ({ id, title, slug, excerpt, cover_image_url, category, author_name, read_minutes, published_at }));
+---
+<Layout lang={lang} title={m.title} description={m.description || (lang === 'nl' ? 'Artikelen over Salesforce, Agentforce en AI van het team van Intigris.' : 'Articles on Salesforce, Agentforce and AI from the Intigris team.')} route="/blog" robots={m.robots} headExtra={m.head} bodyExtra={m.body}>
+  <App client:load posts={posts || undefined} />
+</Layout>

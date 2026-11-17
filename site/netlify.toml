@@ -1,0 +1,28 @@
+# Netlify: site "intigris-astro" with base directory "site" (set in the Netlify UI).
+# The old static site (repo root) keeps its own Netlify site until launch.
+[build]
+  command = "npm install --no-audit --no-fund && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  ASTRO_TELEMETRY_DISABLED = "1"
+
+# Deploy previews and branch deploys are never indexed
+[context.deploy-preview.environment]
+  PUBLIC_NOINDEX = "true"
+[context.branch-deploy.environment]
+  PUBLIC_NOINDEX = "true"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
