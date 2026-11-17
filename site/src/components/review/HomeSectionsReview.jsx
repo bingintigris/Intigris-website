@@ -3,8 +3,17 @@
 import React from 'react';
 import { tx, getLang, localePath } from '../../lib/i18n.js';
 import { StartRolesCard, StartRoles, StartTabs, StartBento, WtsStyles } from '../home/WhereToStart.jsx';
+import { HowTimeline, HowPinned, HowCards, HwwStyles } from '../home/HowWeWork.jsx';
 
 const ROUNDS = () => [
+  {
+    id: 'how', title: tx('Section 6 · How we work', 'Sectie 6 · Zo werken we'),
+    variants: [
+      { k: 'A', name: tx('Scroll timeline', 'Scroll-tijdlijn'), note: tx('Light; a coral line fills as you scroll and lights up each step. Title stays on the left.', 'Licht; een koraal lijn loopt mee met scrollen en licht elke stap op. Titel blijft links staan.'), C: HowTimeline },
+      { k: 'B', name: tx('Pinned steps + mini screen', 'Vastgezette stappen + mini-scherm'), note: tx('Dark band that stays in place while you scroll through the six steps; each step shows a small screen.', 'Donkere band die blijft staan terwijl je door de zes stappen scrolt; elke stap toont een klein scherm.'), C: HowPinned },
+      { k: 'C', name: tx('Horizontal cards', 'Horizontale kaarten'), note: tx('Scrolling down moves six cards sideways; they slide in one by one.', 'Naar beneden scrollen schuift zes kaarten opzij; ze schuiven één voor één in beeld.'), C: HowCards },
+    ],
+  },
   {
     id: 'start', title: tx('Section 4 · Where do you start?', 'Sectie 4 · Waar begin je?'),
     variants: [
@@ -37,6 +46,7 @@ export default function HomeSectionsReview() {
         </div>
       ))}
       <WtsStyles />
+      <HwwStyles />
       <style dangerouslySetInnerHTML={{ __html: `
         .rv-top { position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1d1206; color: #fff; font-size: 14px; }
         .rv-top a { color: #fff; font-weight: 600; }
