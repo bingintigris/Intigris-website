@@ -166,9 +166,9 @@ export function StartRolesCard() {
   return (
     <section className="wts wts--combo">
       <div className="container">
-        <StartHead dark />
+        <StartHead />
         <div className="wts-combo">
-          <div className="wts-rolelist wts-rolelist--dark" role="tablist" aria-label={tx('Pick your role', 'Kies je rol')}>
+          <div className="wts-rolelist wts-rolelist--combo" role="tablist" aria-label={tx('Pick your role', 'Kies je rol')}>
             {items.map((x, i) => (
               <button key={x.id} id={'wts-d-tab-' + x.id} role="tab" aria-selected={i === a} aria-controls="wts-d-panel" className={i === a ? 'on' : ''} onClick={() => { leave(); setA(i); }} onMouseEnter={() => enter(i)} onMouseLeave={leave}>
                 <span>{x.role}</span>
@@ -269,20 +269,15 @@ const WTS_CSS = `
 .wts-rolelist button:focus-visible { outline: 2px solid var(--intigris-coral); outline-offset: 2px; }
 .wts-rolecard { position: sticky; top: 110px; background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 26px; padding: 40px; box-shadow: 0 30px 60px -44px rgba(43,23,0,.45); animation: wtsIn .4s cubic-bezier(.2,.8,.2,1) both; }
 
-/* D · roles + product card */
-.wts--combo { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
-.wts--combo .eyebrow { color: rgba(255,250,240,.7); }
+/* D · roles + product card (light, like A) */
 .wts-combo { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.6fr); gap: 48px; align-items: start; }
-.wts-rolelist--dark { border-top-color: rgba(255,250,240,.16); }
-.wts-rolelist--dark button { color: rgba(255,250,240,.42); border-bottom-color: rgba(255,250,240,.16); padding: 18px 4px; }
-.wts-rolelist--dark button span { font-size: clamp(20px, 1.9vw, 26px); }
-.wts-rolelist--dark button:hover { color: rgba(255,250,240,.75); }
-.wts-rolelist--dark button.on { color: var(--intigris-off-white); }
-.wts-rolelist--dark button.on em { color: var(--intigris-coral); }
-.wts-rolelist--dark button:focus-visible { outline-color: #fff; }
-.wts-rolelist--dark button::after { content: '→'; font-size: 22px; color: var(--intigris-coral); opacity: 0; transform: translateX(-8px); transition: opacity .25s, transform .25s; }
-.wts-rolelist--dark button.on::after { opacity: 1; transform: none; }
-.wts-combocard { position: sticky; top: 110px; container-type: inline-size; display: grid; grid-template-columns: 1fr; gap: 28px; background: var(--intigris-off-white); color: var(--intigris-dark-brown); border-radius: 28px; padding: 36px; animation: wtsIn .4s cubic-bezier(.2,.8,.2,1) both; }
+.wts-rolelist--combo button { padding: 18px 4px; }
+.wts-rolelist--combo button span { font-size: clamp(20px, 1.9vw, 26px); }
+.wts-rolelist--combo button:hover { color: rgba(64,35,1,.75); }
+.wts-rolelist--combo button::after { content: '→'; font-size: 22px; color: var(--intigris-coral); opacity: 0; transform: translateX(-8px); transition: opacity .25s, transform .25s; }
+.wts-rolelist--combo button.on::after { opacity: 1; transform: none; }
+.wts-combocard { position: sticky; top: 110px; display: grid; grid-template-columns: 1fr; gap: 28px; background: var(--intigris-paper); color: var(--intigris-dark-brown); border: 1px solid var(--border); border-radius: 28px; padding: 36px; box-shadow: 0 30px 60px -44px rgba(43,23,0,.45); animation: wtsIn .4s cubic-bezier(.2,.8,.2,1) both; }
+.wts-combocard .wts-incl li { background: var(--intigris-off-white); }
 @media (min-width: 1180px) { .wts-combocard { grid-template-columns: 1fr 1.1fr; align-items: center; min-height: 460px; } }
 .wts-combocard .wts-row { grid-template-columns: auto 1fr auto; }
 .wts-combocard .wts-row b { white-space: nowrap; }

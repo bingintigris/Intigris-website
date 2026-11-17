@@ -8,7 +8,7 @@ const ROUNDS = () => [
   {
     id: 'start', title: tx('Section 4 · Where do you start?', 'Sectie 4 · Waar begin je?'),
     variants: [
-      { k: 'D', name: tx('Roles + product card (A × B)', 'Rollen + productkaart (A × B)'), note: tx('NEW · A’s role list on the left switches B’s card with the mini Salesforce screen.', 'NIEUW · De rollenlijst van A wisselt de kaart van B met het mini Salesforce-scherm.'), C: StartRolesCard },
+      { k: 'D', name: tx('Roles + product card (A × B)', 'Rollen + productkaart (A × B)'), note: tx('NEW · Light like A; the role list on the left switches B’s card with the mini Salesforce screen.', 'NIEUW · Licht zoals A; de rollenlijst links wisselt de kaart van B met het mini Salesforce-scherm.'), C: StartRolesCard },
       { k: 'A', name: tx('Role switcher', 'Rol-kiezer'), note: tx('Visitor picks who they are; the card shows the matching product.', 'Bezoeker kiest wie hij is; de kaart toont het passende product.'), C: StartRoles },
       { k: 'B', name: tx('Product tabs + mini screen', 'Producttabs + mini-scherm'), note: tx('Dark band; each tab shows a small Salesforce screen of the product.', 'Donkere band; elke tab toont een klein Salesforce-scherm van het product.'), C: StartTabs },
       { k: 'C', name: tx('Bento grid', 'Bento-raster'), note: tx('All six at a glance; details appear on hover.', 'Alle zes in één oogopslag; details verschijnen bij hover.'), C: StartBento },
