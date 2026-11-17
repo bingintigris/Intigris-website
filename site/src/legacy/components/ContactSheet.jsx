@@ -14,8 +14,9 @@ import { win } from '../../lib/env.js';
 //   subject   : optional pre-filled subject (e.g. 'AI readiness scan')
 //   message   : optional pre-filled message
 //   source    : optional label stored as source_page (defaults to the URL path)
+//   inline    : render the form inside the page (Contact page) instead of a slide-in panel
 
-function SiteContactSheet({ open, onClose, subject = '', message = '', source }) {
+function SiteContactSheet({ open, onClose, subject = '', message = '', source, inline = false }) {
   const { useState, useEffect, useMemo } = React;
 
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
@@ -30,17 +31,18 @@ function SiteContactSheet({ open, onClose, subject = '', message = '', source })
 
   // Reset (and apply any pre-filled subject/message) each time it opens.
   useEffect(() => {
-    if (open) {
+    if (open || inline) {
       setForm({ name: '', email: '', subject: subject || '', message: message || '' });
       setSent(false); setErr(''); setSending(false);
     }
-  }, [open, subject, message]);
+  }, [open, inline, subject, message]);
 
   useEffect(() => {
+    if (inline) return;
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     win.addEventListener('keydown', onKey);
     return () => win.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  }, [onClose, inline]);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -93,7 +95,7 @@ function SiteContactSheet({ open, onClose, subject = '', message = '', source })
     setSent(true);
   }
 
-  if (!open) return null;
+  if (!open && !inline) return null;
 
   const fieldStyle = (multiline) => ({
     fontFamily: 'inherit', fontSize: 16, fontWeight: 400,
@@ -105,24 +107,8 @@ function SiteContactSheet({ open, onClose, subject = '', message = '', source })
     borderRadius: 10, outline: 'none', resize: 'vertical',
   });
 
-  return (
-    <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, zIndex: 200,
-      background: 'rgba(64,35,1,0.42)', backdropFilter: 'blur(4px)',
-      display: 'flex', justifyContent: 'flex-end',
-      animation: 'fadeIn 220ms cubic-bezier(0.22,0.61,0.36,1)',
-    }}>
-      <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'var(--intigris-off-white)', width: '100%', maxWidth: 520, height: '100%',
-        padding: 56, overflowY: 'auto', boxShadow: '-20px 0 60px rgba(0,0,0,0.18)',
-        animation: 'slideRight 320ms cubic-bezier(0.22,0.61,0.36,1)', position: 'relative',
-      }}>
-        <button onClick={onClose} style={{
-          position: 'absolute', top: 20, right: 20, width: 36, height: 36, borderRadius: 999,
-          background: 'transparent', border: '1px solid var(--border)', cursor: 'pointer',
-          color: 'var(--intigris-dark-brown)', fontSize: 18,
-        }} aria-label="Close">×</button>
-
+  const content = (
+    <>
         {!sent ? (
           <>
             <div className="eyebrow" style={{ marginBottom: 16 }}>{tx('CONTACT · WE GOT YOU', 'CONTACT · WE ZIJN ER VOOR JE')}</div>
@@ -184,11 +170,35 @@ function SiteContactSheet({ open, onClose, subject = '', message = '', source })
                 'We hebben je bericht ontvangen. Een Intigrant neemt binnen één werkdag contact met je op.'
               )}
             </p>
-            <button onClick={onClose} className="btn btn-secondary" style={{ marginTop: 28 }}>
-              {tx('Back to the site', 'Terug naar de site')}
+            <button onClick={inline ? () => setSent(false) : onClose} className="btn btn-secondary" style={{ marginTop: 28 }}>
+              {inline ? tx('Send another message', 'Nog een bericht sturen') : tx('Back to the site', 'Terug naar de site')}
             </button>
           </>
         )}
+    </>
+  );
+
+  if (inline) return <div className="contact-inline">{content}</div>;
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed', inset: 0, zIndex: 200,
+      background: 'rgba(64,35,1,0.42)', backdropFilter: 'blur(4px)',
+      display: 'flex', justifyContent: 'flex-end',
+      animation: 'fadeIn 220ms cubic-bezier(0.22,0.61,0.36,1)',
+    }}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        background: 'var(--intigris-off-white)', width: '100%', maxWidth: 520, height: '100%',
+        padding: 56, overflowY: 'auto', boxShadow: '-20px 0 60px rgba(0,0,0,0.18)',
+        animation: 'slideRight 320ms cubic-bezier(0.22,0.61,0.36,1)', position: 'relative',
+      }}>
+        <button onClick={onClose} style={{
+          position: 'absolute', top: 20, right: 20, width: 36, height: 36, borderRadius: 999,
+          background: 'transparent', border: '1px solid var(--border)', cursor: 'pointer',
+          color: 'var(--intigris-dark-brown)', fontSize: 18,
+        }} aria-label="Close">×</button>
+
+        {content}
       </div>
     </div>
   );

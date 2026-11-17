@@ -216,7 +216,7 @@ function SiteFooter({ divider }) {
 
           {COL(tx('SERVICES', 'DIENSTEN'), [{ label: 'Sales Cloud', href: lp("/quickstarts/sales-cloud") }, { label: 'Field Service', href: lp("/quickstarts/field-service") }, { label: 'Service Cloud', href: lp("/quickstarts/service-cloud") }, 'Integrations', { label: 'Agentforce', href: lp("/quickstarts/agentforce") }, 'Data 360', 'FieldBuddy', 'Experience Cloud'])}
           {COL(tx('SOLUTIONS', 'OPLOSSINGEN'), ['Salesforce Consulting', 'Integration Development', 'Field Service Consulting', { label: tx('Salesforce Quickstarts', 'Salesforce Quickstarts'), href: lp("/quickstarts") }, 'ISA Academy'])}
-          {COL(tx('COMPANY', 'BEDRIJF'), [tx('About', 'Over ons'), 'Blog', tx('Careers', 'Werken bij'), tx('Contact', 'Contact'), 'LinkedIn', { label: tx('Admin', 'Admin'), href: 'https://intigris-admin.netlify.app' }])}
+          {COL(tx('COMPANY', 'BEDRIJF'), [{ label: tx('About', 'Over ons'), href: lp("/company") }, { label: 'Blog', href: lp("/blog") }, { label: tx('Careers', 'Werken bij'), href: lp("/careers") }, { label: tx('Contact', 'Contact'), href: lp("/contact") }, 'LinkedIn', { label: tx('Admin', 'Admin'), href: 'https://intigris-admin.netlify.app' }])}
         </div>
 
         {/* 14px matches the column links and the address block above, so the
