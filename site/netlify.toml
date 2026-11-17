@@ -1,5 +1,6 @@
-# Netlify: site "intigris-astro" with base directory "site" (set in the Netlify UI).
-# The old static site (repo root) keeps its own Netlify site until launch.
+# Netlify: the existing site (intigris.netlify.app) builds from branch main with
+# base directory "site" (Site configuration > Build & deploy > Base directory).
+# Every pull request gets its own deploy preview (never indexed, see below).
 [build]
   command = "npm install --no-audit --no-fund && npm run build"
   publish = "dist"

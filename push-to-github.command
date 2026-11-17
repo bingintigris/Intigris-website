@@ -10,8 +10,14 @@ echo "================================================"
 echo
 
 echo "Repository : $(git config --get remote.origin.url)"
-echo "Branch     : $(git branch --show-current)"
+BRANCH="$(git branch --show-current)"
+echo "Branch     : $BRANCH"
 echo
+if [ "$BRANCH" = "main" ]; then
+  echo "You're on main. Changes go to main through a pull request on GitHub,"
+  echo "so this tool only pushes work branches. Nothing was pushed."
+  echo; read -r -p "Press return to close."; exit 0
+fi
 
 echo "About to push these commits:"
 git --no-pager log --oneline origin/main..HEAD
@@ -24,13 +30,15 @@ case "$reply" in
 esac
 
 echo
-git push origin main
+git push -u origin "$BRANCH"
 status=$?
 echo
 
 if [ $status -eq 0 ]; then
-  echo "Done. Pushed to GitHub."
-  echo "Netlify will pick it up and redeploy in a minute or two."
+  echo "Done. Pushed branch $BRANCH to GitHub."
+  echo "Open a pull request (Netlify makes a preview link for it):"
+  echo "  https://github.com/bingintigris/Intigris-website/compare/main...$BRANCH"
+  echo "After you merge it into main, intigris.netlify.app updates in a minute or two."
   echo
   read -r -p "Press return to close."
   exit 0
@@ -54,7 +62,7 @@ case "$clr" in
     echo
     read -r -p "Press return to continue."
     echo
-    git push origin main
+    git push -u origin "$BRANCH"
     status=$?
     echo
     if [ $status -eq 0 ]; then

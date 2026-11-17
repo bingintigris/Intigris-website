@@ -20,8 +20,8 @@ export default defineConfig({
   ],
   vite: {
     resolve: {
-      /* island sources live in ../islands: always use this project's single copy of these */
+      /* island sources live in ./islands: always use this project's single copy of these */
       dedupe: ['react', 'react-dom', 'motion', 'framer-motion', 'clsx', 'tailwind-merge', 'gsap'],
-      alias: { '@islands': fileURLToPath(new URL('../islands/src', import.meta.url)), '@': fileURLToPath(new URL('../islands/src', import.meta.url)) } },
+      alias: { '@islands': fileURLToPath(new URL('./islands/src', import.meta.url)), '@': fileURLToPath(new URL('./islands/src', import.meta.url)) } },
   },
 });
