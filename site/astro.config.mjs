@@ -14,7 +14,7 @@ export default defineConfig({
   integrations: [
     intigrisReact(),
     sitemap({
-      filter: (page) => !DRAFT.some((d) => new URL(page).pathname.replace(/\/$/, '') === d),
+      filter: (page) => { const p = new URL(page).pathname.replace(/\/$/, ''); return !DRAFT.includes(p) && !/^(\/nl)?\/review(\/|$)/.test(p); },
       i18n: { defaultLocale: 'en', locales: { en: 'en', nl: 'nl' } },
     }),
   ],
