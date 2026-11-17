@@ -1,0 +1,154 @@
+{
+  "index": {
+    "route": "/",
+    "title": "Intigris | Smarten up your business.",
+    "description": "",
+    "robots": "",
+    "head": "<link rel=\"stylesheet\" href=\"https://unpkg.com/lenis@1.1.20/dist/lenis.css\">\n<link rel=\"stylesheet\" href=\"/islands-dist/islands.css?v=7\">",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/DrawSVGPlugin.min.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/MorphSVGPlugin.min.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/MotionPathPlugin.min.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Flip.min.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js\"></script>\n<script src=\"https://unpkg.com/lenis@1.1.20/dist/lenis.min.js\"></script>\n<script src=\"/components/SmoothScroll.js?v=1789080000000\"></script>\n<style>\n    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }\n    @keyframes slideRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n  </style>"
+  },
+  "Services": {
+    "route": "/services",
+    "title": "Services | Intigris",
+    "description": "Salesforce consulting, field service, integrations, platform development and support. One certified team across the whole Salesforce stack, since 2010.",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<style>\n    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }\n    @keyframes slideRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n  </style>"
+  },
+  "Quickstarts": {
+    "route": "/quickstarts",
+    "title": "Quickstarts | Intigris",
+    "description": "Intigris Quickstarts: Sales Cloud, Service Cloud and Field Service live in four weeks, and your first Agentforce agent in two. Fixed scope, built in your own Salesforce org.",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>"
+  },
+  "SalesCloud": {
+    "route": "/quickstarts/sales-cloud",
+    "title": "Sales Cloud | Intigris",
+    "description": "Salesforce Sales Cloud implemented by Intigris: all your customers and deals in one place, connected to Exact, AFAS, NetSuite and more. Start with a Quickstart from €7,000 or a full implementation.",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js\"></script>"
+  },
+  "FieldService-v3": {
+    "route": "/quickstarts/field-service",
+    "title": "Field Service | Intigris",
+    "description": "Salesforce Field Service implemented by Intigris: planning, engineers and work orders in one system. Fewer kilometres, fewer second visits, invoices the same day. Quickstart from €13,000.",
+    "robots": "noindex",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js\"></script>"
+  },
+  "ServiceCloud": {
+    "route": "/quickstarts/service-cloud",
+    "title": "Service Cloud | Intigris",
+    "description": "Salesforce Service Cloud implemented by Intigris: one queue for every channel and the whole customer in view. Live in four weeks with our Quickstart.",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>"
+  },
+  "Agentforce": {
+    "route": "/quickstarts/agentforce",
+    "title": "Agentforce Kickstart | Intigris",
+    "description": "You already pay for Agentforce. We switch it on. The Agentforce Kickstart by Intigris: in two weeks your first working AI agent on your own Salesforce data, for a fixed €3,950, fully credited when you continue.",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>"
+  },
+  "About": {
+    "route": "/company",
+    "title": "About | Intigris",
+    "description": "",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<style>\n    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }\n    @keyframes slideRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n  </style>"
+  },
+  "Careers": {
+    "route": "/careers",
+    "title": "Careers | Intigris",
+    "description": "",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>"
+  },
+  "Culture": {
+    "route": "/culture",
+    "title": "Our culture | Intigris",
+    "description": "",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>"
+  },
+  "Benefits": {
+    "route": "/benefits",
+    "title": "Benefits | Intigris",
+    "description": "",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>"
+  },
+  "Vacancies": {
+    "route": "/vacancies",
+    "title": "Vacancies | Intigris",
+    "description": "",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<style>\n    @media (max-width: 560px) { .app-two { grid-template-columns: 1fr !important; } }\n    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }\n    @keyframes popIn { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }\n    .vac-row { transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out); }\n    .vac-row:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -18px rgba(64,35,1,0.3); }\n    .post-body { margin-top: 28px; font-size: 17px; line-height: 1.7; color: var(--intigris-dark-brown); font-weight: 400; }\n    .post-body h2 { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin: 32px 0 12px; }\n    .post-body p { margin: 0 0 16px; }\n    .post-body ul { margin: 0 0 16px 22px; }\n    .post-body li { margin: 6px 0; }\n    .post-body strong { font-weight: 600; }\n  </style>"
+  },
+  "ApplicationProcedure": {
+    "route": "/application-procedure",
+    "title": "Application procedure | Intigris",
+    "description": "",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>"
+  },
+  "ISA": {
+    "route": "/isa",
+    "title": "ISA | Intigris Salesforce Academy",
+    "description": "",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<style>\n    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }\n    @keyframes slideRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n  </style>"
+  },
+  "Blog": {
+    "route": "/blog",
+    "title": "Blog | Intigris",
+    "description": "",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<style>\n    @media (max-width: 900px) {\n      .blog-grid { grid-template-columns: 1fr 1fr !important; }\n    }\n    @media (max-width: 620px) {\n      .blog-grid { grid-template-columns: 1fr !important; }\n    }\n    .post-body { margin-top: 28px; font-size: 18px; line-height: 1.7; color: var(--intigris-dark-brown); font-weight: 400; }\n    .post-body h2 { font-size: 28px; font-weight: 500; letter-spacing: -0.02em; margin: 36px 0 12px; }\n    .post-body h3 { font-size: 22px; font-weight: 500; margin: 28px 0 10px; }\n    .post-body h4 { font-size: 18px; font-weight: 600; margin: 22px 0 8px; }\n    .post-body p { margin: 0 0 18px; }\n    .post-body ul, .post-body ol { margin: 0 0 18px 24px; }\n    .post-body li { margin: 6px 0; }\n    .post-body a { color: var(--intigris-coral); text-decoration: underline; }\n    .post-body strong { font-weight: 600; }\n    .post-body hr { border: 0; border-top: 1px solid var(--border); margin: 32px 0; }\n  </style>"
+  },
+  "Industries": {
+    "route": "/industries",
+    "title": "Industries | Intigris",
+    "description": "Salesforce for energy, manufacturing, installation, healthcare, logistics and technology. Domain expertise for the sectors that run on service.",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<style>\n    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }\n    @keyframes slideRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n  </style>"
+  },
+  "AIReadinessScan": {
+    "route": "/ai-readiness-scan",
+    "title": "AI readiness scan | Intigris",
+    "description": "",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<style>\n    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }\n    @keyframes slideRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }\n  </style>"
+  },
+  "Privacy": {
+    "route": "/privacy",
+    "title": "Privacy notice | Intigris",
+    "description": "How Intigris handles personal information collected through intigris.nl: contact enquiries, newsletter sign-ups and job applications.",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>"
+  },
+  "Cookies": {
+    "route": "/cookies",
+    "title": "Cookie notice | Intigris",
+    "description": "Which cookies intigris.nl sets, what each one does, and how to change your choice at any time.",
+    "robots": "",
+    "head": "",
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>"
+  }
+}

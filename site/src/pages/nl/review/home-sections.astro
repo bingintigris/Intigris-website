@@ -1,0 +1,11 @@
+---
+/* nl /review/home-sections — design round page (noindex, not in sitemap) */
+import Layout from '../../../layouts/Layout.astro';
+import Review from '../../../components/review/HomeSectionsReview.jsx';
+import { setLang } from '../../../lib/i18n.js';
+const lang = 'nl';
+setLang(lang);
+---
+<Layout lang={lang} title="Review · Homepage sections" route="/review/home-sections" robots="noindex, nofollow">
+  <Review client:load />
+</Layout>

@@ -1,0 +1,46 @@
+# Netlify redirects for www.intigris.nl (Astro). First match wins.
+# Webflow URL paths are kept, so most old links need no redirect.
+
+# Draft pages (switched off): ISA → careers until the page is published
+/isa            /careers        302
+/nl/isa         /nl/careers     302
+
+# Old .html addresses of the redesign (previews, shared review links), Dutch via ?lang=nl
+/index.html                 lang=nl  /nl/                               301!
+/index.html                          /                                  301!
+/SalesCloud.html            lang=nl  /nl/quickstarts/sales-cloud        301!
+/SalesCloud.html                     /quickstarts/sales-cloud           301!
+/SalesCloud-v3.html                  /quickstarts/sales-cloud           301!
+/FieldService.html          lang=nl  /nl/quickstarts/field-service      301!
+/FieldService.html                   /quickstarts/field-service         301!
+/FieldService-v3.html                /quickstarts/field-service         301!
+/ServiceCloud.html          lang=nl  /nl/quickstarts/service-cloud      301!
+/ServiceCloud.html                   /quickstarts/service-cloud         301!
+/Agentforce.html            lang=nl  /nl/quickstarts/agentforce         301!
+/Agentforce.html                     /quickstarts/agentforce            301!
+/Quickstarts.html                    /quickstarts                       301!
+/Services.html                       /services                          301!
+/About.html                          /company                           301!
+/Careers.html                        /careers                           301!
+/Culture.html                        /culture                           301!
+/Benefits.html                       /benefits                          301!
+/Vacancies.html             job=:job /vacancies/:job                    301!
+/Vacancies.html                      /vacancies                         301!
+/ApplicationProcedure.html           /application-procedure             301!
+/ISA.html                            /careers                           302!
+/Blog.html                  post=:p  /blog-posts/:p                     301!
+/Blog.html                           /blog                              301!
+/Industries.html                     /industries                        301!
+/AIReadinessScan.html                /ai-readiness-scan                 301!
+/Privacy.html                        /privacy                           301!
+/Cookies.html                        /cookies                           301!
+
+# Posts / jobs published after the last build: the overview page loads them in the browser
+/blog-posts/*      /blog/          200
+/nl/blog-posts/*   /nl/blog/       200
+/vacancies/*       /vacancies/     200
+/nl/vacancies/*    /nl/vacancies/  200
+
+# Webflow blog posts and cases that are not migrated go to the overviews (filled in after Bing's selection)
+# /blog-posts/<old-slug>   /blog    301
+# /cases/<old-slug>        /cases   301

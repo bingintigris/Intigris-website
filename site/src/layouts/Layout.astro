@@ -1,0 +1,63 @@
+---
+/* Shared page shell: SEO head (title, description, canonical, hreflang, Open Graph),
+   site CSS, public config for the browser, and page-specific extras (CDN scripts, styles). */
+import { localePath, basePath } from '../lib/i18n.js';
+
+interface Props {
+  lang: 'en' | 'nl';
+  title: string;
+  description?: string;
+  route: string;          // EN route, e.g. /quickstarts/sales-cloud
+  robots?: string;
+  headExtra?: string;     // raw HTML for <head>
+  bodyExtra?: string;     // raw HTML at the end of <body> (classic scripts: GSAP, Lenis, Supabase)
+  image?: string;
+}
+const { lang, title, description = '', route, robots = '', headExtra = '', bodyExtra = '', image = '/assets/og-default.jpg' } = Astro.props;
+const site = 'https://www.intigris.nl';
+const en = localePath(basePath(route), 'en');
+const nl = localePath(basePath(route), 'nl');
+const canonical = site + (lang === 'nl' ? nl : en);
+const isPreview = import.meta.env.PUBLIC_NOINDEX === 'true';
+const robotsContent = isPreview ? 'noindex, nofollow' : robots;
+---
+<!doctype html>
+<html lang={lang}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  {description && <meta name="description" content={description} />}
+  {robotsContent && <meta name="robots" content={robotsContent} />}
+  <link rel="canonical" href={canonical} />
+  <link rel="alternate" hreflang="en" href={site + en} />
+  <link rel="alternate" hreflang="nl" href={site + nl} />
+  <link rel="alternate" hreflang="x-default" href={site + en} />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Intigris" />
+  <meta property="og:title" content={title} />
+  {description && <meta property="og:description" content={description} />}
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={site + image} />
+  <meta property="og:locale" content={lang === 'nl' ? 'nl_NL' : 'en_GB'} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="/assets/logo-coral.png" />
+  <link rel="stylesheet" href="/design-system/site.css" />
+  <script is:inline define:vars={{ lang }}>
+    /* public config for classic scripts and islands (anon key is safe in the browser) */
+    /* QA: collect runtime errors (read by the page checker; harmless for visitors) */
+    window.__qa = [];
+    window.addEventListener('error', function (e) { window.__qa.push('error: ' + (e.message || e.type)); });
+    window.addEventListener('unhandledrejection', function (e) { window.__qa.push('promise: ' + String(e.reason && e.reason.message || e.reason)); });
+    window.__lang = lang;
+    window.tx = function (en, nl) { return window.__lang === 'nl' ? nl : en; };
+    window.SUPABASE_URL = 'https://kzonefjyvaedaoodckmj.supabase.co';
+    window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6b25lZmp5dmFlZGFvb2Rja21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MjI2OTYsImV4cCI6MjEwMDI5ODY5Nn0.FZiSfRI1OxeJhHzZvF5rhVi-xJ5ut1TgFQBPRhskv54';
+  </script>
+  <Fragment set:html={headExtra} />
+</head>
+<body>
+  <div id="root"><slot /></div>
+  <Fragment set:html={bodyExtra} />
+</body>
+</html>
