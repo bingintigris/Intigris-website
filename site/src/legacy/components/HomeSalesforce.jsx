@@ -5,6 +5,7 @@ import React from 'react';
 import { Island } from './Island.jsx';
 import { V3LogoHub, V3Styles } from './CloudKitV3.jsx';
 import { StorySpotlight } from './StorySpotlight.jsx';
+import { StartRolesCard, WtsStyles } from '../../components/home/WhereToStart.jsx';
 /* ==================================================================== */
 /*  HOMEPAGE · SALESFORCE SOLUTIONS view (index.html, mode = salesforce)   */
 /*  Built section by section with Bing (plan 2026-11-09):                  */
@@ -35,7 +36,8 @@ function SiteSalesforceHome({ onCta }) {
       {/* 2 · Proof strip: TODO (variant round) */}
       {/* 3 · The platform: concept B "Mission Control" (chosen 2026-11-11), island in islands/src/islands/PlatformMission.tsx */}
       <Island name="platformMission" />
-      {/* 4 · Where do you start: TODO (variant round) */}
+      {/* 4 · Where do you start: variant D (roles + product card, light), chosen 2026-11-17 */}
+      <StartRolesCard />
 
       {/* 5 · Integrations (approved on the Sales Cloud page) */}
       <V3LogoHub center="Salesforce" head={{ eyebrow: tx('INTEGRATIONS', 'KOPPELINGEN'), a: tx('Connected to', 'Gekoppeld aan'), b: tx('everything you use.', 'alles wat je gebruikt.'),
@@ -55,6 +57,7 @@ function SiteSalesforceHome({ onCta }) {
       <CkTalk onCta={onCta} line={tx('30 minutes, and you know what Salesforce can do for you.', 'In 30 minuten weet je wat Salesforce voor jou kan doen.')} />
       <CkStyles />
       <V3Styles />
+      <WtsStyles />
     </React.Fragment>
   );
 }
