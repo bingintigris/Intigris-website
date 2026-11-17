@@ -9,7 +9,7 @@
 /*  customer claims, price on request.                                     */
 /*  Mock screens use the fictional demo company "Havenwerk BV".           */
 /* ==================================================================== */
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { tx, lp } from '../../lib/i18n.js';
 
 export const START_ITEMS = () => [
@@ -150,6 +150,41 @@ export function StartRoles() {
   );
 }
 
+/* ---------- D · roles on the left + B's product card on the right ---------- */
+/* Bing's combination (2026-11-17): A's "who are you?" list switches one big */
+/* card that holds B's detail + mini Salesforce screen.                     */
+export function StartRolesCard() {
+  const items = START_ITEMS();
+  const [a, setA] = useState(0);
+  const hover = useRef(0);
+  const it = items[a];
+  // hover intent: only switch when the pointer rests on a row, so moving the mouse
+  // diagonally towards the card doesn't flick through the roles it crosses
+  const enter = (i) => { clearTimeout(hover.current); hover.current = setTimeout(() => setA(i), 160); };
+  const leave = () => clearTimeout(hover.current);
+  useEffect(() => () => clearTimeout(hover.current), []);
+  return (
+    <section className="wts wts--combo">
+      <div className="container">
+        <StartHead dark />
+        <div className="wts-combo">
+          <div className="wts-rolelist wts-rolelist--dark" role="tablist" aria-label={tx('Pick your role', 'Kies je rol')}>
+            {items.map((x, i) => (
+              <button key={x.id} id={'wts-d-tab-' + x.id} role="tab" aria-selected={i === a} aria-controls="wts-d-panel" className={i === a ? 'on' : ''} onClick={() => { leave(); setA(i); }} onMouseEnter={() => enter(i)} onMouseLeave={leave}>
+                <span>{x.role}</span>
+              </button>
+            ))}
+          </div>
+          <div className="wts-combocard" id="wts-d-panel" role="tabpanel" aria-labelledby={'wts-d-tab-' + it.id} key={it.id}>
+            <Detail it={it} />
+            <MiniScreen id={it.id} />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ---------- B · product tabs with a mini Salesforce screen ---------- */
 export function StartTabs() {
   const items = START_ITEMS();
@@ -234,6 +269,24 @@ const WTS_CSS = `
 .wts-rolelist button:focus-visible { outline: 2px solid var(--intigris-coral); outline-offset: 2px; }
 .wts-rolecard { position: sticky; top: 110px; background: var(--intigris-paper); border: 1px solid var(--border); border-radius: 26px; padding: 40px; box-shadow: 0 30px 60px -44px rgba(43,23,0,.45); animation: wtsIn .4s cubic-bezier(.2,.8,.2,1) both; }
 
+/* D · roles + product card */
+.wts--combo { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
+.wts--combo .eyebrow { color: rgba(255,250,240,.7); }
+.wts-combo { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.6fr); gap: 48px; align-items: start; }
+.wts-rolelist--dark { border-top-color: rgba(255,250,240,.16); }
+.wts-rolelist--dark button { color: rgba(255,250,240,.42); border-bottom-color: rgba(255,250,240,.16); padding: 18px 4px; }
+.wts-rolelist--dark button span { font-size: clamp(20px, 1.9vw, 26px); }
+.wts-rolelist--dark button:hover { color: rgba(255,250,240,.75); }
+.wts-rolelist--dark button.on { color: var(--intigris-off-white); }
+.wts-rolelist--dark button.on em { color: var(--intigris-coral); }
+.wts-rolelist--dark button:focus-visible { outline-color: #fff; }
+.wts-rolelist--dark button::after { content: '→'; font-size: 22px; color: var(--intigris-coral); opacity: 0; transform: translateX(-8px); transition: opacity .25s, transform .25s; }
+.wts-rolelist--dark button.on::after { opacity: 1; transform: none; }
+.wts-combocard { position: sticky; top: 110px; container-type: inline-size; display: grid; grid-template-columns: 1fr; gap: 28px; background: var(--intigris-off-white); color: var(--intigris-dark-brown); border-radius: 28px; padding: 36px; animation: wtsIn .4s cubic-bezier(.2,.8,.2,1) both; }
+@media (min-width: 1180px) { .wts-combocard { grid-template-columns: 1fr 1.1fr; align-items: center; min-height: 460px; } }
+.wts-combocard .wts-row { grid-template-columns: auto 1fr auto; }
+.wts-combocard .wts-row b { white-space: nowrap; }
+
 /* B · tabs + mini screen */
 .wts--tabs { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
 .wts--tabs .eyebrow { color: rgba(255,250,240,.7); }
@@ -284,6 +337,8 @@ const WTS_CSS = `
   .wts { padding: 80px 0; }
   .wts-roles, .wts-tabpanel { grid-template-columns: 1fr; gap: 28px; }
   .wts-rolecard { position: static; padding: 28px; }
+  .wts-combo { grid-template-columns: 1fr; gap: 28px; }
+  .wts-combocard { position: static; padding: 24px; }
   .wts-tabpanel { padding: 24px; }
   .wts-bento { grid-template-columns: 1fr; }
   .wts-tile--sales, .wts-tile--field { grid-row: auto; }
