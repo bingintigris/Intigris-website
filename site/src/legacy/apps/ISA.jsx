@@ -59,7 +59,7 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
                 </button>
               </div>
               <div style={{ borderRadius: 24, overflow: 'hidden', border: '1px solid var(--border)', aspectRatio: '4/3', background: 'var(--intigris-off-white-200)' }}>
-                <img src="https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/64410322b2af2d8c825d8d70_2022_Intigris705-1024x683.jpg" alt={tx('Intigris consultants at work', 'Intigris-consultants aan het werk')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src="/assets/photos/intigris-team-2022.jpg" alt={tx('Intigris consultants at work', 'Intigris-consultants aan het werk')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
             </div>
           </section>
@@ -134,7 +134,7 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
           {/* FIT */}
           <section className="container-wide isa-split" style={{ paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(56px, 7vw, 88px)', display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: 'clamp(32px, 5vw, 72px)', alignItems: 'center' }}>
             <div style={{ borderRadius: 24, overflow: 'hidden', border: '1px solid var(--border)', aspectRatio: '4/3', background: 'var(--intigris-off-white-200)' }}>
-              <img src="https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/64410a2a6b79b5cfd60fddc0_Sfeerfoto-overleg-I-1024x683.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="/assets/photos/isa-overleg.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div>
               <div className="eyebrow" style={{ color: 'var(--intigris-coral)' }}>{tx('FIT', 'PASSEND?')}</div>
