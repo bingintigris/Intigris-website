@@ -83,7 +83,7 @@ export function CloudsChaos() {
   const [phase, setPhase] = useState('chaos');
   useEffect(() => {
     setPhase('chaos');
-    const t = setTimeout(() => setPhase('order'), 1700);
+    const t = setTimeout(() => setPhase('order'), 950);
     return () => clearTimeout(t);
   }, [p.a]);
   return (
@@ -96,7 +96,7 @@ export function CloudsChaos() {
             <div className={'cp-chaos cp-chaos--' + phase} aria-hidden="true">
               {chaos[c.id].map(([k, v], i) => (
                 <div key={i} className={'cp-note cp-note--' + k.toLowerCase().replace(/[^a-z]/g, '')}
-                  style={{ left: SPOTS[i][0] + '%', top: SPOTS[i][1] + '%', '--r': SPOTS[i][2] + 'deg', '--d': i * 0.08 + 's' }}>
+                  style={{ left: SPOTS[i][0] + '%', top: SPOTS[i][1] + '%', '--r': SPOTS[i][2] + 'deg', '--d': i * 0.05 + 's' }}>
                   <small>{k}</small>{v}
                 </div>
               ))}
@@ -227,14 +227,14 @@ const CP_CSS = `
 /* A · chaos to order */
 .cp-stage { position: relative; min-height: 520px; border-radius: 28px; background: radial-gradient(120% 90% at 80% 10%, #ffe1d6 0%, var(--intigris-paper) 55%); border: 1px solid var(--border); overflow: hidden; }
 .cp-chaos { position: absolute; inset: 0; }
-.cp-note { position: absolute; width: 38%; max-width: 230px; padding: 12px 14px; border-radius: 12px; background: #fff; box-shadow: 0 14px 28px -16px rgba(43,23,0,.45); font-size: 14px; font-weight: 500; line-height: 1.35; transform: rotate(var(--r)); animation: cpFloat 3.2s ease-in-out infinite alternate, cpPop .45s var(--d) cubic-bezier(.2,.8,.2,1) both; transition: transform .7s cubic-bezier(.6,0,.2,1), opacity .5s, left .7s cubic-bezier(.6,0,.2,1), top .7s cubic-bezier(.6,0,.2,1); }
+.cp-note { position: absolute; width: 38%; max-width: 230px; padding: 12px 14px; border-radius: 12px; background: #fff; box-shadow: 0 14px 28px -16px rgba(43,23,0,.45); font-size: 14px; font-weight: 500; line-height: 1.35; transform: rotate(var(--r)); animation: cpFloat 3.2s ease-in-out infinite alternate, cpPop .3s var(--d) cubic-bezier(.2,.8,.2,1) both; transition: transform .45s cubic-bezier(.6,0,.2,1), opacity .35s, left .45s cubic-bezier(.6,0,.2,1), top .45s cubic-bezier(.6,0,.2,1); }
 .cp-note small { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .55; margin-bottom: 3px; }
 .cp-note--postit { background: #fff3a8; } .cp-note--whatsapp, .cp-note--chat { background: #dcf8c6; } .cp-note--excel { background: #e6f4ea; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; }
 .cp-note--whiteboard { background: #f4f6f8; border: 1px solid #d6dbe0; } .cp-note--voicemail, .cp-note--phone, .cp-note--telefoon { background: #ffe6dc; } .cp-note--workorder, .cp-note--werkbon, .cp-note--doc, .cp-note--slides { background: #fbf4e6; }
 @keyframes cpFloat { from { translate: 0 0; } to { translate: 0 -8px; } }
 @keyframes cpPop { from { opacity: 0; scale: .8; } to { opacity: 1; scale: 1; } }
 .cp-chaos--order .cp-note { left: 40% !important; top: 40% !important; transform: rotate(0deg) scale(.3); opacity: 0; }
-.cp-order { position: absolute; inset: 28px; display: grid; grid-template-columns: 1fr 1.1fr; grid-template-rows: 1fr auto; gap: 18px 28px; align-items: center; opacity: 0; transform: scale(.94); transition: opacity .55s .25s, transform .55s .25s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
+.cp-order { position: absolute; inset: 28px; display: grid; grid-template-columns: 1fr 1.1fr; grid-template-rows: 1fr auto; gap: 18px 28px; align-items: center; opacity: 0; transform: scale(.94); transition: opacity .4s .12s, transform .4s .12s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
 .cp-order.on { opacity: 1; transform: none; pointer-events: auto; }
 .cp-order .cp-foot { grid-column: 1 / -1; }
 

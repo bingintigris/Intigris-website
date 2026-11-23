@@ -6,8 +6,15 @@ import { StartRolesCard, StartRoles, StartTabs, StartBento, WtsStyles } from '..
 import { HowTimeline, HowPinned, HowCards, HwwStyles } from '../home/HowWeWork.jsx';
 import { ClStyles } from '../home/CloudsOverview.jsx';
 import { CloudsChaos, CloudsShowcase, CloudsDeck, CpStyles } from '../home/CloudsPick.jsx';
+import { CloudIntrosReview, CiStyles } from '../home/CloudIntros.jsx';
 
 const ROUNDS = () => [
+  {
+    id: 'intros', title: tx('Section 2 · Opening animation per cloud (option 1 vs 2)', 'Sectie 2 · Openingsanimatie per cloud (optie 1 vs 2)'),
+    variants: [
+      { k: '★', name: tx('Pick 1 or 2 per cloud', 'Kies 1 of 2 per cloud'), note: tx('Rough previews; the section itself (concept A) is already on the homepage.', 'Ruwe previews; de sectie zelf (concept A) staat al op de homepage.'), C: CloudIntrosReview },
+    ],
+  },
   {
     id: 'clouds', title: tx('Section 2 · What we implement (round 2: list left, animated card right)', 'Sectie 2 · Wat we implementeren (ronde 2: lijst links, geanimeerde kaart rechts)'),
     variants: [
@@ -59,6 +66,7 @@ export default function HomeSectionsReview() {
       <HwwStyles />
       <ClStyles />
       <CpStyles />
+      <CiStyles />
       <style dangerouslySetInnerHTML={{ __html: `
         .rv-top { position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1d1206; color: #fff; font-size: 14px; }
         .rv-top a { color: #fff; font-weight: 600; }
