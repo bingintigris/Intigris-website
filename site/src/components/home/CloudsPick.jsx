@@ -83,8 +83,13 @@ export function CloudsChaos() {
   const [phase, setPhase] = useState('chaos');
   useEffect(() => {
     setPhase('chaos');
-    const t = setTimeout(() => setPhase('order'), 950);
-    return () => clearTimeout(t);
+    // Sales (and clouds without their own intro yet): notes land after ~1 s.
+    // Service Cloud (option 1, Bing 2026-11-23): three channels arrive, merge, then land.
+    const own = c.id === 'service';
+    const ts = own
+      ? [setTimeout(() => setPhase('merge'), 1500), setTimeout(() => setPhase('order'), 2050)]
+      : [setTimeout(() => setPhase('order'), 950)];
+    return () => ts.forEach(clearTimeout);
   }, [p.a]);
   return (
     <section className="cp cp--chaos">
@@ -94,7 +99,7 @@ export function CloudsChaos() {
           <CloudList items={cs} p={p} style="icon" />
           <div className="cp-stage" role="tabpanel" key={c.id}>
             <div className={'cp-chaos cp-chaos--' + phase} aria-hidden="true">
-              {chaos[c.id].map(([k, v], i) => (
+              {c.id === 'service' ? <ServiceChannels /> : chaos[c.id].map(([k, v], i) => (
                 <div key={i} className={'cp-note cp-note--' + k.toLowerCase().replace(/[^a-z]/g, '')}
                   style={{ left: SPOTS[i][0] + '%', top: SPOTS[i][1] + '%', '--r': SPOTS[i][2] + 'deg', '--d': i * 0.05 + 's' }}>
                   <small>{k}</small>{v}
@@ -107,13 +112,38 @@ export function CloudsChaos() {
                 <p className="cp-does">{c.does}</p>
                 <p className="cp-result">✓ {c.result}</p>
               </div>
-              <MiniScreen id={c.id} />
+              {c.id === 'service' ? <ServiceCase /> : <MiniScreen id={c.id} />}
               <Foot c={c} />
             </div>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/* Service Cloud opening (option 1): one question arrives by mail, phone and chat,
+   the three merge, and the card ends on the single case that holds all three. */
+const SERVICE_Q = () => tx('Where is my order?', 'Waar blijft mijn bestelling?');
+function ServiceChannels() {
+  const chans = [['mail', 'Mail', '09:02', 6, 10], ['phone', tx('Phone', 'Telefoon'), '09:15', 50, 30], ['chat', 'Chat', '09:31', 14, 60]];
+  return chans.map(([k, label, time, l, t], i) => (
+    <div key={k} className={'cp-chan cp-chan--' + k} style={{ left: l + '%', top: t + '%', '--d': i * 0.35 + 's' }}>
+      <small><i />{label} · {time} · Noor, Havenwerk BV</small>{SERVICE_Q()}
+    </div>
+  ));
+}
+function ServiceCase() {
+  return (
+    <div className="cp-case">
+      <div className="cp-case-top"><b>Case #00418</b><i>{tx('1 case · 3 channels', '1 case · 3 kanalen')}</i></div>
+      <p>{SERVICE_Q()}</p>
+      <div className="cp-case-from">Noor · Havenwerk BV</div>
+      <div className="cp-case-tl">
+        {[['mail', 'Mail', '09:02'], ['phone', tx('Phone', 'Telefoon'), '09:15'], ['chat', 'Chat', '09:31']].map(([k, l, t]) => <span key={k} className={'cp-case-dot cp-case-dot--' + k}>{l} <em>{t}</em></span>)}
+      </div>
+      <div className="cp-case-foot"><span>{tx('Assigned to', 'Toegewezen aan')} <b>Sanne</b></span><span className="cp-case-sla">{tx('Answer within 2h', 'Antwoord binnen 2u')}</span></div>
+    </div>
   );
 }
 
@@ -237,6 +267,31 @@ const CP_CSS = `
 .cp-order { position: absolute; inset: 28px; display: grid; grid-template-columns: 1fr 1.1fr; grid-template-rows: 1fr auto; gap: 18px 28px; align-items: center; opacity: 0; transform: scale(.94); transition: opacity .4s .12s, transform .4s .12s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
 .cp-order.on { opacity: 1; transform: none; pointer-events: auto; }
 .cp-order .cp-foot { grid-column: 1 / -1; }
+
+/* A · Service Cloud opening: channels merge into one case */
+.cp-chan { position: absolute; width: 44%; max-width: 300px; padding: 14px 16px; border-radius: 14px; background: #fff; box-shadow: 0 16px 30px -18px rgba(43,23,0,.5); font-size: 17px; font-weight: 500; border-left: 5px solid #0176d3; animation: cpPop .35s var(--d) cubic-bezier(.2,.8,.2,1) both; transition: left .45s cubic-bezier(.6,0,.2,1), top .45s cubic-bezier(.6,0,.2,1), transform .45s cubic-bezier(.6,0,.2,1), opacity .3s .15s; }
+.cp-chan small { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; opacity: .6; margin-bottom: 5px; }
+.cp-chan small i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.cp-chan--mail { border-left-color: #0176d3; } .cp-chan--mail small { color: #0176d3; }
+.cp-chan--phone { border-left-color: var(--intigris-coral); } .cp-chan--phone small { color: var(--intigris-coral-700); }
+.cp-chan--chat { border-left-color: #2e844a; } .cp-chan--chat small { color: #2e844a; }
+.cp-chaos--merge .cp-chan, .cp-chaos--order .cp-chan { left: 30% !important; top: 36% !important; transform: scale(.9); }
+.cp-chaos--merge .cp-chan, .cp-chaos--order .cp-chan { animation: none; }
+.cp-chaos--order .cp-chan { opacity: 0; transform: scale(.6); }
+.cp-case { background: #fff; border-radius: 18px; padding: 20px 22px; box-shadow: 0 30px 60px -30px rgba(43,23,0,.5); border: 1px solid rgba(0,0,0,.06); }
+.cp-case-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px; }
+.cp-case-top b { color: #032d60; }
+.cp-case-top i { font-style: normal; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: #e3f5e9; color: #2e844a; }
+.cp-case p { font-size: 22px; font-weight: 500; letter-spacing: -0.01em; margin: 12px 0 2px; color: #111; }
+.cp-case-from { font-size: 13px; color: #666; }
+.cp-case-tl { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; padding-left: 14px; border-left: 2px solid #e5e5e5; }
+.cp-case-dot { position: relative; font-size: 13.5px; font-weight: 600; color: #333; animation: cpIn .4s both; }
+.cp-case-dot:nth-child(2) { animation-delay: .12s; } .cp-case-dot:nth-child(3) { animation-delay: .24s; }
+.cp-case-dot::before { content: ''; position: absolute; left: -20px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #0176d3; }
+.cp-case-dot--phone::before { background: var(--intigris-coral); } .cp-case-dot--chat::before { background: #2e844a; }
+.cp-case-dot em { font-style: normal; font-weight: 500; color: #888; margin-left: 6px; }
+.cp-case-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 12px; border-top: 1px solid #eee; font-size: 13px; color: #555; }
+.cp-case-sla { font-weight: 600; padding: 4px 10px; border-radius: 99px; background: var(--intigris-coral-100); color: var(--intigris-coral-700); }
 
 /* B · showcase */
 .cp--show { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
