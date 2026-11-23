@@ -4,16 +4,16 @@ import React from 'react';
 import { tx, getLang, localePath } from '../../lib/i18n.js';
 import { StartRolesCard, StartRoles, StartTabs, StartBento, WtsStyles } from '../home/WhereToStart.jsx';
 import { HowTimeline, HowPinned, HowCards, HwwStyles } from '../home/HowWeWork.jsx';
-import { CloudsOrbit, CloudsPanels, CloudsFlip, CloudsStack, ClStyles } from '../home/CloudsOverview.jsx';
+import { ClStyles } from '../home/CloudsOverview.jsx';
+import { CloudsChaos, CloudsShowcase, CloudsDeck, CpStyles } from '../home/CloudsPick.jsx';
 
 const ROUNDS = () => [
   {
-    id: 'clouds', title: tx('Section 2 · The clouds we implement (NEW)', 'Sectie 2 · De clouds die we implementeren (NIEUW)'),
+    id: 'clouds', title: tx('Section 2 · What we implement (round 2: list left, animated card right)', 'Sectie 2 · Wat we implementeren (ronde 2: lijst links, geanimeerde kaart rechts)'),
     variants: [
-      { k: 'A', name: tx('Orbit', 'Baan'), note: tx('"Your customer" in the middle, six clouds around it. Cycles by itself until you hover or click; the card shows problem, solution and a mini screen.', '"Jouw klant" in het midden, zes clouds eromheen. Wisselt vanzelf tot je hovert of klikt; de kaart toont probleem, oplossing en een mini-scherm.'), C: CloudsOrbit },
-      { k: 'B', name: tx('Expanding panels', 'Uitklappende panelen'), note: tx('Dark band with six tall strips; the one you hover opens wide with problem, solution and mini screen.', 'Donkere band met zes hoge stroken; degene waar je overheen gaat klapt breed open met probleem, oplossing en mini-scherm.'), C: CloudsPanels },
-      { k: 'C', name: tx('Flip cards (problem first)', 'Flipkaarten (probleem eerst)'), note: tx('Six cards with the problem as a question; hover or tap to flip to the cloud that solves it.', 'Zes kaarten met het probleem als vraag; hover of tik om om te draaien naar de cloud die het oplost.'), C: CloudsFlip },
-      { k: 'D', name: tx('Stacking cards', 'Stapelkaarten'), note: tx('While you scroll, each cloud card slides up and stacks on the previous one.', 'Terwijl je scrolt schuift elke cloudkaart omhoog en stapelt op de vorige.'), C: CloudsStack },
+      { k: 'A', name: tx('Chaos to order', 'Van chaos naar orde'), note: tx('Light, like "Where do you start?". Pick a cloud: that team\'s typical mess floats in (post-its, mails, Excel), then lands in one clean Salesforce screen, like the Sales Cloud hero.', 'Licht, zoals "Waar begin je?". Kies een cloud: de typische chaos van dat team zweeft binnen (post-its, mails, Excel) en landt daarna in één strak Salesforce-scherm, zoals de Sales Cloud-hero.'), C: CloudsChaos },
+      { k: 'B', name: tx('Showcase screen', 'Showcase-scherm'), note: tx('Dark band, numbered list. A big laptop switches to the chosen cloud; "today" and "with Salesforce" labels and the price pop in around it.', 'Donkere band, genummerde lijst. Een grote laptop wisselt naar de gekozen cloud; labels "nu" en "met Salesforce" en de prijs ploppen eromheen.'), C: CloudsShowcase },
+      { k: 'C', name: tx('Card deck', 'Kaartspel'), note: tx('Coral band with pill list. A fanned deck of cards: the chosen cloud\'s card is dealt to the front and tilts with your mouse.', 'Koraal band met pil-lijst. Een waaier van kaarten: de kaart van de gekozen cloud wordt naar voren gedeeld en kantelt mee met je muis.'), C: CloudsDeck },
     ],
   },
   {
@@ -58,6 +58,7 @@ export default function HomeSectionsReview() {
       <WtsStyles />
       <HwwStyles />
       <ClStyles />
+      <CpStyles />
       <style dangerouslySetInnerHTML={{ __html: `
         .rv-top { position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1d1206; color: #fff; font-size: 14px; }
         .rv-top a { color: #fff; font-weight: 600; }
