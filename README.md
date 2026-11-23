@@ -18,6 +18,7 @@ Documents and image masters live on the shared Drive:
 ## Workflow
 1. Work on a branch (never directly on `main`).
 2. Preview: double-click `start-preview.command` → http://localhost:8003
+   Design review (new section variants A/B/C to choose from): double-click `start-design-review.command` → http://localhost:8004
 3. Push: double-click `push-to-github.command` (pushes the branch, shows the pull-request link).
 4. Bing merges the pull request on GitHub → Netlify publishes `main` to intigris.netlify.app
    (and to www.intigris.nl after the DNS switch on 4 Dec 2026).
