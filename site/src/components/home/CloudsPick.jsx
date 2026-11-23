@@ -85,10 +85,12 @@ export function CloudsChaos() {
     setPhase('chaos');
     // Sales (and clouds without their own intro yet): notes land after ~1 s.
     // Service Cloud (option 1, Bing 2026-11-23): three channels arrive, merge, then land.
-    const own = c.id === 'service';
-    const ts = own
+    // Field Service (option 1, Bing 2026-11-23): zigzag route draws, then redraws as one loop, then lands.
+    const ts = c.id === 'service'
       ? [setTimeout(() => setPhase('merge'), 1500), setTimeout(() => setPhase('order'), 2050)]
-      : [setTimeout(() => setPhase('order'), 950)];
+      : c.id === 'field'
+        ? [setTimeout(() => setPhase('merge'), 1450), setTimeout(() => setPhase('order'), 2650)]
+        : [setTimeout(() => setPhase('order'), 950)];
     return () => ts.forEach(clearTimeout);
   }, [p.a]);
   return (
@@ -99,7 +101,7 @@ export function CloudsChaos() {
           <CloudList items={cs} p={p} style="icon" />
           <div className="cp-stage" role="tabpanel" key={c.id}>
             <div className={'cp-chaos cp-chaos--' + phase} aria-hidden="true">
-              {c.id === 'service' ? <ServiceChannels /> : chaos[c.id].map(([k, v], i) => (
+              {c.id === 'service' ? <ServiceChannels /> : c.id === 'field' ? <FieldMap big /> : chaos[c.id].map(([k, v], i) => (
                 <div key={i} className={'cp-note cp-note--' + k.toLowerCase().replace(/[^a-z]/g, '')}
                   style={{ left: SPOTS[i][0] + '%', top: SPOTS[i][1] + '%', '--r': SPOTS[i][2] + 'deg', '--d': i * 0.05 + 's' }}>
                   <small>{k}</small>{v}
@@ -112,7 +114,7 @@ export function CloudsChaos() {
                 <p className="cp-does">{c.does}</p>
                 <p className="cp-result">✓ {c.result}</p>
               </div>
-              {c.id === 'service' ? <ServiceCase /> : <MiniScreen id={c.id} />}
+              {c.id === 'service' ? <ServiceCase /> : c.id === 'field' ? <FieldRoute /> : <MiniScreen id={c.id} />}
               <Foot c={c} />
             </div>
           </div>
@@ -143,6 +145,46 @@ function ServiceCase() {
         {[['mail', 'Mail', '09:02'], ['phone', tx('Phone', 'Telefoon'), '09:15'], ['chat', 'Chat', '09:31']].map(([k, l, t]) => <span key={k} className={'cp-case-dot cp-case-dot--' + k}>{l} <em>{t}</em></span>)}
       </div>
       <div className="cp-case-foot"><span>{tx('Assigned to', 'Toegewezen aan')} <b>Sanne</b></span><span className="cp-case-sla">{tx('Answer within 2h', 'Antwoord binnen 2u')}</span></div>
+    </div>
+  );
+}
+
+/* Field Service opening (option 1): a zigzag route with wasted kilometres redraws
+   itself as one smart loop; the card ends on the planned route with times. */
+const FM_PINS = [[60, 40], [300, 70], [110, 200], [330, 230], [200, 130]];   // map positions
+const FM_ORDER = [1, 2, 4, 3, 5];                                           // stop number per pin (loop order)
+const FM_ZIG = 'M60 40 L330 230 L110 200 L300 70 L200 130 L60 40';
+const FM_LOOP = 'M60 40 C120 30 250 40 300 70 C340 110 350 200 330 230 C260 250 160 230 110 200 C80 170 150 140 200 130 C150 110 70 80 60 40';
+function FieldMapSvg({ showBad }) {
+  return (
+    <svg className="cp-fm-svg" viewBox="0 0 400 280" aria-hidden="true">
+      <rect width="400" height="280" rx="18" fill="#eef1ea" />
+      <path d="M0 160 C100 140 180 190 400 150" stroke="#cfd8e3" strokeWidth="14" fill="none" />
+      <path d="M150 0 C170 90 140 180 190 280" stroke="#e2e6dc" strokeWidth="8" fill="none" />
+      {showBad && <path className="cp-fm-route cp-fm-bad" d={FM_ZIG} />}
+      <path className="cp-fm-route cp-fm-good" d={FM_LOOP} />
+      {FM_PINS.map(([x, y], i) => <g key={i}><circle cx={x} cy={y} r="12" fill="#fff" stroke="#402301" strokeWidth="2" /><text x={x} y={y + 4} textAnchor="middle" fontSize="12" fontWeight="700" fill="#402301">{FM_ORDER[i]}</text></g>)}
+    </svg>
+  );
+}
+function FieldMap() {
+  return (
+    <div className="cp-fm">
+      <FieldMapSvg showBad />
+      <div className="cp-fm-km cp-fm-km--bad">⚠ 143 km · 4 {tx('h', 'u')} 10</div>
+      <div className="cp-fm-km cp-fm-km--good">✓ 68 km · 2 {tx('h', 'u')} 05</div>
+    </div>
+  );
+}
+function FieldRoute() {
+  const stops = [['08:30', 'Havenwerk BV', 'Zaandam'], ['09:20', 'Polderbouw', 'Purmerend'], ['10:15', 'Duinzicht Zorg', 'Hoorn'], ['11:05', 'Kade Installatie', 'Alkmaar'], ['11:50', 'Veldhuis Techniek', 'Castricum']];
+  return (
+    <div className="cp-route">
+      <div className="cp-route-top"><b>{tx('Route · Jan · Tuesday', 'Route · Jan · dinsdag')}</b><i>68 km · 2 {tx('h', 'u')} 05</i></div>
+      <div className="cp-route-map"><FieldMapSvg /></div>
+      <ol className="cp-route-stops">
+        {stops.map(([t, n, city], i) => <li key={n} style={{ animationDelay: 0.1 + i * 0.07 + 's' }}><b>{i + 1}</b><span>{n} <em>{city}</em></span><time>{t}</time></li>)}
+      </ol>
     </div>
   );
 }
@@ -292,6 +334,35 @@ const CP_CSS = `
 .cp-case-dot em { font-style: normal; font-weight: 500; color: #888; margin-left: 6px; }
 .cp-case-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 12px; border-top: 1px solid #eee; font-size: 13px; color: #555; }
 .cp-case-sla { font-weight: 600; padding: 4px 10px; border-radius: 99px; background: var(--intigris-coral-100); color: var(--intigris-coral-700); }
+
+/* A · Field Service opening: zigzag route → one loop */
+.cp-fm { position: absolute; inset: 26px; }
+.cp-fm-svg { width: 100%; height: 100%; display: block; }
+.cp-fm-route { fill: none; stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1400; stroke-dashoffset: 1400; }
+.cp-fm-bad { stroke: var(--intigris-coral); animation: cpDraw 1.25s .1s ease-in-out forwards; transition: opacity .35s; }
+.cp-fm-good { stroke: #2e844a; }
+.cp-fm .cp-fm-good { opacity: 0; }
+.cp-chaos--merge .cp-fm-bad { opacity: .15; }
+.cp-chaos--merge .cp-fm .cp-fm-good { opacity: 1; animation: cpDraw 1s ease-in-out forwards; }
+.cp-chaos--order .cp-fm { opacity: 0; transform: scale(.96); transition: opacity .3s, transform .35s; }
+@keyframes cpDraw { to { stroke-dashoffset: 0; } }
+.cp-fm-km { position: absolute; right: 18px; bottom: 16px; padding: 9px 15px; border-radius: 99px; background: #fff; font-size: 15px; font-weight: 700; box-shadow: 0 10px 20px -12px rgba(43,23,0,.45); transition: opacity .3s, transform .3s; }
+.cp-fm-km--bad { color: var(--intigris-coral-700); animation: cpPop .3s 1s both; }
+.cp-fm-km--good { color: #2e844a; opacity: 0; transform: translateY(8px); }
+.cp-chaos--merge .cp-fm-km--bad { animation: none; opacity: 0; }
+.cp-chaos--merge .cp-fm-km--good { opacity: 1; transform: none; transition-delay: .5s; }
+.cp-route { background: #fff; border-radius: 18px; padding: 16px 18px; box-shadow: 0 30px 60px -30px rgba(43,23,0,.5); border: 1px solid rgba(0,0,0,.06); }
+.cp-route-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px; }
+.cp-route-top b { color: #032d60; }
+.cp-route-top i { font-style: normal; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 99px; background: #e3f5e9; color: #2e844a; }
+.cp-route-map { height: 120px; margin: 10px 0; border-radius: 12px; overflow: hidden; }
+.cp-route-map .cp-fm-svg { width: 100%; height: 100%; }
+.cp-route-map .cp-fm-good { animation: cpDraw .9s .15s ease-in-out forwards; }
+.cp-route-stops { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.cp-route-stops li { display: grid; grid-template-columns: 20px 1fr auto; gap: 8px; align-items: center; font-size: 13px; animation: cpIn .35s both; }
+.cp-route-stops b { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; background: #2e844a; color: #fff; }
+.cp-route-stops span { color: #222; font-weight: 500; } .cp-route-stops em { font-style: normal; color: #888; font-weight: 400; margin-left: 4px; }
+.cp-route-stops time { font-weight: 600; color: #0176d3; font-variant-numeric: tabular-nums; }
 
 /* B · showcase */
 .cp--show { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
