@@ -6,6 +6,7 @@ import { Island } from './Island.jsx';
 import { V3LogoHub, V3Styles } from './CloudKitV3.jsx';
 import { StorySpotlight } from './StorySpotlight.jsx';
 import { StartRolesCard, WtsStyles } from '../../components/home/WhereToStart.jsx';
+import { CloudsChaos, CpStyles } from '../../components/home/CloudsPick.jsx';
 /* ==================================================================== */
 /*  HOMEPAGE · SALESFORCE SOLUTIONS view (index.html, mode = salesforce)   */
 /*  Built section by section with Bing (plan 2026-11-09):                  */
@@ -34,8 +35,9 @@ function SiteSalesforceHome({ onCta }) {
   return (
     <React.Fragment>
       {/* 2 · Proof strip: TODO (variant round) */}
-      {/* 3 · The platform: concept B "Mission Control" (chosen 2026-11-11), island in islands/src/islands/PlatformMission.tsx */}
-      <Island name="platformMission" />
+      {/* 2 · What we implement: concept A "Chaos to order" (chosen by Bing 2026-11-23), replaces the
+             "A day at Havenwerk BV" platform island (islands/src/islands/PlatformMission.tsx, kept as inspiration) */}
+      <CloudsChaos />
       {/* 4 · Where do you start: variant D (roles + product card, light), chosen 2026-11-17 */}
       <StartRolesCard />
 
@@ -58,6 +60,7 @@ function SiteSalesforceHome({ onCta }) {
       <CkStyles />
       <V3Styles />
       <WtsStyles />
+      <CpStyles />
     </React.Fragment>
   );
 }
