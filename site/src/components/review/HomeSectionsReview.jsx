@@ -4,8 +4,18 @@ import React from 'react';
 import { tx, getLang, localePath } from '../../lib/i18n.js';
 import { StartRolesCard, StartRoles, StartTabs, StartBento, WtsStyles } from '../home/WhereToStart.jsx';
 import { HowTimeline, HowPinned, HowCards, HwwStyles } from '../home/HowWeWork.jsx';
+import { CloudsOrbit, CloudsPanels, CloudsFlip, CloudsStack, ClStyles } from '../home/CloudsOverview.jsx';
 
 const ROUNDS = () => [
+  {
+    id: 'clouds', title: tx('Section 2 · The clouds we implement (NEW)', 'Sectie 2 · De clouds die we implementeren (NIEUW)'),
+    variants: [
+      { k: 'A', name: tx('Orbit', 'Baan'), note: tx('"Your customer" in the middle, six clouds around it. Cycles by itself until you hover or click; the card shows problem, solution and a mini screen.', '"Jouw klant" in het midden, zes clouds eromheen. Wisselt vanzelf tot je hovert of klikt; de kaart toont probleem, oplossing en een mini-scherm.'), C: CloudsOrbit },
+      { k: 'B', name: tx('Expanding panels', 'Uitklappende panelen'), note: tx('Dark band with six tall strips; the one you hover opens wide with problem, solution and mini screen.', 'Donkere band met zes hoge stroken; degene waar je overheen gaat klapt breed open met probleem, oplossing en mini-scherm.'), C: CloudsPanels },
+      { k: 'C', name: tx('Flip cards (problem first)', 'Flipkaarten (probleem eerst)'), note: tx('Six cards with the problem as a question; hover or tap to flip to the cloud that solves it.', 'Zes kaarten met het probleem als vraag; hover of tik om om te draaien naar de cloud die het oplost.'), C: CloudsFlip },
+      { k: 'D', name: tx('Stacking cards', 'Stapelkaarten'), note: tx('While you scroll, each cloud card slides up and stacks on the previous one.', 'Terwijl je scrolt schuift elke cloudkaart omhoog en stapelt op de vorige.'), C: CloudsStack },
+    ],
+  },
   {
     id: 'how', title: tx('Section 6 · How we work', 'Sectie 6 · Zo werken we'),
     variants: [
@@ -47,6 +57,7 @@ export default function HomeSectionsReview() {
       ))}
       <WtsStyles />
       <HwwStyles />
+      <ClStyles />
       <style dangerouslySetInnerHTML={{ __html: `
         .rv-top { position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1d1206; color: #fff; font-size: 14px; }
         .rv-top a { color: #fff; font-weight: 600; }
