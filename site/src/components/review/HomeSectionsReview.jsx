@@ -11,6 +11,7 @@ import { TrustedVelocity, TrustedWall, TrustedSentence, TrustedStats, TvStyles }
 import { HeroFx1, HeroFx2, HeroFx3, HfxStyles } from './HeroFxVariants.jsx';
 import { WhyBento, WhyVs, WhyPinned, WhyStory, WhyPeople, WiStyles } from '../home/WhyIntigris.jsx';
 import { WhyLine, WhyStage, WhyZigzag, WsStyles } from '../home/WhyStack.jsx';
+import { WhySettleCards, WhySettleBento, WhySettleLine, WsoStyles } from '../home/WhySettle.jsx';
 import { StoriesStack, StoriesWall, StoriesGallery, StoriesGalleryIndustry, SvStyles } from '../home/StoriesVariants.jsx';
 import { StorySpotlight, SsStyles } from '../../legacy/components/StorySpotlight.jsx';
 import { CK_STORIES, CkStyles } from '../../legacy/components/CloudKit.jsx';
@@ -20,6 +21,14 @@ const WhyStageNumber = () => <WhyStage look="number" />;
 const WhyStageSplit = () => <WhyStage look="split" />;
 
 const ROUNDS = () => [
+  {
+    id: 'why4', title: tx('"We breathe Salesforce." · plays once, then settles into a fixed overview (three designs)', '"Wij ademen Salesforce." · speelt één keer, daarna een vast overzicht (drie ontwerpen)'),
+    variants: [
+      { k: 'A', name: tx('Five cards in a row', 'Vijf kaarten op een rij'), note: tx('After the last reason, the timeline folds into five white cards side by side (proof on top, reason and short text below) under the heading. Scrolling back up just passes this still overview.', 'Na de laatste reden vouwt de tijdlijn zich tot vijf witte kaarten naast elkaar (bewijs boven, reden en korte tekst eronder) onder de kop. Terugscrollen loopt gewoon langs dit stilstaande overzicht.'), C: WhySettleCards },
+      { k: 'B', name: tx('Bento: heading left, tiles right', 'Bento: kop links, tegels rechts'), note: tx('The heading stays left; the reasons gather into four compact tiles with their proof, plus a wide coral 4.5★ bar underneath.', 'De kop blijft links; de redenen komen samen in vier compacte tegels met hun bewijs, plus een brede koraal 4.5★-balk eronder.'), C: WhySettleBento },
+      { k: 'C', name: tx('The line turns horizontal', 'De lijn draait horizontaal'), note: tx('The coral scroll line turns sideways under a centred heading: five checkpoints, each with its proof, reason and short text.', 'De koraal scrolllijn draait opzij onder een gecentreerde kop: vijf checkpoints, elk met bewijs, reden en korte tekst.'), C: WhySettleLine },
+    ],
+  },
   {
     id: 'stories', title: tx('Customer stories · current section + three redesigns', 'Klantverhalen · huidige sectie + drie herontwerpen'),
     variants: [
@@ -135,7 +144,7 @@ export default function HomeSectionsReview() {
       <TvStyles />
       <HfxStyles />
       <WiStyles />
-      <WsStyles />
+      <WsStyles /><WsoStyles />
       <SvStyles />
       <SsStyles />
       <style dangerouslySetInnerHTML={{ __html: `
