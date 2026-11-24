@@ -18,7 +18,9 @@ import { SS_LOGOS } from '../../legacy/components/StorySpotlight.jsx';
 const reduced = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const ORDER = ['wetransfer', 'evbox', 'opcharge', 'atag', 'alpha', 'zon365', 'solar'];
 const stories = () => { const S = CK_STORIES(); return ORDER.map((k) => ({ k, ...S[k] })); };
-const Logo = ({ s, big }) => SS_LOGOS[s.name] ? <img className={'sv-logo' + (big ? ' sv-logo--big' : '')} src={SS_LOGOS[s.name]} alt={s.name} /> : <b className={'sv-logo sv-logo--txt' + (big ? ' sv-logo--big' : '')}>{s.name}</b>;
+// logos with a lot of height (stacked wordmarks) get a bit more room so they read as large as the others
+const LOGO_H = { 'Solar Assistance': 1.45, 'Alpha Ventilatie': 1.25 };
+const Logo = ({ s, big }) => SS_LOGOS[s.name] ? <img className={'sv-logo' + (big ? ' sv-logo--big' : '')} src={SS_LOGOS[s.name]} alt={s.name} style={LOGO_H[s.name] ? { height: (big ? 40 : 30) * LOGO_H[s.name] } : undefined} /> : <b className={'sv-logo sv-logo--txt' + (big ? ' sv-logo--big' : '')}>{s.name}</b>;
 const Pills = ({ s }) => <div className="sv-pills">{s.clouds.map((c) => <span key={c}>{c}</span>)}</div>;
 const Who = ({ s }) => <div className="sv-who"><b>{s.who}</b>{s.role && <span>{s.role}, {s.name}</span>}</div>;
 function Head({ light }) {
