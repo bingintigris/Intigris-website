@@ -23,16 +23,18 @@ export function PickHead({ dark }) {
 }
 
 /* list on the left with hover intent; auto-advances until the visitor interacts */
-function usePick(n, ms = 5600) {
+function usePick(n, ms = 5600, msFor) {
   const [a, setA] = useState(0);
   const [touched, setTouched] = useState(false);
   const hover = useRef(0);
+  // auto-advance until the visitor interacts; msFor(i) lets a cloud with a longer
+  // opening animation stay on screen long enough after it has landed
   useEffect(() => {
     if (touched) return;
     if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const t = setInterval(() => setA((x) => (x + 1) % n), ms);
-    return () => clearInterval(t);
-  }, [touched, n, ms]);
+    const t = setTimeout(() => setA((x) => (x + 1) % n), msFor ? msFor(a) : ms);
+    return () => clearTimeout(t);
+  }, [touched, n, ms, a]);
   useEffect(() => () => clearTimeout(hover.current), []);
   const choose = (i) => { clearTimeout(hover.current); setTouched(true); setA(i); };
   const enter = (i) => { clearTimeout(hover.current); hover.current = setTimeout(() => choose(i), 160); };
@@ -78,7 +80,9 @@ const SPOTS = [[6, 8, -6], [52, 2, 4], [60, 58, -3], [2, 62, 5]];
 export function CloudsChaos() {
   const cs = CLOUDS();
   const chaos = CHAOS();
-  const p = usePick(cs.length);
+  // landing time per cloud (see the phase timings below) + 3.5 s to read the card
+  const LAND = { sales: 950, service: 2050, field: 2650, agentforce: 5100, experience: 3700 };
+  const p = usePick(cs.length, 5600, (i) => (LAND[cs[i].id] || 950) + 3500);
   const c = cs[p.a];
   const [phase, setPhase] = useState('chaos');
   useEffect(() => {
@@ -92,10 +96,10 @@ export function CloudsChaos() {
         ? [setTimeout(() => setPhase('merge'), 1450), setTimeout(() => setPhase('order'), 2650)]
         // Agentforce (option 1, Bing 2026-11-24): 22:47, "we're closed" is replaced by an agent that books.
         : c.id === 'agentforce'
-          ? [setTimeout(() => setPhase('merge'), 1600), setTimeout(() => setPhase('order'), 3100)]
+          ? [setTimeout(() => setPhase('merge'), 3000), setTimeout(() => setPhase('order'), 5100)]
           // Experience Cloud (option 1, Bing 2026-11-24): the same "resend my invoice" mail keeps coming → portal.
           : c.id === 'experience'
-            ? [setTimeout(() => setPhase('merge'), 1900), setTimeout(() => setPhase('order'), 2350)]
+            ? [setTimeout(() => setPhase('merge'), 1900), setTimeout(() => setPhase('order'), 3700)]
             : [setTimeout(() => setPhase('order'), 950)];
     return () => ts.forEach(clearTimeout);
   }, [p.a]);
@@ -248,6 +252,12 @@ function ExpMails() {
         </div>
       ))}
       <div className="cp-xm-count"><b>×{n}</b><span>{tx('this week', 'deze week')}</span></div>
+      <div className="cp-xm-login">
+        <div className="cp-xm-login-head"><b>{tx('Customer portal', 'Klantportaal')}</b><span>Havenwerk BV</span></div>
+        <label>{tx('Email', 'E-mail')}<span><em className="cp-xm-type">noor@havenwerk.nl</em></span></label>
+        <label>{tx('Password', 'Wachtwoord')}<span>••••••••••</span></label>
+        <i className="cp-xm-btn">{tx('Log in', 'Inloggen')}</i>
+      </div>
     </div>
   );
 }
@@ -439,10 +449,10 @@ const CP_CSS = `
 .cp-af-agent { align-self: flex-end; background: #eef4ff; }
 .cp-af-ok { align-self: flex-end; background: #e3f5e9; color: #2e844a; font-weight: 600; }
 .cp-af .cp-af-agent, .cp-af .cp-af-ok { display: none; }
-.cp-chaos--merge .cp-af-closed { animation: cpSweep .35s forwards; }
+.cp-chaos--merge .cp-af-closed { animation: cpSweep .45s forwards; }
 @keyframes cpSweep { to { opacity: 0; transform: translateX(40px); height: 0; padding-top: 0; padding-bottom: 0; margin-top: -12px; } }
-.cp-chaos--merge .cp-af .cp-af-agent { display: block; animation: cpPop .35s .45s both; }
-.cp-chaos--merge .cp-af .cp-af-ok { display: block; animation: cpPop .35s 1s both; }
+.cp-chaos--merge .cp-af .cp-af-agent { display: block; animation: cpPop .4s .5s both; }
+.cp-chaos--merge .cp-af .cp-af-ok { display: block; animation: cpPop .4s 1.3s both; }
 .cp-chaos--order .cp-af { opacity: 0; transform: scale(.96); }
 .cp-afc { background: #fff; border-radius: 18px; padding: 14px 16px; box-shadow: 0 30px 60px -30px rgba(43,23,0,.5); border: 1px solid rgba(0,0,0,.06); }
 .cp-afc-top { display: flex; justify-content: space-between; align-items: center; font-size: 13.5px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
@@ -462,6 +472,19 @@ const CP_CSS = `
 .cp-xm-count span { font-size: 13px; opacity: .85; margin-top: 4px; }
 .cp-chaos--merge .cp-xm-mail, .cp-chaos--order .cp-xm-mail { animation: none; opacity: 0; transform: translateX(-60px); }
 .cp-chaos--merge .cp-xm-count, .cp-chaos--order .cp-xm-count { animation: none; opacity: 0; transform: scale(.7); }
+
+.cp-xm-login { position: absolute; left: 50%; top: 50%; width: 330px; max-width: 80%; transform: translate(-50%, -46%) scale(.92); opacity: 0; pointer-events: none; background: #fff; border-radius: 18px; padding: 22px; box-shadow: 0 30px 60px -28px rgba(43,23,0,.55); display: flex; flex-direction: column; gap: 12px; transition: opacity .35s, transform .4s cubic-bezier(.2,.8,.2,1); }
+.cp-xm-login-head b { display: block; font-size: 18px; color: #032d60; } .cp-xm-login-head span { font-size: 13px; color: #777; }
+.cp-xm-login label { display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; font-weight: 600; color: #666; }
+.cp-xm-login label span { padding: 10px 12px; border: 1px solid #d8dde3; border-radius: 9px; font-size: 14px; font-weight: 500; color: #222; }
+.cp-xm-type { display: inline-block; vertical-align: bottom; font-style: normal; overflow: hidden; white-space: nowrap; }
+.cp-xm-btn { font-style: normal; text-align: center; padding: 11px; border-radius: 10px; background: #0176d3; color: #fff; font-weight: 600; font-size: 14px; }
+.cp-chaos--merge .cp-xm-login { opacity: 1; transform: translate(-50%, -50%); transition-delay: .25s; }
+.cp-chaos--merge .cp-xm-type { animation: cpType .7s .5s steps(17) both; }
+@keyframes cpType { from { max-width: 0; } to { max-width: 100%; } }
+.cp-chaos--merge .cp-xm-btn { animation: cpPress .3s 1.35s both; }
+@keyframes cpPress { 50% { transform: scale(.95); background: #014486; } 100% { transform: none; background: #2e844a; } }
+.cp-chaos--order .cp-xm-login { opacity: 0; transform: translate(-50%, -50%) scale(1.04); }
 
 /* B · showcase */
 .cp--show { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
