@@ -7,8 +7,18 @@ import { HowTimeline, HowPinned, HowCards, HwwStyles } from '../home/HowWeWork.j
 import { ClStyles } from '../home/CloudsOverview.jsx';
 import { CloudsChaos, CloudsShowcase, CloudsDeck, CpStyles } from '../home/CloudsPick.jsx';
 import { CloudIntrosReview, CiStyles } from '../home/CloudIntros.jsx';
+import { IntOrbit, IntSync, IntMarquee, IntSphere, IvStyles } from '../home/IntegrationsVariants.jsx';
 
 const ROUNDS = () => [
+  {
+    id: 'integrations', title: tx('Integrations · four alternatives to the current section', 'Koppelingen · vier alternatieven voor de huidige sectie'),
+    variants: [
+      { k: 'A', name: tx('Orbit', 'Baan'), note: tx('Two rings of tools rotate in opposite directions around Salesforce; data pulses travel to the centre. Hover a tool: the rings pause and the left side explains it.', 'Twee ringen met tools draaien tegengesteld rond Salesforce; datapulsjes reizen naar het midden. Hover een tool: de ringen stoppen en links staat wat hij doet.'), C: IntOrbit },
+      { k: 'B', name: tx('Live sync into one record', 'Live sync naar één record'), note: tx('Beams run from each tool into the field it fills on one Salesforce account (Havenwerk BV), one after another, until "All in sync".', 'Lichtstralen lopen van elke tool naar het veld dat hij vult in één Salesforce-account (Havenwerk BV), één voor één, tot "Alles in sync".'), C: IntSync },
+      { k: 'C', name: tx('Logo carousel', 'Logocarrousel'), note: tx('Three rows of tools glide past in opposite directions behind a central Salesforce card. Calm and modern; hover pauses.', 'Drie rijen tools glijden tegengesteld voorbij achter een centrale Salesforce-kaart. Rustig en modern; hover pauzeert.'), C: IntMarquee },
+      { k: 'D', name: tx('3D sphere', '3D-bol'), note: tx('The tools sit on a slowly turning sphere around the Salesforce logo; drag to spin it. The front tools show what they are.', 'De tools staan op een langzaam draaiende bol rond het Salesforce-logo; sleep om hem te draaien. De voorste tools tonen wat ze zijn.'), C: IntSphere },
+    ],
+  },
   {
     id: 'intros', title: tx('Section 2 · Opening animation per cloud (option 1 vs 2)', 'Sectie 2 · Openingsanimatie per cloud (optie 1 vs 2)'),
     variants: [
@@ -67,6 +77,7 @@ export default function HomeSectionsReview() {
       <ClStyles />
       <CpStyles />
       <CiStyles />
+      <IvStyles />
       <style dangerouslySetInnerHTML={{ __html: `
         .rv-top { position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1d1206; color: #fff; font-size: 14px; }
         .rv-top a { color: #fff; font-weight: 600; }
