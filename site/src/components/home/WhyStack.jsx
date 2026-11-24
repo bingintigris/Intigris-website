@@ -105,13 +105,17 @@ export function WhyLine() {
 }
 
 /* ---------- 2 · Pinned stage ---------- */
-export function WhyStage() {
+export function WhyStage({ look = 'dark' }) {
   const ref = useRef(null); const P = PROMISES();
   const [act, setAct] = useState(0);
   const last = useRef(0);
   useGsap(ref, (gsap, ScrollTrigger) => {
     ScrollTrigger.create({ trigger: '.ws2-pin', start: 'top top', end: '+=' + P.length * 70 + '%', pin: true, scrub: true,
       onUpdate: (st) => { const i = Math.min(P.length - 1, Math.floor(st.progress * P.length)); if (i !== last.current) { last.current = i; setAct(i); } gsap.set('.ws2-fill', { scaleY: st.progress }); } });
+    // several pinned stages can live on one page (the design review): once all have been
+    // created, re-measure them in page order so each pin accounts for the ones above it
+    clearTimeout(window.__wsRefresh);
+    window.__wsRefresh = setTimeout(() => { ScrollTrigger.sort(); ScrollTrigger.refresh(); }, 250);
   });
   useEffect(() => {
     let alive = true;
@@ -125,8 +129,44 @@ export function WhyStage() {
     return () => { alive = false; };
   }, [act]);
   const p = P[act];
+  if (look === 'number') return (
+    <section className="ws ws--2 ws--cream ws--num" ref={ref}>
+      <div className="ws2-pin">
+        <div className="container ws2n-grid">
+          <div className="ws2n-col" aria-label={tx('Reasons', 'Redenen')}>
+            {P.map((x, i) => <span key={x.id} className={i === act ? 'on' : i < act ? 'past' : ''}>{String(i + 1).padStart(2, '0')}</span>)}
+            <div className="ws2-track" aria-hidden="true"><i className="ws2-fill" /></div>
+          </div>
+          <div className="ws2n-stage" key={p.id}>
+            <span className="ws2n-big" aria-hidden="true" style={{ '--p': (act + 1) / P.length }}>{String(act + 1).padStart(2, '0')}</span>
+            <div className="eyebrow">{tx('WHY INTIGRIS', 'WAAROM INTIGRIS')}</div>
+            <h2 className="ws2-title">{p.t}</h2>
+            <p>{p.d}</p>
+            <Proof id={p.id} on />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+  if (look === 'split') return (
+    <section className="ws ws--2 ws--cream ws--split" ref={ref}>
+      <div className="ws2-pin">
+        <div className="container">
+          <div className="ws2s-grid">
+            <div className="ws2s-text" key={p.id + 't'}>
+              <div className="eyebrow">{tx('WHY INTIGRIS', 'WAAROM INTIGRIS')} · {String(act + 1).padStart(2, '0')} / 05</div>
+              <h2 className="ws2-title">{p.t}</h2>
+              <p>{p.d}</p>
+            </div>
+            <div className="ws2s-card" key={p.id + 'c'}><Proof id={p.id} on /></div>
+          </div>
+          <div className="ws2s-bars">{P.map((x, i) => <div key={x.id} className={'ws2s-bar' + (i === act ? ' on' : '') + (i < act ? ' past' : '')}><i /><span>{x.t.replace('.', '')}</span></div>)}</div>
+        </div>
+      </div>
+    </section>
+  );
   return (
-    <section className="ws ws--2" ref={ref}>
+    <section className={'ws ws--2' + (look === 'cream' ? ' ws--cream' : '')} ref={ref}>
       <div className="ws2-pin">
         <div className="container ws2-grid">
           <div className="ws2-rail">
@@ -234,6 +274,44 @@ const WS_CSS = `
 .ws2-stage > p { font-size: 19px; line-height: 1.55; opacity: .8; max-width: 32em; margin: 0; animation: wsIn .5s .25s both; }
 .ws2-stage .ws-proof { animation: wsIn .5s .4s both; background: rgba(255,250,240,.06); border-color: rgba(255,250,240,.14); } .ws2-stage .ws-proof span, .ws2-stage .ws-gantt div { color: rgba(255,250,240,.7); } .ws2-stage .ws-sla b { color: #fff; }
 .ws2-stage .ws-proof--b { background: linear-gradient(150deg, #032d60, #0b5cab); }
+/* 2 on cream (Bing 2026-11-24: likes the pinned stage, wants the cream background) */
+.ws--cream.ws--2 { background: var(--intigris-off-white); color: var(--intigris-dark-brown); }
+.ws--cream .ws2-title { color: var(--intigris-dark-brown) !important; }
+.ws--cream .ws2-stage .eyebrow, .ws--cream .eyebrow { color: var(--intigris-coral-700); }
+.ws--cream .ws2-stage > p, .ws--cream .ws2n-stage > p, .ws--cream .ws2s-text > p { color: var(--fg-muted); opacity: 1; }
+.ws--cream .ws2-track { background: var(--border); }
+.ws--cream .ws2-node { color: rgba(64,35,1,.4); } .ws--cream .ws2-node.past { color: rgba(64,35,1,.7); } .ws--cream .ws2-node.on { color: var(--intigris-dark-brown); }
+.ws--cream .ws2-node span { background: var(--intigris-off-white); border-color: var(--border); }
+.ws--cream .ws2-node.past span, .ws--cream .ws2-node.on span { background: var(--intigris-coral); border-color: var(--intigris-coral); }
+.ws--cream .ws-proof { background: #fff; border-color: var(--border); box-shadow: 0 24px 50px -34px rgba(43,23,0,.45); }
+.ws--cream .ws-proof span, .ws--cream .ws-gantt div { color: var(--fg-muted) !important; } .ws--cream .ws-sla b { color: var(--intigris-dark-brown) !important; }
+.ws--cream .ws-proof--b { background: linear-gradient(150deg, #032d60, #0b5cab); }
+/* 2B · big outlined number */
+.ws2n-grid { display: grid; grid-template-columns: 70px 1fr; gap: 64px; align-items: center; }
+.ws2n-col { position: relative; display: flex; flex-direction: column; gap: 22px; padding-left: 26px; }
+.ws2n-col .ws2-track { left: 0; top: 4px; bottom: 4px; }
+.ws2n-col span { font-size: 18px; font-weight: 600; color: rgba(64,35,1,.3); transition: color .3s, transform .3s; font-variant-numeric: tabular-nums; }
+.ws2n-col span.past { color: rgba(64,35,1,.6); } .ws2n-col span.on { color: var(--intigris-coral); transform: scale(1.35); transform-origin: left; }
+.ws2n-stage { position: relative; display: flex; flex-direction: column; gap: 18px; align-items: flex-start; padding: 30px 0; }
+.ws2n-stage > *:not(.ws2n-big) { position: relative; z-index: 1; }
+.ws2n-big { position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: clamp(220px, 30vw, 440px); font-weight: 600; letter-spacing: -0.06em; line-height: .8; color: transparent; -webkit-text-stroke: 2px rgba(255,92,57,.35); background: linear-gradient(0deg, var(--intigris-coral) 0%, var(--intigris-coral) calc(var(--p) * 100%), transparent calc(var(--p) * 100%)); -webkit-background-clip: text; background-clip: text; opacity: .9; animation: wsBig .7s cubic-bezier(.2,.8,.2,1) both; pointer-events: none; }
+@keyframes wsBig { from { opacity: 0; transform: translateY(-40%) scale(.85); } to { opacity: .9; transform: translateY(-50%); } }
+.ws2n-stage > p { font-size: 19px; line-height: 1.55; max-width: 30em; margin: 0; animation: wsIn .5s .25s both; }
+.ws2n-stage .ws-proof { animation: wsIn .5s .4s both; }
+/* 2C · split stage with story bars */
+.ws2s-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 64px; align-items: center; min-height: 52vh; }
+.ws2s-text { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+.ws2s-text > p { font-size: 19px; line-height: 1.55; max-width: 30em; margin: 0; animation: wsIn .5s .25s both; }
+.ws2s-card { display: flex; justify-content: center; animation: wsCard .7s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes wsCard { from { opacity: 0; transform: translateX(60px) rotate(4deg); } to { opacity: 1; transform: none; } }
+.ws2s-card .ws-proof { transform: scale(1.35); transform-origin: center; padding: 22px 26px; }
+.ws2s-bars { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 40px; }
+.ws2s-bar i { display: block; height: 5px; border-radius: 5px; background: var(--border); position: relative; overflow: hidden; }
+.ws2s-bar i::after { content: ''; position: absolute; inset: 0; background: var(--intigris-coral); transform: scaleX(0); transform-origin: left; transition: transform .5s; }
+.ws2s-bar.past i::after { transform: scaleX(1); } .ws2s-bar.on i::after { transform: scaleX(1); transition-duration: 1.2s; }
+.ws2s-bar span { display: block; margin-top: 10px; font-size: 13px; font-weight: 600; color: rgba(64,35,1,.4); transition: color .3s; }
+.ws2s-bar.on span { color: var(--intigris-dark-brown); } .ws2s-bar.past span { color: rgba(64,35,1,.65); }
+@media (max-width: 960px) { .ws2n-grid { grid-template-columns: 1fr; } .ws2n-col { display: none; } .ws2n-big { font-size: 180px; } .ws2s-grid { grid-template-columns: 1fr; gap: 28px; } .ws2s-bars span { display: none; } }
 @keyframes wsIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 /* 3 · zigzag */
 .ws3-head { text-align: center; margin-bottom: 60px; } .ws3-head h2 { margin-top: 14px; }

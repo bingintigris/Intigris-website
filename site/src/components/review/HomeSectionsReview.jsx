@@ -11,8 +11,19 @@ import { TrustedVelocity, TrustedWall, TrustedSentence, TrustedStats, TvStyles }
 import { HeroFx1, HeroFx2, HeroFx3, HfxStyles } from './HeroFxVariants.jsx';
 import { WhyBento, WhyVs, WhyPinned, WhyStory, WhyPeople, WiStyles } from '../home/WhyIntigris.jsx';
 import { WhyLine, WhyStage, WhyZigzag, WsStyles } from '../home/WhyStack.jsx';
+const WhyStageCream = () => <WhyStage look="cream" />;
+const WhyStageNumber = () => <WhyStage look="number" />;
+const WhyStageSplit = () => <WhyStage look="split" />;
 
 const ROUNDS = () => [
+  {
+    id: 'why3', title: tx('"Why Intigris" round 3 · the pinned stage (2) on cream, three designs', '"Waarom Intigris" ronde 3 · het vastgezette podium (2) op crème, drie ontwerpen'),
+    variants: [
+      { k: '2A', name: tx('Cream classic', 'Crème klassiek'), note: tx('Same as 2, on cream: line with the five reasons on the left, the big reason in the middle, proof in a white card.', 'Zelfde als 2, op crème: lijn met de vijf redenen links, de grote reden in het midden, bewijs in een witte kaart.'), C: WhyStageCream },
+      { k: '2B', name: tx('Big outlined number', 'Groot omlijnd cijfer'), note: tx('A giant outlined number (01–05) behind each reason fills with coral as you scroll; a slim column of numbers on the left.', 'Een reusachtig omlijnd cijfer (01–05) achter elke reden vult zich met koraal terwijl je scrolt; een smalle kolom cijfers links.'), C: WhyStageNumber },
+      { k: '2C', name: tx('Split stage with story bars', 'Gesplitst podium met storybalkjes'), note: tx('Reason on the left, a large proof card sliding in on the right; progress as five bars along the bottom, like stories.', 'Reden links, een grote bewijskaart die rechts inschuift; voortgang als vijf balkjes onderaan, zoals stories.'), C: WhyStageSplit },
+    ],
+  },
   {
     id: 'why2', title: tx('"Why Intigris" round 2 · C × D: stacked reasons with an active scroll line', '"Waarom Intigris" ronde 2 · C × D: gestapelde redenen met een actieve scrolllijn'),
     variants: [
