@@ -58,7 +58,8 @@ function SiteSalesforceHome({ onCta }) {
       {/* 7 · Customer stories: horizontal gallery with industry pills (C2, chosen by Bing 2026-11-24);
              replaces the StorySpotlight tabs (WeTransfer / EVBox / De Ridder). De Ridder is left out
              because its story is about FieldBuddy (Bing's rule). Starts on "All". */}
-      <StoriesGalleryIndustry />
+      {/* Bing 2026-11-24: after scrolling through, it becomes the spotlight (big quote + logo list) */}
+      <StoriesGalleryIndustry after="feature" />
 
       {/* 8 · Why Intigris: TODO (variant round) */}
 
