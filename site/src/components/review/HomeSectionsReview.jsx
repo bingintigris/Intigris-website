@@ -11,11 +11,24 @@ import { TrustedVelocity, TrustedWall, TrustedSentence, TrustedStats, TvStyles }
 import { HeroFx1, HeroFx2, HeroFx3, HfxStyles } from './HeroFxVariants.jsx';
 import { WhyBento, WhyVs, WhyPinned, WhyStory, WhyPeople, WiStyles } from '../home/WhyIntigris.jsx';
 import { WhyLine, WhyStage, WhyZigzag, WsStyles } from '../home/WhyStack.jsx';
+import { StoriesStack, StoriesWall, StoriesGallery, SvStyles } from '../home/StoriesVariants.jsx';
+import { StorySpotlight, SsStyles } from '../../legacy/components/StorySpotlight.jsx';
+import { CK_STORIES, CkStyles } from '../../legacy/components/CloudKit.jsx';
+const StoriesCurrent = () => { const S = CK_STORIES(); return <><CkStyles /><StorySpotlight variant="pills" head={{ eyebrow: tx('CUSTOMER SUCCESS STORIES', 'KLANTSUCCESVERHALEN'), a: tx('Teams that run on it.', 'Teams die erop draaien.'), b: '', lede: tx('What we built, in their own words. Pick a company or let it play.', 'Wat we bouwden, in hun eigen woorden. Kies een bedrijf of laat het vanzelf lopen.') }} stories={[S.wetransfer, S.evbox, S.ridder]} /></>; };
 const WhyStageCream = () => <WhyStage look="cream" />;
 const WhyStageNumber = () => <WhyStage look="number" />;
 const WhyStageSplit = () => <WhyStage look="split" />;
 
 const ROUNDS = () => [
+  {
+    id: 'stories', title: tx('Customer stories · current section + three redesigns', 'Klantverhalen · huidige sectie + drie herontwerpen'),
+    variants: [
+      { k: '0', name: tx('Current (reference)', 'Huidig (referentie)'), note: tx('The section that is on the homepage now.', 'De sectie die nu op de homepage staat.'), C: StoriesCurrent },
+      { k: 'A', name: tx('Swipeable card stack', 'Swipebare kaartenstapel'), note: tx('A deck of story cards you drag (or swipe) away with throwing physics; the next quote appears line by line. GSAP Draggable + Inertia + SplitText.', 'Een stapel verhaalkaarten die je wegsleept (of swipet) met werpfysica; het volgende citaat verschijnt regel voor regel. GSAP Draggable + Inertia + SplitText.'), C: StoriesStack },
+      { k: 'B', name: tx('Story wall that expands', 'Verhalenmuur die uitklapt'), note: tx('A wall of small customer tiles; click one and it smoothly grows into the featured story while the others make room. GSAP Flip.', 'Een muur met kleine klanttegels; klik er één aan en hij groeit soepel uit tot het uitgelichte verhaal terwijl de rest plaatsmaakt. GSAP Flip.'), C: StoriesWall },
+      { k: 'C', name: tx('Horizontal story gallery', 'Horizontale verhalengalerij'), note: tx('The section stays in place while scrolling slides large story cards sideways; each quote lights up word by word. ScrollTrigger + SplitText.', 'De sectie blijft staan terwijl scrollen grote verhaalkaarten opzij schuift; elk citaat licht woord voor woord op. ScrollTrigger + SplitText.'), C: StoriesGallery },
+    ],
+  },
   {
     id: 'why2', title: tx('"Why Intigris" round 2 · C × D: stacked reasons with an active scroll line', '"Waarom Intigris" ronde 2 · C × D: gestapelde redenen met een actieve scrolllijn'),
     variants: [
@@ -122,6 +135,8 @@ export default function HomeSectionsReview() {
       <HfxStyles />
       <WiStyles />
       <WsStyles />
+      <SvStyles />
+      <SsStyles />
       <style dangerouslySetInnerHTML={{ __html: `
         .rv-top { position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1d1206; color: #fff; font-size: 14px; }
         .rv-top a { color: #fff; font-weight: 600; }
