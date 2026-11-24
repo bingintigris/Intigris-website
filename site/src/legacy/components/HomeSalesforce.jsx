@@ -1,6 +1,7 @@
 /* Converted from components/HomeSalesforce.jsx (classic Babel global) by scripts/convert-legacy.mjs */
 import { tx } from '../../lib/i18n.js';
-import { CK_STORIES, CkStyles, CkTalk } from './CloudKit.jsx';
+import { CK_STORIES, CkStyles } from './CloudKit.jsx';
+import { TalkChatAsk, TkStyles } from '../../components/home/TalkVariants.jsx';
 import React from 'react';
 import { Island } from './Island.jsx';
 import { V3LogoHub, V3Styles } from './CloudKitV3.jsx';
@@ -65,13 +66,16 @@ function SiteSalesforceHome({ onCta }) {
       {/* 8 · Why Intigris: TODO (variant round) */}
 
       {/* 9 · Talk to a person (approved) */}
-      <CkTalk onCta={onCta} line={tx('30 minutes, and you know what Salesforce can do for you.', 'In 30 minuten weet je wat Salesforce voor jou kan doen.')} />
+      {/* Closing section (Bing 2026-11-24): 'Chat with Frank' on cream, 'Ask Frank' look (round talkcream, 6);
+          replaces the Frank 'Let's talk' strip AND the shared 'Ready to smarten up your business?' CTA */}
+      <TalkChatAsk onCta={onCta} />
       <CkStyles />
       <V3Styles />
       <WtsStyles />
       <CpStyles />
       <WsStyles />
       <WsoStyles />
+      <TkStyles />
       <SvStyles />
     </React.Fragment>
   );

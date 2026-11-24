@@ -292,7 +292,8 @@ const TK_CSS = `
 .tk-chat-style--blob .tk-chat { position: relative; z-index: 1; background: #fff; box-shadow: 0 40px 70px -40px rgba(64,35,1,.55); }
 .tk-chat-style--blob .tk-bubble { background: var(--intigris-off-white); border-color: transparent; }
 /* 6 'Ask Frank' look (9 Nov chat): white / cream / white */
-.tk-chat-style--ask .tk-chat { background: #fff; border-radius: 24px; box-shadow: 0 30px 60px -30px rgba(43,23,0,.35); display: flex; flex-direction: column; }
+.tk-chat-style--ask .tk-chat { background: #fff; border-radius: 24px; box-shadow: 0 60px 110px -40px rgba(43,23,0,.5), 0 18px 40px -24px rgba(43,23,0,.28); display: flex; flex-direction: column; }
+.tk-chat-style--ask .tk-chat-head .tk-photo--coral { box-shadow: 0 0 0 2px var(--intigris-coral); } /* thinner ring (Bing 2026-11-24) */
 .tk-chat-style--ask .tk-chat-head { padding: 16px 20px; border-bottom: 1px solid rgba(43,23,0,.08); }
 .tk-chat-style--ask .tk-chat-body { background: var(--intigris-off-white); min-height: 260px; padding: 20px; gap: 10px; }
 .tk-row { display: flex; align-items: flex-end; gap: 8px; max-width: 88%; animation: tkPop .45s cubic-bezier(.2,.9,.3,1.2) both; }

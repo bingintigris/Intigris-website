@@ -89,7 +89,8 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
               </React.Fragment>
             )}
 
-            <SiteFinalCTA onCta={openContact} />
+            {/* Salesforce view ends with its own 'Chat with Frank' section (Bing 2026-11-24) */}
+            {mode === 'ai' && <SiteFinalCTA onCta={openContact} />}
           </main>
           <SiteNewsletter key={'nl-'+lang} />
           <SiteFooter key={'f-'+lang} />
