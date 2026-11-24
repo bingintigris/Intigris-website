@@ -543,7 +543,12 @@ function V3LogoHub({ head, center, items }) {
       const stage = root.querySelector('.lh-stage');
       const nodes = root.querySelectorAll('.lh-node');
       const lines = root.querySelectorAll('.lh-line');
-      const tl = gsap.timeline({ scrollTrigger: { trigger: root.querySelector('.lh-grid'), start: 'center center', end: '+=110%', scrub: 0.8, pin: true,
+      /* Pin and animation are separate (Bing 2026-11-24): the grid pins when it is centred,
+         but the fly-in already starts when the section enters the screen from below, so
+         the visitor sees movement before the section fills the screen. */
+      const grid = root.querySelector('.lh-grid');
+      const pinST = win.ScrollTrigger.create({ trigger: grid, start: 'center center', end: '+=80%', pin: true });
+      const tl = gsap.timeline({ scrollTrigger: { trigger: root, start: 'top 85%', end: () => pinST.end, scrub: 0.8, invalidateOnRefresh: true,
         onUpdate: st => setLanded(st.progress > 0.92) } });
       tl.fromTo(root.querySelector('.lh-center'), { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.6)' }, 0);
       nodes.forEach((el, i) => {
