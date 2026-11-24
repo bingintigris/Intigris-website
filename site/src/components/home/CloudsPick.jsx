@@ -90,7 +90,10 @@ export function CloudsChaos() {
       ? [setTimeout(() => setPhase('merge'), 1500), setTimeout(() => setPhase('order'), 2050)]
       : c.id === 'field'
         ? [setTimeout(() => setPhase('merge'), 1450), setTimeout(() => setPhase('order'), 2650)]
-        : [setTimeout(() => setPhase('order'), 950)];
+        // Agentforce (option 1, Bing 2026-11-24): 22:47, "we're closed" is replaced by an agent that books.
+        : c.id === 'agentforce'
+          ? [setTimeout(() => setPhase('merge'), 1600), setTimeout(() => setPhase('order'), 3100)]
+          : [setTimeout(() => setPhase('order'), 950)];
     return () => ts.forEach(clearTimeout);
   }, [p.a]);
   return (
@@ -101,7 +104,7 @@ export function CloudsChaos() {
           <CloudList items={cs} p={p} style="icon" />
           <div className="cp-stage" role="tabpanel" key={c.id}>
             <div className={'cp-chaos cp-chaos--' + phase} aria-hidden="true">
-              {c.id === 'service' ? <ServiceChannels /> : c.id === 'field' ? <FieldMap big /> : chaos[c.id].map(([k, v], i) => (
+              {c.id === 'service' ? <ServiceChannels /> : c.id === 'field' ? <FieldMap /> : c.id === 'agentforce' ? <AgentNight /> : chaos[c.id].map(([k, v], i) => (
                 <div key={i} className={'cp-note cp-note--' + k.toLowerCase().replace(/[^a-z]/g, '')}
                   style={{ left: SPOTS[i][0] + '%', top: SPOTS[i][1] + '%', '--r': SPOTS[i][2] + 'deg', '--d': i * 0.05 + 's' }}>
                   <small>{k}</small>{v}
@@ -114,7 +117,7 @@ export function CloudsChaos() {
                 <p className="cp-does">{c.does}</p>
                 <p className="cp-result">✓ {c.result}</p>
               </div>
-              {c.id === 'service' ? <ServiceCase /> : c.id === 'field' ? <FieldRoute /> : <MiniScreen id={c.id} />}
+              {c.id === 'service' ? <ServiceCase /> : c.id === 'field' ? <FieldRoute /> : c.id === 'agentforce' ? <AgentChat /> : <MiniScreen id={c.id} />}
               <Foot c={c} />
             </div>
           </div>
@@ -185,6 +188,40 @@ function FieldRoute() {
       <ol className="cp-route-stops">
         {stops.map(([t, n, city], i) => <li key={n} style={{ animationDelay: 0.1 + i * 0.07 + 's' }}><b>{i + 1}</b><span>{n} <em>{city}</em></span><time>{t}</time></li>)}
       </ol>
+    </div>
+  );
+}
+
+/* Agentforce opening (option 1): 22:47, a customer asks a question and gets the
+   "we're closed" auto-reply; that reply is swept away and the agent answers and
+   books the visit. The card ends on that chat. */
+const AF_Q = () => tx('When is my engineer coming?', 'Wanneer komt mijn monteur?');
+const AF_A = () => tx('Tuesday between 8:30 and 9:30. Shall I send you a text when he leaves?', 'Dinsdag tussen 8:30 en 9:30. Zal ik je een sms sturen als hij vertrekt?');
+const AF_OK = () => tx('Visit confirmed · Tue 08:30', 'Bezoek bevestigd · di 08:30');
+function AgentNight() {
+  return (
+    <div className="cp-af">
+      <div className="cp-af-clock">🌙 22:47 · {tx('office closed', 'kantoor gesloten')}</div>
+      <div className="cp-af-chat">
+        <div className="cp-af-msg cp-af-in">{AF_Q()}</div>
+        <div className="cp-af-msg cp-af-closed">{tx('We are closed. We will get back to you tomorrow from 9:00.', 'We zijn gesloten. Morgen vanaf 9:00 reageren we.')}</div>
+        <div className="cp-af-msg cp-af-agent"><b>✦ Agentforce</b>{AF_A()}</div>
+        <div className="cp-af-msg cp-af-ok">✓ {AF_OK()}</div>
+      </div>
+    </div>
+  );
+}
+function AgentChat() {
+  return (
+    <div className="cp-afc">
+      <div className="cp-afc-top"><b>{tx('Website chat · Havenwerk BV', 'Websitechat · Havenwerk BV')}</b><i>22:47</i></div>
+      <div className="cp-afc-body">
+        <div className="cp-af-msg cp-af-in">{AF_Q()}</div>
+        <div className="cp-af-msg cp-af-agent"><b>✦ Agentforce</b>{AF_A()}</div>
+        <div className="cp-af-msg cp-af-in">{tx('Yes please', 'Ja graag')}</div>
+        <div className="cp-af-msg cp-af-ok">✓ {AF_OK()}</div>
+      </div>
+      <div className="cp-afc-foot">{tx('Answered in 3 seconds · booked in the planning', 'Beantwoord in 3 seconden · ingepland in de planning')}</div>
     </div>
   );
 }
@@ -363,6 +400,32 @@ const CP_CSS = `
 .cp-route-stops b { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; background: #2e844a; color: #fff; }
 .cp-route-stops span { color: #222; font-weight: 500; } .cp-route-stops em { font-style: normal; color: #888; font-weight: 400; margin-left: 4px; }
 .cp-route-stops time { font-weight: 600; color: #0176d3; font-variant-numeric: tabular-nums; }
+
+/* A · Agentforce opening: after hours */
+.cp-af { position: absolute; inset: 26px; border-radius: 20px; background: linear-gradient(160deg, #1f2a44 0%, #2b3a5c 100%); padding: 22px 26px; transition: opacity .3s, transform .35s; }
+.cp-af-clock { display: inline-block; padding: 7px 14px; border-radius: 99px; background: rgba(255,255,255,.12); color: #fff; font-size: 14px; font-weight: 600; animation: cpPop .3s both; }
+.cp-af-chat { display: flex; flex-direction: column; gap: 12px; margin-top: 22px; }
+.cp-af-msg { max-width: 72%; padding: 12px 15px; border-radius: 16px; font-size: 16px; line-height: 1.4; background: #fff; color: #222; box-shadow: 0 8px 18px -12px rgba(0,0,0,.4); }
+.cp-af-msg b { display: block; font-size: 12px; color: #0176d3; margin-bottom: 3px; }
+.cp-af-in { align-self: flex-start; }
+.cp-af .cp-af-in { animation: cpPop .35s .25s both; }
+.cp-af-closed { align-self: flex-end; background: #e4e2de; color: #6b6b6b; font-style: italic; animation: cpPop .35s .85s both; transition: opacity .3s, transform .35s; }
+.cp-af-agent { align-self: flex-end; background: #eef4ff; }
+.cp-af-ok { align-self: flex-end; background: #e3f5e9; color: #2e844a; font-weight: 600; }
+.cp-af .cp-af-agent, .cp-af .cp-af-ok { display: none; }
+.cp-chaos--merge .cp-af-closed { animation: cpSweep .35s forwards; }
+@keyframes cpSweep { to { opacity: 0; transform: translateX(40px); height: 0; padding-top: 0; padding-bottom: 0; margin-top: -12px; } }
+.cp-chaos--merge .cp-af .cp-af-agent { display: block; animation: cpPop .35s .45s both; }
+.cp-chaos--merge .cp-af .cp-af-ok { display: block; animation: cpPop .35s 1s both; }
+.cp-chaos--order .cp-af { opacity: 0; transform: scale(.96); }
+.cp-afc { background: #fff; border-radius: 18px; padding: 14px 16px; box-shadow: 0 30px 60px -30px rgba(43,23,0,.5); border: 1px solid rgba(0,0,0,.06); }
+.cp-afc-top { display: flex; justify-content: space-between; align-items: center; font-size: 13.5px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+.cp-afc-top b { color: #032d60; } .cp-afc-top i { font-style: normal; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 99px; background: #1f2a44; color: #fff; }
+.cp-afc-body { display: flex; flex-direction: column; gap: 8px; padding: 12px 0; }
+.cp-afc .cp-af-msg { font-size: 13.5px; padding: 9px 12px; max-width: 82%; box-shadow: none; animation: cpIn .35s both; }
+.cp-afc .cp-af-in { background: #f3f3f3; }
+.cp-afc .cp-af-msg:nth-child(2) { animation-delay: .1s; } .cp-afc .cp-af-msg:nth-child(3) { animation-delay: .2s; } .cp-afc .cp-af-msg:nth-child(4) { animation-delay: .3s; }
+.cp-afc-foot { font-size: 12.5px; color: #2e844a; font-weight: 600; padding-top: 10px; border-top: 1px solid #eee; }
 
 /* B · showcase */
 .cp--show { background: var(--intigris-brown-700); color: var(--intigris-off-white); }

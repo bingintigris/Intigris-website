@@ -28,10 +28,10 @@ export const START_ITEMS = () => [
     price: tx('Quickstart · €7,000 fixed', 'Quickstart · €7.000 vaste prijs'), href: '/quickstarts/service-cloud',
   },
   {
-    id: 'field', product: 'Field Service', sub: '+ FieldBuddy', role: tx('I plan field engineers', 'Ik plan monteurs'),
+    id: 'field', product: 'Field Service', role: tx('I plan field engineers', 'Ik plan monteurs'),
     problem: tx('Planning on a whiteboard, work orders on paper, invoices weeks later.', 'Planning op een whiteboard, werkbonnen op papier, facturen weken later.'),
     outcome: tx('Smart scheduling and the whole job on the engineer’s phone.', 'Slim plannen en de hele klus op de telefoon van de monteur.'),
-    includes: [tx('Scheduling & routes', 'Planning & routes'), tx('Mobile work orders (FieldBuddy)', 'Mobiele werkbonnen (FieldBuddy)'), tx('Parts & installed base', 'Onderdelen & installaties')],
+    includes: [tx('Scheduling & routes', 'Planning & routes'), tx('Mobile work orders', 'Mobiele werkbonnen'), tx('Parts & installed base', 'Onderdelen & installaties')],
     price: tx('Quickstart · €13,000 fixed', 'Quickstart · €13.000 vaste prijs'), href: '/quickstarts/field-service',
   },
   {

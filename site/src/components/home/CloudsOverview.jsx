@@ -34,7 +34,7 @@ export const CLOUDS = () => [
     id: 'field', name: 'Field Service', who: tx('For field service', 'Voor de buitendienst'),
     problem: tx('Planning on a whiteboard, work orders on paper, invoices weeks later.', 'Planning op een whiteboard, werkbonnen op papier, facturen weken later.'),
     ask: tx('Planning on a whiteboard?', 'Plannen op een whiteboard?'),
-    does: tx('Smart scheduling and the whole job on the engineer’s phone, with FieldBuddy.', 'Slim plannen en de hele klus op de telefoon van de monteur, met FieldBuddy.'),
+    does: tx('Smart scheduling and the whole job on the engineer’s phone.', 'Slim plannen en de hele klus op de telefoon van de monteur.'),
     result: tx('Fewer wasted trips, invoices the same day.', 'Minder loze ritten, dezelfde dag factureren.'),
     price: tx('Quickstart · €13,000 fixed', 'Quickstart · €13.000 vaste prijs'), href: '/quickstarts/field-service',
   },
