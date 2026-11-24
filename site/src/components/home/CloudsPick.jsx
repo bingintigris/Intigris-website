@@ -394,6 +394,9 @@ export function CpStyles() {
 
 const CP_CSS = `
 .cp { padding: 120px 0; background: var(--intigris-off-white); color: var(--intigris-dark-brown); overflow: hidden; }
+/* homepage spacing (Bing 2026-11-24): tighter between Trusted by → this section → Integrations */
+.cp--chaos { padding: 64px 0 56px; }
+.hsf-int .lh { padding-top: 64px; }
 .cp-head { max-width: 760px; margin-bottom: 52px; }
 .cp-head h2 { font-size: clamp(38px, 4.6vw, 64px); font-weight: 500; letter-spacing: -0.03em; line-height: 1.02; margin: 16px 0 0; }
 .cp-head h2 span { color: var(--intigris-coral); }
