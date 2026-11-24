@@ -81,7 +81,7 @@ export function CloudsChaos() {
   const cs = CLOUDS();
   const chaos = CHAOS();
   // landing time per cloud (see the phase timings below) + 3.5 s to read the card
-  const LAND = { sales: 950, service: 2050, field: 2650, agentforce: 5100, experience: 3700 };
+  const LAND = { sales: 950, service: 2050, field: 2650, agentforce: 5100, experience: 3700, data: 3750 };
   const p = usePick(cs.length, 5600, (i) => (LAND[cs[i].id] || 950) + 3500);
   const c = cs[p.a];
   const [phase, setPhase] = useState('chaos');
@@ -100,7 +100,10 @@ export function CloudsChaos() {
           // Experience Cloud (option 1, Bing 2026-11-24): the same "resend my invoice" mail keeps coming → portal.
           : c.id === 'experience'
             ? [setTimeout(() => setPhase('merge'), 1900), setTimeout(() => setPhase('order'), 3700)]
-            : [setTimeout(() => setPhase('order'), 950)];
+            // Data 360 (option 2B, Bing 2026-11-24): real tools all wired together → one customer profile.
+            : c.id === 'data'
+              ? [setTimeout(() => setPhase('merge'), 2050), setTimeout(() => setPhase('order'), 3750)]
+              : [setTimeout(() => setPhase('order'), 950)];
     return () => ts.forEach(clearTimeout);
   }, [p.a]);
   return (
@@ -111,7 +114,7 @@ export function CloudsChaos() {
           <CloudList items={cs} p={p} style="icon" />
           <div className="cp-stage" role="tabpanel" key={c.id}>
             <div className={'cp-chaos cp-chaos--' + phase} aria-hidden="true">
-              {c.id === 'service' ? <ServiceChannels /> : c.id === 'field' ? <FieldMap /> : c.id === 'agentforce' ? <AgentNight /> : c.id === 'experience' ? <ExpMails /> : chaos[c.id].map(([k, v], i) => (
+              {c.id === 'service' ? <ServiceChannels /> : c.id === 'field' ? <FieldMap /> : c.id === 'agentforce' ? <AgentNight /> : c.id === 'experience' ? <ExpMails /> : c.id === 'data' ? <DataTangle /> : chaos[c.id].map(([k, v], i) => (
                 <div key={i} className={'cp-note cp-note--' + k.toLowerCase().replace(/[^a-z]/g, '')}
                   style={{ left: SPOTS[i][0] + '%', top: SPOTS[i][1] + '%', '--r': SPOTS[i][2] + 'deg', '--d': i * 0.05 + 's' }}>
                   <small>{k}</small>{v}
@@ -124,7 +127,7 @@ export function CloudsChaos() {
                 <p className="cp-does">{c.does}</p>
                 <p className="cp-result">✓ {c.result}</p>
               </div>
-              {c.id === 'service' ? <ServiceCase /> : c.id === 'field' ? <FieldRoute /> : c.id === 'agentforce' ? <AgentChat /> : <MiniScreen id={c.id} />}
+              {c.id === 'service' ? <ServiceCase /> : c.id === 'field' ? <FieldRoute /> : c.id === 'agentforce' ? <AgentChat /> : c.id === 'data' ? <DataProfile /> : <MiniScreen id={c.id} />}
               <Foot c={c} />
             </div>
           </div>
@@ -258,6 +261,63 @@ function ExpMails() {
         <label>{tx('Password', 'Wachtwoord')}<span>••••••••••</span></label>
         <i className="cp-xm-btn">{tx('Log in', 'Inloggen')}</i>
       </div>
+    </div>
+  );
+}
+
+/* Data 360 opening (option 2B): six real tools a field service company uses, every one
+   wired to every other; the tangle clears into spokes to one customer profile, and the
+   card ends on that profile with its sources. Logos: /assets/logos/tools/. */
+const DT_TOOLS = () => [
+  ['Exact Online', 'exact.svg', 'ERP', 17, 19],
+  ['Outlook', 'outlook.svg', tx('Mail', 'Mail'), 50, 13],
+  ['Mailchimp', 'mailchimp.svg', 'Marketing', 83, 19],
+  ['AFAS', 'afas.png', tx('Admin & HR', 'Administratie & HR'), 17, 81],
+  ['Google Analytics', 'googleanalytics.svg', 'Website', 50, 87],
+  ['Snowflake', 'snowflake.svg', 'Data warehouse', 83, 81],
+];
+const DT_PAIRS = [0, 1, 2, 3, 4, 5].flatMap((i) => [0, 1, 2, 3, 4, 5].filter((j) => j > i).map((j) => [i, j]));
+function DataTangle() {
+  const T = DT_TOOLS();
+  return (
+    <div className="cp-dt">
+      <svg className="cp-dt-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        {DT_PAIRS.map(([i, j], k) => {
+          const [x, y] = [T[i][3], T[i][4]], [x2, y2] = [T[j][3], T[j][4]];
+          const mx = (x + x2) / 2, my = (y + y2) / 2;
+          const cx = mx + (mx - 50) * 0.55 + (k % 2 ? 6 : -6), cy = my + (my - 50) * 0.55 + (k % 3 ? 5 : -5);
+          return <path key={k} className="cp-dt-line" pathLength="1" style={{ '--d': 0.1 + k * 0.06 + 's' }} d={`M${x} ${y} Q${cx} ${cy} ${x2} ${y2}`} />;
+        })}
+        {T.map(([n, , , x, y]) => <line key={'s' + n} className="cp-dt-spoke" pathLength="1" x1={x} y1={y} x2="50" y2="50" />)}
+      </svg>
+      {T.map(([n, logo, cat, x, y], i) => (
+        <div key={n} className="cp-dt-tool" style={{ left: x + '%', top: y + '%', '--d': i * 0.1 + 's' }}>
+          <img src={'/assets/logos/tools/' + logo} alt="" /><span><b>{n}</b><small>{cat}</small></span>
+        </div>
+      ))}
+      <div className="cp-dt-hub">
+        <div className="cp-dt-avatar"><span>NJ</span></div>
+        <b>Noor Jansen</b><small>Havenwerk BV</small>
+        <i>Data 360 · {tx('1 profile', '1 profiel')}</i>
+      </div>
+    </div>
+  );
+}
+function DataProfile() {
+  const T = DT_TOOLS();
+  return (
+    <div className="cp-dp">
+      <div className="cp-dp-top">
+        <div className="cp-dt-avatar"><span>NJ</span></div>
+        <div><b>Noor Jansen</b><span>{tx('Operations manager', 'Operationeel manager')} · Havenwerk BV</span></div>
+      </div>
+      <div className="cp-dp-facts">
+        <div><small>ERP</small>{tx('14 orders · €86k this year', '14 orders · €86k dit jaar')}</div>
+        <div><small>Website</small>{tx('Pricing page, 3× this week', 'Prijspagina, 3× deze week')}</div>
+        <div><small>Marketing</small>{tx('Opened the newsletter', 'Nieuwsbrief geopend')}</div>
+        <div><small>Service</small>{tx('1 open case', '1 open case')}</div>
+      </div>
+      <div className="cp-dp-src"><span>{tx('Combined from', 'Samengebracht uit')}</span>{T.map(([n, logo]) => <img key={n} src={'/assets/logos/tools/' + logo} alt={n} title={n} />)}</div>
     </div>
   );
 }
@@ -485,6 +545,39 @@ const CP_CSS = `
 .cp-chaos--merge .cp-xm-btn { animation: cpPress .3s 1.35s both; }
 @keyframes cpPress { 50% { transform: scale(.95); background: #014486; } 100% { transform: none; background: #2e844a; } }
 .cp-chaos--order .cp-xm-login { opacity: 0; transform: translate(-50%, -50%) scale(1.04); }
+
+/* A · Data 360 opening: every tool wired to every other → one profile */
+.cp-dt { position: absolute; inset: 18px; transition: opacity .3s, transform .35s; }
+.cp-dt-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cp-dt-line { fill: none; stroke: var(--intigris-coral); stroke-width: .45; stroke-linecap: round; opacity: .7; stroke-dasharray: 1; stroke-dashoffset: 1; animation: cpDraw 1s var(--d) ease-in-out forwards; transition: opacity .4s; }
+.cp-dt-spoke { stroke: #2e844a; stroke-width: .7; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.cp-chaos--merge .cp-dt-line { opacity: 0; }
+.cp-chaos--merge .cp-dt-spoke { animation: cpDraw .6s .25s ease-out forwards; }
+.cp-dt-tool { position: absolute; transform: translate(-50%, -50%); width: 186px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 10px 13px; border-radius: 14px; background: #fff; box-shadow: 0 10px 22px -14px rgba(43,23,0,.5); border: 1px solid rgba(0,0,0,.06); animation: cpPopC .35s var(--d) both; z-index: 2; }
+@keyframes cpPopC { from { opacity: 0; transform: translate(-50%, -50%) scale(.8); } to { opacity: 1; transform: translate(-50%, -50%); } }
+.cp-dt-tool img { flex: none; width: 28px; height: 28px; object-fit: contain; }
+.cp-dt-tool span { min-width: 0; }
+.cp-dt-tool b { display: block; font-size: 14px; color: #222; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cp-dt-tool small { display: block; font-size: 11.5px; color: #888; line-height: 1.3; }
+.cp-dt-hub { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.6); opacity: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 14px 22px 12px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 3px #f4c15d, 0 20px 40px -20px rgba(43,23,0,.6); transition: opacity .4s .6s, transform .5s .6s cubic-bezier(.2,.8,.2,1); }
+.cp-chaos--merge .cp-dt-hub { opacity: 1; transform: translate(-50%, -50%); }
+.cp-dt-avatar { width: 52px; height: 52px; border-radius: 50%; padding: 3px; box-sizing: border-box; background: conic-gradient(#29B5E8, #2e844a, #f4c15d, var(--intigris-coral), #29B5E8); flex: none; }
+.cp-dt-hub .cp-dt-avatar { margin-bottom: 6px; }
+.cp-dt-avatar span { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; background: var(--intigris-brown-700); color: #fff; font-size: 15px; font-weight: 700; }
+.cp-dt-hub b { font-size: 16px; } .cp-dt-hub small { font-size: 12.5px; color: #777; }
+.cp-dt-hub i { font-style: normal; margin-top: 6px; font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: #eef4ff; color: #0176d3; }
+.cp-chaos--order .cp-dt { opacity: 0; transform: scale(.97); }
+.cp-chaos--merge .cp-dt-tool, .cp-chaos--order .cp-dt-tool { animation: none; }
+.cp-dp { background: #fff; border-radius: 18px; padding: 18px; box-shadow: 0 0 0 3px #f4c15d, 0 30px 60px -30px rgba(43,23,0,.5); }
+.cp-dp-top { display: flex; align-items: center; gap: 12px; }
+.cp-dp-top b { display: block; font-size: 17px; } .cp-dp-top span { font-size: 12.5px; color: #777; }
+.cp-dp-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0; }
+.cp-dp-facts div { padding: 9px 10px; border-radius: 10px; background: #f6f8fb; font-size: 12.5px; color: #333; animation: cpIn .35s both; }
+.cp-dp-facts div:nth-child(2) { animation-delay: .08s; } .cp-dp-facts div:nth-child(3) { animation-delay: .16s; } .cp-dp-facts div:nth-child(4) { animation-delay: .24s; }
+.cp-dp-facts small { display: block; font-size: 10.5px; font-weight: 700; color: #0176d3; text-transform: uppercase; letter-spacing: .05em; }
+.cp-dp-src { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-top: 12px; border-top: 1px solid #eee; font-size: 12px; color: #777; }
+.cp-dp-src span { margin-right: 2px; }
+.cp-dp-src img { width: 22px; height: 22px; object-fit: contain; }
 
 /* B · showcase */
 .cp--show { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
