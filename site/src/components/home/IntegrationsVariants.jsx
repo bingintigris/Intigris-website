@@ -234,3 +234,13 @@ const IV_CSS = `
 }
 @media (prefers-reduced-motion: reduce) { .iv *, .iv *::before { animation: none !important; } }
 `;
+
+/* ---------- Round 2 (Bing 2026-11-24): smoother connector lines, homepage content ---------- */
+import { V3LogoHub, V3Styles } from '../../legacy/components/CloudKitV3.jsx';
+const intHead = () => ({ eyebrow: tx('INTEGRATIONS', 'KOPPELINGEN'), a: tx('Connected to', 'Gekoppeld aan'), b: tx('everything you use.', 'alles wat je gebruikt.'),
+  lede: tx('Salesforce gets stronger when it talks to the rest of your business. These are connections we build and maintain. Hover over a tool to see what it does.', 'Salesforce wordt sterker als het praat met de rest van je bedrijf. Dit zijn koppelingen die wij bouwen en onderhouden. Ga met je muis over een tool om te zien wat het doet.') });
+export const IntLinesPop = () => <V3LogoHub head={intHead()} items={HSF_INTEGRATIONS()} lineFx="pop" />;
+export const IntLinesGrow = () => <V3LogoHub head={intHead()} items={HSF_INTEGRATIONS()} lineFx="grow" />;
+export const IntLinesTrace = () => <V3LogoHub head={intHead()} items={HSF_INTEGRATIONS()} lineFx="trace" />;
+export const IntLinesFlow = () => <V3LogoHub head={intHead()} items={HSF_INTEGRATIONS()} lineFx="flow" />;
+export { V3Styles };

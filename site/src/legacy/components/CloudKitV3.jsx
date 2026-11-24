@@ -525,19 +525,29 @@ function LhTile({ it }) {
   );
 }
 
-function V3LogoHub({ head, center, items }) {
+/* lineFx (Bing 2026-11-24, smoother connector lines): 'pop' (original: line snaps in after the
+   tool lands), 'grow' (line draws out from Salesforce while the tool flies in; they meet),
+   'trace' (tools land, then each line draws slowly and a light dot travels to the tool),
+   'flow' (lines fade in softly, then calm dashes keep flowing towards Salesforce) */
+function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
   const ref = v3Ref(null);
   const [active, setActive] = v3State(0);
   const [paused, setPaused] = v3State(false);
-  const [landed, setLanded] = v3State(V3_REDUCE || !win.gsap);
+  const [landed, setLanded] = v3State(V3_REDUCE);
   /* Once everything has landed, the highlight walks from tool to tool. */
   v3Effect(() => { if (!landed || paused || V3_REDUCE) return; const t = setInterval(() => setActive(a => (a + 1) % items.length), 2600); return () => clearInterval(t); }, [landed, paused, items.length]);
   const n = items.length, W = 1000, H = 820;
   const pts = items.map((_, i) => { const a = (-90 + (360 / n) * i) * Math.PI / 180; return [50 + 37 * Math.cos(a), 50 + 41 * Math.sin(a)]; });
   v3Effect(() => {
-    if (!win.gsap || V3_REDUCE) return;
-    const gsap = win.gsap;
-    const mm = gsap.matchMedia();
+    if (V3_REDUCE) return;
+    let mm, alive = true;
+    /* the page's own GSAP (CDN, synced with Lenis) when present, else the npm copy (design review) */
+    const load = win.gsap && win.ScrollTrigger ? Promise.resolve([win.gsap, win.ScrollTrigger])
+      : Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([a, b]) => { a.gsap.registerPlugin(b.ScrollTrigger); return [a.gsap, b.ScrollTrigger]; });
+    load.then(([gsap, ST]) => {
+    if (!alive || !ref.current) return;
+    mm = gsap.matchMedia();
+    mm.add('(max-width: 999px)', () => setLanded(true));
     mm.add('(min-width: 1000px)', () => {
       const root = ref.current;
       const stage = root.querySelector('.lh-stage');
@@ -547,7 +557,7 @@ function V3LogoHub({ head, center, items }) {
          but the fly-in already starts when the section enters the screen from below, so
          the visitor sees movement before the section fills the screen. */
       const grid = root.querySelector('.lh-grid');
-      const pinST = win.ScrollTrigger.create({ trigger: grid, start: 'center center', end: '+=80%', pin: true });
+      const pinST = ST.create({ trigger: grid, start: 'center center', end: '+=80%', pin: true });
       /* Play once (Bing 2026-11-24): after the visitor has scrolled past, finish the animation,
          remove the pin (so scrolling back up is shorter and nothing replays) and shift the scroll
          position by the removed pin length so the view does not jump. */
@@ -558,11 +568,12 @@ function V3LogoHub({ head, center, items }) {
         const st = tl.scrollTrigger; if (st) st.kill(false, true); tl.kill(); pinST.kill();
         /* Hard end state, so no scrub tween can pull the tools back to their start position. */
         gsap.set([root.querySelector('.lh-center'), ...nodes], { clearProps: 'transform,opacity' });
-        gsap.set(lines, { strokeDashoffset: 0 });
+        gsap.set(lines, { strokeDashoffset: 0, opacity: 1 });
+        gsap.set(root.querySelectorAll('.lh-dot'), { opacity: 0 });
         const y = Math.max(0, win.scrollY - d);
         if (win.lenis) win.lenis.scrollTo(y, { immediate: true, force: true }); else win.scrollTo(0, y);
         setLanded(true);
-        win.ScrollTrigger.refresh();
+        ST.refresh();
       };
       const tl = gsap.timeline({ scrollTrigger: { trigger: root, start: 'top 85%', end: () => pinST.end, scrub: 0.8, invalidateOnRefresh: true,
         onUpdate: st => setLanded(st.progress > 0.92), onLeave: () => requestAnimationFrame(settle) } });
@@ -572,18 +583,28 @@ function V3LogoHub({ head, center, items }) {
         const dx = () => (pts[i][0] - 50) / 100 * stage.offsetWidth * 1.15;
         const dy = () => (pts[i][1] - 50) / 100 * stage.offsetHeight * 1.15;
         const t0 = 0.15 + i * 0.07;
-        tl.fromTo(el, { x: dx, y: dy, opacity: 0, scale: 0.85 }, { x: 0, y: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'power3.out' }, t0)
-          .fromTo(lines[i], { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.35, ease: 'none' }, t0 + 0.7);
+        tl.fromTo(el, { x: dx, y: dy, opacity: 0, scale: 0.85 }, { x: 0, y: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'power3.out' }, t0);
+        if (lineFx === 'grow') tl.fromTo(lines[i], { strokeDashoffset: 1, opacity: 0 }, { strokeDashoffset: 0, opacity: 1, duration: 0.9, ease: 'power3.out' }, t0);
+        else if (lineFx === 'trace') {
+          const dot = root.querySelectorAll('.lh-dot')[i];
+          const tt = 0.55 + n * 0.07 + i * 0.06;
+          tl.fromTo(lines[i], { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.7, ease: 'sine.inOut' }, tt)
+            .fromTo(dot, { attr: { cx: W / 2, cy: H / 2 }, opacity: 0 }, { attr: { cx: pts[i][0] / 100 * W, cy: pts[i][1] / 100 * H }, opacity: 1, duration: 0.7, ease: 'sine.inOut' }, tt)
+            .to(dot, { opacity: 0, duration: 0.2 }, tt + 0.7);
+        }
+        else if (lineFx === 'flow') tl.fromTo(lines[i], { opacity: 0, strokeDashoffset: 0 }, { opacity: 1, duration: 0.8, ease: 'sine.inOut' }, t0 + 0.3);
+        else tl.fromTo(lines[i], { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.35, ease: 'none' }, t0 + 0.7);
       });
       tl.to({}, { duration: 0.25 });
       return () => setLanded(true);
     });
-    return () => mm.revert();
+    });
+    return () => { alive = false; mm && mm.revert(); };
   }, []);
   const a = items[active];
   const pick = i => () => { setActive(i); setPaused(true); };
   return (
-    <section className="ck-section ck-section--dark lh" ref={ref}>
+    <section className={'ck-section ck-section--dark lh lh--' + lineFx + (landed ? ' lh--landed' : '')} ref={ref}>
       <div className="container-wide">
         <div className="lh-grid">
           <div className="lh-text">
@@ -593,6 +614,8 @@ function V3LogoHub({ head, center, items }) {
           <div className="lh-stage" onMouseLeave={() => setPaused(false)}>
             <svg className="lh-lines" viewBox={'0 0 ' + W + ' ' + H} aria-hidden>
               {pts.map(([x, y], i) => <line key={i} x1={W / 2} y1={H / 2} x2={x / 100 * W} y2={y / 100 * H} pathLength="1" className={'lh-line' + (i === active ? ' on' : '')} />)}
+              {lineFx === 'flow' && pts.map(([x, y], i) => <line key={'f' + i} x1={x / 100 * W} y1={y / 100 * H} x2={W / 2} y2={H / 2} pathLength="1" className="lh-flow" style={{ animationDelay: (i * -0.37) + 's' }} />)}
+              {lineFx === 'trace' && pts.map((_, i) => <circle key={'d' + i} className="lh-dot" r="7" cx={W / 2} cy={H / 2} opacity="0" />)}
             </svg>
             <div className="lh-center">
               <img src={LH_DIR + 'salesforce.svg'} alt="Salesforce" />
@@ -618,6 +641,11 @@ function V3LogoHub({ head, center, items }) {
         .lh-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
         .lh-line { stroke: rgba(252,247,235,.28); stroke-width: 2; stroke-dasharray: 1 1; stroke-dashoffset: 0; transition: stroke 300ms, stroke-width 300ms; }
         .lh-line.on { stroke: var(--intigris-coral); stroke-width: 4; }
+        .lh-dot { fill: #fff; filter: drop-shadow(0 0 6px rgba(255,92,57,.9)); }
+        .lh-flow { stroke: rgba(255,92,57,.75); stroke-width: 3; stroke-linecap: round; stroke-dasharray: .015 .085; fill: none; opacity: 0; transition: opacity .8s; animation: lhFlow 2.6s linear infinite; }
+        .lh--landed .lh-flow { opacity: 1; }
+        @keyframes lhFlow { to { stroke-dashoffset: -.1; } }
+        @media (prefers-reduced-motion: reduce) { .lh-flow { animation: none; } }
         .lh-center { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
         .lh-center::before { content: ''; position: absolute; left: 50%; top: 42%; width: 150%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,161,224,.28), rgba(0,161,224,0)); z-index: -1; }
         .lh-center img { width: clamp(120px, 12vw, 172px); height: auto; filter: drop-shadow(0 18px 30px rgba(0,0,0,.4)); }

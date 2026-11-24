@@ -11,6 +11,7 @@ import { TrustedVelocity, TrustedWall, TrustedSentence, TrustedStats, TvStyles }
 import { HeroFx1, HeroFx2, HeroFx3, HfxStyles } from './HeroFxVariants.jsx';
 import { WhyBento, WhyVs, WhyPinned, WhyStory, WhyPeople, WiStyles } from '../home/WhyIntigris.jsx';
 import { WhyLine, WhyStage, WhyZigzag, WsStyles } from '../home/WhyStack.jsx';
+import { IntLinesPop, IntLinesGrow, IntLinesTrace, IntLinesFlow, V3Styles } from '../home/IntegrationsVariants.jsx';
 import { WhySettleCards, WhySettleBento, WhySettleLine, WsoStyles } from '../home/WhySettle.jsx';
 import { StoriesStack, StoriesWall, StoriesGallery, StoriesGalleryIndustry, SvStyles } from '../home/StoriesVariants.jsx';
 import { StorySpotlight, SsStyles } from '../../legacy/components/StorySpotlight.jsx';
@@ -26,6 +27,15 @@ const StoriesAfterGrid = () => <StoriesGalleryIndustry after="grid" />;
 const StoriesAfterFeature = () => <StoriesGalleryIndustry after="feature" />;
 
 const ROUNDS = () => [
+  {
+    id: 'intlines', title: tx('Integrations · smoother connector lines (Salesforce label removed)', 'Koppelingen · soepelere verbindingslijnen (Salesforce-label weg)'),
+    variants: [
+      { k: '0', name: tx('Now: lines pop in', 'Nu: lijnen ploppen in'), note: tx('Reference: each line snaps in quickly after its tool has landed.', 'Referentie: elke lijn schiet snel in nadat de tool geland is.'), C: IntLinesPop },
+      { k: 'A', name: tx('Reach out', 'Uitreiken'), note: tx('Each line draws out from Salesforce at the same pace as its tool flies in, so they meet exactly when the tool lands. One continuous movement.', 'Elke lijn tekent zich vanuit Salesforce in hetzelfde tempo als de tool invliegt, zodat ze elkaar precies raken als de tool landt. Eén doorlopende beweging.'), C: IntLinesGrow },
+      { k: 'B', name: tx('Connect one by one', 'Eén voor één verbinden'), note: tx('The tools land first; then each line draws slowly from Salesforce to its tool, one after another, with a small light travelling along it.', 'Eerst landen de tools; daarna tekent elke lijn zich rustig van Salesforce naar zijn tool, één voor één, met een klein lichtje dat meereist.'), C: IntLinesTrace },
+      { k: 'C', name: tx('Soft fade + data flow', 'Zachte fade + datastroom'), note: tx('Lines fade in softly (no drawing); once everything has landed, small coral dashes keep flowing calmly from each tool into Salesforce.', 'Lijnen faden zacht in (geen tekenen); zodra alles geland is, blijven kleine koraal streepjes rustig van elke tool naar Salesforce stromen.'), C: IntLinesFlow },
+    ],
+  },
   {
     id: 'stories2', title: tx('Customer stories · what it becomes after you have scrolled through it (scroll past each one)', 'Klantverhalen · wat het wordt nadat je erdoorheen gescrold bent (scroll steeds voorbij)'),
     variants: [
@@ -158,7 +168,7 @@ export default function HomeSectionsReview() {
       <TvStyles />
       <HfxStyles />
       <WiStyles />
-      <WsStyles /><WsoStyles />
+      <WsStyles /><WsoStyles /><V3Styles />
       <SvStyles />
       <SsStyles />
       <style dangerouslySetInnerHTML={{ __html: `
