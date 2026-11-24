@@ -10,8 +10,17 @@ import { CloudIntrosReview, CiStyles } from '../home/CloudIntros.jsx';
 import { TrustedVelocity, TrustedWall, TrustedSentence, TrustedStats, TvStyles } from '../home/TrustedVariants.jsx';
 import { HeroFx1, HeroFx2, HeroFx3, HfxStyles } from './HeroFxVariants.jsx';
 import { WhyBento, WhyVs, WhyPinned, WhyStory, WhyPeople, WiStyles } from '../home/WhyIntigris.jsx';
+import { WhyLine, WhyStage, WhyZigzag, WsStyles } from '../home/WhyStack.jsx';
 
 const ROUNDS = () => [
+  {
+    id: 'why2', title: tx('"Why Intigris" round 2 · C × D: stacked reasons with an active scroll line', '"Waarom Intigris" ronde 2 · C × D: gestapelde redenen met een actieve scrolllijn'),
+    variants: [
+      { k: '1', name: tx('Scroll line along the reasons', 'Scrolllijn langs de redenen'), note: tx('"Why Intigris?" stays on the left with a 01/05 counter; on the right a line fills as you scroll, a glowing dot lights each reason, headlines animate in letter by letter and each proof animates.', '"Waarom Intigris?" blijft links staan met een teller 01/05; rechts vult een lijn zich terwijl je scrolt, een gloeiende stip licht elke reden op, koppen animeren letter voor letter in en elk bewijs animeert.'), C: WhyLine },
+      { k: '2', name: tx('Pinned stage', 'Vastgezet podium'), note: tx('The section stays in place; scrolling moves the line on the left from reason to reason while one big reason at a time flies in letter by letter, with its proof.', 'De sectie blijft staan; scrollen beweegt de lijn links van reden naar reden terwijl één grote reden tegelijk letter voor letter invliegt, met het bewijs.'), C: WhyStage },
+      { k: '3', name: tx('Centre line, zigzag', 'Middenlijn, zigzag'), note: tx('A line draws itself down the middle; reasons slide in from left and right, each point lights up; it ends on the Summit badge and a call to action.', 'Een lijn tekent zichzelf door het midden; redenen schuiven links en rechts in, elk punt licht op; eindigt bij de Summit-badge en een call-to-action.'), C: WhyZigzag },
+    ],
+  },
   {
     id: 'why', title: tx('"Why Intigris" · five variations (replaces "Where do you start?")', '"Waarom Intigris" · vijf varianten (vervangt "Waar begin je?")'),
     variants: [
@@ -101,6 +110,7 @@ export default function HomeSectionsReview() {
       <TvStyles />
       <HfxStyles />
       <WiStyles />
+      <WsStyles />
       <style dangerouslySetInnerHTML={{ __html: `
         .rv-top { position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1d1206; color: #fff; font-size: 14px; }
         .rv-top a { color: #fff; font-weight: 600; }
