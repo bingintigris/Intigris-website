@@ -572,7 +572,10 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
         const d = pinST.end - pinST.start;
         const st = tl.scrollTrigger; if (st) st.kill(false, true); tl.kill(); pinST.kill();
         /* Hard end state, so no scrub tween can pull the tools back to their start position. */
-        gsap.set([root.querySelector('.lh-center'), ...nodes], { clearProps: 'transform,opacity' });
+        /* explicit end values, NOT clearProps: GSAP turned the CSS 'translate: -50% -50%' centring into its
+           own transform; clearing it and letting GSAP re-render later doubled the centring (logos half a
+           tile off their lines when scrolling back up, Bing 2026-11-24) */
+        gsap.set([root.querySelector('.lh-center'), ...nodes], { x: 0, y: 0, scale: 1, opacity: 1 });
         gsap.set(lines, { strokeDashoffset: 0, opacity: 1 });
         gsap.set(root.querySelectorAll('.lh-dot'), { opacity: 0 });
         scrollShift(win.scrollY - d);
@@ -620,6 +623,7 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
           </div>
           <div className="lh-stage" onMouseLeave={() => { setPaused(false); setHov(-1); }}>
             <svg className="lh-lines" viewBox={'0 0 ' + W + ' ' + H} aria-hidden>
+              {glow && pts.map(([x, y], i) => <line key={'h' + i} x1={W / 2} y1={H / 2} x2={x / 100 * W} y2={y / 100 * H} className={'lh-halo' + (lit(i) ? ' on' : '')} />)}
               {pts.map(([x, y], i) => <line key={i} x1={W / 2} y1={H / 2} x2={x / 100 * W} y2={y / 100 * H} pathLength="1" className={'lh-line' + (lit(i) ? ' on' : '')} />)}
               {lineFx === 'trace' && pts.map((_, i) => <circle key={'d' + i} className="lh-dot" r="7" cx={W / 2} cy={H / 2} opacity="0" />)}
             </svg>
@@ -649,12 +653,18 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
         .lh-line.on { stroke: var(--intigris-coral); stroke-width: 4; }
         .lh-dot { fill: #fff; filter: drop-shadow(0 0 6px rgba(255,92,57,.9)); }
         /* glow (Bing 2026-11-24): every line one light orange, softly glowing up and down together;
-           the hovered tool's line turns bright orange */
+           the hovered tool's line turns bright orange. No CSS filter on the SVG lines: Chrome can
+           paint filtered SVG elements at a stale position after the section moves (lines drawn
+           off the logos); the glow is a second, wide, soft line (.lh-halo) behind each line. */
         .lh--flow .lh-line { stroke: #ffb595; stroke-width: 2.5; }
+        .lh-halo { stroke: #ff9a72; stroke-width: 12; stroke-linecap: round; fill: none; opacity: 0; }
         .lh--flow.lh--landed .lh-line { animation: lhGlow 3.2s ease-in-out infinite; }
-        .lh--flow .lh-line.on { stroke: var(--intigris-coral); stroke-width: 4; animation: none; opacity: 1; filter: drop-shadow(0 0 8px rgba(255,92,57,.9)); }
-        @keyframes lhGlow { 0%, 100% { opacity: .45; filter: drop-shadow(0 0 0 rgba(255,150,110,0)); } 50% { opacity: 1; filter: drop-shadow(0 0 6px rgba(255,150,110,.75)); } }
-        @media (prefers-reduced-motion: reduce) { .lh--flow .lh-line { animation: none !important; opacity: .8; } }
+        .lh--flow.lh--landed .lh-halo { animation: lhHalo 3.2s ease-in-out infinite; }
+        .lh--flow .lh-line.on { stroke: var(--intigris-coral); stroke-width: 4; animation: none; opacity: 1; }
+        .lh--flow .lh-halo.on { stroke: var(--intigris-coral); animation: none; opacity: .4; }
+        @keyframes lhGlow { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+        @keyframes lhHalo { 0%, 100% { opacity: 0; } 50% { opacity: .22; } }
+        @media (prefers-reduced-motion: reduce) { .lh--flow .lh-line, .lh-halo { animation: none !important; } .lh--flow .lh-line { opacity: .8; } }
         .lh-center { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
         .lh-center::before { content: ''; position: absolute; left: 50%; top: 42%; width: 150%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,161,224,.28), rgba(0,161,224,0)); z-index: -1; }
         .lh-center img { width: clamp(120px, 12vw, 172px); height: auto; filter: drop-shadow(0 18px 30px rgba(0,0,0,.4)); }
