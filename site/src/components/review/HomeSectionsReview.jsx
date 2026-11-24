@@ -12,6 +12,8 @@ import { HeroFx1, HeroFx2, HeroFx3, HfxStyles } from './HeroFxVariants.jsx';
 import { WhyBento, WhyVs, WhyPinned, WhyStory, WhyPeople, WiStyles } from '../home/WhyIntigris.jsx';
 import { WhyLine, WhyStage, WhyZigzag, WsStyles } from '../home/WhyStack.jsx';
 import { IntLinesPop, IntLinesGrow, IntLinesTrace, IntLinesFlow, V3Styles } from '../home/IntegrationsVariants.jsx';
+import { V3FaqChat } from '../../legacy/components/CloudKitV3.jsx';
+import { sc3 } from '../../legacy/components/CloudPagesV3.jsx';
 import { TalkDesk, TalkChat, TalkBigType, TalkBooking, TalkCoral, TkStyles } from '../home/TalkVariants.jsx';
 import { SiteFinalCTA } from '../../legacy/components/Footer.jsx';
 import { CkTalk } from '../../legacy/components/CloudKit.jsx';
@@ -31,7 +33,15 @@ const StoriesAfterFeature = () => <StoriesGalleryIndustry after="feature" />;
 
 const TalkNow = () => <><CkTalk line={tx('30 minutes, and you know what Salesforce can do for you.', 'In 30 minuten weet je wat Salesforce voor jou kan doen.')} /><SiteFinalCTA /></>;
 
+const AskFrank = () => <V3FaqChat head={{ eyebrow: tx('QUESTIONS WE GET', 'VRAGEN DIE WE KRIJGEN'), a: tx('Before you', 'Voordat je'), b: tx('book the call.', 'het gesprek plant.') }} items={sc3.faq()} onCta={() => { window.location.href = '/contact'; }} />;
+
 const ROUNDS = () => [
+  {
+    id: 'askfrank', title: tx('Found: "Ask Frank" chat (pre-set questions, Frank answers) · as it is on the Sales Cloud page', 'Gevonden: "Vraag het Frank"-chat (vaste vragen, Frank antwoordt) · zoals op de Sales Cloud-pagina'),
+    variants: [
+      { k: 'F', name: tx('Ask Frank (current version, from 9 Nov)', 'Vraag het Frank (huidige versie, van 9 nov)'), note: tx('Chat window on the right with Frank\'s photo; tap a question and Frank "types" and answers. When all questions are asked, a button to plan 30 minutes appears. Now used as the FAQ on the Sales Cloud and Field Service pages; not on the homepage.', 'Chatvenster rechts met Franks foto; tik een vraag aan en Frank "typt" en antwoordt. Als alle vragen gesteld zijn, verschijnt een knop om 30 minuten te plannen. Nu de FAQ op de Sales Cloud- en Field Service-pagina; niet op de homepage.'), C: AskFrank },
+    ],
+  },
   {
     id: 'talk', title: tx('Closing section · "Let\'s talk" (Frank) + "Ready to smarten up your business?" merged into one (five concepts)', 'Afsluitende sectie · "Zullen we praten?" (Frank) + "Klaar om je bedrijf slimmer te maken?" samengevoegd tot één (vijf concepten)'),
     variants: [
