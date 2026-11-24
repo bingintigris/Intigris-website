@@ -556,7 +556,7 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
     mm.add('(min-width: 1000px)', () => {
       const root = ref.current;
       const stage = root.querySelector('.lh-stage');
-      const nodes = root.querySelectorAll('.lh-node');
+      const nodes = root.querySelectorAll('.lh-pos--n');
       const lines = root.querySelectorAll('.lh-line');
       /* Pin and animation are separate (Bing 2026-11-24): the grid pins when it is centred,
          but the fly-in already starts when the section enters the screen from below, so
@@ -575,7 +575,7 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
         /* explicit end values, NOT clearProps: GSAP turned the CSS 'translate: -50% -50%' centring into its
            own transform; clearing it and letting GSAP re-render later doubled the centring (logos half a
            tile off their lines when scrolling back up, Bing 2026-11-24) */
-        gsap.set([root.querySelector('.lh-center'), ...nodes], { x: 0, y: 0, scale: 1, opacity: 1 });
+        gsap.set([root.querySelector('.lh-pos--c'), ...nodes], { x: 0, y: 0, scale: 1, opacity: 1 });
         gsap.set(lines, { strokeDashoffset: 0, opacity: 1 });
         gsap.set(root.querySelectorAll('.lh-dot'), { opacity: 0 });
         scrollShift(win.scrollY - d);
@@ -586,7 +586,7 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
         onUpdate: st => setLanded(st.progress > 0.92) } });
       /* settle only once the section is completely off screen: the visitor never sees the switch */
       ST.create({ start: () => pinST.end, end: 'max', onUpdate: () => { if (!settled && root.getBoundingClientRect().bottom < 0) requestAnimationFrame(settle); } });
-      tl.fromTo(root.querySelector('.lh-center'), { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.6)' }, 0);
+      tl.fromTo(root.querySelector('.lh-pos--c'), { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.6)' }, 0);
       nodes.forEach((el, i) => {
         /* Start further out along the node's own spoke: straight outside-in. */
         const dx = () => (pts[i][0] - 50) / 100 * stage.offsetWidth * 1.15;
@@ -627,15 +627,22 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
               {pts.map(([x, y], i) => <line key={i} x1={W / 2} y1={H / 2} x2={x / 100 * W} y2={y / 100 * H} pathLength="1" className={'lh-line' + (lit(i) ? ' on' : '')} />)}
               {lineFx === 'trace' && pts.map((_, i) => <circle key={'d' + i} className="lh-dot" r="7" cx={W / 2} cy={H / 2} opacity="0" />)}
             </svg>
-            <div className="lh-center">
-              <img src={LH_DIR + 'salesforce.svg'} alt="Salesforce" />
-              {center && <span>{center}</span>}
+            {/* .lh-pos = invisible zero-size anchor point that GSAP moves; the visible element inside
+                is centred on it by CSS. GSAP and CSS never touch the same element, so the centring can't
+                be doubled or lost (logos/cloud drifting off the lines, Bing 2026-11-24) */}
+            <div className="lh-pos lh-pos--c">
+              <div className="lh-center">
+                <img src={LH_DIR + 'salesforce.svg'} alt="Salesforce" />
+                {center && <span>{center}</span>}
+              </div>
             </div>
             {items.map((it, i) => (
-              <button key={i} type="button" className={'lh-node' + (lit(i) ? ' on' : '')} style={{ left: pts[i][0] + '%', top: pts[i][1] + '%' }}
-                onMouseEnter={pick(i)} onFocus={pick(i)} onClick={pick(i)} aria-pressed={i === active} aria-label={it.n}>
-                <LhTile it={it} />
-              </button>
+              <span key={i} className="lh-pos lh-pos--n" style={{ left: pts[i][0] + '%', top: pts[i][1] + '%' }}>
+                <button type="button" className={'lh-node' + (lit(i) ? ' on' : '')}
+                  onMouseEnter={pick(i)} onFocus={pick(i)} onClick={pick(i)} aria-pressed={i === active} aria-label={it.n}>
+                  <LhTile it={it} />
+                </button>
+              </span>
             ))}
           </div>
         </div>
@@ -665,11 +672,12 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
         @keyframes lhGlow { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
         @keyframes lhHalo { 0%, 100% { opacity: 0; } 50% { opacity: .22; } }
         @media (prefers-reduced-motion: reduce) { .lh--flow .lh-line, .lh-halo { animation: none !important; } .lh--flow .lh-line { opacity: .8; } }
-        .lh-center { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
+        .lh-pos { position: absolute; width: 0; height: 0; } .lh-pos--c { left: 50%; top: 50%; z-index: 2; } .lh-pos--n { z-index: 3; }
+        .lh-center { position: absolute; left: 0; top: 0; translate: -50% -50%; width: max-content; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
         .lh-center::before { content: ''; position: absolute; left: 50%; top: 42%; width: 150%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,161,224,.28), rgba(0,161,224,0)); z-index: -1; }
-        .lh-center img { width: clamp(120px, 12vw, 172px); height: auto; filter: drop-shadow(0 18px 30px rgba(0,0,0,.4)); }
+        .lh-center img { width: clamp(120px, 12vw, 172px); max-width: none; height: auto; filter: drop-shadow(0 18px 30px rgba(0,0,0,.4)); }
         .lh-center span { font-size: 14px; font-weight: 500; letter-spacing: .02em; padding: 6px 14px; border-radius: 999px; background: #3a2108; border: 1px solid rgba(252,247,235,.22); color: var(--intigris-off-white); white-space: nowrap; }
-        .lh-node { position: absolute; translate: -50% -50%; appearance: none; font: inherit; cursor: pointer; z-index: 3; display: grid; place-items: center; min-width: 136px; height: 60px; padding: 8px 16px; border-radius: 16px; border: 0; background: #fff; box-shadow: 0 14px 30px -14px rgba(0,0,0,.6), 0 0 0 0 var(--intigris-coral); transition: box-shadow 300ms, scale 300ms; }
+        .lh-node { position: absolute; left: 0; top: 0; translate: -50% -50%; appearance: none; font: inherit; cursor: pointer; z-index: 3; display: grid; place-items: center; min-width: 136px; height: 60px; padding: 8px 16px; border-radius: 16px; border: 0; background: #fff; box-shadow: 0 14px 30px -14px rgba(0,0,0,.6), 0 0 0 0 var(--intigris-coral); transition: box-shadow 300ms, scale 300ms; }
         .lh-node.on { box-shadow: 0 14px 30px -14px rgba(0,0,0,.6), 0 0 0 4px var(--intigris-coral); scale: 1.06; }
         .lh-tile-logos { display: flex; align-items: center; gap: 10px; }
         .lh-tile-logos img { height: 26px; width: auto; max-width: 116px; object-fit: contain; display: block; }
