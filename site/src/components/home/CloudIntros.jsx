@@ -211,22 +211,96 @@ function Data2() {
   );
 }
 
+/* ---------------- Experience Cloud · options 3 + 4 (2026-11-24) ---------------- */
+function Exp3() {
+  const [p, run, replay] = usePhase(2800, 3400);
+  const sec = useCount(p === 'a', 2, 522, 2400);
+  const mm = String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+  return (
+    <Scene title={tx('3 · On hold vs. self-service', '3 · In de wacht vs. zelf regelen')} note={tx('A phone stuck in the queue switches to the portal, where the customer gets it done in seconds.', 'Een telefoon in de wachtrij wisselt naar het portaal, waar de klant het in seconden zelf regelt.')} phase={p} run={run} replay={replay}>
+      <div className="ci-phone ci-phone--exp">
+        <div className="ci-phone-notch" />
+        <div className="ci-hold ci-hide-b">
+          <small>{tx('Customer service', 'Klantenservice')}</small>
+          <b>{tx('You are number', 'Je bent nummer')}</b><strong>14</strong><span>{tx('in the queue', 'in de wachtrij')}</span>
+          <div className="ci-hold-time">♪ {mm}</div>
+        </div>
+        <div className="ci-selfserve ci-reveal">
+          <small>{tx('Customer portal', 'Klantportaal')} · Havenwerk BV</small>
+          <div className="ci-ss-row">{tx('Invoice', 'Factuur')} 2026-1143 <i>PDF</i></div>
+          <div className="ci-ss-btn">{tx('Download invoice', 'Factuur downloaden')}</div>
+          <div className="ci-ss-ok">✓ {tx('Done in 12 seconds', 'Klaar in 12 seconden')}</div>
+        </div>
+      </div>
+    </Scene>
+  );
+}
+function Exp4() {
+  const [p, run, replay] = usePhase(2000, 4200);
+  const steps = [tx('Received', 'Ontvangen'), tx('Planned', 'Ingepland'), tx('Engineer on the way', 'Monteur onderweg'), tx('Done', 'Klaar')];
+  return (
+    <Scene title={tx('4 · Track & trace for your service', '4 · Track & trace voor je service')} note={tx('Like following a parcel: the customer sees their request move step by step, without calling.', 'Zoals een pakketje volgen: de klant ziet zijn aanvraag stap voor stap, zonder te bellen.')} phase={p} run={run} replay={replay}>
+      <div className="ci-calls ci-hide-b">
+        {[tx('Where is the engineer?', 'Waar blijft de monteur?'), tx('Is my request planned yet?', 'Is mijn aanvraag al ingepland?'), tx('Any update??', 'Al nieuws??')].map((q, i) => <div key={i} className="ci-chip ci-drop" style={{ '--d': i * 0.4 + 's', top: 14 + i * 24 + '%', left: (i % 2 ? 40 : 8) + '%' }}><small>☎ {tx('Call', 'Telefoon')}</small>{q}</div>)}
+      </div>
+      <div className="ci-track ci-reveal">
+        <div className="ci-track-top"><b>{tx('Your service request', 'Je serviceaanvraag')} #SR-2291</b><span>Havenwerk BV · {tx('pump maintenance', 'onderhoud pomp')}</span></div>
+        <ol className="ci-track-steps">
+          {steps.map((x, i) => <li key={x} style={{ '--d': 0.3 + i * 0.55 + 's' }}><i />{x}<em>{['Mo 09:12', 'Tu 08:30', 'Tu 08:05', ''][i]}</em></li>)}
+        </ol>
+        <div className="ci-track-eta">{tx('Engineer Jan arrives in ±12 min', 'Monteur Jan is er over ±12 min')}</div>
+      </div>
+    </Scene>
+  );
+}
+
+/* ---------------- Data 360 · options 3 + 4 (2026-11-24) ---------------- */
+const PIECES = () => [
+  ['ERP', tx('14 orders · €86k this year', '14 orders · €86k dit jaar'), 6, 8, -8],
+  ['Web', tx('Pricing page, 3× this week', 'Prijspagina, 3× deze week'), 58, 4, 6],
+  [tx('Service', 'Service'), tx('1 open case', '1 open case'), 4, 64, 5],
+  ['Mail', tx('Opened newsletter', 'Nieuwsbrief geopend'), 60, 62, -6],
+];
+function Data3() {
+  const [p, run, replay] = usePhase(2400, 3600);
+  return (
+    <Scene title={tx('3 · Puzzle', '3 · Puzzel')} note={tx('Loose pieces of customer data fly in and snap together into one complete profile.', 'Losse stukjes klantdata vliegen binnen en klikken samen tot één compleet profiel.')} phase={p} run={run} replay={replay}>
+      {PIECES().map(([k, v, l, t, r], i) => <div key={k} className="ci-chip ci-piece" style={{ left: l + '%', top: t + '%', '--r': r + 'deg', '--d': i * 0.2 + 's', '--tx': ['-28%', '28%', '-28%', '28%'][i], '--ty': ['-40%', '-40%', '40%', '40%'][i] }}><small>{k}</small>{v}</div>)}
+      <div className="ci-puzzle ci-reveal">
+        <div className="ci-golden-top"><span className="ci-avatar">NJ</span><div><b>Noor Jansen</b><span>{tx('Operations manager', 'Operationeel manager')} · Havenwerk BV</span></div></div>
+        <div className="ci-puzzle-grid">{PIECES().map(([k, v], i) => <div key={k} style={{ '--d': 0.15 + i * 0.12 + 's' }}><small>{k}</small>{v}</div>)}</div>
+      </div>
+    </Scene>
+  );
+}
+function Data4() {
+  const [p, run, replay] = usePhase(2900, 3400);
+  const score = useCount(p === 'a', 12, 86, 2500);
+  const sig = [[tx('Web', 'Web'), tx('Visited the pricing page 3×', 'Bezocht de prijspagina 3×')], [tx('Service', 'Service'), tx('Open case: pump noise', 'Open case: pomp maakt geluid')], ['ERP', tx('Contract ends in 30 days', 'Contract loopt af over 30 dagen')]];
+  return (
+    <Scene title={tx('4 · From signals to action', '4 · Van signalen naar actie')} note={tx('Signals from different systems add up to one score and a concrete next step for sales.', 'Signalen uit verschillende systemen tellen op tot één score en een concrete volgende stap voor sales.')} phase={p} run={run} replay={replay}>
+      <div className="ci-signals">
+        {sig.map(([k, v], i) => <div key={k} className="ci-sig" style={{ '--d': 0.2 + i * 0.6 + 's' }}><small>{k}</small>{v}</div>)}
+      </div>
+      <div className="ci-score"><small>{tx('Renewal score', 'Verlengscore')} · Havenwerk BV</small><b>{p === 'a' ? score : 86}</b><div className="ci-score-bar"><i style={{ width: (p === 'a' ? score : 86) + '%' }} /></div></div>
+      <div className="ci-nba ci-reveal"><small>✦ {tx('Next best action', 'Volgende beste stap')}</small><b>{tx('Call Noor about the renewal this week', 'Bel Noor deze week over de verlenging')}</b><span>{tx('Assigned to Mark · sales', 'Toegewezen aan Mark · sales')}</span></div>
+    </Scene>
+  );
+}
+
 export function CloudIntrosReview() {
   const rows = [
-    ['service', 'Service Cloud', Service1, Service2],
-    ['field', 'Field Service', Field1, Field2],
-    ['agentforce', 'Agentforce', Agent1, Agent2],
-    ['experience', 'Experience Cloud', Exp1, Exp2],
-    ['data', 'Data 360', Data1, Data2],
+    ['experience', 'Experience Cloud', [Exp1, Exp2, Exp3, Exp4]],
+    ['data', 'Data 360', [Data1, Data2, Data3, Data4]],
   ];
   return (
     <section className="ci">
       <div className="container">
-        <p className="ci-intro">{tx('Rough previews of the opening animation per cloud (Sales Cloud keeps its floating notes). Pick option 1 or 2 per cloud as the starting point; the chosen ones get finalized later. Each loops: problem → solved.', 'Ruwe previews van de openingsanimatie per cloud (Sales Cloud houdt de zwevende notities). Kies per cloud optie 1 of 2 als startpunt; de gekozen versies werken we later uit. Elke animatie loopt rond: probleem → opgelost.')}</p>
-        {rows.map(([id, name, A, B]) => (
+        <p className="ci-intro">{tx('Decided and on the homepage: Sales (notes), Service (1), Field Service (1), Agentforce (1). Still open: Experience Cloud and Data 360, now with four options each (3 and 4 are new). Pick one per cloud; the chosen one gets the same card flow as the others.', 'Gekozen en op de homepage: Sales (notities), Service (1), Field Service (1), Agentforce (1). Nog open: Experience Cloud en Data 360, nu met vier opties per cloud (3 en 4 zijn nieuw). Kies er één per cloud; de gekozen versie krijgt dezelfde kaartflow als de andere.')}</p>
+        {rows.map(([id, name, comps]) => (
           <div key={id} className="ci-row">
             <h3><CloudIcon id={id} size={22} /> {name}</h3>
-            <div className="ci-pair"><A /><B /></div>
+            <div className="ci-pair">{comps.map((C, i) => <C key={i} />)}</div>
           </div>
         ))}
       </div>
@@ -351,5 +425,44 @@ const CI_CSS = `
 .ci-hubdot { fill: #2e844a; opacity: 0; transform-origin: 200px 140px; transform: scale(.4); transition: opacity .4s .7s, transform .5s .7s cubic-bezier(.2,.8,.2,1); }
 .ci--b .ci-hubdot { opacity: 1; transform: none; }
 .ci-hubtxt { fill: #fff; font-size: 12px; font-weight: 700; opacity: 0; transition: opacity .3s 1s; } .ci--b .ci-hubtxt { opacity: 1; }
+/* experience 3 */
+.ci-phone--exp { width: 190px; margin-left: -95px; top: 6%; height: 300px; }
+.ci-hold, .ci-selfserve { position: absolute; inset: 30px 12px 12px; border-radius: 16px; background: #fff; padding: 14px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; }
+.ci-hold { background: #f4f4f6; } .ci-hold small, .ci-selfserve small { font-size: 11px; font-weight: 700; color: #0176d3; margin-bottom: 10px; }
+.ci-hold b { font-size: 13px; font-weight: 500; color: #555; } .ci-hold strong { font-size: 54px; line-height: 1.1; color: var(--intigris-coral); } .ci-hold span { font-size: 13px; color: #555; }
+.ci-hold-time { margin-top: auto; font-size: 18px; font-weight: 700; color: #333; font-variant-numeric: tabular-nums; }
+.ci-selfserve { align-items: stretch; text-align: left; gap: 10px; }
+.ci-ss-row { padding: 10px; border-radius: 10px; background: #f4f6f9; font-size: 13px; display: flex; justify-content: space-between; } .ci-ss-row i { font-style: normal; font-weight: 700; color: #c0392b; }
+.ci-ss-btn { padding: 10px; border-radius: 10px; background: #0176d3; color: #fff; font-size: 13px; font-weight: 600; text-align: center; }
+.ci-ss-ok { margin-top: auto; padding: 9px; border-radius: 10px; background: #e3f5e9; color: #2e844a; font-weight: 700; font-size: 13px; text-align: center; opacity: 0; } .ci--b .ci-ss-ok { animation: ciPop .4s .8s both; }
+/* experience 4 */
+.ci-calls { position: absolute; inset: 0; }
+.ci-track { position: absolute; left: 10%; right: 10%; top: 9%; background: #fff; border-radius: 18px; padding: 18px 20px; box-shadow: 0 24px 50px -28px rgba(43,23,0,.6); }
+.ci-track-top b { display: block; font-size: 15px; color: #032d60; } .ci-track-top span { font-size: 12.5px; color: #777; }
+.ci-track-steps { list-style: none; margin: 14px 0 12px; padding: 0 0 0 4px; display: flex; flex-direction: column; gap: 12px; }
+.ci-track-steps li { position: relative; display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 600; color: #bbb; transition: color .3s var(--d); }
+.ci-track-steps li i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #ccc; background: #fff; transition: background .3s var(--d), border-color .3s var(--d); }
+.ci-track-steps li em { margin-left: auto; font-style: normal; font-weight: 500; font-size: 12px; color: #999; }
+.ci-track-steps li:not(:last-child)::after { content: ''; position: absolute; left: 8px; top: 18px; width: 2px; height: 14px; background: #e5e5e5; }
+.ci--b .ci-track-steps li:nth-child(-n+3) { color: #222; } .ci--b .ci-track-steps li:nth-child(-n+3) i { background: #2e844a; border-color: #2e844a; }
+.ci--b .ci-track-steps li:nth-child(3) i { box-shadow: 0 0 0 5px rgba(46,132,74,.18); }
+.ci-track-eta { padding: 10px 12px; border-radius: 10px; background: #e3f5e9; color: #2e844a; font-weight: 700; font-size: 13.5px; opacity: 0; } .ci--b .ci-track-eta { animation: ciPop .4s 1.8s both; }
+/* data 3 */
+.ci-piece { max-width: 38%; transition: transform .55s cubic-bezier(.6,0,.2,1), opacity .35s .3s; }
+.ci--b .ci-piece { animation: none; transform: translate(var(--tx), var(--ty)) scale(.6); opacity: 0; }
+.ci-puzzle { position: absolute; left: 9%; right: 9%; top: 10%; background: #fff; border-radius: 18px; padding: 18px; box-shadow: 0 0 0 3px #f4c15d, 0 24px 50px -28px rgba(43,23,0,.6); }
+.ci-puzzle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+.ci-puzzle-grid div { padding: 10px; border-radius: 10px; background: #f6f8fb; font-size: 12.5px; color: #333; opacity: 0; } .ci--b .ci-puzzle-grid div { animation: ciPop .35s var(--d) both; }
+.ci-puzzle-grid small { display: block; font-size: 10.5px; font-weight: 700; color: #0176d3; text-transform: uppercase; letter-spacing: .05em; }
+/* data 4 */
+.ci-signals { position: absolute; left: 6%; top: 10%; width: 50%; display: flex; flex-direction: column; gap: 10px; }
+.ci-sig { padding: 10px 13px; border-radius: 12px; background: #fff; font-size: 13.5px; font-weight: 500; box-shadow: 0 8px 18px -12px rgba(43,23,0,.45); animation: ciSlide .4s var(--d) both; }
+.ci-sig small { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #0176d3; }
+@keyframes ciSlide { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: none; } }
+.ci-score { position: absolute; right: 6%; top: 12%; width: 34%; background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 16px 30px -18px rgba(43,23,0,.5); }
+.ci-score small { font-size: 11px; color: #777; font-weight: 600; } .ci-score b { display: block; font-size: 48px; color: var(--intigris-coral); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.ci-score-bar { height: 8px; border-radius: 8px; background: #f0f0f0; overflow: hidden; } .ci-score-bar i { display: block; height: 100%; background: linear-gradient(90deg, #f4c15d, var(--intigris-coral)); }
+.ci-nba { position: absolute; left: 6%; right: 6%; bottom: 8%; background: #1f2a44; color: #fff; border-radius: 16px; padding: 14px 18px; display: flex; flex-direction: column; gap: 3px; }
+.ci-nba small { font-size: 11px; font-weight: 700; color: #9cc3ff; letter-spacing: .05em; text-transform: uppercase; } .ci-nba b { font-size: 17px; } .ci-nba span { font-size: 12.5px; opacity: .75; }
 @media (max-width: 960px) { .ci-pair { grid-template-columns: 1fr; } }
 `;
