@@ -173,9 +173,9 @@ export function StoriesGallery() {
    that actually have stories in CK_STORIES. */
 export const INDUSTRIES = () => [
   { id: 'all', l: tx('All', 'Alles'), keys: ORDER },
-  { id: 'energy', l: tx('Energy & renewables', 'Energie & duurzaam'), keys: ['evbox', 'opcharge', 'zon365', 'solar'] },
-  { id: 'install', l: tx('Installation & maintenance', 'Installatie & onderhoud'), keys: ['atag', 'alpha'] },
-  { id: 'tech', l: tx('Software & tech', 'Software & tech'), keys: ['wetransfer'] },
+  { id: 'energy', l: tx('Energy', 'Energie'), keys: ['evbox', 'opcharge', 'zon365', 'solar'] },
+  { id: 'install', l: tx('Installation', 'Installatie'), keys: ['atag', 'alpha'] },
+  { id: 'tech', l: tx('Tech', 'Tech'), keys: ['wetransfer'] },
 ];
 export function StoriesGalleryIndustry() {
   const all = stories();
@@ -224,7 +224,7 @@ export function StoriesGalleryIndustry() {
           <Head />
           <div className="sv-c2-pills" ref={pills} role="tablist" aria-label={tx('Filter by industry', 'Filter op branche')}>
             <span className="sv-c2-thumb" aria-hidden="true" style={{ transform: `translateX(${thumb.x}px)`, width: thumb.w }} />
-            {IND.map((x) => <button key={x.id} role="tab" aria-selected={x.id === ind} className={x.id === ind ? 'on' : ''} onClick={() => setInd(x.id)}>{x.l}<small>{x.keys.length}</small></button>)}
+            {IND.map((x) => <button key={x.id} role="tab" aria-selected={x.id === ind} className={x.id === ind ? 'on' : ''} onClick={() => setInd(x.id)}>{x.l}</button>)}
           </div>
         </div>
         <div className="sv-c-view">

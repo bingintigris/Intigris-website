@@ -8,6 +8,7 @@ import { StorySpotlight } from './StorySpotlight.jsx';
 import { StartRolesCard, WtsStyles } from '../../components/home/WhereToStart.jsx';
 import { CloudsChaos, CpStyles } from '../../components/home/CloudsPick.jsx';
 import { WhyLine, WsStyles } from '../../components/home/WhyStack.jsx';
+import { StoriesGalleryIndustry, SvStyles } from '../../components/home/StoriesVariants.jsx';
 /* ==================================================================== */
 /*  HOMEPAGE · SALESFORCE SOLUTIONS view (index.html, mode = salesforce)   */
 /*  Built section by section with Bing (plan 2026-11-09):                  */
@@ -52,10 +53,10 @@ function SiteSalesforceHome({ onCta }) {
 
       {/* 6 · How we work: TODO (variant round) */}
 
-      {/* 7 · Customer stories (approved) */}
-      <StorySpotlight variant="pills" head={{ eyebrow: tx('CUSTOMER SUCCESS STORIES', 'KLANTSUCCESVERHALEN'), a: tx('Teams that run on it.', 'Teams die erop draaien.'), b: '',
-        lede: tx('What we built, in their own words. Pick a company or let it play.', 'Wat we bouwden, in hun eigen woorden. Kies een bedrijf of laat het vanzelf lopen.') }}
-        stories={[S.wetransfer, S.evbox, S.ridder]} />
+      {/* 7 · Customer stories: horizontal gallery with industry pills (C2, chosen by Bing 2026-11-24);
+             replaces the StorySpotlight tabs (WeTransfer / EVBox / De Ridder). De Ridder is left out
+             because its story is about FieldBuddy (Bing's rule). Starts on "All". */}
+      <StoriesGalleryIndustry />
 
       {/* 8 · Why Intigris: TODO (variant round) */}
 
@@ -66,6 +67,7 @@ function SiteSalesforceHome({ onCta }) {
       <WtsStyles />
       <CpStyles />
       <WsStyles />
+      <SvStyles />
     </React.Fragment>
   );
 }
