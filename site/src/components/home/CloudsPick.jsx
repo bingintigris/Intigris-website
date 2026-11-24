@@ -93,7 +93,10 @@ export function CloudsChaos() {
         // Agentforce (option 1, Bing 2026-11-24): 22:47, "we're closed" is replaced by an agent that books.
         : c.id === 'agentforce'
           ? [setTimeout(() => setPhase('merge'), 1600), setTimeout(() => setPhase('order'), 3100)]
-          : [setTimeout(() => setPhase('order'), 950)];
+          // Experience Cloud (option 1, Bing 2026-11-24): the same "resend my invoice" mail keeps coming → portal.
+          : c.id === 'experience'
+            ? [setTimeout(() => setPhase('merge'), 1900), setTimeout(() => setPhase('order'), 2350)]
+            : [setTimeout(() => setPhase('order'), 950)];
     return () => ts.forEach(clearTimeout);
   }, [p.a]);
   return (
@@ -104,7 +107,7 @@ export function CloudsChaos() {
           <CloudList items={cs} p={p} style="icon" />
           <div className="cp-stage" role="tabpanel" key={c.id}>
             <div className={'cp-chaos cp-chaos--' + phase} aria-hidden="true">
-              {c.id === 'service' ? <ServiceChannels /> : c.id === 'field' ? <FieldMap /> : c.id === 'agentforce' ? <AgentNight /> : chaos[c.id].map(([k, v], i) => (
+              {c.id === 'service' ? <ServiceChannels /> : c.id === 'field' ? <FieldMap /> : c.id === 'agentforce' ? <AgentNight /> : c.id === 'experience' ? <ExpMails /> : chaos[c.id].map(([k, v], i) => (
                 <div key={i} className={'cp-note cp-note--' + k.toLowerCase().replace(/[^a-z]/g, '')}
                   style={{ left: SPOTS[i][0] + '%', top: SPOTS[i][1] + '%', '--r': SPOTS[i][2] + 'deg', '--d': i * 0.05 + 's' }}>
                   <small>{k}</small>{v}
@@ -222,6 +225,29 @@ function AgentChat() {
         <div className="cp-af-msg cp-af-ok">✓ {AF_OK()}</div>
       </div>
       <div className="cp-afc-foot">{tx('Answered in 3 seconds · booked in the planning', 'Beantwoord in 3 seconden · ingepland in de planning')}</div>
+    </div>
+  );
+}
+
+/* Experience Cloud opening (option 1): "Can you resend my invoice?" keeps arriving from
+   different customers while a counter climbs; the card ends on the customer portal. */
+function ExpMails() {
+  const [n, setN] = useState(1);
+  useEffect(() => {
+    const t0 = performance.now(); let raf;
+    const step = (t) => { const k = Math.min(1, (t - t0) / 1600); setN(Math.max(1, Math.round(23 * k * k))); if (k < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  const who = ['Polderbouw', 'Duinzicht Zorg', 'Havenwerk BV', 'Kade Installatie', 'Polderbouw'];
+  return (
+    <div className="cp-xm">
+      {who.map((w, i) => (
+        <div key={i} className="cp-xm-mail" style={{ top: 8 + i * 17 + '%', left: (i % 2 ? 16 : 4) + '%', '--d': i * 0.3 + 's' }}>
+          <small>✉ {w} · {['08:58', '10:12', '11:40', '13:05', '15:21'][i]}</small>{tx('Can you resend my invoice?', 'Kun je mijn factuur nog eens sturen?')}
+        </div>
+      ))}
+      <div className="cp-xm-count"><b>×{n}</b><span>{tx('this week', 'deze week')}</span></div>
     </div>
   );
 }
@@ -426,6 +452,16 @@ const CP_CSS = `
 .cp-afc .cp-af-in { background: #f3f3f3; }
 .cp-afc .cp-af-msg:nth-child(2) { animation-delay: .1s; } .cp-afc .cp-af-msg:nth-child(3) { animation-delay: .2s; } .cp-afc .cp-af-msg:nth-child(4) { animation-delay: .3s; }
 .cp-afc-foot { font-size: 12.5px; color: #2e844a; font-weight: 600; padding-top: 10px; border-top: 1px solid #eee; }
+
+/* A · Experience Cloud opening: the same mail, again and again */
+.cp-xm { position: absolute; inset: 0; }
+.cp-xm-mail { position: absolute; width: 52%; max-width: 340px; padding: 12px 15px; border-radius: 13px; background: #fff; box-shadow: 0 14px 28px -18px rgba(43,23,0,.5); font-size: 16px; font-weight: 500; border-left: 4px solid #0176d3; animation: cpPop .3s var(--d) cubic-bezier(.2,.8,.2,1) both; transition: transform .4s cubic-bezier(.6,0,.2,1), opacity .3s; }
+.cp-xm-mail small { display: block; font-size: 11px; font-weight: 700; color: #0176d3; letter-spacing: .03em; margin-bottom: 4px; }
+.cp-xm-count { position: absolute; right: 7%; top: 30%; width: 128px; height: 128px; border-radius: 50%; background: var(--intigris-coral); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 20px 40px -18px rgba(255,92,57,.8); animation: cpPop .3s both; transition: opacity .3s, transform .35s; }
+.cp-xm-count b { font-size: 42px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+.cp-xm-count span { font-size: 13px; opacity: .85; margin-top: 4px; }
+.cp-chaos--merge .cp-xm-mail, .cp-chaos--order .cp-xm-mail { animation: none; opacity: 0; transform: translateX(-60px); }
+.cp-chaos--merge .cp-xm-count, .cp-chaos--order .cp-xm-count { animation: none; opacity: 0; transform: scale(.7); }
 
 /* B · showcase */
 .cp--show { background: var(--intigris-brown-700); color: var(--intigris-off-white); }
