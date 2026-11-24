@@ -33,8 +33,8 @@ export function WhySettle({ look = 'cards' }) {
       const wide = w.matchMedia('(min-width: 1000px)').matches;
       /* Smooth handover (Bing 2026-11-24, v2): 1) the timeline fades out (no scroll pause: Lenis'
          stop() sets overflow hidden, which breaks the sticky heading), 2) the layout switches with the section's bottom edge kept exactly in place
-         (nothing visible jumps, not even the next section), 3) the page eases the overview into
-         the middle of the screen while the heading glides and the tiles rise in one by one. */
+         (nothing visible jumps, not even the next section), 3) the heading glides to its new place
+         and the tiles rise in one by one; the page itself never scrolls by itself. */
       const settle = () => {
         if (done || !alive) return; done = true;
         const list = root.querySelector('.ws1-list');
@@ -50,12 +50,9 @@ export function WhySettle({ look = 'cards' }) {
           if (w.lenis) w.lenis.scrollTo(y0, { immediate: true, force: true }); else w.scrollTo(0, y0);
           gsap.from(side, { y: sideBefore - side.getBoundingClientRect().top, duration: 1, ease: 'power2.inOut', clearProps: 'transform' });
           gsap.from(root.querySelectorAll('.ws1-item'), { opacity: 0, y: 24, duration: 0.8, stagger: 0.07, ease: 'power2.out', clearProps: 'opacity,transform' });
-          // ease the overview into view: centred when it fits the screen, else its top at the top
-          const r = root.getBoundingClientRect();
-          const y = Math.max(0, w.scrollY + r.top + Math.min(0, (r.height - w.innerHeight) / 2));
-          const ease = (t) => 1 - Math.pow(1 - t, 3);
-          if (w.lenis) w.lenis.scrollTo(y, { duration: 1, easing: ease, lock: true, force: true, onComplete: () => ScrollTrigger.refresh() });
-          else { w.scrollTo({ top: y, behavior: 'smooth' }); setTimeout(() => ScrollTrigger.refresh(), 1000); }
+          // no automatic scrolling (Bing 2026-11-24): the visitor keeps full control, the page
+          // never moves by itself; the overview may sit partly above the screen
+          ScrollTrigger.refresh();
         } });
       };
       ctx = gsap.context(() => {
