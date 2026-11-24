@@ -123,8 +123,9 @@ export function WhyStage({ look = 'dark' }) {
       if (!alive || reduced() || !ref.current) return;
       gsap.registerPlugin(SplitText);
       const h = ref.current.querySelector('.ws2-title'); if (!h) return;
-      const split = SplitText.create(h, { type: 'chars' });
-      gsap.from(split.chars, { yPercent: 120, rotate: 8, opacity: 0, stagger: 0.02, duration: 0.55, ease: 'back.out(1.6)', onComplete: () => split.revert() });
+      // words first, then chars: a word never breaks over two lines mid-animation (Bing 2026-11-24)
+      const split = SplitText.create(h, { type: 'words,chars', wordsClass: 'ws-word' });
+      gsap.from(split.chars, { yPercent: 110, rotate: 6, opacity: 0, stagger: 0.02, duration: 0.55, ease: 'back.out(1.6)', onComplete: () => split.revert() });
     });
     return () => { alive = false; };
   }, [act]);
@@ -270,7 +271,10 @@ const WS_CSS = `
 .ws2-node.on { color: #fff; font-weight: 600; } .ws2-node.on span { background: var(--intigris-coral); border-color: var(--intigris-coral); box-shadow: 0 0 0 7px rgba(255,92,57,.25); }
 .ws2-stage { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
 .ws2-stage .eyebrow { color: #ffb59e; }
-.ws2-title { font-size: clamp(48px, 6.4vw, 100px) !important; margin: 0 !important; color: var(--intigris-off-white); overflow: hidden; }
+.ws2-title { font-size: clamp(42px, 5.2vw, 80px) !important; line-height: 1.04 !important; margin: 0 !important; color: var(--intigris-off-white); text-wrap: balance; padding-bottom: .08em; max-width: 14ch; }
+.ws-word { white-space: nowrap; }
+.ws--split .ws2-title { font-size: clamp(38px, 4.4vw, 64px) !important; max-width: 15ch; }
+.ws--num .ws2-title { max-width: 14ch; }
 .ws2-stage > p { font-size: 19px; line-height: 1.55; opacity: .8; max-width: 32em; margin: 0; animation: wsIn .5s .25s both; }
 .ws2-stage .ws-proof { animation: wsIn .5s .4s both; background: rgba(255,250,240,.06); border-color: rgba(255,250,240,.14); } .ws2-stage .ws-proof span, .ws2-stage .ws-gantt div { color: rgba(255,250,240,.7); } .ws2-stage .ws-sla b { color: #fff; }
 .ws2-stage .ws-proof--b { background: linear-gradient(150deg, #032d60, #0b5cab); }
