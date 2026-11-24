@@ -7,8 +7,18 @@ import { HowTimeline, HowPinned, HowCards, HwwStyles } from '../home/HowWeWork.j
 import { ClStyles } from '../home/CloudsOverview.jsx';
 import { CloudsChaos, CloudsShowcase, CloudsDeck, CpStyles } from '../home/CloudsPick.jsx';
 import { CloudIntrosReview, CiStyles } from '../home/CloudIntros.jsx';
+import { TrustedVelocity, TrustedWall, TrustedSentence, TrustedStats, TvStyles } from '../home/TrustedVariants.jsx';
 
 const ROUNDS = () => [
+  {
+    id: 'trusted', title: tx('"Trusted by" logo strip · four redesigns (current = simple scrolling row below the hero)', '"Vertrouwd door"-logostrook · vier herontwerpen (nu = simpele scrollende rij onder de hero)'),
+    variants: [
+      { k: 'A', name: tx('Speed marquee', 'Snelheidsmarquee'), note: tx('Scroll down the page: the row speeds up and leans; scroll up: it reverses. Grey logos turn colour on hover.', 'Scroll de pagina: de rij versnelt en helt over; scroll omhoog: hij keert om. Grijze logo\'s krijgen kleur bij hover.'), C: TrustedVelocity },
+      { k: 'B', name: tx('Logo wall with spotlight', 'Logomuur met spotlight'), note: tx('A 3×3 wall that appears tile by tile; a soft light follows your mouse.', 'Een 3×3-muur die tegel voor tegel verschijnt; een zacht licht volgt je muis.'), C: TrustedWall },
+      { k: 'C', name: tx('Rotating sentence', 'Wisselende zin'), note: tx('"Trusted by [logo] in [industry]": the logo glides in, the industry word scrambles into the next one. Industry labels to confirm.', '"Vertrouwd door [logo] in [sector]": het logo glijdt in, het sectorwoord husselt naar het volgende. Sectorlabels nog te bevestigen.'), C: TrustedSentence },
+      { k: 'D', name: tx('Numbers + shuffling wall', 'Cijfers + schuivende muur'), note: tx('Counters run up when you scroll in (15+, 300+, 4.5★); the logo wall reshuffles every few seconds (GSAP Flip).', 'Tellers lopen op als je erin scrolt (15+, 300+, 4.5★); de logomuur schudt om de paar seconden door (GSAP Flip).'), C: TrustedStats },
+    ],
+  },
   {
     id: 'intros', title: tx('Section 2 · Opening animation per cloud (option 1 vs 2)', 'Sectie 2 · Openingsanimatie per cloud (optie 1 vs 2)'),
     variants: [
@@ -67,6 +77,7 @@ export default function HomeSectionsReview() {
       <ClStyles />
       <CpStyles />
       <CiStyles />
+      <TvStyles />
       <style dangerouslySetInnerHTML={{ __html: `
         .rv-top { position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1d1206; color: #fff; font-size: 14px; }
         .rv-top a { color: #fff; font-weight: 600; }
