@@ -548,8 +548,24 @@ function V3LogoHub({ head, center, items }) {
          the visitor sees movement before the section fills the screen. */
       const grid = root.querySelector('.lh-grid');
       const pinST = win.ScrollTrigger.create({ trigger: grid, start: 'center center', end: '+=80%', pin: true });
+      /* Play once (Bing 2026-11-24): after the visitor has scrolled past, finish the animation,
+         remove the pin (so scrolling back up is shorter and nothing replays) and shift the scroll
+         position by the removed pin length so the view does not jump. */
+      let settled = false;
+      const settle = () => {
+        if (settled) return; settled = true;
+        const d = pinST.end - pinST.start;
+        const st = tl.scrollTrigger; if (st) st.kill(false, true); tl.kill(); pinST.kill();
+        /* Hard end state, so no scrub tween can pull the tools back to their start position. */
+        gsap.set([root.querySelector('.lh-center'), ...nodes], { clearProps: 'transform,opacity' });
+        gsap.set(lines, { strokeDashoffset: 0 });
+        const y = Math.max(0, win.scrollY - d);
+        if (win.lenis) win.lenis.scrollTo(y, { immediate: true, force: true }); else win.scrollTo(0, y);
+        setLanded(true);
+        win.ScrollTrigger.refresh();
+      };
       const tl = gsap.timeline({ scrollTrigger: { trigger: root, start: 'top 85%', end: () => pinST.end, scrub: 0.8, invalidateOnRefresh: true,
-        onUpdate: st => setLanded(st.progress > 0.92) } });
+        onUpdate: st => setLanded(st.progress > 0.92), onLeave: () => requestAnimationFrame(settle) } });
       tl.fromTo(root.querySelector('.lh-center'), { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.6)' }, 0);
       nodes.forEach((el, i) => {
         /* Start further out along the node's own spoke: straight outside-in. */
