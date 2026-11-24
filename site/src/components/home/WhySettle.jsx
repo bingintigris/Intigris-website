@@ -31,18 +31,28 @@ export function WhySettle({ look = 'cards' }) {
       if (reduced()) { setAct(P.length); return; }
       gsap.registerPlugin(ScrollTrigger, SplitText, Flip);
       const wide = w.matchMedia('(min-width: 1000px)').matches;
+      /* Smooth handover (Bing 2026-11-24): 1) the timeline fades out while the heading stays,
+         2) layout switches while the list is invisible (incl. the scroll correction),
+         3) the heading glides to its new place and the tiles rise in one by one. */
       const settle = () => {
         if (done || !alive) return; done = true;
-        const els = root.querySelectorAll('.ws1-side, .ws1-track, .ws1-item, .ws-proof');
-        const state = Flip.getState(els);
-        ctx.revert();
-        flushSync(() => { setAct(P.length); setSettled(true); });
-        // put the overview in view: centred when it fits the screen, else its top at the top
-        const r = root.getBoundingClientRect();
-        const y = Math.max(0, w.scrollY + r.top + Math.min(0, (r.height - w.innerHeight) / 2));
-        if (w.lenis) w.lenis.scrollTo(y, { immediate: true, force: true }); else w.scrollTo(0, y);
-        Flip.from(state, { duration: 0.9, ease: 'power3.inOut', stagger: 0.04, nested: true, onComplete: () => ScrollTrigger.refresh() });
-        ScrollTrigger.refresh();
+        const list = root.querySelector('.ws1-list');
+        gsap.to(list, { opacity: 0, y: -16, duration: 0.35, ease: 'power2.in', onComplete: () => {
+          if (!alive) return;
+          const side = root.querySelector('.ws1-side');
+          const before = side.getBoundingClientRect().top;
+          ctx.revert();
+          flushSync(() => { setAct(P.length); setSettled(true); });
+          gsap.set(list, { opacity: 1, y: 0 });
+          // put the overview in view: centred when it fits the screen, else its top at the top
+          const r = root.getBoundingClientRect();
+          const y = Math.max(0, w.scrollY + r.top + Math.min(0, (r.height - w.innerHeight) / 2));
+          if (w.lenis) w.lenis.scrollTo(y, { immediate: true, force: true }); else w.scrollTo(0, y);
+          // heading glides from where it was on screen to its new place
+          gsap.from(side, { y: before - side.getBoundingClientRect().top, duration: 0.8, ease: 'power3.inOut', clearProps: 'transform' });
+          gsap.from(root.querySelectorAll('.ws1-item'), { opacity: 0, y: 34, scale: 0.97, duration: 0.7, stagger: 0.08, delay: 0.05, ease: 'power3.out', clearProps: 'opacity,transform' });
+          ScrollTrigger.refresh();
+        } });
       };
       ctx = gsap.context(() => {
         gsap.fromTo('.ws1-fill', { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: { trigger: '.ws1-list', start: 'top 60%', end: 'bottom 60%', scrub: 0.4,
@@ -89,7 +99,7 @@ export function WsoStyles() { return <style dangerouslySetInnerHTML={{ __html: W
 const WSO_CSS = `
 @media (min-width: 1000px) {
 .wso.is-settled { padding: 96px 0 88px; }
-.wso.is-settled .ws1-item { opacity: 1; }
+.wso.is-settled .ws1-item { opacity: 1; transition: none; }
 .wso.is-settled .ws1-item .ws-proof { opacity: 1; transform: none; min-width: 0; }
 .wso.is-settled .ws1-dot { box-shadow: none !important; transform: none !important; }
 .wso.is-settled .ws-proof--s svg { display: block; width: 100%; min-width: 120px; }
