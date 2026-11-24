@@ -9,8 +9,19 @@ import { CloudsChaos, CloudsShowcase, CloudsDeck, CpStyles } from '../home/Cloud
 import { CloudIntrosReview, CiStyles } from '../home/CloudIntros.jsx';
 import { TrustedVelocity, TrustedWall, TrustedSentence, TrustedStats, TvStyles } from '../home/TrustedVariants.jsx';
 import { HeroFx1, HeroFx2, HeroFx3, HfxStyles } from './HeroFxVariants.jsx';
+import { WhyBento, WhyVs, WhyPinned, WhyStory, WhyPeople, WiStyles } from '../home/WhyIntigris.jsx';
 
 const ROUNDS = () => [
+  {
+    id: 'why', title: tx('"Why Intigris" · five variations (replaces "Where do you start?")', '"Waarom Intigris" · vijf varianten (vervangt "Waar begin je?")'),
+    variants: [
+      { k: 'A', name: tx('Proof bento', 'Bewijs-bento'), note: tx('Tiles with Summit Partner, the numbers and the reasons; they appear one after another as you scroll in.', 'Tegels met Summit Partner, de cijfers en de redenen; ze verschijnen na elkaar als je erin scrolt.'), C: WhyBento },
+      { k: 'B', name: tx('Intigris vs a typical partner', 'Intigris vs een gemiddelde partner'), note: tx('Side-by-side comparison; rows slide in, the checkmarks pop.', 'Vergelijking naast elkaar; rijen schuiven in, de vinkjes ploppen.'), C: WhyVs },
+      { k: 'C', name: tx('Pinned statement', 'Vastgezette stelling'), note: tx('"Why Intigris?" stays on the left while the reasons scroll by; each headline animates in letter by letter (SplitText).', '"Waarom Intigris?" blijft links staan terwijl de redenen voorbij scrollen; elke kop animeert letter voor letter in (SplitText).'), C: WhyPinned },
+      { k: 'D', name: tx('The Intigris story', 'Het verhaal van Intigris'), note: tx('A timeline that draws itself as you scroll: 2010 → 300+ projects → 4.5★ → 2026 Summit Partner → today.', 'Een tijdlijn die zichzelf tekent als je scrolt: 2010 → 300+ projecten → 4.5★ → 2026 Summit Partner → nu.'), C: WhyStory },
+      { k: 'E', name: tx('Meet the people', 'Maak kennis met de mensen'), note: tx('"Talk to the people who build it": team photos fan out next to the key reasons.', '"Praat met de mensen die het bouwen": teamfoto\'s waaieren uit naast de belangrijkste redenen.'), C: WhyPeople },
+    ],
+  },
   {
     id: 'herofx', title: tx('Homepage top section · three scroll effects (copy of the hero; the real one on :8003 is unchanged)', 'Bovenste sectie homepage · drie scrolleffecten (kopie van de hero; de echte op :8003 is ongewijzigd)'),
     variants: [
@@ -89,6 +100,7 @@ export default function HomeSectionsReview() {
       <CiStyles />
       <TvStyles />
       <HfxStyles />
+      <WiStyles />
       <style dangerouslySetInnerHTML={{ __html: `
         .rv-top { position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1d1206; color: #fff; font-size: 14px; }
         .rv-top a { color: #fff; font-weight: 600; }
