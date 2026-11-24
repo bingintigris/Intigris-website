@@ -8,8 +8,17 @@ import { ClStyles } from '../home/CloudsOverview.jsx';
 import { CloudsChaos, CloudsShowcase, CloudsDeck, CpStyles } from '../home/CloudsPick.jsx';
 import { CloudIntrosReview, CiStyles } from '../home/CloudIntros.jsx';
 import { TrustedVelocity, TrustedWall, TrustedSentence, TrustedStats, TvStyles } from '../home/TrustedVariants.jsx';
+import { HeroFx1, HeroFx2, HeroFx3, HfxStyles } from './HeroFxVariants.jsx';
 
 const ROUNDS = () => [
+  {
+    id: 'herofx', title: tx('Homepage top section · three scroll effects (copy of the hero; the real one on :8003 is unchanged)', 'Bovenste sectie homepage · drie scrolleffecten (kopie van de hero; de echte op :8003 is ongewijzigd)'),
+    variants: [
+      { k: '1', name: tx('Card lift', 'Kaart tilt op'), note: tx('Space grows on the left and right; the hero becomes a floating card with rounded corners.', 'Links en rechts groeit ruimte; de hero wordt een zwevende kaart met ronde hoeken.'), C: HeroFx1 },
+      { k: '2', name: tx('Depth (parallax)', 'Diepte (parallax)'), note: tx('The photo moves slower and zooms in a little; headline and numbers card drift up at different speeds.', 'De foto beweegt trager en zoomt iets in; kop en cijferkaart drijven met verschillende snelheden omhoog.'), C: HeroFx2 },
+      { k: '3', name: tx('Photo reveal', 'Foto komt naar voren'), note: tx('The team photo comes forward, the colour warms toward brown, and "Business." turns light to stay readable.', 'De teamfoto komt naar voren, de kleur verwarmt naar bruin en "Business." wordt licht zodat het leesbaar blijft.'), C: HeroFx3 },
+    ],
+  },
   {
     id: 'trusted', title: tx('"Trusted by" logo strip · four redesigns (current = simple scrolling row below the hero)', '"Vertrouwd door"-logostrook · vier herontwerpen (nu = simpele scrollende rij onder de hero)'),
     variants: [
@@ -79,6 +88,7 @@ export default function HomeSectionsReview() {
       <CpStyles />
       <CiStyles />
       <TvStyles />
+      <HfxStyles />
       <style dangerouslySetInnerHTML={{ __html: `
         .rv-top { position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background: #1d1206; color: #fff; font-size: 14px; }
         .rv-top a { color: #fff; font-weight: 600; }
