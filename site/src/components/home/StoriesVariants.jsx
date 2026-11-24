@@ -246,21 +246,29 @@ export function StoriesGalleryIndustry({ after = 'end' }) {
         if (dist() < 40) { gsap.set('.sv-c-bar i', { scaleX: 1 }); return; }
         const tween = gsap.to(track.current, { x: () => -dist(), ease: 'none', scrollTrigger: { trigger: '.sv-c-pin', start: 'top top', end: () => '+=' + Math.max(1, dist()), pin: true, scrub: 0.6, invalidateOnRefresh: true,
           onUpdate: (st) => gsap.set('.sv-c-bar i', { scaleX: st.progress }),
-          onLeave: (st) => requestAnimationFrame(() => {
+          onLeave: () => requestAnimationFrame(() => {
             if (settledRef.current || !alive) return;
             if (after === 'grid' || after === 'feature') { morph(); return; }
-            // anchor on the section's bottom edge: whatever unpinning removes, the content
-            // below stays exactly where it was on screen
-            const before = root.current.getBoundingClientRect().bottom;
             settledRef.current = true;
-            ctx.revert();
-            setSettled(true);
-            const view = track.current && track.current.parentElement;
-            if (view) view.scrollLeft = view.scrollWidth;
-            const y = Math.max(0, w.scrollY + root.current.getBoundingClientRect().bottom - before);
-            scrollShift(y);
-            ScrollTrigger.refresh();
-            if (after === 'carousel' && view) gsap.to(view, { scrollLeft: 0, duration: 1.3, delay: 0.15, ease: 'power3.inOut' });
+            /* smooth handover (Bing 2026-11-24): 1) stop the word triggers and let any words that
+               are still dim light up softly, 2) take the row over at its exact current position
+               (no snap), 3) carousel: glide back to the first story */
+            ScrollTrigger.getAll().filter((x) => x.vars.containerAnimation === tween).forEach((x) => x.kill(false, true));
+            gsap.to(root.current.querySelectorAll('.sv-c-card blockquote div, .sv-c-card blockquote span'), { opacity: 1, duration: 0.3, overwrite: true, onComplete: () => {
+              if (!alive) return;
+              const cx = -(gsap.getProperty(track.current, 'x') || 0);
+              // anchor on the section's bottom edge: whatever unpinning removes, the content
+              // below stays exactly where it was on screen
+              const before = root.current.getBoundingClientRect().bottom;
+              ctx.revert();
+              flushSync(() => setSettled(true));
+              const view = track.current && track.current.parentElement;
+              if (view) view.scrollLeft = cx;
+              const bar = root.current.querySelector('.sv-c-bar i'); if (bar) bar.style.transform = 'scaleX(1)';
+              scrollShift(w.scrollY + root.current.getBoundingClientRect().bottom - before);
+              ScrollTrigger.refresh();
+              if (after === 'carousel' && view) gsap.to(view, { scrollLeft: 0, duration: 1.6, ease: 'power2.inOut' });
+            } });
           }) } });
         /* grid / feature: the row fades out, the layout switches while it is invisible (keeping
            the section's top edge where it is on screen) and the new cards rise in one by one */
