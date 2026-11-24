@@ -185,6 +185,11 @@ export function StoriesGalleryIndustry() {
   const [ind, setInd] = useState('all');
   const list = all.filter((s) => IND.find((x) => x.id === ind).keys.includes(s.k));
   const root = useRef(null), track = useRef(null), pills = useRef(null);
+  /* Play once (Bing 2026-11-24): after the visitor has scrolled past the gallery once, the pin is
+     removed and the row becomes a normal sideways-scrollable strip, so scrolling back up is short
+     and nothing replays. */
+  const settledRef = useRef(false);
+  const [settled, setSettled] = useState(false);
   const [thumb, setThumb] = useState({ x: 0, w: 0 });
   // sliding thumb follows the active pill
   useEffect(() => {
@@ -204,12 +209,27 @@ export function StoriesGalleryIndustry() {
       ctx = gsap.context(() => {
         gsap.from('.sv-c-card, .sv-c-end', { opacity: 0, x: 60, duration: 0.5, stagger: 0.07, ease: 'power3.out' });
         if (reduced() || window.innerWidth < 960) return;
+        if (settledRef.current) return;
         const dist = () => Math.max(0, track.current.scrollWidth - track.current.parentElement.clientWidth);
         // all cards already fit (e.g. one industry with a single story): no sideways scroll,
         // no pin, quotes simply shown in full
         if (dist() < 40) { gsap.set('.sv-c-bar i', { scaleX: 1 }); return; }
         const tween = gsap.to(track.current, { x: () => -dist(), ease: 'none', scrollTrigger: { trigger: '.sv-c-pin', start: 'top top', end: () => '+=' + Math.max(1, dist()), pin: true, scrub: 0.6, invalidateOnRefresh: true,
-          onUpdate: (st) => gsap.set('.sv-c-bar i', { scaleX: st.progress }) } });
+          onUpdate: (st) => gsap.set('.sv-c-bar i', { scaleX: st.progress }),
+          onLeave: (st) => requestAnimationFrame(() => {
+            if (settledRef.current || !alive) return;
+            // anchor on the section's bottom edge: whatever unpinning removes, the content
+            // below stays exactly where it was on screen
+            const before = root.current.getBoundingClientRect().bottom;
+            settledRef.current = true;
+            ctx.revert();
+            setSettled(true);
+            const view = track.current && track.current.parentElement;
+            if (view) view.scrollLeft = view.scrollWidth;
+            const y = Math.max(0, w.scrollY + root.current.getBoundingClientRect().bottom - before);
+            if (w.lenis) w.lenis.scrollTo(y, { immediate: true, force: true }); else w.scrollTo(0, y);
+            ScrollTrigger.refresh();
+          }) } });
         gsap.utils.toArray('.sv-c-card blockquote').forEach((q) => {
           const split = SplitText.create(q, { type: 'words' });
           gsap.from(split.words, { opacity: 0.12, stagger: 0.04, ease: 'none', scrollTrigger: { trigger: q, containerAnimation: tween, start: 'left 90%', end: 'left 40%', scrub: true } });
@@ -219,14 +239,22 @@ export function StoriesGalleryIndustry() {
     });
     return () => { alive = false; ctx && ctx.revert(); };
   }, [ind]);
+  // settled: the progress bar follows the sideways scroll of the row
+  useEffect(() => {
+    if (!settled || !track.current) return;
+    const view = track.current.parentElement, bar = root.current.querySelector('.sv-c-bar i');
+    const upd = () => { const m = view.scrollWidth - view.clientWidth; bar.style.transform = 'scaleX(' + (m > 0 ? view.scrollLeft / m : 1) + ')'; };
+    upd(); view.addEventListener('scroll', upd, { passive: true });
+    return () => view.removeEventListener('scroll', upd);
+  }, [settled, ind]);
   return (
-    <section className="sv sv--c sv--c2" ref={root}>
+    <section className={'sv sv--c sv--c2' + (settled ? ' sv--settled' : '')} ref={root}>
       <div className="sv-c-pin">
         <div className="container sv-c2-top">
           <Head />
           <div className="sv-c2-pills" ref={pills} role="tablist" aria-label={tx('Filter by industry', 'Filter op branche')}>
             <span className="sv-c2-thumb" aria-hidden="true" style={{ transform: `translateX(${thumb.x}px)`, width: thumb.w }} />
-            {IND.map((x) => <button key={x.id} role="tab" aria-selected={x.id === ind} className={x.id === ind ? 'on' : ''} onClick={() => setInd(x.id)}>{x.l}</button>)}
+            {IND.map((x) => <button key={x.id} role="tab" aria-selected={x.id === ind} className={x.id === ind ? 'on' : ''} onClick={() => { setInd(x.id); if (settled && track.current) track.current.parentElement.scrollLeft = 0; }}>{x.l}</button>)}
           </div>
         </div>
         <div className="sv-c-view">
@@ -298,6 +326,10 @@ const SV_CSS = `
 .sv-c-end { flex: none; width: 240px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 10px; padding: 34px; border-radius: 28px; border: 2px dashed rgba(64,35,1,.35); color: var(--intigris-dark-brown); text-decoration: none; }
 .sv-c-end b { font-size: 24px; font-weight: 500; } .sv-c-end span { font-size: 34px; }
 .sv-c-bar { height: 4px; border-radius: 4px; background: rgba(64,35,1,.18); overflow: hidden; } .sv-c-bar i { display: block; height: 100%; background: var(--intigris-dark-brown); transform: scaleX(0); transform-origin: left; }
+/* settled (after the first pass): native sideways scroll, no pin */
+.sv--settled .sv-c-view { overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
+.sv--settled .sv-c-view::-webkit-scrollbar { display: none; }
+.sv--settled .sv-c-card, .sv--settled .sv-c-end { scroll-snap-align: center; }
 /* C2 · heading left, industry pills right */
 .sv-c2-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; }
 .sv--c2 .sv-head h2 { max-width: 9ch; }
