@@ -31,27 +31,31 @@ export function WhySettle({ look = 'cards' }) {
       if (reduced()) { setAct(P.length); return; }
       gsap.registerPlugin(ScrollTrigger, SplitText, Flip);
       const wide = w.matchMedia('(min-width: 1000px)').matches;
-      /* Smooth handover (Bing 2026-11-24): 1) the timeline fades out while the heading stays,
-         2) layout switches while the list is invisible (incl. the scroll correction),
-         3) the heading glides to its new place and the tiles rise in one by one. */
+      /* Smooth handover (Bing 2026-11-24, v2): 1) the timeline fades out (no scroll pause: Lenis'
+         stop() sets overflow hidden, which breaks the sticky heading), 2) the layout switches with the section's bottom edge kept exactly in place
+         (nothing visible jumps, not even the next section), 3) the page eases the overview into
+         the middle of the screen while the heading glides and the tiles rise in one by one. */
       const settle = () => {
         if (done || !alive) return; done = true;
         const list = root.querySelector('.ws1-list');
-        gsap.to(list, { opacity: 0, y: -16, duration: 0.35, ease: 'power2.in', onComplete: () => {
+        gsap.to(list, { opacity: 0, duration: 0.3, ease: 'power1.in', onComplete: () => {
           if (!alive) return;
           const side = root.querySelector('.ws1-side');
-          const before = side.getBoundingClientRect().top;
+          const sideBefore = side.getBoundingClientRect().top;
+          const bottomBefore = root.getBoundingClientRect().bottom;
           ctx.revert();
           flushSync(() => { setAct(P.length); setSettled(true); });
-          gsap.set(list, { opacity: 1, y: 0 });
-          // put the overview in view: centred when it fits the screen, else its top at the top
+          gsap.set(list, { opacity: 1 });
+          const y0 = Math.max(0, w.scrollY + root.getBoundingClientRect().bottom - bottomBefore);
+          if (w.lenis) w.lenis.scrollTo(y0, { immediate: true, force: true }); else w.scrollTo(0, y0);
+          gsap.from(side, { y: sideBefore - side.getBoundingClientRect().top, duration: 1, ease: 'power2.inOut', clearProps: 'transform' });
+          gsap.from(root.querySelectorAll('.ws1-item'), { opacity: 0, y: 24, duration: 0.8, stagger: 0.07, ease: 'power2.out', clearProps: 'opacity,transform' });
+          // ease the overview into view: centred when it fits the screen, else its top at the top
           const r = root.getBoundingClientRect();
           const y = Math.max(0, w.scrollY + r.top + Math.min(0, (r.height - w.innerHeight) / 2));
-          if (w.lenis) w.lenis.scrollTo(y, { immediate: true, force: true }); else w.scrollTo(0, y);
-          // heading glides from where it was on screen to its new place
-          gsap.from(side, { y: before - side.getBoundingClientRect().top, duration: 0.8, ease: 'power3.inOut', clearProps: 'transform' });
-          gsap.from(root.querySelectorAll('.ws1-item'), { opacity: 0, y: 34, scale: 0.97, duration: 0.7, stagger: 0.08, delay: 0.05, ease: 'power3.out', clearProps: 'opacity,transform' });
-          ScrollTrigger.refresh();
+          const ease = (t) => 1 - Math.pow(1 - t, 3);
+          if (w.lenis) w.lenis.scrollTo(y, { duration: 1, easing: ease, lock: true, force: true, onComplete: () => ScrollTrigger.refresh() });
+          else { w.scrollTo({ top: y, behavior: 'smooth' }); setTimeout(() => ScrollTrigger.refresh(), 1000); }
         } });
       };
       ctx = gsap.context(() => {
