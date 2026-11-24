@@ -292,21 +292,29 @@ function Data4() {
    company uses (Data 360 connects to them; Snowflake via zero copy). The tangle of
    point-to-point links clears into spokes to one customer profile in the middle. */
 const TOOLS = () => [
-  ['Exact Online', 'exact.svg', 'ERP', 15, 19],
+  ['Exact Online', 'exact.svg', 'ERP', 17, 19],
   ['Outlook', 'outlook.svg', tx('Mail', 'Mail'), 50, 14],
-  ['Mailchimp', 'mailchimp.svg', 'Marketing', 85, 19],
-  ['AFAS', 'afas.png', tx('Admin & HR', 'Administratie & HR'), 15, 81],
+  ['Mailchimp', 'mailchimp.svg', 'Marketing', 83, 19],
+  ['AFAS', 'afas.png', tx('Admin & HR', 'Administratie & HR'), 17, 81],
   ['Google Analytics', 'googleanalytics.svg', 'Website', 50, 87],
-  ['Snowflake', 'snowflake.svg', 'Data warehouse', 85, 81],
+  ['Snowflake', 'snowflake.svg', 'Data warehouse', 83, 81],
 ];
+// which tools are tangled together (9 links instead of all 15, so the mess stays readable)
+const RT_PAIRS = [[0, 1], [1, 2], [0, 3], [2, 5], [3, 4], [4, 5], [0, 5], [2, 3], [1, 4]];
 function Data2B() {
   const [p, run, replay] = usePhase(2500, 3600);
   const T = TOOLS();
   return (
     <Scene title={tx('2B · Real tools, one profile', '2B · Echte tools, één profiel')} note={tx('Option 2 with the tools a field service company really uses; the tangle clears into one customer profile in the middle.', 'Optie 2 met de tools die een buitendienstbedrijf echt gebruikt; het kluwen wordt één klantprofiel in het midden.')} phase={p} run={run} replay={replay}>
       <svg className="ci-rt-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        {T.map(([n, , , x, y], i) => T.slice(i + 1).map(([n2, , , x2, y2], j) => <path key={n + n2} className="ci-rt-tangle" pathLength="1" d={`M${x} ${y} C${(x + x2) / 2 + (j % 2 ? 22 : -22)} ${y - 18} ${(x + x2) / 2 + (i % 2 ? -18 : 18)} ${y2 + 18} ${x2} ${y2}`} vectorEffect="non-scaling-stroke" />))}
-        {T.map(([n, , , x, y]) => <line key={'s' + n} className="ci-rt-spoke" pathLength="1" x1={x} y1={y} x2="50" y2="50" vectorEffect="non-scaling-stroke" />)}
+        {RT_PAIRS.map(([i, j], k) => {
+          // smooth arc: quadratic curve bulging away from the middle (calmer than a full tangle)
+          const [x, y] = [T[i][3], T[i][4]], [x2, y2] = [T[j][3], T[j][4]];
+          const mx = (x + x2) / 2, my = (y + y2) / 2;
+          const cx = mx + (mx - 50) * 0.55 + (k % 2 ? 6 : -6), cy = my + (my - 50) * 0.55 + (k % 3 ? 5 : -5);
+          return <path key={k} className="ci-rt-tangle" pathLength="1" style={{ '--d': 0.15 + k * 0.09 + 's' }} d={`M${x} ${y} Q${cx} ${cy} ${x2} ${y2}`} />;
+        })}
+        {T.map(([n, , , x, y]) => <line key={'s' + n} className="ci-rt-spoke" pathLength="1" x1={x} y1={y} x2="50" y2="50" />)}
       </svg>
       {T.map(([n, logo, cat, x, y], i) => (
         <div key={n} className="ci-rt-tool" style={{ left: x + '%', top: y + '%', '--d': i * 0.12 + 's' }}>
@@ -499,15 +507,16 @@ const CI_CSS = `
 .ci-nba small { font-size: 11px; font-weight: 700; color: #9cc3ff; letter-spacing: .05em; text-transform: uppercase; } .ci-nba b { font-size: 17px; } .ci-nba span { font-size: 12.5px; opacity: .75; }
 /* data 2B · real tools */
 .ci-rt-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.ci-rt-tangle { fill: none; stroke: var(--intigris-coral); stroke-width: 1.5; opacity: .65; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ciDrawRt 1.7s .2s ease-in-out forwards; transition: opacity .4s; }
+.ci-rt-tangle { fill: none; stroke: var(--intigris-coral); stroke-width: .45; stroke-linecap: round; opacity: .7; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ciDrawRt 1s var(--d) ease-in-out forwards; transition: opacity .4s; }
 @keyframes ciDrawRt { to { stroke-dashoffset: 0; } }
 .ci--b .ci-rt-tangle { opacity: 0; }
-.ci-rt-spoke { stroke: #2e844a; stroke-width: 2.5; opacity: 0; transition: opacity .45s .3s; }
-.ci--b .ci-rt-spoke { opacity: 1; }
-.ci-rt-tool { position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 8px; padding: 8px 12px 8px 9px; border-radius: 14px; background: #fff; box-shadow: 0 10px 22px -14px rgba(43,23,0,.5); border: 1px solid rgba(0,0,0,.06); animation: ciPopC .35s var(--d) both; white-space: nowrap; z-index: 2; }
+.ci-rt-spoke { stroke: #2e844a; stroke-width: .7; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.ci--b .ci-rt-spoke { animation: ciDrawRt .6s .3s ease-out forwards; }
+.ci-rt-tool { position: absolute; transform: translate(-50%, -50%); width: 168px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 14px; background: #fff; box-shadow: 0 10px 22px -14px rgba(43,23,0,.5); border: 1px solid rgba(0,0,0,.06); animation: ciPopC .35s var(--d) both; z-index: 2; }
+.ci-rt-tool span { min-width: 0; }
 @keyframes ciPopC { from { opacity: 0; transform: translate(-50%, -50%) scale(.8); } to { opacity: 1; transform: translate(-50%, -50%); } }
-.ci-rt-tool img { width: 24px; height: 24px; object-fit: contain; }
-.ci-rt-tool b { display: block; font-size: 12.5px; color: #222; } .ci-rt-tool small { display: block; font-size: 10.5px; color: #888; }
+.ci-rt-tool img { flex: none; width: 26px; height: 26px; object-fit: contain; }
+.ci-rt-tool b { display: block; font-size: 13px; color: #222; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ci-rt-tool small { display: block; font-size: 11px; color: #888; line-height: 1.3; }
 .ci-rt-hub { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.6); opacity: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 12px 18px 10px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 3px #f4c15d, 0 20px 40px -20px rgba(43,23,0,.6); transition: opacity .4s .7s, transform .5s .7s cubic-bezier(.2,.8,.2,1); }
 .ci--b .ci-rt-hub { opacity: 1; transform: translate(-50%, -50%); }
 .ci-rt-avatar { width: 46px; height: 46px; border-radius: 50%; padding: 3px; background: conic-gradient(#29B5E8, #2e844a, #f4c15d, var(--intigris-coral), #29B5E8); margin-bottom: 5px; }
