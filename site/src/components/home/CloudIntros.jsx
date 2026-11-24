@@ -299,8 +299,8 @@ const TOOLS = () => [
   ['Google Analytics', 'googleanalytics.svg', 'Website', 50, 87],
   ['Snowflake', 'snowflake.svg', 'Data warehouse', 83, 81],
 ];
-// which tools are tangled together (9 links instead of all 15, so the mess stays readable)
-const RT_PAIRS = [[0, 1], [1, 2], [0, 3], [2, 5], [3, 4], [4, 5], [0, 5], [2, 3], [1, 4]];
+// every tool is linked to every other tool (all 15 pairs, Bing 2026-11-24), drawn as smooth arcs
+const RT_PAIRS = [0, 1, 2, 3, 4, 5].flatMap((i) => [0, 1, 2, 3, 4, 5].filter((j) => j > i).map((j) => [i, j]));
 function Data2B() {
   const [p, run, replay] = usePhase(2500, 3600);
   const T = TOOLS();
@@ -312,7 +312,7 @@ function Data2B() {
           const [x, y] = [T[i][3], T[i][4]], [x2, y2] = [T[j][3], T[j][4]];
           const mx = (x + x2) / 2, my = (y + y2) / 2;
           const cx = mx + (mx - 50) * 0.55 + (k % 2 ? 6 : -6), cy = my + (my - 50) * 0.55 + (k % 3 ? 5 : -5);
-          return <path key={k} className="ci-rt-tangle" pathLength="1" style={{ '--d': 0.15 + k * 0.09 + 's' }} d={`M${x} ${y} Q${cx} ${cy} ${x2} ${y2}`} />;
+          return <path key={k} className="ci-rt-tangle" pathLength="1" style={{ '--d': 0.1 + k * 0.06 + 's' }} d={`M${x} ${y} Q${cx} ${cy} ${x2} ${y2}`} />;
         })}
         {T.map(([n, , , x, y]) => <line key={'s' + n} className="ci-rt-spoke" pathLength="1" x1={x} y1={y} x2="50" y2="50" />)}
       </svg>
