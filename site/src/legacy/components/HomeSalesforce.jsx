@@ -7,6 +7,7 @@ import { V3LogoHub, V3Styles } from './CloudKitV3.jsx';
 import { StorySpotlight } from './StorySpotlight.jsx';
 import { StartRolesCard, WtsStyles } from '../../components/home/WhereToStart.jsx';
 import { CloudsChaos, CpStyles } from '../../components/home/CloudsPick.jsx';
+import { WhyLine, WsStyles } from '../../components/home/WhyStack.jsx';
 /* ==================================================================== */
 /*  HOMEPAGE · SALESFORCE SOLUTIONS view (index.html, mode = salesforce)   */
 /*  Built section by section with Bing (plan 2026-11-09):                  */
@@ -45,8 +46,9 @@ function SiteSalesforceHome({ onCta }) {
         items={HSF_INTEGRATIONS()} />
       </div>
 
-      {/* 4 · Where do you start: variant D (roles + product card, light), chosen 2026-11-17 */}
-      <StartRolesCard />
+      {/* 4 · Why Intigris: "We breathe Salesforce." scroll line along five reasons (chosen by Bing 2026-11-24);
+             replaces "Where do you start?" (StartRolesCard, overlapped with section 2) */}
+      <WhyLine />
 
       {/* 6 · How we work: TODO (variant round) */}
 
@@ -63,6 +65,7 @@ function SiteSalesforceHome({ onCta }) {
       <V3Styles />
       <WtsStyles />
       <CpStyles />
+      <WsStyles />
     </React.Fragment>
   );
 }

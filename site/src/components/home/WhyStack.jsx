@@ -17,10 +17,17 @@ const reduced = () => typeof window !== 'undefined' && window.matchMedia('(prefe
 function useGsap(ref, build) {
   useEffect(() => {
     let ctx, alive = true;
-    Promise.all([import('gsap'), import('gsap/ScrollTrigger'), import('gsap/SplitText')]).then(([{ gsap }, { ScrollTrigger }, { SplitText }]) => {
+    // On the homepage, use the page's own GSAP (window.*, CDN, synced with Lenis smooth
+    // scrolling); the npm copy measures scroll positions wrongly there. Elsewhere: npm.
+    const w = typeof window !== 'undefined' ? window : {};
+    const load = w.gsap && w.ScrollTrigger && w.SplitText
+      ? Promise.resolve([{ gsap: w.gsap }, { ScrollTrigger: w.ScrollTrigger }, { SplitText: w.SplitText }])
+      : Promise.all([import('gsap'), import('gsap/ScrollTrigger'), import('gsap/SplitText')]);
+    load.then(([{ gsap }, { ScrollTrigger }, { SplitText }]) => {
       if (!alive || !ref.current || reduced()) return;
       gsap.registerPlugin(ScrollTrigger, SplitText);
       ctx = gsap.context(() => build(gsap, ScrollTrigger, SplitText), ref);
+      ScrollTrigger.refresh();
     });
     return () => { alive = false; ctx && ctx.revert(); };
   }, []);
