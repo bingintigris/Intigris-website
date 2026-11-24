@@ -14,6 +14,7 @@ import { WhyLine, WhyStage, WhyZigzag, WsStyles } from '../home/WhyStack.jsx';
 import { IntLinesPop, IntLinesGrow, IntLinesTrace, IntLinesFlow, V3Styles } from '../home/IntegrationsVariants.jsx';
 import { V3FaqChat } from '../../legacy/components/CloudKitV3.jsx';
 import { sc3 } from '../../legacy/components/CloudPagesV3.jsx';
+import { TalkChatWhite, TalkChatDark, TalkChatCoralHead, TalkChatBlob, TalkChatPaper } from '../home/TalkVariants.jsx';
 import { TalkDesk, TalkChat, TalkBigType, TalkBooking, TalkCoral, TkStyles } from '../home/TalkVariants.jsx';
 import { SiteFinalCTA } from '../../legacy/components/Footer.jsx';
 import { CkTalk } from '../../legacy/components/CloudKit.jsx';
@@ -36,6 +37,16 @@ const TalkNow = () => <><CkTalk line={tx('30 minutes, and you know what Salesfor
 const AskFrank = () => <V3FaqChat head={{ eyebrow: tx('QUESTIONS WE GET', 'VRAGEN DIE WE KRIJGEN'), a: tx('Before you', 'Voordat je'), b: tx('book the call.', 'het gesprek plant.') }} items={sc3.faq()} onCta={() => { window.location.href = '/contact'; }} />;
 
 const ROUNDS = () => [
+  {
+    id: 'talkcream', title: tx('Closing section · B "Chat with Frank" on cream: five colour combinations for the chat', 'Afsluitende sectie · B "Chat met Frank" op crème: vijf kleurcombinaties voor de chat'),
+    variants: [
+      { k: '1', name: tx('White chat', 'Witte chat'), note: tx('Pure white chat window with a fine border and a deeper shadow; cream bubbles inside.', 'Spierwit chatvenster met een fijne rand en diepere schaduw; crème bubbels erin.'), C: TalkChatWhite },
+      { k: '2', name: tx('Dark chat', 'Donkere chat'), note: tx('Dark brown chat window with light bubbles: the strongest contrast with the cream.', 'Donkerbruin chatvenster met lichte bubbels: het sterkste contrast met de crème.'), C: TalkChatDark },
+      { k: '3', name: tx('Coral header', 'Koraal kop'), note: tx('Coral top bar with Frank, white chat body below.', 'Koraal bovenbalk met Frank, witte chat eronder.'), C: TalkChatCoralHead },
+      { k: '4', name: tx('Coral shape behind', 'Koraal vorm erachter'), note: tx('White chat window on a large, slightly rotated coral block.', 'Wit chatvenster op een groot, iets gedraaid koraal vlak.'), C: TalkChatBlob },
+      { k: '5', name: tx('Paper panel', 'Papieren paneel'), note: tx('White chat inside a warm beige panel, calm and soft.', 'Witte chat in een warm beige paneel, rustig en zacht.'), C: TalkChatPaper },
+    ],
+  },
   {
     id: 'askfrank', title: tx('Found: "Ask Frank" chat (pre-set questions, Frank answers) · as it is on the Sales Cloud page', 'Gevonden: "Vraag het Frank"-chat (vaste vragen, Frank antwoordt) · zoals op de Sales Cloud-pagina'),
     variants: [

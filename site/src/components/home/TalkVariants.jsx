@@ -68,7 +68,7 @@ export function TalkDesk({ onCta }) {
 }
 
 /* ---------- B · Chat with Frank ---------- */
-export function TalkChat({ onCta }) {
+export function TalkChat({ onCta, tone = 'dark', chat = '' }) {
   const [ref, inV] = useIn(); const t = T();
   const msgs = [tx('Hi, I’m Frank 👋', 'Hoi, ik ben Frank 👋'), tx('Ready to smarten up your business?', 'Klaar om je bedrijf slimmer te maken?'), tx('In 30 minutes you’ll know what Salesforce can do for you.', 'In 30 minuten weet je wat Salesforce voor je kan doen.')];
   const [shown, setShown] = useState(0);
@@ -79,14 +79,14 @@ export function TalkChat({ onCta }) {
     let tm = setTimeout(step, 500); return () => clearTimeout(tm);
   }, [inV]);
   return (
-    <section className={'tk tk--dark tk--b' + (inV ? ' in' : '')} ref={ref}>
+    <section className={'tk tk--' + tone + ' tk--b' + (chat ? ' tk-chat-style--' + chat : '') + (inV ? ' in' : '')} ref={ref}>
       <div className="container tk-b-grid">
         <div className="tk-col">
           <div className="eyebrow tk-r" style={{ '--i': 0 }}>{t.eyebrow}</div>
           <div className="tk-r" style={{ '--i': 1 }}><Title big /></div>
           <div className="tk-r" style={{ '--i': 2 }}><Trust /></div>
         </div>
-        <div className="tk-chat tk-r" style={{ '--i': 1 }}>
+        <div className="tk-chat-wrap tk-r" style={{ '--i': 1 }}><div className="tk-chat">
           <div className="tk-chat-head"><Photo size={52} /><div><b>Frank Timmer</b><span><i className="tk-dot" />{t.role} · Intigris</span></div></div>
           <div className="tk-chat-body">
             {msgs.map((m, i) => i < shown && <div key={i} className="tk-bubble">{m}</div>)}
@@ -98,7 +98,7 @@ export function TalkChat({ onCta }) {
               </div>
             )}
           </div>
-        </div>
+        </div></div>
       </div>
     </section>
   );
@@ -177,6 +177,13 @@ export function TalkCoral({ onCta }) {
   );
 }
 
+/* B on cream (Bing 2026-11-24): five colour combinations so the chat stands out from the cream */
+export const TalkChatWhite = (p) => <TalkChat {...p} tone="cream" chat="white" />;
+export const TalkChatDark = (p) => <TalkChat {...p} tone="cream" chat="dark" />;
+export const TalkChatCoralHead = (p) => <TalkChat {...p} tone="cream" chat="coralhead" />;
+export const TalkChatBlob = (p) => <TalkChat {...p} tone="cream" chat="blob" />;
+export const TalkChatPaper = (p) => <TalkChat {...p} tone="cream" chat="paper" />;
+
 export function TkStyles() { return <style dangerouslySetInnerHTML={{ __html: TK_CSS }} />; }
 const TK_CSS = `
 .tk { padding: clamp(72px, 9vw, 128px) 0; position: relative; overflow: hidden; }
@@ -247,4 +254,31 @@ const TK_CSS = `
 .tk-tag { position: absolute; left: -12px; bottom: 26px; display: flex; flex-direction: column; padding: 12px 18px; border-radius: 16px; background: var(--intigris-dark-brown); color: var(--intigris-off-white); font-size: 13px; transform: rotate(-4deg); box-shadow: 0 20px 40px -20px rgba(0,0,0,.6); }
 .tk-tag b { font-size: 17px; font-weight: 500; }
 @media (max-width: 900px) { .tk-a-grid, .tk-b-grid, .tk-e-grid { grid-template-columns: 1fr; } .tk-e-photo { order: -1; } }
+/* cream section */
+.tk--cream { background: var(--intigris-off-white); color: var(--intigris-dark-brown); }
+.tk--cream .eyebrow { color: var(--intigris-coral-700); }
+.tk--cream .tk-trust { border-color: rgba(64,35,1,.18); }
+.tk-chat-wrap { position: relative; }
+/* 1 white */
+.tk-chat-style--white .tk-chat { background: #fff; border: 1px solid rgba(64,35,1,.1); box-shadow: 0 50px 90px -40px rgba(64,35,1,.45), 0 4px 14px -6px rgba(64,35,1,.12); }
+.tk-chat-style--white .tk-bubble { background: var(--intigris-off-white); border-color: transparent; }
+/* 2 dark */
+.tk-chat-style--dark .tk-chat { background: var(--intigris-dark-brown); color: var(--intigris-off-white); box-shadow: 0 50px 90px -40px rgba(64,35,1,.6); }
+.tk-chat-style--dark .tk-chat-head { border-color: rgba(252,247,235,.12); } .tk-chat-style--dark .tk-chat-head span { color: rgba(252,247,235,.65); }
+.tk-chat-style--dark .tk-bubble { background: rgba(252,247,235,.1); border-color: rgba(252,247,235,.12); color: var(--intigris-off-white); }
+.tk-chat-style--dark .tk-typing i { background: rgba(252,247,235,.6); }
+.tk-chat-style--dark .tk-chip { border-color: rgba(252,247,235,.5); color: var(--intigris-off-white); } .tk-chat-style--dark .tk-chip:hover { background: rgba(252,247,235,.08); }
+/* 3 coral header */
+.tk-chat-style--coralhead .tk-chat { background: #fff; box-shadow: 0 50px 90px -40px rgba(64,35,1,.45); }
+.tk-chat-style--coralhead .tk-chat-head { background: var(--intigris-coral); color: #fff; border: 0; } .tk-chat-style--coralhead .tk-chat-head span { color: rgba(255,255,255,.85); }
+.tk-chat-style--coralhead .tk-photo--coral { box-shadow: 0 0 0 3px #fff; } .tk-chat-style--coralhead .tk-dot { background: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.3); }
+.tk-chat-style--coralhead .tk-bubble { background: var(--intigris-off-white); border-color: transparent; }
+/* 4 coral shape behind */
+.tk-chat-style--blob .tk-chat-wrap::before { content: ''; position: absolute; inset: 8% -6% -8% 10%; border-radius: 40px; background: var(--intigris-coral); transform: rotate(4deg); z-index: 0; }
+.tk-chat-style--blob .tk-chat { position: relative; z-index: 1; background: #fff; box-shadow: 0 40px 70px -40px rgba(64,35,1,.55); }
+.tk-chat-style--blob .tk-bubble { background: var(--intigris-off-white); border-color: transparent; }
+/* 5 paper panel */
+.tk-chat-style--paper .tk-chat-wrap { padding: 28px; border-radius: 36px; background: #f1e4cd; }
+.tk-chat-style--paper .tk-chat { background: #fff; box-shadow: 0 30px 60px -36px rgba(64,35,1,.45); }
+.tk-chat-style--paper .tk-bubble { background: var(--intigris-off-white); border-color: transparent; }
 `;
