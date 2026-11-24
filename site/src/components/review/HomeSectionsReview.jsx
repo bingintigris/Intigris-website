@@ -14,7 +14,7 @@ import { WhyLine, WhyStage, WhyZigzag, WsStyles } from '../home/WhyStack.jsx';
 import { IntLinesPop, IntLinesGrow, IntLinesTrace, IntLinesFlow, V3Styles } from '../home/IntegrationsVariants.jsx';
 import { V3FaqChat } from '../../legacy/components/CloudKitV3.jsx';
 import { sc3 } from '../../legacy/components/CloudPagesV3.jsx';
-import { TalkChatWhite, TalkChatDark, TalkChatCoralHead, TalkChatBlob, TalkChatPaper } from '../home/TalkVariants.jsx';
+import { TalkChatWhite, TalkChatDark, TalkChatCoralHead, TalkChatBlob, TalkChatPaper, TalkChatAsk } from '../home/TalkVariants.jsx';
 import { TalkDesk, TalkChat, TalkBigType, TalkBooking, TalkCoral, TkStyles } from '../home/TalkVariants.jsx';
 import { SiteFinalCTA } from '../../legacy/components/Footer.jsx';
 import { CkTalk } from '../../legacy/components/CloudKit.jsx';
@@ -45,6 +45,7 @@ const ROUNDS = () => [
       { k: '3', name: tx('Coral header', 'Koraal kop'), note: tx('Coral top bar with Frank, white chat body below.', 'Koraal bovenbalk met Frank, witte chat eronder.'), C: TalkChatCoralHead },
       { k: '4', name: tx('Coral shape behind', 'Koraal vorm erachter'), note: tx('White chat window on a large, slightly rotated coral block.', 'Wit chatvenster op een groot, iets gedraaid koraal vlak.'), C: TalkChatBlob },
       { k: '5', name: tx('Paper panel', 'Papieren paneel'), note: tx('White chat inside a warm beige panel, calm and soft.', 'Witte chat in een warm beige paneel, rustig en zacht.'), C: TalkChatPaper },
+      { k: '6', name: tx('"Ask Frank" look', '"Vraag het Frank"-look'), note: tx('The colour layout of the 9 Nov "Ask Frank" chat: white top with Frank, cream message area with white bubbles and Frank\'s small photo, white strip at the bottom with the buttons.', 'De kleurindeling van de "Vraag het Frank"-chat van 9 nov: witte bovenkant met Frank, crème berichtenvlak met witte bubbels en Franks kleine foto, witte strook onderaan met de knoppen.'), C: TalkChatAsk },
     ],
   },
   {

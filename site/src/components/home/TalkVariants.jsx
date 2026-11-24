@@ -69,7 +69,7 @@ export function TalkDesk({ onCta }) {
 
 /* ---------- B · Chat with Frank ---------- */
 export function TalkChat({ onCta, tone = 'dark', chat = '' }) {
-  const [ref, inV] = useIn(); const t = T();
+  const [ref, inV] = useIn(); const t = T(); const ask = chat === 'ask';
   const msgs = [tx('Hi, I’m Frank 👋', 'Hoi, ik ben Frank 👋'), tx('Ready to smarten up your business?', 'Klaar om je bedrijf slimmer te maken?'), tx('In 30 minutes you’ll know what Salesforce can do for you.', 'In 30 minuten weet je wat Salesforce voor je kan doen.')];
   const [shown, setShown] = useState(0);
   useEffect(() => {
@@ -88,6 +88,19 @@ export function TalkChat({ onCta, tone = 'dark', chat = '' }) {
         </div>
         <div className="tk-chat-wrap tk-r" style={{ '--i': 1 }}><div className="tk-chat">
           <div className="tk-chat-head"><Photo size={52} /><div><b>Frank Timmer</b><span><i className="tk-dot" />{t.role} · Intigris</span></div></div>
+          {ask ? (<>
+            {/* 'ask' look = the 9 Nov "Ask Frank" chat: white head, cream message area with white
+                bubbles and Frank's small photo, white strip at the bottom with the buttons */}
+            <div className="tk-chat-body">
+              {msgs.map((m, i) => i < shown && <div key={i} className="tk-row"><Photo size={28} ring="none" /><div className="tk-bubble">{m}</div></div>)}
+              {shown > 0 && shown <= msgs.length && <div className="tk-row"><Photo size={28} ring="none" /><div className="tk-bubble tk-typing" aria-hidden="true"><i /><i /><i /></div></div>}
+            </div>
+            <div className="tk-chat-foot">
+              {shown > msgs.length
+                ? <div className="tk-replies"><Cta onCta={onCta} cls="tk-btn--chip" /><a className="tk-chip" href={'mailto:' + MAIL}>{tx('Email Frank', 'Mail Frank')}</a></div>
+                : <span className="tk-foot-wait">{tx('Frank is typing…', 'Frank is aan het typen…')}</span>}
+            </div>
+          </>) : (
           <div className="tk-chat-body">
             {msgs.map((m, i) => i < shown && <div key={i} className="tk-bubble">{m}</div>)}
             {shown > 0 && shown <= msgs.length && <div className="tk-bubble tk-typing" aria-hidden="true"><i /><i /><i /></div>}
@@ -97,7 +110,7 @@ export function TalkChat({ onCta, tone = 'dark', chat = '' }) {
                 <a className="tk-chip" href={'mailto:' + MAIL}>{tx('Email Frank', 'Mail Frank')}</a>
               </div>
             )}
-          </div>
+          </div>)}
         </div></div>
       </div>
     </section>
@@ -183,6 +196,7 @@ export const TalkChatDark = (p) => <TalkChat {...p} tone="cream" chat="dark" />;
 export const TalkChatCoralHead = (p) => <TalkChat {...p} tone="cream" chat="coralhead" />;
 export const TalkChatBlob = (p) => <TalkChat {...p} tone="cream" chat="blob" />;
 export const TalkChatPaper = (p) => <TalkChat {...p} tone="cream" chat="paper" />;
+export const TalkChatAsk = (p) => <TalkChat {...p} tone="cream" chat="ask" />;
 
 export function TkStyles() { return <style dangerouslySetInnerHTML={{ __html: TK_CSS }} />; }
 const TK_CSS = `
@@ -277,6 +291,16 @@ const TK_CSS = `
 .tk-chat-style--blob .tk-chat-wrap::before { content: ''; position: absolute; inset: 8% -6% -8% 10%; border-radius: 40px; background: var(--intigris-coral); transform: rotate(4deg); z-index: 0; }
 .tk-chat-style--blob .tk-chat { position: relative; z-index: 1; background: #fff; box-shadow: 0 40px 70px -40px rgba(64,35,1,.55); }
 .tk-chat-style--blob .tk-bubble { background: var(--intigris-off-white); border-color: transparent; }
+/* 6 'Ask Frank' look (9 Nov chat): white / cream / white */
+.tk-chat-style--ask .tk-chat { background: #fff; border-radius: 24px; box-shadow: 0 30px 60px -30px rgba(43,23,0,.35); display: flex; flex-direction: column; }
+.tk-chat-style--ask .tk-chat-head { padding: 16px 20px; border-bottom: 1px solid rgba(43,23,0,.08); }
+.tk-chat-style--ask .tk-chat-body { background: var(--intigris-off-white); min-height: 260px; padding: 20px; gap: 10px; }
+.tk-row { display: flex; align-items: flex-end; gap: 8px; max-width: 88%; animation: tkPop .45s cubic-bezier(.2,.9,.3,1.2) both; }
+.tk-row .tk-bubble { max-width: none; background: #fff; border: 0; border-radius: 18px 18px 18px 6px; box-shadow: 0 2px 6px rgba(43,23,0,.06); font-size: 15.5px; animation: none; }
+.tk-photo--none { box-shadow: none; }
+.tk-chat-foot { min-height: 76px; box-sizing: border-box; display: flex; align-items: center; padding: 16px 20px 20px; border-top: 1px solid rgba(43,23,0,.08); }
+.tk-chat-foot .tk-replies { margin: 0; align-self: auto; justify-content: flex-start; }
+.tk-foot-wait { font-size: 13.5px; color: var(--fg-muted); }
 /* 5 paper panel */
 .tk-chat-style--paper .tk-chat-wrap { padding: 28px; border-radius: 36px; background: #f1e4cd; }
 .tk-chat-style--paper .tk-chat { background: #fff; box-shadow: 0 30px 60px -36px rgba(64,35,1,.45); }
