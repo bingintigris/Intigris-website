@@ -202,8 +202,8 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
         }
         .mode-thumb[data-mode="salesforce"] {
           transform: translateX(100%);
-          background: var(--intigris-soft-blue);
-          box-shadow: 0 4px 14px rgba(154,184,226,0.5);
+          background: #00A1E0; /* Salesforce logo blue (Bing 2026-11-24) */
+          box-shadow: 0 4px 14px rgba(0,161,224,0.45);
         }
         .mode-opt {
           position: relative; z-index: 1;
