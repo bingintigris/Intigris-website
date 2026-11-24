@@ -70,6 +70,35 @@ function RotatingWord({ words, idx, color = 'var(--intigris-coral)' }) {
 }
 
 /* ---------- Cinematic: full-bleed coral hero, transparent overlay header ---------- */
+/* ---------- Hero depth on scroll (chosen by Bing 2026-11-24, effect 2) ----------
+   While the hero scrolls away, the team photo moves slower and zooms in a little,
+   and the headline and the numbers card drift up at different speeds.
+   GSAP + ScrollTrigger from npm (client only), scrubbed over the hero's height,
+   reverted on unmount, skipped for prefers-reduced-motion. */
+function useHeroDepth(ref) {
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let ctx, alive = true;
+    // Prefer the page's own GSAP (window.gsap, loaded from the CDN and synced with Lenis
+    // smooth scrolling, like the Integrations hub); fall back to the npm copy elsewhere.
+    const load = window.gsap && window.ScrollTrigger
+      ? Promise.resolve([{ gsap: window.gsap }, { ScrollTrigger: window.ScrollTrigger }])
+      : Promise.all([import('gsap'), import('gsap/ScrollTrigger')]);
+    load.then(([{ gsap }, { ScrollTrigger }]) => {
+      if (!alive || !ref.current) return;
+      gsap.registerPlugin(ScrollTrigger);
+      ctx = gsap.context(() => {
+        const st = { trigger: ref.current, start: 'top top', end: 'bottom top', scrub: 0.6, invalidateOnRefresh: true };
+        gsap.fromTo('.hero-depth-photo', { scale: 1, yPercent: 0 }, { scale: 1.14, yPercent: 14, ease: 'none', scrollTrigger: st });
+        gsap.to('.hero-depth-text', { yPercent: -18, ease: 'none', scrollTrigger: st });
+        gsap.to('.hero-depth-stats', { yPercent: -70, ease: 'none', scrollTrigger: st });
+      }, ref);
+      ScrollTrigger.refresh();
+    });
+    return () => { alive = false; ctx && ctx.revert(); };
+  }, []);
+}
+
 function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'coral', mode = 'ai', onMode }) {
   const dark = mood === 'dark';
   const services = [
@@ -78,9 +107,11 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
     { n: '03', label: tx('Service Cloud', 'Service Cloud') },
     { n: '04', label: tx('Integrations', 'Integraties') },
   ];
+  const heroRef = React.useRef(null);
+  useHeroDepth(heroRef);
   return (
     <>
-    <section style={{
+    <section ref={heroRef} style={{
       position: 'relative',
       overflow: 'hidden',
       background: dark
@@ -91,7 +122,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
       isolation: 'isolate',
     }}>
       {/* Photo layer, warm silhouette emerging from the right */}
-      <div aria-hidden style={{
+      <div aria-hidden className="hero-depth-photo" style={{
         position: 'absolute', inset: 0, zIndex: 0,
         backgroundImage: 'url("/assets/hero-team.jpg")',
         backgroundSize: 'cover',
@@ -123,7 +154,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           alignItems: 'end',
           flex: 1,
         }}>
-          <div style={{ alignSelf: 'center' }}>
+          <div className="hero-depth-text" style={{ alignSelf: 'center' }}>
             <div className="eyebrow" style={{ marginBottom: 24, color: dark ? 'var(--intigris-off-white)' : 'var(--intigris-dark-brown)' }}>
               {tx('Salesforce Implementation Partner', 'Salesforce Implementation Partner')}
             </div>
@@ -156,7 +187,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           </div>
 
           {/* Right, glassy credentials cell, bottom-aligned */}
-          <div style={{ justifySelf: 'end', paddingBottom: 8, width: '100%', maxWidth: 420 }}>
+          <div className="hero-depth-stats" style={{ justifySelf: 'end', paddingBottom: 8, width: '100%', maxWidth: 420 }}>
             <HeroStats tx={tx} glass />
           </div>
         </div>
