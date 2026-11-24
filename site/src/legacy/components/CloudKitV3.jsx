@@ -616,7 +616,7 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
           <div className="lh-stage" onMouseLeave={() => setPaused(false)}>
             <svg className="lh-lines" viewBox={'0 0 ' + W + ' ' + H} aria-hidden>
               {pts.map(([x, y], i) => <line key={i} x1={W / 2} y1={H / 2} x2={x / 100 * W} y2={y / 100 * H} pathLength="1" className={'lh-line' + (i === active ? ' on' : '')} />)}
-              {lineFx === 'flow' && pts.map(([x, y], i) => <line key={'f' + i} x1={x / 100 * W} y1={y / 100 * H} x2={W / 2} y2={H / 2} pathLength="1" className="lh-flow" style={{ animationDelay: (i * -0.37) + 's' }} />)}
+              {lineFx === 'flow' && pts.map(([x, y], i) => <line key={'f' + i} x1={x / 100 * W} y1={y / 100 * H} x2={W / 2} y2={H / 2} pathLength="1" className="lh-flow" style={{ animationDelay: (i * 0.4) + 's' }} />)}
               {lineFx === 'trace' && pts.map((_, i) => <circle key={'d' + i} className="lh-dot" r="7" cx={W / 2} cy={H / 2} opacity="0" />)}
             </svg>
             <div className="lh-center">
@@ -644,10 +644,15 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
         .lh-line { stroke: rgba(252,247,235,.28); stroke-width: 2; stroke-dasharray: 1 1; stroke-dashoffset: 0; transition: stroke 300ms, stroke-width 300ms; }
         .lh-line.on { stroke: var(--intigris-coral); stroke-width: 4; }
         .lh-dot { fill: #fff; filter: drop-shadow(0 0 6px rgba(255,92,57,.9)); }
-        .lh-flow { stroke: rgba(255,92,57,.75); stroke-width: 3; stroke-linecap: round; stroke-dasharray: .015 .085; fill: none; opacity: 0; transition: opacity .8s; animation: lhFlow 2.6s linear infinite; }
-        .lh--landed .lh-flow { opacity: 1; }
-        @keyframes lhFlow { to { stroke-dashoffset: -.1; } }
-        @media (prefers-reduced-motion: reduce) { .lh-flow { animation: none; } }
+        /* live pulse (Bing 2026-11-24): one glowing signal per line runs from the tool into
+           Salesforce, staggered; Salesforce answers with a soft heartbeat ring */
+        .lh-flow { stroke: #ff7a52; stroke-width: 5; stroke-linecap: round; stroke-dasharray: .16 2; stroke-dashoffset: .16; fill: none; opacity: 0; filter: drop-shadow(0 0 5px rgba(255,92,57,.95)); }
+        .lh--landed .lh-flow { animation: lhPulse 3.2s cubic-bezier(.45,0,.55,1) infinite; }
+        @keyframes lhPulse { 0% { stroke-dashoffset: .16; opacity: 0; } 12% { opacity: 1; } 62% { stroke-dashoffset: -1; opacity: 1; } 66%, 100% { stroke-dashoffset: -1; opacity: 0; } }
+        .lh--flow .lh-center::after { content: ''; position: absolute; left: 50%; top: 50%; width: 92%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; border: 3px solid rgba(255,122,82,.85); box-shadow: 0 0 18px rgba(255,92,57,.45); opacity: 0; z-index: -1; pointer-events: none; }
+        .lh--flow.lh--landed .lh-center::after { animation: lhBeat 1.6s cubic-bezier(.2,.7,.3,1) infinite; }
+        @keyframes lhBeat { 0% { transform: scale(.75); opacity: 0; } 15% { opacity: .9; } 100% { transform: scale(1.6); opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .lh-flow, .lh--flow .lh-center::after { animation: none !important; } }
         .lh-center { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
         .lh-center::before { content: ''; position: absolute; left: 50%; top: 42%; width: 150%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,161,224,.28), rgba(0,161,224,0)); z-index: -1; }
         .lh-center img { width: clamp(120px, 12vw, 172px); height: auto; filter: drop-shadow(0 18px 30px rgba(0,0,0,.4)); }
