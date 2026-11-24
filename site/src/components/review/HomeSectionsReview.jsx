@@ -12,6 +12,9 @@ import { HeroFx1, HeroFx2, HeroFx3, HfxStyles } from './HeroFxVariants.jsx';
 import { WhyBento, WhyVs, WhyPinned, WhyStory, WhyPeople, WiStyles } from '../home/WhyIntigris.jsx';
 import { WhyLine, WhyStage, WhyZigzag, WsStyles } from '../home/WhyStack.jsx';
 import { IntLinesPop, IntLinesGrow, IntLinesTrace, IntLinesFlow, V3Styles } from '../home/IntegrationsVariants.jsx';
+import { TalkDesk, TalkChat, TalkBigType, TalkBooking, TalkCoral, TkStyles } from '../home/TalkVariants.jsx';
+import { SiteFinalCTA } from '../../legacy/components/Footer.jsx';
+import { CkTalk } from '../../legacy/components/CloudKit.jsx';
 import { WhySettleCards, WhySettleBento, WhySettleLine, WsoStyles } from '../home/WhySettle.jsx';
 import { StoriesStack, StoriesWall, StoriesGallery, StoriesGalleryIndustry, SvStyles } from '../home/StoriesVariants.jsx';
 import { StorySpotlight, SsStyles } from '../../legacy/components/StorySpotlight.jsx';
@@ -26,7 +29,20 @@ const StoriesAfterCarousel = () => <StoriesGalleryIndustry after="carousel" />;
 const StoriesAfterGrid = () => <StoriesGalleryIndustry after="grid" />;
 const StoriesAfterFeature = () => <StoriesGalleryIndustry after="feature" />;
 
+const TalkNow = () => <><CkTalk line={tx('30 minutes, and you know what Salesforce can do for you.', 'In 30 minuten weet je wat Salesforce voor jou kan doen.')} /><SiteFinalCTA /></>;
+
 const ROUNDS = () => [
+  {
+    id: 'talk', title: tx('Closing section · "Let\'s talk" (Frank) + "Ready to smarten up your business?" merged into one (five concepts)', 'Afsluitende sectie · "Zullen we praten?" (Frank) + "Klaar om je bedrijf slimmer te maken?" samengevoegd tot één (vijf concepten)'),
+    variants: [
+      { k: '0', name: tx('Now: two separate sections', 'Nu: twee losse secties'), note: tx('Reference: the Frank strip and the "Let\'s talk." section as they are on the homepage now.', 'Referentie: de Frank-strook en de "Laten we praten."-sectie zoals ze nu op de homepage staan.'), C: TalkNow },
+      { k: 'A', name: tx('Frank\'s desk', 'Franks bureau'), note: tx('Big "Let\'s talk." with the text, button and email on the left; a portrait card of Frank on the right.', 'Groot "Laten we praten." met tekst, knop en e-mail links; rechts een portretkaart van Frank.'), C: TalkDesk },
+      { k: 'B', name: tx('Chat with Frank', 'Chat met Frank'), note: tx('A chat window: Frank\'s messages appear one by one (with typing dots), then "Plan 30 minutes" and "Email Frank" appear as reply buttons.', 'Een chatvenster: Franks berichten verschijnen één voor één (met typpuntjes), daarna verschijnen "Plan 30 minuten" en "Mail Frank" als antwoordknoppen.'), C: TalkChat },
+      { k: 'C', name: tx('Big type with Frank in it', 'Grote letters met Frank erin'), note: tx('A huge centred "Let\'s [photo] talk." where Frank\'s photo opens up inside the headline as you arrive.', 'Een enorm gecentreerd "Laten [foto] praten." waarbij Franks foto openschuift in de kop als je aankomt.'), C: TalkBigType },
+      { k: 'D', name: tx('Booking card', 'Boekingskaart'), note: tx('Headline left; on the right a card "30 minutes with Frank" with what to expect and a choice of part of the day, then the button.', 'Kop links; rechts een kaart "30 minuten met Frank" met wat je kunt verwachten en een keuze voor het dagdeel, daarna de knop.'), C: TalkBooking },
+      { k: 'E', name: tx('Coral band', 'Koraal band'), note: tx('A bright coral closing section with a large round photo of Frank and a name tag; dark buttons.', 'Een felle koraal afsluiter met een grote ronde foto van Frank en een naamkaartje; donkere knoppen.'), C: TalkCoral },
+    ],
+  },
   {
     id: 'intlines', title: tx('Integrations · smoother connector lines (Salesforce label removed)', 'Koppelingen · soepelere verbindingslijnen (Salesforce-label weg)'),
     variants: [
@@ -168,7 +184,7 @@ export default function HomeSectionsReview() {
       <TvStyles />
       <HfxStyles />
       <WiStyles />
-      <WsStyles /><WsoStyles /><V3Styles />
+      <WsStyles /><WsoStyles /><V3Styles /><TkStyles />
       <SvStyles />
       <SsStyles />
       <style dangerouslySetInnerHTML={{ __html: `
