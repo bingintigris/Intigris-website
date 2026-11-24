@@ -18,7 +18,7 @@ const SS_REDUCE = win.matchMedia && win.matchMedia('(prefers-reduced-motion: red
 // customer logos (2026-11-24: ATAG Warmte + Alpha Ventilatie = the black versions from the current
 // intigris.nl; 365Zon from 365zon.nl; Solar Assistance from solar-assistance.be). Masters on the Drive.
 const SS_LOGOS = { WeTransfer: "/assets/logos/wetransfer.svg", EVBox: "/assets/logos/evbox.svg", Opcharge: "/assets/logos/opcharge.svg",
-  'ATAG Warmte': "/assets/logos/atag-warmte.png", 'Alpha Ventilatie': "/assets/logos/alpha-ventilatie.png", '365Zon': "/assets/logos/365zon.svg", 'Solar Assistance': "/assets/logos/solar-assistance.webp" };
+  'ATAG Warmte': "/assets/logos/atag-warmte.png", 'Alpha Ventilatie': "/assets/logos/alpha-ventilatie.png", '365Zon': "/assets/logos/365zon.svg", 'Solar Assistance': "/assets/logos/solar-assistance.png" };
 
 function SsLogo({ s, className = '' }) {
   const src = SS_LOGOS[s.name];
