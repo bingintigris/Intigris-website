@@ -534,9 +534,13 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
   const ref = v3Ref(null);
   const [active, setActive] = v3State(0);
   const [paused, setPaused] = v3State(false);
+  /* 'flow' look (Bing 2026-11-24): all lines glow softly together; only the hovered tool's line
+     turns bright orange, so no automatic walking highlight there */
+  const glow = lineFx === 'flow';
+  const [hov, setHov] = v3State(-1);
   const [landed, setLanded] = v3State(V3_REDUCE);
   /* Once everything has landed, the highlight walks from tool to tool. */
-  v3Effect(() => { if (!landed || paused || V3_REDUCE) return; const t = setInterval(() => setActive(a => (a + 1) % items.length), 2600); return () => clearInterval(t); }, [landed, paused, items.length]);
+  v3Effect(() => { if (!landed || paused || V3_REDUCE || glow) return; const t = setInterval(() => setActive(a => (a + 1) % items.length), 2600); return () => clearInterval(t); }, [landed, paused, items.length]);
   const n = items.length, W = 1000, H = 820;
   const pts = items.map((_, i) => { const a = (-90 + (360 / n) * i) * Math.PI / 180; return [50 + 37 * Math.cos(a), 50 + 41 * Math.sin(a)]; });
   v3Effect(() => {
@@ -604,7 +608,8 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
     return () => { alive = false; mm && mm.revert(); };
   }, []);
   const a = items[active];
-  const pick = i => () => { setActive(i); setPaused(true); };
+  const pick = i => () => { setActive(i); setPaused(true); setHov(i); };
+  const lit = i => glow ? i === hov : i === active;
   return (
     <section className={'ck-section ck-section--dark lh lh--' + lineFx + (landed ? ' lh--landed' : '')} ref={ref}>
       <div className="container-wide">
@@ -613,10 +618,9 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
             <CkHead {...head} />
             <div className="lh-caption" key={active} aria-live="polite"><small>{a.k}</small><b>{a.n}</b><span>{a.d}</span></div>
           </div>
-          <div className="lh-stage" onMouseLeave={() => setPaused(false)}>
+          <div className="lh-stage" onMouseLeave={() => { setPaused(false); setHov(-1); }}>
             <svg className="lh-lines" viewBox={'0 0 ' + W + ' ' + H} aria-hidden>
-              {pts.map(([x, y], i) => <line key={i} x1={W / 2} y1={H / 2} x2={x / 100 * W} y2={y / 100 * H} pathLength="1" className={'lh-line' + (i === active ? ' on' : '')} />)}
-              {lineFx === 'flow' && pts.map(([x, y], i) => <line key={'f' + i} x1={x / 100 * W} y1={y / 100 * H} x2={W / 2} y2={H / 2} pathLength="1" className="lh-flow" style={{ animationDelay: (i * 0.4) + 's' }} />)}
+              {pts.map(([x, y], i) => <line key={i} x1={W / 2} y1={H / 2} x2={x / 100 * W} y2={y / 100 * H} pathLength="1" className={'lh-line' + (lit(i) ? ' on' : '')} />)}
               {lineFx === 'trace' && pts.map((_, i) => <circle key={'d' + i} className="lh-dot" r="7" cx={W / 2} cy={H / 2} opacity="0" />)}
             </svg>
             <div className="lh-center">
@@ -624,7 +628,7 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
               {center && <span>{center}</span>}
             </div>
             {items.map((it, i) => (
-              <button key={i} type="button" className={'lh-node' + (i === active ? ' on' : '')} style={{ left: pts[i][0] + '%', top: pts[i][1] + '%' }}
+              <button key={i} type="button" className={'lh-node' + (lit(i) ? ' on' : '')} style={{ left: pts[i][0] + '%', top: pts[i][1] + '%' }}
                 onMouseEnter={pick(i)} onFocus={pick(i)} onClick={pick(i)} aria-pressed={i === active} aria-label={it.n}>
                 <LhTile it={it} />
               </button>
@@ -644,15 +648,13 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
         .lh-line { stroke: rgba(252,247,235,.28); stroke-width: 2; stroke-dasharray: 1 1; stroke-dashoffset: 0; transition: stroke 300ms, stroke-width 300ms; }
         .lh-line.on { stroke: var(--intigris-coral); stroke-width: 4; }
         .lh-dot { fill: #fff; filter: drop-shadow(0 0 6px rgba(255,92,57,.9)); }
-        /* live pulse (Bing 2026-11-24): one glowing signal per line runs from the tool into
-           Salesforce, staggered; Salesforce answers with a soft heartbeat ring */
-        .lh-flow { stroke: #ff7a52; stroke-width: 5; stroke-linecap: round; stroke-dasharray: .16 2; stroke-dashoffset: .16; fill: none; opacity: 0; filter: drop-shadow(0 0 5px rgba(255,92,57,.95)); }
-        .lh--landed .lh-flow { animation: lhPulse 3.2s cubic-bezier(.45,0,.55,1) infinite; }
-        @keyframes lhPulse { 0% { stroke-dashoffset: .16; opacity: 0; } 12% { opacity: 1; } 62% { stroke-dashoffset: -1; opacity: 1; } 66%, 100% { stroke-dashoffset: -1; opacity: 0; } }
-        .lh--flow .lh-center::after { content: ''; position: absolute; left: 50%; top: 50%; width: 92%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; border: 3px solid rgba(255,122,82,.85); box-shadow: 0 0 18px rgba(255,92,57,.45); opacity: 0; z-index: -1; pointer-events: none; }
-        .lh--flow.lh--landed .lh-center::after { animation: lhBeat 1.6s cubic-bezier(.2,.7,.3,1) infinite; }
-        @keyframes lhBeat { 0% { transform: scale(.75); opacity: 0; } 15% { opacity: .9; } 100% { transform: scale(1.6); opacity: 0; } }
-        @media (prefers-reduced-motion: reduce) { .lh-flow, .lh--flow .lh-center::after { animation: none !important; } }
+        /* glow (Bing 2026-11-24): every line one light orange, softly glowing up and down together;
+           the hovered tool's line turns bright orange */
+        .lh--flow .lh-line { stroke: #ffb595; stroke-width: 2.5; }
+        .lh--flow.lh--landed .lh-line { animation: lhGlow 3.2s ease-in-out infinite; }
+        .lh--flow .lh-line.on { stroke: var(--intigris-coral); stroke-width: 4; animation: none; opacity: 1; filter: drop-shadow(0 0 8px rgba(255,92,57,.9)); }
+        @keyframes lhGlow { 0%, 100% { opacity: .45; filter: drop-shadow(0 0 0 rgba(255,150,110,0)); } 50% { opacity: 1; filter: drop-shadow(0 0 6px rgba(255,150,110,.75)); } }
+        @media (prefers-reduced-motion: reduce) { .lh--flow .lh-line { animation: none !important; opacity: .8; } }
         .lh-center { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
         .lh-center::before { content: ''; position: absolute; left: 50%; top: 42%; width: 150%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,161,224,.28), rgba(0,161,224,0)); z-index: -1; }
         .lh-center img { width: clamp(120px, 12vw, 172px); height: auto; filter: drop-shadow(0 18px 30px rgba(0,0,0,.4)); }
