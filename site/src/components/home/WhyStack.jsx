@@ -83,11 +83,11 @@ export function WhyLine() {
     <section className="ws ws--1" ref={ref}>
       <div className="container ws1-grid">
         <div className="ws1-side">
+          {/* Bing 2026-11-24: headline "We breathe Salesforce." (eyebrow stays "Why Intigris");
+              no 01/05 counter and no CTA button on the left */}
           <div className="eyebrow">{tx('WHY INTIGRIS', 'WAAROM INTIGRIS')}</div>
-          <h2>{tx('Why', 'Waarom')}<br /><span>Intigris?</span></h2>
+          <h2><em className="ws1-line">{tx('We breathe', 'Wij ademen')}</em><br /><span className="ws1-line">Salesforce.</span></h2>
           <p>{tx('Five reasons Dutch companies choose us as their Salesforce partner.', 'Vijf redenen waarom Nederlandse bedrijven ons kiezen als Salesforce-partner.')}</p>
-          <div className="ws1-count"><b>{act < 0 ? '01' : String(act + 1).padStart(2, '0')}</b><span>/ 05</span></div>
-          <Cta />
         </div>
         <div className="ws1-list">
           <div className="ws1-track" aria-hidden="true"><i className="ws1-fill" /></div>
@@ -244,7 +244,8 @@ const WS_CSS = `
 /* 1 · line */
 .ws1-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr); gap: 64px; align-items: start; }
 .ws1-side { position: sticky; top: 110px; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
-.ws1-side h2 { margin: 0; font-size: clamp(52px, 6.4vw, 96px); } .ws1-side p { font-size: 17px; color: var(--fg-muted); margin: 0; max-width: 22em; }
+.ws1-side h2 { margin: 0; font-size: clamp(42px, 4.6vw, 72px); }
+.ws1-line { white-space: nowrap; font-style: normal; } .ws1-side p { font-size: 17px; color: var(--fg-muted); margin: 0; max-width: 22em; }
 .ws1-count { display: flex; align-items: baseline; gap: 6px; } .ws1-count b { font-size: 56px; font-weight: 500; color: var(--intigris-coral); font-variant-numeric: tabular-nums; } .ws1-count span { color: var(--fg-muted); font-weight: 600; }
 .ws1-list { position: relative; padding-left: 48px; }
 .ws1-track { position: absolute; left: 11px; top: 12px; bottom: 12px; width: 3px; border-radius: 3px; background: var(--border); }

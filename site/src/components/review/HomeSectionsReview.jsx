@@ -17,19 +17,19 @@ const WhyStageSplit = () => <WhyStage look="split" />;
 
 const ROUNDS = () => [
   {
+    id: 'why2', title: tx('"Why Intigris" round 2 · C × D: stacked reasons with an active scroll line', '"Waarom Intigris" ronde 2 · C × D: gestapelde redenen met een actieve scrolllijn'),
+    variants: [
+      { k: '1', name: tx('Scroll line along the reasons (CHOSEN, with Bing\'s changes)', 'Scrolllijn langs de redenen (GEKOZEN, met Bings wijzigingen)'), note: tx('"We breathe Salesforce." stays on the left (no counter, no button); on the right a line fills as you scroll, a glowing dot lights each reason, headlines animate in letter by letter and each proof animates.', '"Wij ademen Salesforce." blijft links staan (geen teller, geen knop); rechts vult een lijn zich terwijl je scrolt, een gloeiende stip licht elke reden op, koppen animeren letter voor letter in en elk bewijs animeert.'), C: WhyLine },
+      { k: '2', name: tx('Pinned stage', 'Vastgezet podium'), note: tx('The section stays in place; scrolling moves the line on the left from reason to reason while one big reason at a time flies in letter by letter, with its proof.', 'De sectie blijft staan; scrollen beweegt de lijn links van reden naar reden terwijl één grote reden tegelijk letter voor letter invliegt, met het bewijs.'), C: WhyStage },
+      { k: '3', name: tx('Centre line, zigzag', 'Middenlijn, zigzag'), note: tx('A line draws itself down the middle; reasons slide in from left and right, each point lights up; it ends on the Summit badge and a call to action.', 'Een lijn tekent zichzelf door het midden; redenen schuiven links en rechts in, elk punt licht op; eindigt bij de Summit-badge en een call-to-action.'), C: WhyZigzag },
+    ],
+  },
+  {
     id: 'why3', title: tx('"Why Intigris" round 3 · the pinned stage (2) on cream, three designs', '"Waarom Intigris" ronde 3 · het vastgezette podium (2) op crème, drie ontwerpen'),
     variants: [
       { k: '2A', name: tx('Cream classic', 'Crème klassiek'), note: tx('Same as 2, on cream: line with the five reasons on the left, the big reason in the middle, proof in a white card.', 'Zelfde als 2, op crème: lijn met de vijf redenen links, de grote reden in het midden, bewijs in een witte kaart.'), C: WhyStageCream },
       { k: '2B', name: tx('Big outlined number', 'Groot omlijnd cijfer'), note: tx('A giant outlined number (01–05) behind each reason fills with coral as you scroll; a slim column of numbers on the left.', 'Een reusachtig omlijnd cijfer (01–05) achter elke reden vult zich met koraal terwijl je scrolt; een smalle kolom cijfers links.'), C: WhyStageNumber },
       { k: '2C', name: tx('Split stage with story bars', 'Gesplitst podium met storybalkjes'), note: tx('Reason on the left, a large proof card sliding in on the right; progress as five bars along the bottom, like stories.', 'Reden links, een grote bewijskaart die rechts inschuift; voortgang als vijf balkjes onderaan, zoals stories.'), C: WhyStageSplit },
-    ],
-  },
-  {
-    id: 'why2', title: tx('"Why Intigris" round 2 · C × D: stacked reasons with an active scroll line', '"Waarom Intigris" ronde 2 · C × D: gestapelde redenen met een actieve scrolllijn'),
-    variants: [
-      { k: '1', name: tx('Scroll line along the reasons', 'Scrolllijn langs de redenen'), note: tx('"Why Intigris?" stays on the left with a 01/05 counter; on the right a line fills as you scroll, a glowing dot lights each reason, headlines animate in letter by letter and each proof animates.', '"Waarom Intigris?" blijft links staan met een teller 01/05; rechts vult een lijn zich terwijl je scrolt, een gloeiende stip licht elke reden op, koppen animeren letter voor letter in en elk bewijs animeert.'), C: WhyLine },
-      { k: '2', name: tx('Pinned stage', 'Vastgezet podium'), note: tx('The section stays in place; scrolling moves the line on the left from reason to reason while one big reason at a time flies in letter by letter, with its proof.', 'De sectie blijft staan; scrollen beweegt de lijn links van reden naar reden terwijl één grote reden tegelijk letter voor letter invliegt, met het bewijs.'), C: WhyStage },
-      { k: '3', name: tx('Centre line, zigzag', 'Middenlijn, zigzag'), note: tx('A line draws itself down the middle; reasons slide in from left and right, each point lights up; it ends on the Summit badge and a call to action.', 'Een lijn tekent zichzelf door het midden; redenen schuiven links en rechts in, elk punt licht op; eindigt bij de Summit-badge en een call-to-action.'), C: WhyZigzag },
     ],
   },
   {
