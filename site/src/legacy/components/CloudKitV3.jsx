@@ -595,7 +595,7 @@ function V3LogoHub({ head, center, items }) {
         </div>
       </div>
       <style dangerouslySetInnerHTML={{ __html: `
-        .lh { overflow-x: clip; }
+        .lh { overflow: clip; } /* tools flying in stay inside the dark section (never over the section above) */
         .lh-grid { display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
         .lh-text .ck-head { margin-bottom: 28px; }
         .lh-stage { position: relative; width: 100%; max-width: min(760px, calc((100vh - 140px) * 1.2195)); margin: 0 auto; aspect-ratio: 1000 / 820; }
