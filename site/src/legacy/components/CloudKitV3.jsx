@@ -1,4 +1,5 @@
 /* Converted from components/CloudKitV3.jsx (classic Babel global) by scripts/convert-legacy.mjs */
+import { scrollShift } from '../../lib/scrollShift.js';
 import React from 'react';
 import { doc, win } from '../../lib/env.js';
 import { getLang, tx } from '../../lib/i18n.js';
@@ -570,13 +571,14 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
         gsap.set([root.querySelector('.lh-center'), ...nodes], { clearProps: 'transform,opacity' });
         gsap.set(lines, { strokeDashoffset: 0, opacity: 1 });
         gsap.set(root.querySelectorAll('.lh-dot'), { opacity: 0 });
-        const y = Math.max(0, win.scrollY - d);
-        if (win.lenis) win.lenis.scrollTo(y, { immediate: true, force: true }); else win.scrollTo(0, y);
+        scrollShift(win.scrollY - d);
         setLanded(true);
         ST.refresh();
       };
-      const tl = gsap.timeline({ scrollTrigger: { trigger: root, start: 'top 85%', end: () => pinST.end, scrub: 0.8, invalidateOnRefresh: true,
-        onUpdate: st => setLanded(st.progress > 0.92), onLeave: () => requestAnimationFrame(settle) } });
+      const tl = gsap.timeline({ scrollTrigger: { trigger: root, start: 'top 85%', end: () => pinST.end, scrub: 1, invalidateOnRefresh: true,
+        onUpdate: st => setLanded(st.progress > 0.92) } });
+      /* settle only once the section is completely off screen: the visitor never sees the switch */
+      ST.create({ start: () => pinST.end, end: 'max', onUpdate: () => { if (!settled && root.getBoundingClientRect().bottom < 0) requestAnimationFrame(settle); } });
       tl.fromTo(root.querySelector('.lh-center'), { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.6)' }, 0);
       nodes.forEach((el, i) => {
         /* Start further out along the node's own spoke: straight outside-in. */
@@ -595,7 +597,7 @@ function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
         else if (lineFx === 'flow') tl.fromTo(lines[i], { opacity: 0, strokeDashoffset: 0 }, { opacity: 1, duration: 0.8, ease: 'sine.inOut' }, t0 + 0.3);
         else tl.fromTo(lines[i], { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.35, ease: 'none' }, t0 + 0.7);
       });
-      tl.to({}, { duration: 0.25 });
+      tl.to({}, { duration: 0.5 }); // a calm still moment before the pin lets go
       return () => setLanded(true);
     });
     });

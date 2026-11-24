@@ -12,6 +12,7 @@
 /* ==================================================================== */
 import React, { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
+import { scrollShift } from '../../lib/scrollShift.js';
 import { tx, lp } from '../../lib/i18n.js';
 import { CK_STORIES } from '../../legacy/components/CloudKit.jsx';
 import { SS_LOGOS } from '../../legacy/components/StorySpotlight.jsx';
@@ -257,7 +258,7 @@ export function StoriesGalleryIndustry({ after = 'end' }) {
             const view = track.current && track.current.parentElement;
             if (view) view.scrollLeft = view.scrollWidth;
             const y = Math.max(0, w.scrollY + root.current.getBoundingClientRect().bottom - before);
-            if (w.lenis) w.lenis.scrollTo(y, { immediate: true, force: true }); else w.scrollTo(0, y);
+            scrollShift(y);
             ScrollTrigger.refresh();
             if (after === 'carousel' && view) gsap.to(view, { scrollLeft: 0, duration: 1.3, delay: 0.15, ease: 'power3.inOut' });
           }) } });
@@ -271,7 +272,7 @@ export function StoriesGalleryIndustry({ after = 'end' }) {
             flushSync(() => setSettled(true));
             // the new layout starts with its top edge at the top of the screen
             const y = Math.max(0, w.scrollY + root.current.getBoundingClientRect().top);
-            if (w.lenis) w.lenis.scrollTo(y, { immediate: true, force: true }); else w.scrollTo(0, y);
+            scrollShift(y);
             gsap.from(root.current.querySelectorAll('.sv-g-card, .sv-f-main, .sv-f-item'), { opacity: 0, y: 30, scale: 0.97, duration: 0.7, stagger: 0.06, ease: 'power3.out', clearProps: 'opacity,transform' });
             ScrollTrigger.refresh();
           } });

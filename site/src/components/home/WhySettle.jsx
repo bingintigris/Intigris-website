@@ -9,6 +9,7 @@
 /* ==================================================================== */
 import React, { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
+import { scrollShift } from '../../lib/scrollShift.js';
 import { tx } from '../../lib/i18n.js';
 import { PROMISES, Proof } from './WhyStack.jsx';
 
@@ -47,7 +48,7 @@ export function WhySettle({ look = 'cards' }) {
           flushSync(() => { setAct(P.length); setSettled(true); });
           gsap.set(list, { opacity: 1 });
           const y0 = Math.max(0, w.scrollY + root.getBoundingClientRect().bottom - bottomBefore);
-          if (w.lenis) w.lenis.scrollTo(y0, { immediate: true, force: true }); else w.scrollTo(0, y0);
+          scrollShift(y0);
           gsap.from(side, { y: sideBefore - side.getBoundingClientRect().top, duration: 1, ease: 'power2.inOut', clearProps: 'transform' });
           gsap.from(root.querySelectorAll('.ws1-item'), { opacity: 0, y: 24, duration: 0.8, stagger: 0.07, ease: 'power2.out', clearProps: 'opacity,transform' });
           // no automatic scrolling (Bing 2026-11-24): the visitor keeps full control, the page
