@@ -167,6 +167,84 @@ export function StoriesGallery() {
   );
 }
 
+/* ---------- C2 · Horizontal gallery with industry pills (Bing 2026-11-24) ----------
+   C with the heading on the left and a sliding pill selector on the right; picking an
+   industry shows only that industry's stories. Industries = partner-profile categories
+   that actually have stories in CK_STORIES. */
+export const INDUSTRIES = () => [
+  { id: 'all', l: tx('All', 'Alles'), keys: ORDER },
+  { id: 'energy', l: tx('Energy & renewables', 'Energie & duurzaam'), keys: ['evbox', 'opcharge', 'zon365', 'solar'] },
+  { id: 'install', l: tx('Installation & maintenance', 'Installatie & onderhoud'), keys: ['atag', 'alpha'] },
+  { id: 'tech', l: tx('Software & tech', 'Software & tech'), keys: ['wetransfer'] },
+];
+export function StoriesGalleryIndustry() {
+  const all = stories();
+  const IND = INDUSTRIES();
+  const [ind, setInd] = useState('all');
+  const list = all.filter((s) => IND.find((x) => x.id === ind).keys.includes(s.k));
+  const root = useRef(null), track = useRef(null), pills = useRef(null);
+  const [thumb, setThumb] = useState({ x: 0, w: 0 });
+  // sliding thumb follows the active pill
+  useEffect(() => {
+    const place = () => { const b = pills.current && pills.current.querySelector('button.on'); if (b) setThumb({ x: b.offsetLeft, w: b.offsetWidth }); };
+    place(); window.addEventListener('resize', place); return () => window.removeEventListener('resize', place);
+  }, [ind]);
+  // (re)build the horizontal scroll whenever the industry changes
+  useEffect(() => {
+    let ctx, alive = true;
+    const w = window;
+    const load = w.gsap && w.ScrollTrigger && w.SplitText
+      ? Promise.resolve([{ gsap: w.gsap }, { ScrollTrigger: w.ScrollTrigger }, { SplitText: w.SplitText }])
+      : Promise.all([import('gsap'), import('gsap/ScrollTrigger'), import('gsap/SplitText')]);
+    load.then(([{ gsap }, { ScrollTrigger }, { SplitText }]) => {
+      if (!alive || !root.current) return;
+      gsap.registerPlugin(ScrollTrigger, SplitText);
+      ctx = gsap.context(() => {
+        gsap.from('.sv-c-card, .sv-c-end', { opacity: 0, x: 60, duration: 0.5, stagger: 0.07, ease: 'power3.out' });
+        if (reduced() || window.innerWidth < 960) return;
+        const dist = () => Math.max(0, track.current.scrollWidth - track.current.parentElement.clientWidth);
+        // all cards already fit (e.g. one industry with a single story): no sideways scroll,
+        // no pin, quotes simply shown in full
+        if (dist() < 40) { gsap.set('.sv-c-bar i', { scaleX: 1 }); return; }
+        const tween = gsap.to(track.current, { x: () => -dist(), ease: 'none', scrollTrigger: { trigger: '.sv-c-pin', start: 'top top', end: () => '+=' + Math.max(1, dist()), pin: true, scrub: 0.6, invalidateOnRefresh: true,
+          onUpdate: (st) => gsap.set('.sv-c-bar i', { scaleX: st.progress }) } });
+        gsap.utils.toArray('.sv-c-card blockquote').forEach((q) => {
+          const split = SplitText.create(q, { type: 'words' });
+          gsap.from(split.words, { opacity: 0.12, stagger: 0.04, ease: 'none', scrollTrigger: { trigger: q, containerAnimation: tween, start: 'left 90%', end: 'left 40%', scrub: true } });
+        });
+      }, root);
+      clearTimeout(window.__svRefresh); window.__svRefresh = setTimeout(() => { ScrollTrigger.sort(); ScrollTrigger.refresh(); }, 200);
+    });
+    return () => { alive = false; ctx && ctx.revert(); };
+  }, [ind]);
+  return (
+    <section className="sv sv--c sv--c2" ref={root}>
+      <div className="sv-c-pin">
+        <div className="container sv-c2-top">
+          <Head />
+          <div className="sv-c2-pills" ref={pills} role="tablist" aria-label={tx('Filter by industry', 'Filter op branche')}>
+            <span className="sv-c2-thumb" aria-hidden="true" style={{ transform: `translateX(${thumb.x}px)`, width: thumb.w }} />
+            {IND.map((x) => <button key={x.id} role="tab" aria-selected={x.id === ind} className={x.id === ind ? 'on' : ''} onClick={() => setInd(x.id)}>{x.l}<small>{x.keys.length}</small></button>)}
+          </div>
+        </div>
+        <div className="sv-c-view">
+          <div className="sv-c-track" ref={track} key={ind}>
+            {list.map((s, i) => (
+              <article key={s.k} className={'sv-c-card sv-c-card--' + (i % 3)}>
+                <div className="sv-a-top"><Logo s={s} big /><span className="sv-sector">{s.sector}</span></div>
+                <blockquote>“{s.quote}”</blockquote>
+                <div className="sv-c-foot"><Who s={s} /><Pills s={s} /></div>
+              </article>
+            ))}
+            <a className="sv-c-end" href={lp('/cases')}><b>{tx('Read all stories', 'Lees alle verhalen')}</b><span>→</span></a>
+          </div>
+        </div>
+        <div className="container"><div className="sv-c-bar"><i /></div></div>
+      </div>
+    </section>
+  );
+}
+
 export function SvStyles() { return <style dangerouslySetInnerHTML={{ __html: SV_CSS }} />; }
 
 const SV_CSS = `
@@ -215,9 +293,20 @@ const SV_CSS = `
 .sv-c-end { flex: none; width: 240px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 10px; padding: 34px; border-radius: 28px; border: 2px dashed rgba(64,35,1,.35); color: var(--intigris-dark-brown); text-decoration: none; }
 .sv-c-end b { font-size: 24px; font-weight: 500; } .sv-c-end span { font-size: 34px; }
 .sv-c-bar { height: 4px; border-radius: 4px; background: rgba(64,35,1,.18); overflow: hidden; } .sv-c-bar i { display: block; height: 100%; background: var(--intigris-dark-brown); transform: scaleX(0); transform-origin: left; }
+/* C2 · heading left, industry pills right */
+.sv-c2-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; }
+.sv--c2 .sv-head h2 { max-width: 9ch; }
+.sv-c2-pills { margin-bottom: 6px; }
+.sv-c2-pills { position: relative; display: inline-flex; padding: 5px; border-radius: 999px; background: rgba(64,35,1,.14); }
+.sv-c2-thumb { position: absolute; top: 5px; bottom: 5px; left: 0; border-radius: 999px; background: var(--intigris-off-white); box-shadow: 0 6px 16px -8px rgba(64,35,1,.5); transition: transform .45s cubic-bezier(.2,.8,.2,1), width .45s cubic-bezier(.2,.8,.2,1); }
+.sv-c2-pills button { all: unset; position: relative; z-index: 1; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; padding: 11px 18px; border-radius: 999px; font-size: 14.5px; font-weight: 500; color: var(--intigris-off-white); white-space: nowrap; transition: color .3s; }
+.sv-c2-pills button small { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 99px; background: rgba(255,250,240,.22); }
+.sv-c2-pills button.on { color: var(--intigris-dark-brown); } .sv-c2-pills button.on small { background: var(--intigris-coral-100); color: var(--intigris-coral-700); }
+.sv-c2-pills button:focus-visible { outline: 2px solid var(--intigris-dark-brown); outline-offset: 2px; }
 @media (max-width: 960px) {
   .sv { padding: 80px 0; } .sv-a-grid { grid-template-columns: 1fr; } .sv-a-deck { height: 520px; }
   .sv-b-wall { grid-template-columns: 1fr 1fr; } .sv-b-tile.open { grid-column: span 2; grid-row: auto; }
   .sv-c-view { overflow-x: auto; scroll-snap-type: x mandatory; } .sv-c-card { scroll-snap-align: start; }
+  .sv-c2-pills { overflow-x: auto; max-width: 100%; }
 }
 `;

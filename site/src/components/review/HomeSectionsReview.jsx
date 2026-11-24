@@ -11,7 +11,7 @@ import { TrustedVelocity, TrustedWall, TrustedSentence, TrustedStats, TvStyles }
 import { HeroFx1, HeroFx2, HeroFx3, HfxStyles } from './HeroFxVariants.jsx';
 import { WhyBento, WhyVs, WhyPinned, WhyStory, WhyPeople, WiStyles } from '../home/WhyIntigris.jsx';
 import { WhyLine, WhyStage, WhyZigzag, WsStyles } from '../home/WhyStack.jsx';
-import { StoriesStack, StoriesWall, StoriesGallery, SvStyles } from '../home/StoriesVariants.jsx';
+import { StoriesStack, StoriesWall, StoriesGallery, StoriesGalleryIndustry, SvStyles } from '../home/StoriesVariants.jsx';
 import { StorySpotlight, SsStyles } from '../../legacy/components/StorySpotlight.jsx';
 import { CK_STORIES, CkStyles } from '../../legacy/components/CloudKit.jsx';
 const StoriesCurrent = () => { const S = CK_STORIES(); return <><CkStyles /><StorySpotlight variant="pills" head={{ eyebrow: tx('CUSTOMER SUCCESS STORIES', 'KLANTSUCCESVERHALEN'), a: tx('Teams that run on it.', 'Teams die erop draaien.'), b: '', lede: tx('What we built, in their own words. Pick a company or let it play.', 'Wat we bouwden, in hun eigen woorden. Kies een bedrijf of laat het vanzelf lopen.') }} stories={[S.wetransfer, S.evbox, S.ridder]} /></>; };
@@ -23,6 +23,7 @@ const ROUNDS = () => [
   {
     id: 'stories', title: tx('Customer stories · current section + three redesigns', 'Klantverhalen · huidige sectie + drie herontwerpen'),
     variants: [
+      { k: 'C2', name: tx('Horizontal gallery + industry pills (CHOSEN, with Bing\'s changes)', 'Horizontale galerij + branchepillen (GEKOZEN, met Bings wijzigingen)'), note: tx('Heading on the left, a sliding pill selector on the right (All · Energy & renewables · Installation & maintenance · Software & tech); picking one shows only that industry\'s stories.', 'Kop links, rechts een schuivende pillenkiezer (Alles · Energie & duurzaam · Installatie & onderhoud · Software & tech); kies er één en je ziet alleen de verhalen uit die branche.'), C: StoriesGalleryIndustry },
       { k: '0', name: tx('Current (reference)', 'Huidig (referentie)'), note: tx('The section that is on the homepage now.', 'De sectie die nu op de homepage staat.'), C: StoriesCurrent },
       { k: 'A', name: tx('Swipeable card stack', 'Swipebare kaartenstapel'), note: tx('A deck of story cards you drag (or swipe) away with throwing physics; the next quote appears line by line. GSAP Draggable + Inertia + SplitText.', 'Een stapel verhaalkaarten die je wegsleept (of swipet) met werpfysica; het volgende citaat verschijnt regel voor regel. GSAP Draggable + Inertia + SplitText.'), C: StoriesStack },
       { k: 'B', name: tx('Story wall that expands', 'Verhalenmuur die uitklapt'), note: tx('A wall of small customer tiles; click one and it smoothly grows into the featured story while the others make room. GSAP Flip.', 'Een muur met kleine klanttegels; klik er één aan en hij groeit soepel uit tot het uitgelichte verhaal terwijl de rest plaatsmaakt. GSAP Flip.'), C: StoriesWall },
