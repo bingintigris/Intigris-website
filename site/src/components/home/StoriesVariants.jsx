@@ -11,6 +11,7 @@
 /*  Opcharge (SS_LOGOS); others show the name.                              */
 /* ==================================================================== */
 import React, { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { tx, lp } from '../../lib/i18n.js';
 import { CK_STORIES } from '../../legacy/components/CloudKit.jsx';
 import { SS_LOGOS } from '../../legacy/components/StorySpotlight.jsx';
@@ -179,7 +180,35 @@ export const INDUSTRIES = () => [
   { id: 'install', l: tx('Installation', 'Installatie'), keys: ['atag', 'alpha'] },
   { id: 'tech', l: tx('Tech', 'Tech'), keys: ['wetransfer'] },
 ];
-export function StoriesGalleryIndustry() {
+/* spotlight: one big quote, the other customers as a clickable list; rotates every 6 s until
+   the visitor picks one */
+function StoriesFeature({ list }) {
+  const [i, setI] = useState(0); const [hold, setHold] = useState(false);
+  useEffect(() => { if (hold || reduced() || list.length < 2) return; const t = setInterval(() => setI((x) => (x + 1) % list.length), 6000); return () => clearInterval(t); }, [hold, list.length]);
+  const s = list[Math.min(i, list.length - 1)];
+  return (
+    <div className="container"><div className="sv-f">
+      <article className="sv-f-main" key={s.k}>
+        <div className="sv-a-top"><Logo s={s} big /><span className="sv-sector">{s.sector}</span></div>
+        <blockquote>“{s.quote}”</blockquote>
+        <div className="sv-c-foot"><Who s={s} /><Pills s={s} /></div>
+      </article>
+      <div className="sv-f-list" role="tablist">
+        {list.map((x, k) => (
+          <button key={x.k} type="button" role="tab" aria-selected={k === i} className={'sv-f-item' + (k === i ? ' on' : '') + (hold ? ' held' : '')} onClick={() => { setI(k); setHold(true); }}>
+            <Logo s={x} /><span>{x.sector}</span><i />
+          </button>
+        ))}
+        <a className="sv-f-all" href={lp('/cases')}>{tx('Read all stories', 'Lees alle verhalen')} →</a>
+      </div>
+    </div></div>
+  );
+}
+
+/* after = what the gallery becomes once it has been scrolled through (Bing 2026-11-24, round 2):
+   'end' (row stays at its end), 'carousel' (glides back to the first story, arrows + drag),
+   'grid' (folds into a grid of all stories), 'feature' (one big quote + clickable logo list) */
+export function StoriesGalleryIndustry({ after = 'end' }) {
   const all = stories();
   const IND = INDUSTRIES();
   const [ind, setInd] = useState('all');
@@ -207,7 +236,7 @@ export function StoriesGalleryIndustry() {
       if (!alive || !root.current) return;
       gsap.registerPlugin(ScrollTrigger, SplitText);
       ctx = gsap.context(() => {
-        gsap.from('.sv-c-card, .sv-c-end', { opacity: 0, x: 60, duration: 0.5, stagger: 0.07, ease: 'power3.out' });
+        gsap.from('.sv-c-card, .sv-c-end, .sv-g-card, .sv-f-main, .sv-f-item', { opacity: 0, x: 60, duration: 0.5, stagger: 0.07, ease: 'power3.out' });
         if (reduced() || window.innerWidth < 960) return;
         if (settledRef.current) return;
         const dist = () => Math.max(0, track.current.scrollWidth - track.current.parentElement.clientWidth);
@@ -218,6 +247,7 @@ export function StoriesGalleryIndustry() {
           onUpdate: (st) => gsap.set('.sv-c-bar i', { scaleX: st.progress }),
           onLeave: (st) => requestAnimationFrame(() => {
             if (settledRef.current || !alive) return;
+            if (after === 'grid' || after === 'feature') { morph(); return; }
             // anchor on the section's bottom edge: whatever unpinning removes, the content
             // below stays exactly where it was on screen
             const before = root.current.getBoundingClientRect().bottom;
@@ -229,7 +259,23 @@ export function StoriesGalleryIndustry() {
             const y = Math.max(0, w.scrollY + root.current.getBoundingClientRect().bottom - before);
             if (w.lenis) w.lenis.scrollTo(y, { immediate: true, force: true }); else w.scrollTo(0, y);
             ScrollTrigger.refresh();
+            if (after === 'carousel' && view) gsap.to(view, { scrollLeft: 0, duration: 1.3, delay: 0.15, ease: 'power3.inOut' });
           }) } });
+        /* grid / feature: the row fades out, the layout switches while it is invisible (keeping
+           the section's top edge where it is on screen) and the new cards rise in one by one */
+        const morph = () => {
+          settledRef.current = true;
+          gsap.to(root.current.querySelectorAll('.sv-c-view, .sv-c-bar'), { opacity: 0, y: -14, duration: 0.35, ease: 'power2.in', onComplete: () => {
+            if (!alive) return;
+            ctx.revert();
+            flushSync(() => setSettled(true));
+            // the new layout starts with its top edge at the top of the screen
+            const y = Math.max(0, w.scrollY + root.current.getBoundingClientRect().top);
+            if (w.lenis) w.lenis.scrollTo(y, { immediate: true, force: true }); else w.scrollTo(0, y);
+            gsap.from(root.current.querySelectorAll('.sv-g-card, .sv-f-main, .sv-f-item'), { opacity: 0, y: 30, scale: 0.97, duration: 0.7, stagger: 0.06, ease: 'power3.out', clearProps: 'opacity,transform' });
+            ScrollTrigger.refresh();
+          } });
+        };
         gsap.utils.toArray('.sv-c-card blockquote').forEach((q) => {
           const split = SplitText.create(q, { type: 'words' });
           gsap.from(split.words, { opacity: 0.12, stagger: 0.04, ease: 'none', scrollTrigger: { trigger: q, containerAnimation: tween, start: 'left 90%', end: 'left 40%', scrub: true } });
@@ -239,6 +285,17 @@ export function StoriesGalleryIndustry() {
     });
     return () => { alive = false; ctx && ctx.revert(); };
   }, [ind]);
+  // carousel: arrows move one card; mouse users can also drag the row
+  const nudge = (d) => { const v = track.current && track.current.parentElement; const c = v && v.querySelector('.sv-c-card'); if (v) v.scrollBy({ left: d * (c ? c.offsetWidth + 24 : 400), behavior: 'smooth' }); };
+  useEffect(() => {
+    if (!settled || after !== 'carousel' || !track.current) return;
+    const v = track.current.parentElement; let x0 = 0, l0 = 0, down = false;
+    const dn = (e) => { if (e.pointerType !== 'mouse') return; down = true; x0 = e.clientX; l0 = v.scrollLeft; v.classList.add('drag'); };
+    const mv = (e) => { if (down) v.scrollLeft = l0 - (e.clientX - x0); };
+    const up = () => { down = false; v.classList.remove('drag'); };
+    v.addEventListener('pointerdown', dn); window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up);
+    return () => { v.removeEventListener('pointerdown', dn); window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); };
+  }, [settled, after, ind]);
   // settled: the progress bar follows the sideways scroll of the row
   useEffect(() => {
     if (!settled || !track.current) return;
@@ -248,7 +305,7 @@ export function StoriesGalleryIndustry() {
     return () => view.removeEventListener('scroll', upd);
   }, [settled, ind]);
   return (
-    <section className={'sv sv--c sv--c2' + (settled ? ' sv--settled' : '')} ref={root}>
+    <section className={'sv sv--c sv--c2' + (settled ? ' sv--settled sv--after-' + after : '')} ref={root}>
       <div className="sv-c-pin">
         <div className="container sv-c2-top">
           <Head />
@@ -257,6 +314,19 @@ export function StoriesGalleryIndustry() {
             {IND.map((x) => <button key={x.id} role="tab" aria-selected={x.id === ind} className={x.id === ind ? 'on' : ''} onClick={() => { setInd(x.id); if (settled && track.current) track.current.parentElement.scrollLeft = 0; }}>{x.l}</button>)}
           </div>
         </div>
+        {settled && after === 'grid' && (
+          <div className="container" key={'g' + ind}><div className="sv-g-grid">
+            {list.map((s) => (
+              <article key={s.k} className="sv-g-card">
+                <div className="sv-a-top"><Logo s={s} /><span className="sv-sector">{s.sector}</span></div>
+                <blockquote>“{s.quote}”</blockquote>
+                <Who s={s} />
+              </article>
+            ))}
+            <a className="sv-g-card sv-g-more" href={lp('/cases')}><b>{tx('Read all stories', 'Lees alle verhalen')}</b><span>→</span></a>
+          </div></div>
+        )}
+        {settled && after === 'feature' && <StoriesFeature list={list} key={'f' + ind} />}
         <div className="sv-c-view">
           <div className="sv-c-track" ref={track} key={ind}>
             {list.map((s, i) => (
@@ -269,7 +339,14 @@ export function StoriesGalleryIndustry() {
             <a className="sv-c-end" href={lp('/cases')}><b>{tx('Read all stories', 'Lees alle verhalen')}</b><span>→</span></a>
           </div>
         </div>
-        <div className="container"><div className="sv-c-bar"><i /></div></div>
+        <div className="container sv-c-barrow"><div className="sv-c-bar"><i /></div>
+          {settled && after === 'carousel' && (
+            <div className="sv-k-arrows">
+              <button type="button" aria-label={tx('Previous story', 'Vorig verhaal')} onClick={() => nudge(-1)}>←</button>
+              <button type="button" aria-label={tx('Next story', 'Volgend verhaal')} onClick={() => nudge(1)}>→</button>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
@@ -330,6 +407,29 @@ const SV_CSS = `
 .sv--settled .sv-c-view { overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
 .sv--settled .sv-c-view::-webkit-scrollbar { display: none; }
 .sv--settled .sv-c-card, .sv--settled .sv-c-end { scroll-snap-align: center; }
+/* after-scroll versions (round 2) */
+.sv-c-barrow { display: flex; align-items: center; gap: 18px; } .sv-c-barrow .sv-c-bar { flex: 1; }
+.sv-k-arrows { display: flex; gap: 10px; } .sv-k-arrows button { all: unset; cursor: pointer; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--intigris-dark-brown); color: var(--intigris-off-white); font-size: 18px; transition: transform .2s; } .sv-k-arrows button:hover { transform: scale(1.08); }
+.sv--after-carousel .sv-c-view { cursor: grab; scroll-snap-type: none; } .sv--after-carousel .sv-c-view.drag { cursor: grabbing; user-select: none; }
+.sv--after-grid .sv-c-view, .sv--after-grid .sv-c-barrow, .sv--after-feature .sv-c-view, .sv--after-feature .sv-c-barrow { display: none; }
+.sv--after-grid .sv-c-pin, .sv--after-feature .sv-c-pin { min-height: 0; padding: 84px 0 80px; gap: 28px; }
+.sv-g-card .sv-a-top { flex-wrap: wrap; row-gap: 6px; } .sv-g-card .sv-sector { font-size: 10.5px; white-space: nowrap; }
+.sv-g-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.sv-g-card { box-sizing: border-box; display: flex; flex-direction: column; gap: 14px; padding: 22px; border-radius: 22px; background: var(--intigris-off-white); box-shadow: 0 24px 50px -36px rgba(64,35,1,.6); }
+.sv-g-card blockquote { margin: 0 0 auto; font-size: 16.5px; font-weight: 500; line-height: 1.4; letter-spacing: -0.01em; }
+.sv-g-card .sv-logo { height: 24px; } .sv-g-card .sv-who b { font-size: 13.5px; } .sv-g-card .sv-who span { font-size: 12px; }
+.sv-g-more { justify-content: center; background: var(--intigris-dark-brown); color: var(--intigris-off-white); text-decoration: none; } .sv-g-more b { font-size: 22px; font-weight: 500; } .sv-g-more span { font-size: 30px; }
+.sv-f { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 20px; align-items: stretch; }
+.sv-f-main { display: flex; flex-direction: column; gap: 22px; padding: 34px; border-radius: 28px; background: var(--intigris-off-white); box-shadow: 0 30px 60px -36px rgba(64,35,1,.6); animation: svFIn .55s cubic-bezier(.2,.8,.2,1) both; }
+.sv-f-main blockquote { margin: 0; font-size: clamp(24px, 2.4vw, 34px); font-weight: 500; letter-spacing: -0.02em; line-height: 1.25; }
+@keyframes svFIn { from { opacity: 0; transform: translateY(14px); } }
+.sv-f-list { display: flex; flex-direction: column; gap: 8px; }
+.sv-f-item { all: unset; box-sizing: border-box; cursor: pointer; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-radius: 16px; background: rgba(255,250,240,.35); transition: background .25s; }
+.sv-f-item .sv-logo { height: 22px; } .sv-f-item { padding: 12px 18px; } .sv-f-item span { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(64,35,1,.6); }
+.sv-f-item:hover { background: rgba(255,250,240,.6); } .sv-f-item.on { background: var(--intigris-off-white); }
+.sv-f-item i { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: var(--intigris-coral); }
+.sv-f-item.on:not(.held) i { animation: svFBar 6s linear both; } @keyframes svFBar { to { width: 100%; } }
+.sv-f-all { margin-top: 6px; font-weight: 600; color: var(--intigris-dark-brown); text-decoration: none; padding: 6px 4px; }
 /* C2 · heading left, industry pills right */
 .sv-c2-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; }
 .sv--c2 .sv-head h2 { max-width: 9ch; }
