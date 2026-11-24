@@ -38,13 +38,13 @@ function SiteSalesforceHome({ onCta }) {
       {/* 2 · What we implement: concept A "Chaos to order" (chosen by Bing 2026-11-23), replaces the
              "A day at Havenwerk BV" platform island (islands/src/islands/PlatformMission.tsx, kept as inspiration) */}
       <CloudsChaos />
-      {/* 4 · Where do you start: variant D (roles + product card, light), chosen 2026-11-17 */}
-      <StartRolesCard />
-
-      {/* 5 · Integrations (approved on the Sales Cloud page) */}
+      {/* 3 · Integrations (approved on the Sales Cloud page); moved up below 'What we implement' by Bing 2026-11-24 */}
       <V3LogoHub center="Salesforce" head={{ eyebrow: tx('INTEGRATIONS', 'KOPPELINGEN'), a: tx('Connected to', 'Gekoppeld aan'), b: tx('everything you use.', 'alles wat je gebruikt.'),
         lede: tx('Salesforce gets stronger when it talks to the rest of your business. These are connections we build and maintain. Hover over a tool to see what it does.', 'Salesforce wordt sterker als het praat met de rest van je bedrijf. Dit zijn koppelingen die wij bouwen en onderhouden. Ga met je muis over een tool om te zien wat het doet.') }}
         items={HSF_INTEGRATIONS()} />
+
+      {/* 4 · Where do you start: variant D (roles + product card, light), chosen 2026-11-17 */}
+      <StartRolesCard />
 
       {/* 6 · How we work: TODO (variant round) */}
 
