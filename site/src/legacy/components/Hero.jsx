@@ -1,6 +1,7 @@
 /* Converted from components/Hero.jsx (classic Babel global) by scripts/convert-legacy.mjs */
 import React from 'react';
 import { getLang, tx } from '../../lib/i18n.js';
+import { TrustedVelocity, TvStyles } from '../../components/home/TrustedVariants.jsx';
 // Hero.jsx, Bold stacked headline + warm editorial composition right.
 // Exposes: window.SiteHero
 
@@ -570,53 +571,17 @@ function HeroStats({ tx, glass = false }) {
   );
 }
 
-/* ---------- Tiny logo-strip marquee that lives inside the hero ---------- */
+/* ---------- "Trusted by" logo strip that lives inside the hero ----------
+   Since 2026-11-24 (Bing picked design A): the speed marquee from
+   components/home/TrustedVariants.jsx. It runs on its own, speeds up and
+   leans while the page scrolls, and reverses when scrolling up. Grey logos,
+   colour on hover. The old simple CSS marquee is in git history. */
 function ProofMarquee() {
-  const LOGOS = [
-    { src: "/assets/logos/warmgarant.png",              alt: 'Warmgarant',              h: 38 },
-    { src: "/assets/logos/feenstra.png",                alt: 'Feenstra',                h: 36 },
-    { src: "/assets/logos/direct-healthcare-group.png", alt: 'Direct Healthcare Group', h: 44 },
-    { src: "/assets/logos/customs-support-group.png",   alt: 'Customs Support Group',   h: 46 },
-    { src: "/assets/logos/wetransfer.svg",              alt: 'WeTransfer',              h: 30 },
-    { src: "/assets/logos/cyclovriend.svg",             alt: 'Cyclovriend',             h: 40 },
-    { src: "/assets/logos/bouwgroep-schrijver.svg",     alt: 'Bouwgroep Schrijver',     h: 40 },
-  ];
   return (
-    <div style={{
-      paddingTop: 22, paddingBottom: 28,
-      background: 'var(--intigris-off-white)',
-      position: 'relative',
-    }}>
-      <div className="container-wide" style={{
-        display: 'flex', justifyContent: 'flex-start',
-        marginBottom: 14,
-      }}>
-        <div className="eyebrow" style={{
-          fontSize: 11,
-          color: 'var(--fg-muted)',
-        }}>
-          {tx('TRUSTED BY', 'VERTROUWD DOOR')}
-        </div>
-      </div>
-      <div className="marquee">
-        <div className="marquee-track" style={{ alignItems: 'center', gap: 72 }}>
-          {[...LOGOS, ...LOGOS].map((logo, i) => (
-            <img
-              key={i}
-              src={logo.src}
-              alt={logo.alt}
-              style={{
-                height: logo.h,
-                width: 'auto',
-                display: 'block',
-                flexShrink: 0,
-                objectFit: 'contain',
-              }}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
+    <>
+      <TrustedVelocity hero />
+      <TvStyles />
+    </>
   );
 }
 

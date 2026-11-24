@@ -20,8 +20,8 @@ export const TRUSTED = () => [
   { src: L + 'direct-healthcare-group.png', alt: 'Direct Healthcare Group', h: 40, ind: tx('Healthcare', 'Zorg') },
   { src: L + 'customs-support-group.png', alt: 'Customs Support Group', h: 42, ind: tx('Customs & logistics', 'Douane & logistiek') },
   { src: L + 'bouwgroep-schrijver.svg', alt: 'Bouwgroep Schrijver', h: 36, ind: tx('Construction', 'Bouw') },
-  { src: L + 'feenstra.png', alt: 'Feenstra', h: 32, ind: tx('Installation & energy', 'Installatie & energie') },
-  { src: L + 'warmgarant.png', alt: 'Warmgarant', h: 34, ind: tx('Heating & service', 'Verwarming & service') },
+  { src: L + 'feenstra.png', alt: 'Feenstra', h: 44, ind: tx('Installation & energy', 'Installatie & energie') },
+  { src: L + 'warmgarant.png', alt: 'Warmgarant', h: 44, ind: tx('Heating & service', 'Verwarming & service') },
   { src: L + 'cyclovriend.svg', alt: 'Cyclovriend', h: 34, ind: tx('Mobility', 'Mobiliteit') },
   { src: L + 'opcharge.svg', alt: 'Opcharge', h: 30, ind: tx('EV charging', 'Laadpalen') },
 ];
@@ -29,7 +29,7 @@ const reduced = () => typeof window !== 'undefined' && window.matchMedia('(prefe
 const Eyebrow = () => <div className="eyebrow tv-eyebrow">{tx('TRUSTED BY', 'VERTROUWD DOOR')}</div>;
 
 /* ---------- A · Speed marquee ---------- */
-export function TrustedVelocity({ tint }) {
+export function TrustedVelocity({ tint, hero }) {
   const root = useRef(null), track = useRef(null);
   const logos = TRUSTED();
   useEffect(() => {
@@ -57,8 +57,8 @@ export function TrustedVelocity({ tint }) {
     return () => { alive = false; ctx && ctx.revert(); };
   }, []);
   return (
-    <section className={'tv tv--a' + (tint ? ' tv--tint' : '')} ref={root}>
-      <div className="container"><Eyebrow /></div>
+    <section className={'tv tv--a' + (tint ? ' tv--tint' : '') + (hero ? ' tv--hero' : '')} ref={root}>
+      <div className={hero ? 'container-wide' : 'container'}><Eyebrow /></div>
       <div className="tv-a-viewport">
         <div className="tv-a-track" ref={track}>
           {[...logos, ...logos].map((l, i) => tint
@@ -196,6 +196,9 @@ const TV_CSS = `
 /* A */
 .tv-a-viewport { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
 .tv-a-track { display: flex; align-items: center; gap: 80px; width: max-content; padding: 8px 0; will-change: transform; }
+/* A in the hero (live, Bing 2026-11-24): same compact spacing as the old strip */
+.tv--hero { padding: 22px 0 28px; }
+.tv--hero .tv-eyebrow { margin-bottom: 14px; }
 /* A2 · coral logos */
 .tv-tint { position: relative; display: block; flex: none; }
 .tv-tint img { display: block; width: auto; visibility: hidden; }
