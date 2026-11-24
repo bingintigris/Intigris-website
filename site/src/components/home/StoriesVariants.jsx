@@ -283,6 +283,9 @@ const SV_CSS = `
 .sv--c { padding: 0; }
 .sv-c-pin { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: 36px; padding: 90px 0 50px; box-sizing: border-box; }
 .sv-c-view { overflow: hidden; }
+/* the pin is a flex column: without an explicit width its .container (margin: 0 auto) shrinks to its
+   content; make it span the normal content width so heading and pills align with the other sections */
+.sv-c-pin > .container { width: 100%; box-sizing: border-box; }
 .sv-c-track { display: flex; gap: 24px; width: max-content; padding: 0 max(28px, calc((100vw - 1240px) / 2)); }
 .sv-c-card { flex: none; width: min(560px, 80vw); box-sizing: border-box; display: flex; flex-direction: column; gap: 22px; padding: 34px; border-radius: 28px; background: var(--intigris-off-white); box-shadow: 0 30px 60px -36px rgba(64,35,1,.6); }
 .sv-c-card--1 { background: var(--intigris-brown-700); color: var(--intigris-off-white); } .sv-c-card--1 .sv-logo--txt { color: var(--intigris-off-white); } .sv-c-card--1 .sv-who span { color: rgba(255,250,240,.65); } .sv-c-card--1 .sv-sector { color: #ffb59e; }
