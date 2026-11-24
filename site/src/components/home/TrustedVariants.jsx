@@ -29,7 +29,7 @@ const reduced = () => typeof window !== 'undefined' && window.matchMedia('(prefe
 const Eyebrow = () => <div className="eyebrow tv-eyebrow">{tx('TRUSTED BY', 'VERTROUWD DOOR')}</div>;
 
 /* ---------- A · Speed marquee ---------- */
-export function TrustedVelocity() {
+export function TrustedVelocity({ tint }) {
   const root = useRef(null), track = useRef(null);
   const logos = TRUSTED();
   useEffect(() => {
@@ -57,11 +57,17 @@ export function TrustedVelocity() {
     return () => { alive = false; ctx && ctx.revert(); };
   }, []);
   return (
-    <section className="tv tv--a" ref={root}>
+    <section className={'tv tv--a' + (tint ? ' tv--tint' : '')} ref={root}>
       <div className="container"><Eyebrow /></div>
       <div className="tv-a-viewport">
         <div className="tv-a-track" ref={track}>
-          {[...logos, ...logos].map((l, i) => <img key={i} className="tv-logo" src={l.src} alt={i < logos.length ? l.alt : ''} style={{ height: l.h }} />)}
+          {[...logos, ...logos].map((l, i) => tint
+            /* A2 (Bing 2026-11-24): every logo in Intigris coral. The logo is used as a stencil
+               (CSS mask) over a coral fill; the hidden <img> keeps the logo's own size. */
+            ? <span key={i} className="tv-tint" role="img" aria-label={i < logos.length ? l.alt : undefined} aria-hidden={i < logos.length ? undefined : true}>
+                <img src={l.src} alt="" style={{ height: l.h }} /><i style={{ WebkitMaskImage: `url(${l.src})`, maskImage: `url(${l.src})` }} />
+              </span>
+            : <img key={i} className="tv-logo" src={l.src} alt={i < logos.length ? l.alt : ''} style={{ height: l.h }} />)}
         </div>
       </div>
     </section>
@@ -190,6 +196,11 @@ const TV_CSS = `
 /* A */
 .tv-a-viewport { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
 .tv-a-track { display: flex; align-items: center; gap: 80px; width: max-content; padding: 8px 0; will-change: transform; }
+/* A2 · coral logos */
+.tv-tint { position: relative; display: block; flex: none; }
+.tv-tint img { display: block; width: auto; visibility: hidden; }
+.tv-tint i { position: absolute; inset: 0; background: var(--intigris-coral); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; transition: background .3s; }
+.tv-tint:hover i { background: var(--intigris-dark-brown); }
 /* B */
 .tv-b-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr); gap: 48px; align-items: center; }
 .tv-b-wall { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; --mx: -200px; --my: -200px; }
