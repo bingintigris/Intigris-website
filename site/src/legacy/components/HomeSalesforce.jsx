@@ -7,7 +7,8 @@ import { V3LogoHub, V3Styles } from './CloudKitV3.jsx';
 import { StorySpotlight } from './StorySpotlight.jsx';
 import { StartRolesCard, WtsStyles } from '../../components/home/WhereToStart.jsx';
 import { CloudsChaos, CpStyles } from '../../components/home/CloudsPick.jsx';
-import { WhyLine, WsStyles } from '../../components/home/WhyStack.jsx';
+import { WsStyles } from '../../components/home/WhyStack.jsx';
+import { WhySettleBento, WsoStyles } from '../../components/home/WhySettle.jsx';
 import { StoriesGalleryIndustry, SvStyles } from '../../components/home/StoriesVariants.jsx';
 /* ==================================================================== */
 /*  HOMEPAGE · SALESFORCE SOLUTIONS view (index.html, mode = salesforce)   */
@@ -49,7 +50,8 @@ function SiteSalesforceHome({ onCta }) {
 
       {/* 4 · Why Intigris: "We breathe Salesforce." scroll line along five reasons (chosen by Bing 2026-11-24);
              replaces "Where do you start?" (StartRolesCard, overlapped with section 2) */}
-      <WhyLine />
+      {/* Bing 2026-11-24: plays once, then settles into the bento overview (round 4, B) */}
+      <WhySettleBento />
 
       {/* 6 · How we work: TODO (variant round) */}
 
@@ -67,6 +69,7 @@ function SiteSalesforceHome({ onCta }) {
       <WtsStyles />
       <CpStyles />
       <WsStyles />
+      <WsoStyles />
       <SvStyles />
     </React.Fragment>
   );
