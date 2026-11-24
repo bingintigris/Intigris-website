@@ -70,45 +70,6 @@ function RotatingWord({ words, idx, color = 'var(--intigris-coral)' }) {
 }
 
 /* ---------- Cinematic: full-bleed coral hero, transparent overlay header ---------- */
-/* ---------- Hero scroll effects (design round, Bing 2026-11-24) ----------
-   Three candidate effects, only active with ?heroFx=1|2|3 in the URL so they
-   can be compared on the real homepage; without the parameter nothing changes.
-     1 · Card lift   : side margins grow, corners round, soft shadow
-     2 · Depth       : photo slower + slight zoom, text and stats drift up
-     3 · Photo reveal: coral fades back, the team photo comes forward, warm wash
-   GSAP + ScrollTrigger from npm (client only), scrubbed over the hero's own
-   height, reverted on unmount; skipped for prefers-reduced-motion. */
-function useHeroScrollFx(ref) {
-  React.useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const fx = new URLSearchParams(window.location.search).get('heroFx');
-    if (!fx || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let ctx, alive = true;
-    Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
-      if (!alive || !ref.current) return;
-      gsap.registerPlugin(ScrollTrigger);
-      ctx = gsap.context(() => {
-        const st = { trigger: ref.current, start: 'top top', end: 'bottom top', scrub: 0.6 };
-        if (fx === '1') {
-          gsap.fromTo(ref.current, { clipPath: 'inset(0% 0% 0% 0% round 0px 0px 56px 56px)', boxShadow: '0 0 0 rgba(64,35,1,0)' },
-            { clipPath: 'inset(0% 4% 0% 4% round 0px 0px 44px 44px)', ease: 'none', scrollTrigger: { ...st, end: '60% top' } });
-          gsap.to('.hero-cine-content', { y: 60, ease: 'none', scrollTrigger: st });
-        } else if (fx === '2') {
-          gsap.fromTo('.hero-cine-photo', { scale: 1, yPercent: 0 }, { scale: 1.14, yPercent: 14, ease: 'none', scrollTrigger: st });
-          gsap.to('.hero-cine-text', { yPercent: -18, ease: 'none', scrollTrigger: st });
-          gsap.to('.hero-cine-stats', { yPercent: -70, ease: 'none', scrollTrigger: st });
-        } else if (fx === '3') {
-          gsap.to('.hero-cine-photo', { opacity: 0.85, WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, transparent 0%, #000 40%)', maskImage: 'linear-gradient(90deg, transparent 0%, transparent 0%, #000 40%)', ease: 'none', scrollTrigger: { ...st, end: '70% top' } });
-          gsap.to('.hero-cine-wash', { opacity: 0.32, ease: 'none', scrollTrigger: { ...st, end: '70% top' } });
-          // keep the brown rotating word readable once the photo comes forward behind it
-          gsap.to('.hero-cine-text h1 > span:last-child *', { color: 'var(--intigris-off-white)', ease: 'none', scrollTrigger: { ...st, start: '10% top', end: '45% top' } });
-        }
-      }, ref);
-    });
-    return () => { alive = false; ctx && ctx.revert(); };
-  }, []);
-}
-
 function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'coral', mode = 'ai', onMode }) {
   const dark = mood === 'dark';
   const services = [
@@ -117,11 +78,9 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
     { n: '03', label: tx('Service Cloud', 'Service Cloud') },
     { n: '04', label: tx('Integrations', 'Integraties') },
   ];
-  const heroRef = React.useRef(null);
-  useHeroScrollFx(heroRef);
   return (
     <>
-    <section ref={heroRef} className="hero-cine" style={{
+    <section style={{
       position: 'relative',
       overflow: 'hidden',
       background: dark
@@ -132,7 +91,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
       isolation: 'isolate',
     }}>
       {/* Photo layer, warm silhouette emerging from the right */}
-      <div aria-hidden className="hero-cine-photo" style={{
+      <div aria-hidden style={{
         position: 'absolute', inset: 0, zIndex: 0,
         backgroundImage: 'url("/assets/hero-team.jpg")',
         backgroundSize: 'cover',
@@ -148,10 +107,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
         background: 'linear-gradient(180deg, rgba(64,35,1,0) 40%, rgba(64,35,1,0.28) 100%)',
       }} />
 
-      {/* Warm brown wash, only used by scroll effect 3 (opacity 0 otherwise) */}
-      <div aria-hidden className="hero-cine-wash" style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0, background: 'linear-gradient(120deg, #52300a 0%, var(--intigris-dark-brown) 60%, #2a1700 100%)' }} />
-
-      <div className="container-wide hero-cine-content" style={{
+      <div className="container-wide" style={{
         position: 'relative', zIndex: 1,
         display: 'flex', flexDirection: 'column',
         justifyContent: 'space-between',
@@ -167,7 +123,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           alignItems: 'end',
           flex: 1,
         }}>
-          <div className="hero-cine-text" style={{ alignSelf: 'center' }}>
+          <div style={{ alignSelf: 'center' }}>
             <div className="eyebrow" style={{ marginBottom: 24, color: dark ? 'var(--intigris-off-white)' : 'var(--intigris-dark-brown)' }}>
               {tx('Salesforce Implementation Partner', 'Salesforce Implementation Partner')}
             </div>
@@ -200,7 +156,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           </div>
 
           {/* Right, glassy credentials cell, bottom-aligned */}
-          <div className="hero-cine-stats" style={{ justifySelf: 'end', paddingBottom: 8, width: '100%', maxWidth: 420 }}>
+          <div style={{ justifySelf: 'end', paddingBottom: 8, width: '100%', maxWidth: 420 }}>
             <HeroStats tx={tx} glass />
           </div>
         </div>
