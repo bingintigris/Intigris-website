@@ -9,11 +9,17 @@ const { useState: useHeroState, useEffect: useHeroEffect } = React;
 
 const HERO_INDUSTRIES_EN = ['Business', 'Sales', 'Field Service', 'Integrations', 'Data', 'Service', 'AI'];
 const HERO_INDUSTRIES_NL = ['Business', 'Sales', 'Field Service', 'Integraties', 'Data', 'Service', 'AI'];
-const getHeroIndustries = () => (getLang() === 'nl' ? HERO_INDUSTRIES_NL : HERO_INDUSTRIES_EN);
+/* AI view (default, 2026-11-25): words about work instead of Salesforce clouds */
+const HERO_AI_EN = ['Business', 'Processes', 'Team', 'Workflows', 'Back office'];
+const HERO_AI_NL = ['Business', 'Processen', 'Team', 'Workflows', 'Backoffice'];
+const getHeroIndustries = (mode = 'salesforce') => (mode === 'ai'
+  ? (getLang() === 'nl' ? HERO_AI_NL : HERO_AI_EN)
+  : (getLang() === 'nl' ? HERO_INDUSTRIES_NL : HERO_INDUSTRIES_EN));
 
 function SiteHero({ onCta, onSecondary, variant = 'split', mood = 'coral', mode = 'ai', onMode }) {
-  const [idx, setIdx] = useHeroState(0);
-  const HERO_INDUSTRIES = getHeroIndustries();
+  const [rawIdx, setIdx] = useHeroState(0);
+  const HERO_INDUSTRIES = getHeroIndustries(variant === 'cinematic' ? mode : 'salesforce');
+  const idx = rawIdx % HERO_INDUSTRIES.length; /* the two word lists differ in length */
 
   useHeroEffect(() => {
     // "Business" (index 0) lingers twice as long as the rest, it's the
@@ -156,7 +162,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
         }}>
           <div className="hero-depth-text" style={{ alignSelf: 'center' }}>
             <div className="eyebrow" style={{ marginBottom: 24, color: dark ? 'var(--intigris-off-white)' : 'var(--intigris-dark-brown)' }}>
-              {tx('Salesforce Implementation Partner', 'Salesforce Implementation Partner')}
+              {mode === 'ai' ? tx('AI consultancy & implementation', 'AI-advies & implementatie') : tx('Salesforce Implementation Partner', 'Salesforce Implementation Partner')}
             </div>
             <h1 className="display-stack" style={{ color: 'var(--intigris-off-white)' }}>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>{tx('Smarten up', 'Maak je')}</span>
@@ -188,7 +194,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
 
           {/* Right, glassy credentials cell, bottom-aligned */}
           <div className="hero-depth-stats" style={{ justifySelf: 'end', paddingBottom: 8, width: '100%', maxWidth: 420 }}>
-            <HeroStats tx={tx} glass />
+            <HeroStats tx={tx} glass mode={mode} />
           </div>
         </div>
       </div>
@@ -509,9 +515,11 @@ function HeroEditorial({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
 }
 
 /* ---------- Credentials card, three stats with hairline dividers ---------- */
-function HeroStats({ tx, glass = false }) {
+function HeroStats({ tx, glass = false, mode = 'salesforce' }) {
   const STATS = [
-    { num: '15+',  label: tx('Years Salesforce partner', 'Jaar Salesforce-partner') },
+    mode === 'ai'
+      ? { num: '15+', label: tx('Years of complex implementations', 'Jaar complexe implementaties') }
+      : { num: '15+',  label: tx('Years Salesforce partner', 'Jaar Salesforce-partner') },
     { num: '300+', label: tx('Projects completed',       'Projecten opgeleverd') },
     { num: '4.5',  star: true, label: tx('Customer satisfaction', 'Klanttevredenheid') },
   ];

@@ -5,16 +5,9 @@ import { getLang, lp, switchLang } from '../../lib/i18n.js';
 import { doc, win } from '../../lib/env.js';
 import { SiteHeader } from '../components/Header.jsx';
 import { SiteHero } from '../components/Hero.jsx';
-import { SiteShowcase } from '../components/Showcase.jsx';
-import { SiteOfferings } from '../components/Offerings.jsx';
-import { SiteClientStories } from '../components/ClientStories.jsx';
-import { SiteWhy } from '../components/WhyIntigris.jsx';
-import { SitePricing } from '../components/Pricing.jsx';
-import { SiteCases } from '../components/Cases.jsx';
-import { SiteTestimonial } from '../components/Testimonial.jsx';
-import { SiteISA } from '../components/ISA.jsx';
 import { SiteSalesforceHome } from '../components/HomeSalesforce.jsx';
-import { SiteFinalCTA, SiteFooter } from '../components/Footer.jsx';
+import { SiteAIHome } from '../../components/home/HomeAI.jsx';
+import { SiteFooter } from '../components/Footer.jsx';
 import { SiteNewsletter } from '../components/Newsletter.jsx';
 import { SiteCookieConsent } from '../components/CookieConsent.jsx';
 import { SiteContactSheet } from '../components/ContactSheet.jsx';
@@ -71,16 +64,10 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
 
             {/* ===== Sections below the hero switch with the AI / Salesforce toggle ===== */}
             {mode === 'ai' ? (
-              /* ---------- AI SOLUTIONS view (default) ---------- */
+              /* ---------- AI SOLUTIONS view (default): components/home/HomeAI.jsx (plan 2026-11-25,
+                   content from the Agentris proposition under the Intigris brand) ---------- */
               <React.Fragment key="view-ai">
-                <SiteShowcase onCta={openContact} />
-                <SiteOfferings />
-                <SiteClientStories />
-                <SiteWhy />
-                {t.showPricing && <SitePricing onCta={openContact} />}
-                {t.showCases && <SiteCases />}
-                {t.showTestimonial && <SiteTestimonial lang={lang} />}
-                {t.showISA && <SiteISA />}
+                <SiteAIHome onCta={openContact} onMode={setMode} />
               </React.Fragment>
             ) : (
               /* ---------- SALESFORCE SOLUTIONS view: components/HomeSalesforce.jsx (redesign 2026-11) ---------- */
@@ -89,8 +76,7 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
               </React.Fragment>
             )}
 
-            {/* Salesforce view ends with its own 'Chat with Frank' section (Bing 2026-11-24) */}
-            {mode === 'ai' && <SiteFinalCTA onCta={openContact} />}
+            {/* Both views end with their own 'Chat with Frank' section (Salesforce: Bing 2026-11-24; AI: 2026-11-25) */}
           </main>
           <SiteNewsletter key={'nl-'+lang} />
           <SiteFooter key={'f-'+lang} />
@@ -115,11 +101,6 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
             <TweakSection label="Explore" />
             <TweakToggle label="Dark hero + orange menus" value={t.darkExplore} onChange={(v) => setTweak('darkExplore', v)} />
 
-            <TweakSection label="Sections" />
-            <TweakToggle label="Pricing" value={t.showPricing} onChange={(v) => setTweak('showPricing', v)} />
-            <TweakToggle label="Cases" value={t.showCases} onChange={(v) => setTweak('showCases', v)} />
-            <TweakToggle label="Testimonial" value={t.showTestimonial} onChange={(v) => setTweak('showTestimonial', v)} />
-            <TweakToggle label="ISA teaser" value={t.showISA} onChange={(v) => setTweak('showISA', v)} />
           </TweaksPanel>
         </>
       );
