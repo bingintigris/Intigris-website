@@ -6,7 +6,7 @@ import { doc, win } from '../../lib/env.js';
 import { SiteHeader } from '../components/Header.jsx';
 import { SiteHero } from '../components/Hero.jsx';
 import { SiteSalesforceHome } from '../components/HomeSalesforce.jsx';
-import { SiteAIHome } from '../../components/home/HomeAI.jsx';
+import { SiteAIHome, AiHero } from '../../components/home/HomeAI.jsx';
 import { SiteFooter } from '../components/Footer.jsx';
 import { SiteNewsletter } from '../components/Newsletter.jsx';
 import { SiteCookieConsent } from '../components/CookieConsent.jsx';
@@ -60,7 +60,10 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
             onLang={changeLang}
           />
           <main key={lang}>
-            <SiteHero variant={t.hero} mood={t.darkExplore ? 'dark' : 'coral'} mode={mode} onMode={setMode} onCta={openContact} onSecondary={() => doc.getElementById('cases')?.scrollIntoView({behavior:'smooth', block:'start'})} />
+            {/* AI view: its own futuristic hero (Bing 2026-11-25); Salesforce view keeps the photo hero */}
+            {mode === 'ai'
+              ? <AiHero mode={mode} onMode={setMode} onCta={openContact} />
+              : <SiteHero variant={t.hero} mood={t.darkExplore ? 'dark' : 'coral'} mode={mode} onMode={setMode} onCta={openContact} onSecondary={() => doc.getElementById('cases')?.scrollIntoView({behavior:'smooth', block:'start'})} />}
 
             {/* ===== Sections below the hero switch with the AI / Salesforce toggle ===== */}
             {mode === 'ai' ? (
