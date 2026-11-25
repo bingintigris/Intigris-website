@@ -20,6 +20,7 @@ import { tx, lp } from '../../lib/i18n.js';
 import { V3FaqChat, V3Styles } from '../../legacy/components/CloudKitV3.jsx';
 import { CkStyles } from '../../legacy/components/CloudKit.jsx';
 import { TalkChatAsk, TkStyles } from './TalkVariants.jsx';
+import { useHeadingReveal } from '../../lib/headingReveal.js';
 
 const isBrowser = typeof window !== 'undefined';
 const reduced = () => isBrowser && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -801,14 +802,8 @@ const AI_FAQ = () => [
 /* ==================================================================== */
 function SiteAIHome({ onCta, onMode }) {
   const ref = useRef(null);
-  /* every section heading: words rise out of a mask */
-  useGsap(ref, ({ gsap, SplitText }) => {
-    if (!SplitText) return;
-    gsap.utils.toArray('.hx-split').forEach((h) => {
-      const s = SplitText.create(h, { type: 'words', mask: 'words' });
-      gsap.from(s.words, { yPercent: 110, duration: .9, stagger: .05, ease: 'power3.out', scrollTrigger: { trigger: h, start: 'top 85%' } });
-    });
-  });
+  /* every section heading: words rise out of a mask (shared with the Salesforce home) */
+  useHeadingReveal(ref, '.hx-split');
   return (
     <div className="hx-root" ref={ref}>
       <AiGap />
