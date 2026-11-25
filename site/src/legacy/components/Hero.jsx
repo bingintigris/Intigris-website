@@ -2,7 +2,6 @@
 import React from 'react';
 import { getLang, tx } from '../../lib/i18n.js';
 import { TrustedVelocity, TvStyles } from '../../components/home/TrustedVariants.jsx';
-import { SfHeroBg, SfHeroSide, SfLookBar, SfvStyles, useSfLook } from '../../components/home/SfHeroVariants.jsx';
 // Hero.jsx, Bold stacked headline + warm editorial composition right.
 // Exposes: window.SiteHero
 
@@ -110,8 +109,6 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
   const dark = mood === 'dark';
   /* arriving from the AI view: thumb slides over, content fades in (Bing 2026-11-25) */
   const [arrive] = useHeroState(() => typeof window !== 'undefined' && Date.now() - (window.__modeSwitchAt || 0) < 1500);
-  /* four new looks to compare (Bing 2026-11-25), preview with ?sflook=1..4; 0 = current photo + stats */
-  const [sfLook, setSfLook, sfPreview] = useSfLook();
   const services = [
     { n: '01', label: tx('Sales Cloud', 'Sales Cloud') },
     { n: '02', label: tx('Field Service', 'Field Service') },
@@ -122,7 +119,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
   useHeroDepth(heroRef);
   return (
     <>
-    <section ref={heroRef} className={[arrive ? 'hero-arriving' : '', sfLook ? 'sfv-on' : ''].join(' ').trim() || undefined} style={{
+    <section ref={heroRef} className={arrive ? 'hero-arriving' : undefined} style={{
       position: 'relative',
       overflow: 'hidden',
       background: dark
@@ -133,7 +130,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
       isolation: 'isolate',
     }}>
       {/* Photo layer, warm silhouette emerging from the right */}
-      {sfLook === 0 && <div aria-hidden className="hero-depth-photo" style={{
+      <div aria-hidden className="hero-depth-photo" style={{
         position: 'absolute', inset: 0, zIndex: 0,
         backgroundImage: 'url("/assets/hero-team.jpg")',
         backgroundSize: 'cover',
@@ -142,8 +139,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
         opacity: dark ? 0.42 : 0.5,
         WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%)',
         maskImage: 'linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%)',
-      }} />}
-      <SfHeroBg look={sfLook} />
+      }} />
       {/* Deepen toward bottom-right for the numbered row */}
       <div aria-hidden style={{
         position: 'absolute', inset: 0, zIndex: 0,
@@ -199,8 +195,8 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           </div>
 
           {/* Right, glassy credentials cell, bottom-aligned */}
-          <div className="hero-depth-stats" style={{ justifySelf: 'end', paddingBottom: 8, width: '100%', maxWidth: sfLook ? 340 : 420 }}>
-            {sfLook === 0 ? <HeroStats tx={tx} glass mode={mode} /> : <SfHeroSide look={sfLook} />}
+          <div className="hero-depth-stats" style={{ justifySelf: 'end', paddingBottom: 8, width: '100%', maxWidth: 420 }}>
+            <HeroStats tx={tx} glass mode={mode} />
           </div>
         </div>
       </div>
@@ -290,8 +286,6 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
         }
       ` }} />
     </section>
-    <SfvStyles />
-    {sfPreview && <SfLookBar look={sfLook} setLook={setSfLook} />}
     <ProofMarquee />
     </>
   );
