@@ -21,20 +21,14 @@ import { V3FaqChat, V3Styles } from '../../legacy/components/CloudKitV3.jsx';
 import { CkStyles } from '../../legacy/components/CloudKit.jsx';
 import { TalkChatAsk, TkStyles } from './TalkVariants.jsx';
 import { useHeadingReveal } from '../../lib/headingReveal.js';
-import { TrustedVelocity, TvStyles } from './TrustedVariants.jsx';
 
-/* ---------- Hero looks (Bing 2026-11-25: dark felt too far from the coral Salesforce hero) ----------
-   dark = v2 (current) · a = same as Salesforce (coral + team photo + glass)
-   b = sunset (coral top fading into deep brown) · c = coral + paper cards.
-   Preview with ?look=a|b|c; the small bar at the bottom switches between them. */
-const LOOKS = ['dark', 'a', 'b', 'c'];
-const LOOK_NAMES = { dark: 'Current (dark)', a: 'A · Same as Salesforce', b: 'B · Sunset', c: 'C · Coral + paper' };
-const PALETTES = {
-  dark: { line: [154, 184, 226, .22], hot: [255, 95, 54, .55], dot: 'rgba(252,247,235,.55)', dotHot: 'rgba(255,95,54,.95)' },
-  a: { line: [252, 247, 235, .3], hot: [64, 35, 1, .5], dot: 'rgba(252,247,235,.7)', dotHot: 'rgba(64,35,1,.85)' },
-  b: { line: [252, 247, 235, .26], hot: [255, 214, 196, .65], dot: 'rgba(252,247,235,.6)', dotHot: 'rgba(255,214,196,.95)' },
-  c: { line: [64, 35, 1, .26], hot: [252, 247, 235, .75], dot: 'rgba(64,35,1,.45)', dotHot: 'rgba(252,247,235,.95)' },
-};
+/* ---------- Hero colours: look C "coral + paper" (chosen by Bing 2026-11-25) ----------
+   Salesforce coral gradient, dark-brown neural lines, paper console and stats.
+   Earlier looks (dark / A same as Salesforce / B sunset) are in git history (commit d2608e2). */
+const PALETTE = { line: [64, 35, 1, .26], hot: [252, 247, 235, .75], dot: 'rgba(64,35,1,.45)', dotHot: 'rgba(252,247,235,.95)' };
+/* the visitor just flipped the AI / Salesforce selector (set in apps/index.jsx):
+   the new hero's selector then slides its thumb over instead of jumping */
+export const justSwitched = () => typeof window !== 'undefined' && Date.now() - (window.__modeSwitchAt || 0) < 1500;
 
 const isBrowser = typeof window !== 'undefined';
 const reduced = () => isBrowser && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -106,7 +100,7 @@ const Head = ({ eyebrow, a, b, lede, center }) => (
 /* ==================================================================== */
 /*  0 · HERO (AI view only): neural canvas, scramble word, agent console  */
 /* ==================================================================== */
-function NeuralCanvas({ palette = PALETTES.dark }) {
+function NeuralCanvas({ palette = PALETTE }) {
   const ref = useRef(null);
   const pal = useRef(palette); pal.current = palette;
   useEffect(() => {
@@ -228,46 +222,38 @@ function AgentConsole() {
   );
 }
 
-function LookBar({ look, setLook }) {
-  return (
-    <div className="hx-lookbar" role="group" aria-label="Hero look preview">
-      <span className="hx-mono">Hero look</span>
-      {LOOKS.map((k) => <button key={k} type="button" className={k === look ? 'on' : ''} onClick={() => setLook(k)}>{LOOK_NAMES[k]}</button>)}
-    </div>
-  );
-}
+/* simple floating agents (Bing 2026-11-25: replaces the tool labels, no text) */
+const AGENT_SPOTS = [[4, 18, 1], [41, 11, .8], [94, 16, .9], [3, 74, .85], [47, 84, .75], [30, 92, .7], [93, 82, 1.05], [55, 15, .7]];
+const AgentGlyph = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M12 3.2v3" /><circle cx="12" cy="2.6" r=".9" fill="currentColor" stroke="none" />
+    <rect x="5" y="6.5" width="14" height="11.5" rx="4" />
+    <circle cx="9.5" cy="12" r="1.25" fill="currentColor" stroke="none" /><circle cx="14.5" cy="12" r="1.25" fill="currentColor" stroke="none" />
+    <path d="M10 15.2h4" /><path d="M3 11v3M21 11v3" />
+  </svg>
+);
 function AiHero({ mode, onMode, onCta }) {
   const ref = useRef(null);
-  const [look, setLookState] = useState('dark');
-  const [preview, setPreview] = useState(false);
-  useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get('look');
-    if (q && LOOKS.includes(q)) { setLookState(q); setPreview(true); }
-  }, []);
-  const setLook = (k) => {
-    setLookState(k);
-    const u = new URL(window.location.href); u.searchParams.set('look', k); window.history.replaceState(null, '', u);
-  };
+  const [arrive] = useState(() => justSwitched());
   const words = tx('Business|Processes|Team|Workflows|Back office', 'Business|Processen|Team|Workflows|Backoffice').split('|');
   useGsap(ref, ({ gsap }) => {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
     tl.from('.hx-hero .hx-eyebrow', { y: 16, opacity: 0, duration: .6 })
       .from('.hx-h1 .hx-line', { yPercent: 110, duration: 1, stagger: .12 }, '-=.3')
-      .from('.hx-hero-lede, .hx-mode, .hx-hero-ctas', { y: 22, opacity: 0, duration: .8, stagger: .08 }, '-=.6')
+      .from('.hx-hero-lede, .hx-hero-ctas', { y: 22, opacity: 0, duration: .8, stagger: .08 }, '-=.6')
       .from('.hx-console', { y: 40, opacity: 0, rotateX: 12, duration: 1.1 }, '-=.9')
-      .from('.hx-chip', { scale: .6, opacity: 0, duration: .6, stagger: .05 }, '-=.8')
+      .from('.hx-agent', { scale: 0, opacity: 0, duration: .7, stagger: .06, ease: 'back.out(2)' }, '-=.9')
       .from('.hx-hero-stats > div', { y: 16, opacity: 0, duration: .6, stagger: .08 }, '-=.6');
     gsap.to('.hx-hero-inner', { yPercent: -12, opacity: .35, ease: 'none', scrollTrigger: { trigger: ref.current, start: 'top top', end: 'bottom top', scrub: .5 } });
   });
-  const chips = ['Claude', 'ChatGPT', 'n8n', 'Copilot', 'CRM', 'ERP', 'MCP', 'Gemini'];
   return (
-    <>
-    <section className="hx-hero" data-look={look} ref={ref}>
-      {look === 'a' && <div className="hx-photo" aria-hidden="true" />}
-      <NeuralCanvas palette={PALETTES[look]} />
-      <div className="hx-aurora" aria-hidden="true"><i /><i /><i /></div>
+    <section className={'hx-hero' + (arrive ? ' is-arriving' : '')} data-look="c" ref={ref}>
+      <NeuralCanvas />
       <div className="hx-grid-bg" aria-hidden="true" />
-      {chips.map((c, i) => <span key={c} className={'hx-chip hx-chip--' + i} aria-hidden="true">{c}</span>)}
+      {AGENT_SPOTS.map(([x, y, sc], i) => (
+        <span key={i} className={'hx-agent' + (i % 3 === 0 ? ' is-busy' : '')} aria-hidden="true"
+          style={{ left: x + '%', top: y + '%', '--s': sc, '--d': (-i * 1.3) + 's' }}><AgentGlyph /><i /></span>
+      ))}
       <div className="container-wide hx-hero-inner">
         <div className="hx-hero-copy">
           <span className="hx-eyebrow hx-eyebrow--live"><i />{tx('AI consultancy & implementation', 'AI-advies & implementatie')}</span>
@@ -277,8 +263,9 @@ function AiHero({ mode, onMode, onCta }) {
           </h1>
           <p className="hx-hero-lede">{tx('From “we do something with ChatGPT” to processes where AI agents save time every day. With a proven method, and a team that actually builds it.',
             'Van “we doen iets met ChatGPT” naar processen waarin AI-agents elke dag tijd besparen. Met een bewezen methode, en een team dat het ook echt bouwt.')}</p>
+          {/* glossy selector, same look as on the Salesforce hero (Hero.jsx .mode-toggle) */}
           <div className="hx-mode" role="tablist" aria-label={tx('Choose solutions view', 'Kies weergave')} data-mode={mode}>
-            <span className="hx-mode-thumb" aria-hidden="true" />
+            <span className={'hx-mode-thumb' + (arrive ? ' arrive' : '')} aria-hidden="true" />
             <button type="button" role="tab" aria-selected={mode === 'ai'} className={mode === 'ai' ? 'on' : ''} onClick={() => onMode && onMode('ai')}>{tx('AI solutions', 'AI-oplossingen')}</button>
             <button type="button" role="tab" aria-selected={mode === 'salesforce'} className={mode === 'salesforce' ? 'on' : ''} onClick={() => onMode && onMode('salesforce')}>{tx('Salesforce solutions', 'Salesforce-oplossingen')}</button>
           </div>
@@ -289,20 +276,17 @@ function AiHero({ mode, onMode, onCta }) {
         </div>
         <div className="hx-hero-side">
           <AgentConsole />
+          {/* Bing 2026-11-25: keep 15+ years; 300+ projects and 4.5★ are Salesforce credentials and stay
+              on the Salesforce hero. AI facts from the Agentris proposition instead. */}
           <div className="hx-hero-stats">
             <div><b>15+</b><span>{tx('years of complex implementations', 'jaar complexe implementaties')}</span></div>
-            <div><b>300+</b><span>{tx('projects completed', 'projecten opgeleverd')}</span></div>
-            <div><b>4.5<small>★</small></b><span>{tx('customer satisfaction', 'klanttevredenheid')}</span></div>
+            <div><b>8</b><span>{tx('steps in our AI-ify method', 'stappen in onze AI-ify-methode')}</span></div>
+            <div><b>4–6</b><span>{tx('weeks from idea to a working pilot', 'weken van idee naar werkende pilot')}</span></div>
           </div>
         </div>
       </div>
-      <div className="hx-scrollcue" aria-hidden="true"><i /></div>
       <HxStyles />
     </section>
-    {/* A and C: the same 'trusted by' logo strip as under the Salesforce hero */}
-    {(look === 'a' || look === 'c') && <div className="hx-trust-wrap"><TrustedVelocity hero /><TvStyles /></div>}
-    {preview && <LookBar look={look} setLook={setLook} />}
-    </>
   );
 }
 
@@ -870,51 +854,19 @@ function HxStyles() { return <style dangerouslySetInnerHTML={{ __html: HX_CSS + 
 export { SiteAIHome, AiHero, AI_FAQ };
 
 const LOOK_CSS = `
-/* ===== shared by looks a/b/c: Salesforce-hero size, selector and buttons ===== */
-.hx-hero[data-look]:not([data-look="dark"]) { min-height: min(92vh, 860px); padding: clamp(120px, 15vh, 170px) 0 clamp(60px, 8vh, 100px); }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-h1 { color: var(--intigris-off-white); }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-scramble-live { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: var(--intigris-dark-brown); }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-eyebrow { color: var(--intigris-dark-brown); }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-eyebrow > i { background: var(--intigris-dark-brown); box-shadow: none; }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-hero-lede { color: rgba(252,247,235,.94); }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-mode { background: var(--intigris-off-white); border: 1px solid rgba(64,35,1,.12); box-shadow: 0 6px 20px rgba(64,35,1,.14); backdrop-filter: none; }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-mode button { color: var(--intigris-dark-brown); font-size: 15px; padding: 13px clamp(18px, 3vw, 32px); }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-mode button.on { color: var(--intigris-off-white); }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-mode-thumb { background: var(--intigris-coral); box-shadow: 0 4px 14px rgba(214,67,27,.35); transition: transform 300ms cubic-bezier(.22,.61,.36,1), background-color 300ms; }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-mode[data-mode="salesforce"] .hx-mode-thumb { background: #00A1E0; }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-btn--glow { background: var(--intigris-off-white); color: var(--intigris-dark-brown); box-shadow: 0 14px 34px -14px rgba(64,35,1,.5); }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-btn--glow:hover { background: #fff; box-shadow: 0 18px 40px -14px rgba(64,35,1,.6); }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-btn--ghost { background: rgba(252,247,235,.12); border-color: rgba(252,247,235,.5); }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-chip { color: var(--intigris-off-white); background: rgba(252,247,235,.14); border-color: rgba(252,247,235,.32); }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-grid-bg { background-image: linear-gradient(rgba(252,247,235,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(252,247,235,.08) 1px, transparent 1px); }
-.hx-hero[data-look]:not([data-look="dark"]) .hx-scrollcue { display: none; }
-/* the logo strip sits between the hero and the first sheet, like on the Salesforce view */
-.hx-trust-wrap + .hx-root > .hx-sheet:first-child { margin-top: 0; }
+/* ===== Look C "coral + paper" (chosen by Bing 2026-11-25) ===== */
+.hx-hero[data-look="c"] { min-height: min(92vh, 860px); padding: clamp(120px, 15vh, 170px) 0 clamp(60px, 8vh, 100px); background: linear-gradient(90deg, #ff9166 0%, var(--intigris-coral) 44%, var(--intigris-coral-700) 80%, #9e300d 100%); border-radius: 0 0 clamp(24px, 4vw, 56px) clamp(24px, 4vw, 56px); }
+.hx-hero[data-look="c"] .hx-h1 { color: var(--intigris-off-white); }
+.hx-hero[data-look="c"] .hx-scramble-live { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: var(--intigris-dark-brown); }
+.hx-hero[data-look="c"] .hx-eyebrow { color: var(--intigris-dark-brown); }
+.hx-hero[data-look="c"] .hx-eyebrow > i { background: var(--intigris-dark-brown); box-shadow: none; }
+.hx-hero[data-look="c"] .hx-hero-lede { color: rgba(252,247,235,.94); }
+.hx-hero[data-look="c"] .hx-btn--glow { background: var(--intigris-off-white); color: var(--intigris-dark-brown); box-shadow: 0 14px 34px -14px rgba(64,35,1,.5); }
+.hx-hero[data-look="c"] .hx-btn--glow:hover { background: #fff; box-shadow: 0 18px 40px -14px rgba(64,35,1,.6); }
+.hx-hero[data-look="c"] .hx-btn--ghost { background: rgba(252,247,235,.12); border-color: rgba(252,247,235,.5); }
+.hx-hero[data-look="c"] .hx-grid-bg { background-image: linear-gradient(rgba(252,247,235,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(252,247,235,.08) 1px, transparent 1px); }
 
-/* ===== A · same as Salesforce: coral gradient + team photo + glass ===== */
-.hx-hero[data-look="a"], .hx-hero[data-look="c"] { background: linear-gradient(90deg, #ff9166 0%, var(--intigris-coral) 44%, var(--intigris-coral-700) 80%, #9e300d 100%); border-radius: 0 0 clamp(24px, 4vw, 56px) clamp(24px, 4vw, 56px); }
-.hx-hero[data-look="a"] .hx-aurora, .hx-hero[data-look="c"] .hx-aurora { display: none; }
-.hx-photo { position: absolute; inset: 0; z-index: 0; background: url("/assets/hero-team.jpg") center right / cover; mix-blend-mode: multiply; opacity: .45; -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%); mask-image: linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%); }
-.hx-hero[data-look="a"] .hx-console { background: rgba(252,247,235,.14); border-color: rgba(252,247,235,.38); box-shadow: 0 20px 44px -18px rgba(64,35,1,.5), inset 0 1px 0 rgba(252,247,235,.25); backdrop-filter: blur(16px); }
-.hx-hero[data-look="a"] .hx-console::after { background: conic-gradient(from var(--hx-angle, 0deg), transparent 0 70%, rgba(252,247,235,.9) 82%, transparent 92%); }
-.hx-hero[data-look="a"] .hx-console-top, .hx-hero[data-look="a"] .hx-console-foot { border-color: rgba(252,247,235,.2); color: rgba(252,247,235,.85); }
-.hx-hero[data-look="a"] .hx-live { color: var(--intigris-off-white); } .hx-hero[data-look="a"] .hx-live i { background: var(--intigris-off-white); box-shadow: 0 0 10px #fff; }
-.hx-hero[data-look="a"] .hx-cl-ico { background: rgba(252,247,235,.18); color: var(--intigris-off-white); }
-.hx-hero[data-look="a"] .hx-cl--done .hx-cl-ico { background: var(--intigris-off-white); color: var(--intigris-coral-700); }
-.hx-hero[data-look="a"] .hx-cl small { color: rgba(252,247,235,.8); }
-.hx-hero[data-look="a"] .hx-spin { border-color: rgba(252,247,235,.35); border-top-color: var(--intigris-off-white); }
-.hx-hero[data-look="a"] .hx-cl-bar { background: rgba(252,247,235,.2); } .hx-hero[data-look="a"] .hx-cl-bar i { background: var(--intigris-off-white); }
-.hx-hero[data-look="a"] .hx-hero-stats > div { background: rgba(252,247,235,.14); border-color: rgba(252,247,235,.38); backdrop-filter: blur(16px); }
-.hx-hero[data-look="a"] .hx-hero-stats b small { color: var(--intigris-off-white); }
-.hx-hero[data-look="a"] .hx-hero-stats span { color: rgba(252,247,235,.85); }
-
-/* ===== B · sunset: Salesforce coral at the top, fading into the dark AI sections ===== */
-.hx-hero[data-look="b"] { background: radial-gradient(60% 50% at 85% 20%, rgba(255,145,102,.55), transparent 70%), linear-gradient(180deg, #ff7a4d 0%, var(--intigris-coral) 26%, #d9461c 46%, #8a2d08 66%, #3a1704 86%, var(--hx-night) 100%); }
-.hx-hero[data-look="b"] .hx-aurora i:nth-child(1) { background: radial-gradient(circle, rgba(255,190,160,.45), transparent 65%); }
-.hx-hero[data-look="b"] .hx-aurora i:nth-child(2) { background: radial-gradient(circle, rgba(255,95,54,.4), transparent 65%); }
-.hx-hero[data-look="b"] .hx-grid-bg { -webkit-mask-image: linear-gradient(180deg, transparent, #000 40%, #000 70%, transparent); mask-image: linear-gradient(180deg, transparent, #000 40%, #000 70%, transparent); }
-
-/* ===== C · coral + paper: no photo, light 'paper' console and stats ===== */
+/* paper console + stats */
 .hx-hero[data-look="c"] .hx-console { background: var(--intigris-off-white); border-color: rgba(64,35,1,.08); box-shadow: 0 40px 80px -30px rgba(64,35,1,.55); backdrop-filter: none; }
 .hx-hero[data-look="c"] .hx-console::after { background: conic-gradient(from var(--hx-angle, 0deg), transparent 0 70%, rgba(255,95,54,.9) 82%, transparent 92%); }
 .hx-hero[data-look="c"] .hx-console-top, .hx-hero[data-look="c"] .hx-console-foot { border-color: rgba(64,35,1,.08); color: rgba(64,35,1,.55); }
@@ -926,14 +878,33 @@ const LOOK_CSS = `
 .hx-hero[data-look="c"] .hx-cl--done .hx-cl-ico { background: rgba(76,105,58,.14); color: #4c693a; }
 .hx-hero[data-look="c"] .hx-cl-bar { background: rgba(64,35,1,.08); }
 .hx-hero[data-look="c"] .hx-hero-stats > div { background: var(--intigris-off-white); border-color: transparent; box-shadow: 0 20px 40px -24px rgba(64,35,1,.5); backdrop-filter: none; }
-.hx-hero[data-look="c"] .hx-hero-stats b { color: var(--intigris-dark-brown); } .hx-hero[data-look="c"] .hx-hero-stats b small { color: var(--intigris-coral); }
+.hx-hero[data-look="c"] .hx-hero-stats b { color: var(--intigris-dark-brown); }
 .hx-hero[data-look="c"] .hx-hero-stats span { color: rgba(64,35,1,.65); }
 
-/* preview bar (only with ?look=...) */
-.hx-lookbar { position: fixed; z-index: 60; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; padding: 6px; border-radius: 999px; background: rgba(20,12,6,.88); color: #fcf7eb; backdrop-filter: blur(12px); box-shadow: 0 16px 40px -12px rgba(0,0,0,.6); max-width: calc(100vw - 24px); overflow-x: auto; }
-.hx-lookbar .hx-mono { padding: 0 10px; color: rgba(252,247,235,.6); white-space: nowrap; }
-.hx-lookbar button { border: 0; background: none; color: #fcf7eb; font: inherit; font-size: 13.5px; padding: 9px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
-.hx-lookbar button.on { background: var(--intigris-coral); color: #2a1300; }
+/* floating agents (no labels): small glossy discs with a bot glyph, softly bobbing */
+.hx-agent { position: absolute; z-index: 1; width: calc(60px * var(--s, 1)); height: calc(60px * var(--s, 1)); margin: calc(-30px * var(--s, 1)); border-radius: 50%; display: grid; place-items: center; color: var(--intigris-dark-brown);
+  background: radial-gradient(120% 120% at 30% 20%, #ffffff, rgba(252,247,235,.92) 48%, rgba(241,228,204,.85) 100%);
+  border: 1px solid rgba(255,255,255,.85); box-shadow: inset 0 1px 0 #fff, inset 0 -3px 6px rgba(64,35,1,.08), 0 14px 30px -12px rgba(64,35,1,.6);
+  animation: hxBob 7s ease-in-out infinite; animation-delay: var(--d, 0s); pointer-events: none; }
+.hx-agent svg { width: 52%; height: 52%; }
+.hx-agent > i { position: absolute; right: 6%; top: 6%; width: 11px; height: 11px; border-radius: 50%; background: #3fae62; border: 2px solid #fff; }
+.hx-agent.is-busy > i { background: var(--intigris-coral); animation: hxPulse 1.2s ease-in-out infinite; }
+@keyframes hxBob { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-12px) rotate(3deg); } }
+
+/* glossy selector (same values as .mode-toggle in Hero.jsx) */
+.hx-hero[data-look="c"] .hx-mode { padding: 5px; background: linear-gradient(180deg, rgba(252,247,235,.32), rgba(252,247,235,.12)); border: 1px solid rgba(252,247,235,.5);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -1px 0 rgba(64,35,1,.08), 0 14px 34px -14px rgba(64,35,1,.5); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); }
+.hx-hero[data-look="c"] .hx-mode button { color: var(--intigris-off-white); font-size: 15px; padding: 13px clamp(18px, 3vw, 32px); text-shadow: 0 1px 2px rgba(64,35,1,.18); transition: color 300ms var(--ease-out); }
+.hx-hero[data-look="c"] .hx-mode button.on { color: var(--intigris-dark-brown); text-shadow: none; }
+.hx-hero[data-look="c"] .hx-mode[data-mode="salesforce"] button.on { color: #fff; }
+.hx-hero[data-look="c"] .hx-mode-thumb { overflow: hidden; background: linear-gradient(180deg, #ffffff 0%, #fcf7eb 55%, #f1e4cc 100%); box-shadow: inset 0 1px 0 #fff, inset 0 -2px 4px rgba(64,35,1,.08), 0 6px 18px -6px rgba(64,35,1,.5);
+  transition: transform 420ms cubic-bezier(.22,.61,.36,1), background 420ms var(--ease-out), box-shadow 420ms var(--ease-out); }
+.hx-hero[data-look="c"] .hx-mode-thumb::after { content: ''; position: absolute; left: 8%; right: 8%; top: 2px; height: 45%; border-radius: 999px; background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,0)); }
+.hx-hero[data-look="c"] .hx-mode[data-mode="salesforce"] .hx-mode-thumb { transform: translateX(100%); background: linear-gradient(180deg, #4cc3f0 0%, #00A1E0 55%, #0088c0 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 6px 18px -6px rgba(0,120,180,.65); }
+.hx-hero[data-look="c"] .hx-mode-thumb.arrive { animation: hxThumbIn 420ms cubic-bezier(.22,.61,.36,1); }
+@keyframes hxThumbIn { from { transform: translateX(100%); background: #00A1E0; } to { transform: translateX(0); } }
+@media (max-width: 899px) { .hx-agent { display: none; } }
+@media (prefers-reduced-motion: reduce) { .hx-agent, .hx-hero[data-look="c"] .hx-mode-thumb.arrive { animation: none !important; } }
 `;
 
 const HX_CSS = `

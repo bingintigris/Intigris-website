@@ -34,6 +34,8 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
       /* 'ai' (default) | 'salesforce'. The page is pre-rendered in AI mode; ?mode=salesforce switches after hydration */
       const [mode, setMode] = useState('ai');
       useEffect(() => { if (new URLSearchParams(win.location.search).get('mode') === 'salesforce') setMode('salesforce'); }, []);
+      /* flipping the selector: remember when, so the new hero's selector slides instead of jumping (Bing 2026-11-25) */
+      const switchMode = (m) => { if (m === mode) return; win.__modeSwitchAt = Date.now(); setMode(m); };
       useEffect(() => { doc.documentElement.setAttribute('lang', lang); if (win.gsap) win.gsap.registerPlugin(...['ScrollTrigger', 'SplitText', 'DrawSVGPlugin', 'MorphSVGPlugin', 'MotionPathPlugin', 'Flip', 'ScrambleTextPlugin'].map(n => win[n]).filter(Boolean)); }, []);
 
       // Set window.__lang SYNCHRONOUSLY so the same render's tx() reads the new value.
@@ -62,15 +64,15 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
           <main key={lang}>
             {/* AI view: its own futuristic hero (Bing 2026-11-25); Salesforce view keeps the photo hero */}
             {mode === 'ai'
-              ? <AiHero mode={mode} onMode={setMode} onCta={openContact} />
-              : <SiteHero variant={t.hero} mood={t.darkExplore ? 'dark' : 'coral'} mode={mode} onMode={setMode} onCta={openContact} onSecondary={() => doc.getElementById('cases')?.scrollIntoView({behavior:'smooth', block:'start'})} />}
+              ? <AiHero mode={mode} onMode={switchMode} onCta={openContact} />
+              : <SiteHero variant={t.hero} mood={t.darkExplore ? 'dark' : 'coral'} mode={mode} onMode={switchMode} onCta={openContact} onSecondary={() => doc.getElementById('cases')?.scrollIntoView({behavior:'smooth', block:'start'})} />}
 
             {/* ===== Sections below the hero switch with the AI / Salesforce toggle ===== */}
             {mode === 'ai' ? (
               /* ---------- AI SOLUTIONS view (default): components/home/HomeAI.jsx (plan 2026-11-25,
                    content from the Agentris proposition under the Intigris brand) ---------- */
               <React.Fragment key="view-ai">
-                <SiteAIHome onCta={openContact} onMode={setMode} />
+                <SiteAIHome onCta={openContact} onMode={switchMode} />
               </React.Fragment>
             ) : (
               /* ---------- SALESFORCE SOLUTIONS view: components/HomeSalesforce.jsx (redesign 2026-11) ---------- */

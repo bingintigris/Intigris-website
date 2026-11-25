@@ -107,6 +107,8 @@ function useHeroDepth(ref) {
 
 function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'coral', mode = 'ai', onMode }) {
   const dark = mood === 'dark';
+  /* arriving from the AI view: thumb slides over, content fades in (Bing 2026-11-25) */
+  const [arrive] = useHeroState(() => typeof window !== 'undefined' && Date.now() - (window.__modeSwitchAt || 0) < 1500);
   const services = [
     { n: '01', label: tx('Sales Cloud', 'Sales Cloud') },
     { n: '02', label: tx('Field Service', 'Field Service') },
@@ -117,7 +119,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
   useHeroDepth(heroRef);
   return (
     <>
-    <section ref={heroRef} style={{
+    <section ref={heroRef} className={arrive ? 'hero-arriving' : undefined} style={{
       position: 'relative',
       overflow: 'hidden',
       background: dark
@@ -173,7 +175,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
             </h1>
             <div style={{ marginTop: 'clamp(28px, 4vh, 40px)' }}>
               <div className="mode-toggle" data-mode={mode} role="tablist" aria-label={tx('Choose solutions view', 'Kies weergave')}>
-                <span className="mode-thumb" data-mode={mode} aria-hidden />
+                <span className={'mode-thumb' + (arrive ? ' arrive' : '')} data-mode={mode} aria-hidden />
                 <button
                   type="button" role="tab" aria-selected={mode === 'ai'}
                   className={'mode-opt' + (mode === 'ai' ? ' is-active' : '')}
@@ -214,16 +216,18 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
         }
         .btn-cine-primary:hover .cine-arrow { transform: translateX(3px); }
 
-        /* Segmented AI / Salesforce toggle */
+        /* Segmented AI / Salesforce toggle: glossy glass (Bing 2026-11-25), same values as .hx-mode in HomeAI.jsx */
         .mode-toggle {
           position: relative;
           display: inline-grid;
           grid-template-columns: 1fr 1fr;
           padding: 5px;
           border-radius: 999px;
-          background: var(--intigris-off-white);
-          border: 1px solid rgba(64,35,1,0.12);
-          box-shadow: 0 6px 20px rgba(64,35,1,0.14);
+          background: linear-gradient(180deg, rgba(252,247,235,0.32), rgba(252,247,235,0.12));
+          border: 1px solid rgba(252,247,235,0.5);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(64,35,1,0.08), 0 14px 34px -14px rgba(64,35,1,0.5);
+          -webkit-backdrop-filter: blur(16px) saturate(1.4);
+          backdrop-filter: blur(16px) saturate(1.4);
           max-width: 100%;
         }
         .mode-thumb {
@@ -231,18 +235,24 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           top: 5px; bottom: 5px; left: 5px;
           width: calc((100% - 10px) / 2);
           border-radius: 999px;
-          background: var(--intigris-coral);
-          box-shadow: 0 4px 14px rgba(214,67,27,0.35);
-          transition: transform 300ms cubic-bezier(0.22,0.61,0.36,1),
-                      background-color 300ms var(--ease-out),
-                      box-shadow 300ms var(--ease-out);
+          overflow: hidden;
+          background: linear-gradient(180deg, #ffffff 0%, #fcf7eb 55%, #f1e4cc 100%);
+          box-shadow: inset 0 1px 0 #fff, inset 0 -2px 4px rgba(64,35,1,0.08), 0 6px 18px -6px rgba(64,35,1,0.5);
+          transition: transform 420ms cubic-bezier(0.22,0.61,0.36,1), background 420ms var(--ease-out), box-shadow 420ms var(--ease-out);
           z-index: 0;
+        }
+        .mode-thumb::after {
+          content: ''; position: absolute; left: 8%; right: 8%; top: 2px; height: 45%;
+          border-radius: 999px; background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0));
         }
         .mode-thumb[data-mode="salesforce"] {
           transform: translateX(100%);
-          background: #00A1E0; /* Salesforce logo blue (Bing 2026-11-24) */
-          box-shadow: 0 4px 14px rgba(0,161,224,0.45);
+          background: linear-gradient(180deg, #4cc3f0 0%, #00A1E0 55%, #0088c0 100%); /* Salesforce logo blue (Bing 2026-11-24) */
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 6px 18px -6px rgba(0,120,180,0.65);
         }
+        /* arriving from the AI view: the thumb slides over instead of jumping */
+        .mode-thumb.arrive[data-mode="salesforce"] { animation: modeThumbIn 420ms cubic-bezier(0.22,0.61,0.36,1); }
+        @keyframes modeThumbIn { from { transform: translateX(0); background: #fcf7eb; } to { transform: translateX(100%); } }
         .mode-opt {
           position: relative; z-index: 1;
           border: 0; background: transparent; cursor: pointer;
@@ -250,11 +260,20 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           border-radius: 999px;
           font-family: inherit; font-size: 15px; font-weight: 500;
           letter-spacing: -0.005em; white-space: nowrap;
-          color: var(--intigris-dark-brown);
-          transition: color 220ms var(--ease-out);
+          color: var(--intigris-off-white);
+          text-shadow: 0 1px 2px rgba(64,35,1,0.18);
+          transition: color 300ms var(--ease-out);
         }
-        .mode-opt.is-active { color: var(--intigris-off-white); }
+        .mode-opt.is-active { color: var(--intigris-dark-brown); text-shadow: none; }
+        .mode-toggle[data-mode="salesforce"] .mode-opt.is-active { color: #fff; }
         .mode-opt:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 999px; }
+        /* content fades in when arriving from the AI view (opacity only: the scroll-depth effect owns transform) */
+        .hero-arriving .hero-depth-text, .hero-arriving .hero-depth-stats { animation: heroArrive 520ms cubic-bezier(0.22,0.61,0.36,1) both; }
+        .hero-arriving .hero-depth-stats { animation-delay: 120ms; }
+        .hero-arriving .hero-depth-photo { animation: heroArrivePhoto 700ms ease-out both; }
+        @keyframes heroArrive { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes heroArrivePhoto { from { opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .mode-thumb.arrive, .hero-arriving .hero-depth-text, .hero-arriving .hero-depth-stats, .hero-arriving .hero-depth-photo { animation: none; } }
         @media (max-width: 460px) {
           .mode-opt { padding: 12px 16px; font-size: 13.5px; }
         }
