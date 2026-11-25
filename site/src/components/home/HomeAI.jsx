@@ -842,7 +842,11 @@ export { SiteAIHome, AiHero, AI_FAQ };
 
 const LOOK_CSS = `
 /* ===== Look C "coral + paper" (chosen by Bing 2026-11-25) ===== */
-.hx-hero[data-look="c"] { min-height: min(92vh, 860px); padding: clamp(120px, 15vh, 170px) 0 clamp(60px, 8vh, 100px); background: linear-gradient(90deg, #ff9166 0%, var(--intigris-coral) 44%, var(--intigris-coral-700) 80%, #9e300d 100%); border-radius: 0 0 clamp(24px, 4vw, 56px) clamp(24px, 4vw, 56px); }
+.hx-hero[data-look="c"] { min-height: min(92vh, 860px); padding: clamp(120px, 15vh, 170px) 0 clamp(60px, 8vh, 100px); background: linear-gradient(90deg, #ff9166 0%, var(--intigris-coral) 44%, var(--intigris-coral-700) 80%, #9e300d 100%); }
+/* Bing 2026-11-25: no rounded sheet falling over the hero; the coral fades softly into the dark 'AI gap' section */
+.hx-hero[data-look="c"]::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: clamp(140px, 22vh, 240px); z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(14,8,4,0) 0%, rgba(14,8,4,.18) 30%, rgba(14,8,4,.6) 65%, #0e0804 100%); }
+.hx-root > .hx-gap:first-child { margin-top: 0; border-radius: 0; }
 .hx-hero[data-look="c"] .hx-h1 { color: var(--intigris-off-white); }
 .hx-hero[data-look="c"] .hx-scramble-live { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: var(--intigris-dark-brown); }
 .hx-hero[data-look="c"] .hx-eyebrow { color: var(--intigris-dark-brown); }
