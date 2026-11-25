@@ -11,6 +11,7 @@ import { CloudsChaos, CpStyles } from '../../components/home/CloudsPick.jsx';
 import { WsStyles } from '../../components/home/WhyStack.jsx';
 import { WhySettleBento, WsoStyles } from '../../components/home/WhySettle.jsx';
 import { StoriesGalleryIndustry, SvStyles } from '../../components/home/StoriesVariants.jsx';
+import { useHeadingReveal } from '../../lib/headingReveal.js';
 /* ==================================================================== */
 /*  HOMEPAGE · SALESFORCE SOLUTIONS view (index.html, mode = salesforce)   */
 /*  Built section by section with Bing (plan 2026-11-09):                  */
@@ -36,8 +37,12 @@ const HSF_INTEGRATIONS = () => [
 
 function SiteSalesforceHome({ onCta }) {
   const S = CK_STORIES();
+  /* section titles rise in word by word on scroll, like the AI home (Bing 2026-11-25);
+     the wrapper uses display: contents so it doesn't change the layout */
+  const ref = React.useRef(null);
+  useHeadingReveal(ref);
   return (
-    <React.Fragment>
+    <div className="hsf-root" ref={ref} style={{ display: 'contents' }}>
       {/* 2 · Proof strip: TODO (variant round) */}
       {/* 2 · What we implement: concept A "Chaos to order" (chosen by Bing 2026-11-23), replaces the
              "A day at Havenwerk BV" platform island (islands/src/islands/PlatformMission.tsx, kept as inspiration) */}
@@ -77,7 +82,7 @@ function SiteSalesforceHome({ onCta }) {
       <WsoStyles />
       <TkStyles />
       <SvStyles />
-    </React.Fragment>
+    </div>
   );
 }
 

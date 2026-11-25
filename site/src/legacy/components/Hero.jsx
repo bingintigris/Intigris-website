@@ -9,11 +9,17 @@ const { useState: useHeroState, useEffect: useHeroEffect } = React;
 
 const HERO_INDUSTRIES_EN = ['Business', 'Sales', 'Field Service', 'Integrations', 'Data', 'Service', 'AI'];
 const HERO_INDUSTRIES_NL = ['Business', 'Sales', 'Field Service', 'Integraties', 'Data', 'Service', 'AI'];
-const getHeroIndustries = () => (getLang() === 'nl' ? HERO_INDUSTRIES_NL : HERO_INDUSTRIES_EN);
+/* AI view (default, 2026-11-25): words about work instead of Salesforce clouds */
+const HERO_AI_EN = ['Business', 'Processes', 'Team', 'Workflows', 'Back office'];
+const HERO_AI_NL = ['Business', 'Processen', 'Team', 'Workflows', 'Backoffice'];
+const getHeroIndustries = (mode = 'salesforce') => (mode === 'ai'
+  ? (getLang() === 'nl' ? HERO_AI_NL : HERO_AI_EN)
+  : (getLang() === 'nl' ? HERO_INDUSTRIES_NL : HERO_INDUSTRIES_EN));
 
 function SiteHero({ onCta, onSecondary, variant = 'split', mood = 'coral', mode = 'ai', onMode }) {
-  const [idx, setIdx] = useHeroState(0);
-  const HERO_INDUSTRIES = getHeroIndustries();
+  const [rawIdx, setIdx] = useHeroState(0);
+  const HERO_INDUSTRIES = getHeroIndustries(variant === 'cinematic' ? mode : 'salesforce');
+  const idx = rawIdx % HERO_INDUSTRIES.length; /* the two word lists differ in length */
 
   useHeroEffect(() => {
     // "Business" (index 0) lingers twice as long as the rest, it's the
@@ -101,6 +107,8 @@ function useHeroDepth(ref) {
 
 function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'coral', mode = 'ai', onMode }) {
   const dark = mood === 'dark';
+  /* arriving from the AI view: thumb slides over, content fades in (Bing 2026-11-25) */
+  const [arrive] = useHeroState(() => typeof window !== 'undefined' && Date.now() - (window.__modeSwitchAt || 0) < 1500);
   const services = [
     { n: '01', label: tx('Sales Cloud', 'Sales Cloud') },
     { n: '02', label: tx('Field Service', 'Field Service') },
@@ -111,7 +119,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
   useHeroDepth(heroRef);
   return (
     <>
-    <section ref={heroRef} style={{
+    <section ref={heroRef} className={'sf-hero' + (arrive ? ' hero-arriving' : '')} style={{
       position: 'relative',
       overflow: 'hidden',
       background: dark
@@ -154,16 +162,17 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           alignItems: 'end',
           flex: 1,
         }}>
-          <div className="hero-depth-text" style={{ alignSelf: 'center' }}>
-            <div className="eyebrow" style={{ marginBottom: 24, color: dark ? 'var(--intigris-off-white)' : 'var(--intigris-dark-brown)' }}>
-              {tx('Salesforce Implementation Partner', 'Salesforce Implementation Partner')}
-            </div>
-            <h1 className="display-stack" style={{ color: 'var(--intigris-off-white)' }}>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>{tx('Smarten up', 'Maak je')}</span>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>
+          {/* Bing 2026-11-25: no eyebrow; headline anchored at the same height as the AI hero
+              (clamp(150px, 30vh, 330px) from the top), so the selector sits on the same level in both views */}
+          <div className="hero-depth-text" style={{ alignSelf: 'start', marginTop: 'calc(clamp(150px, 30vh, 330px) - clamp(120px, 15vh, 180px))' }}>
+            {/* same size as the AI hero headline (Bing 2026-11-25: slightly smaller); each line sits in a mask
+                so it can rise in / slide out when switching views, like the AI hero */}
+            <h1 className="display-stack" style={{ color: 'var(--intigris-off-white)', fontSize: 'clamp(44px, 7.4vw, 116px)' }}>
+              <span className="hero-line-mask"><span className="hero-line" style={{ display: 'block', whiteSpace: 'nowrap' }}>{tx('Smarten up', 'Maak je')}</span></span>
+              <span className="hero-line-mask"><span className="hero-line" style={{ display: 'block', whiteSpace: 'nowrap' }}>
                 {tx('your ', '')}
                 <RotatingWord words={HERO_INDUSTRIES} idx={idx} color={dark ? 'var(--intigris-coral)' : 'var(--intigris-dark-brown)'} />
-              </span>
+              </span></span>
             </h1>
             <div style={{ marginTop: 'clamp(28px, 4vh, 40px)' }}>
               <div className="mode-toggle" data-mode={mode} role="tablist" aria-label={tx('Choose solutions view', 'Kies weergave')}>
@@ -188,7 +197,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
 
           {/* Right, glassy credentials cell, bottom-aligned */}
           <div className="hero-depth-stats" style={{ justifySelf: 'end', paddingBottom: 8, width: '100%', maxWidth: 420 }}>
-            <HeroStats tx={tx} glass />
+            <HeroStats tx={tx} glass mode={mode} />
           </div>
         </div>
       </div>
@@ -208,16 +217,18 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
         }
         .btn-cine-primary:hover .cine-arrow { transform: translateX(3px); }
 
-        /* Segmented AI / Salesforce toggle */
+        /* Segmented AI / Salesforce toggle: glossy glass (Bing 2026-11-25), same values as .hx-mode in HomeAI.jsx */
         .mode-toggle {
           position: relative;
           display: inline-grid;
           grid-template-columns: 1fr 1fr;
           padding: 5px;
           border-radius: 999px;
-          background: var(--intigris-off-white);
-          border: 1px solid rgba(64,35,1,0.12);
-          box-shadow: 0 6px 20px rgba(64,35,1,0.14);
+          background: linear-gradient(180deg, rgba(252,247,235,0.32), rgba(252,247,235,0.12));
+          border: 1px solid rgba(252,247,235,0.5);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(64,35,1,0.08), 0 14px 34px -14px rgba(64,35,1,0.5);
+          -webkit-backdrop-filter: blur(16px) saturate(1.4);
+          backdrop-filter: blur(16px) saturate(1.4);
           max-width: 100%;
         }
         .mode-thumb {
@@ -225,18 +236,23 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           top: 5px; bottom: 5px; left: 5px;
           width: calc((100% - 10px) / 2);
           border-radius: 999px;
-          background: var(--intigris-coral);
-          box-shadow: 0 4px 14px rgba(214,67,27,0.35);
-          transition: transform 300ms cubic-bezier(0.22,0.61,0.36,1),
-                      background-color 300ms var(--ease-out),
-                      box-shadow 300ms var(--ease-out);
+          overflow: hidden;
+          background: linear-gradient(180deg, #ffffff 0%, #fcf7eb 55%, #f1e4cc 100%);
+          box-shadow: inset 0 1px 0 #fff, inset 0 -2px 4px rgba(64,35,1,0.08), 0 6px 18px -6px rgba(64,35,1,0.5);
+          transition: transform 420ms cubic-bezier(0.22,0.61,0.36,1), background 420ms var(--ease-out), box-shadow 420ms var(--ease-out);
           z-index: 0;
+        }
+        .mode-thumb::after {
+          content: ''; position: absolute; left: 8%; right: 8%; top: 2px; height: 45%;
+          border-radius: 999px; background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0));
         }
         .mode-thumb[data-mode="salesforce"] {
           transform: translateX(100%);
-          background: #00A1E0; /* Salesforce logo blue (Bing 2026-11-24) */
-          box-shadow: 0 4px 14px rgba(0,161,224,0.45);
+          background: linear-gradient(180deg, #4cc3f0 0%, #00A1E0 55%, #0088c0 100%); /* Salesforce logo blue (Bing 2026-11-24) */
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 6px 18px -6px rgba(0,120,180,0.65);
         }
+        /* arriving from the AI view: the thumb slides over instead of jumping */
+        /* the thumb slides inside the old hero before the views swap (apps/index.jsx switchMode) */
         .mode-opt {
           position: relative; z-index: 1;
           border: 0; background: transparent; cursor: pointer;
@@ -244,11 +260,33 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           border-radius: 999px;
           font-family: inherit; font-size: 15px; font-weight: 500;
           letter-spacing: -0.005em; white-space: nowrap;
-          color: var(--intigris-dark-brown);
-          transition: color 220ms var(--ease-out);
+          color: var(--intigris-off-white);
+          text-shadow: 0 1px 2px rgba(64,35,1,0.18);
+          transition: color 300ms var(--ease-out);
         }
-        .mode-opt.is-active { color: var(--intigris-off-white); }
+        .mode-opt.is-active { color: var(--intigris-dark-brown); text-shadow: none; }
+        .mode-toggle[data-mode="salesforce"] .mode-opt.is-active { color: #fff; }
         .mode-opt:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 999px; }
+        /* content fades in when arriving from the AI view (opacity only: the scroll-depth effect owns transform) */
+        /* Switching views (Bing 2026-11-25): the same choreography as the AI hero.
+           In: headline lines rise out of their masks, stats card follows, photo settles in.
+           Out (.is-leaving, set by switchMode): lines slide up, card + photo fade. */
+        .hero-line-mask { display: block; width: max-content; max-width: none; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; } /* as wide as the text: long words may run past the column */
+        .hero-arriving .hero-line { animation: heroLineIn 1s cubic-bezier(0.215,0.61,0.355,1) both; }
+        .hero-arriving .hero-line-mask + .hero-line-mask .hero-line { animation-delay: 120ms; }
+        .hero-arriving .hero-depth-stats > * { animation: heroCardIn 1s cubic-bezier(0.215,0.61,0.355,1) 250ms both !important; }
+        .hero-arriving .hero-depth-photo { animation: heroPhotoIn 1.2s ease-out both; }
+        @keyframes heroLineIn { from { transform: translateY(110%); } to { transform: none; } }
+        @keyframes heroCardIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+        @keyframes heroPhotoIn { from { opacity: 0; transform: scale(1.08); } }
+        .sf-hero.is-leaving .hero-line { animation: heroLineOut 300ms cubic-bezier(0.55,0.06,0.68,0.19) both !important; }
+        .sf-hero.is-leaving .hero-line-mask + .hero-line-mask .hero-line { animation-delay: 40ms !important; }
+        .sf-hero.is-leaving .hero-depth-stats > * { animation: heroCardOut 260ms ease-in both !important; }
+        .sf-hero.is-leaving .hero-depth-photo { animation: heroPhotoOut 300ms ease-in both !important; }
+        @keyframes heroLineOut { from { transform: none; } to { transform: translateY(-110%); } }
+        @keyframes heroCardOut { to { opacity: 0; transform: translateY(14px) scale(0.98); } }
+        @keyframes heroPhotoOut { to { opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .hero-arriving .hero-line, .hero-arriving .hero-depth-stats > *, .hero-arriving .hero-depth-photo { animation: none !important; } }
         @media (max-width: 460px) {
           .mode-opt { padding: 12px 16px; font-size: 13.5px; }
         }
@@ -509,9 +547,11 @@ function HeroEditorial({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx }) {
 }
 
 /* ---------- Credentials card, three stats with hairline dividers ---------- */
-function HeroStats({ tx, glass = false }) {
+function HeroStats({ tx, glass = false, mode = 'salesforce' }) {
   const STATS = [
-    { num: '15+',  label: tx('Years Salesforce partner', 'Jaar Salesforce-partner') },
+    mode === 'ai'
+      ? { num: '15+', label: tx('Years of complex implementations', 'Jaar complexe implementaties') }
+      : { num: '15+',  label: tx('Years Salesforce partner', 'Jaar Salesforce-partner') },
     { num: '300+', label: tx('Projects completed',       'Projecten opgeleverd') },
     { num: '4.5',  star: true, label: tx('Customer satisfaction', 'Klanttevredenheid') },
   ];

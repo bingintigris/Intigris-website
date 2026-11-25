@@ -40,7 +40,9 @@ const Cta = ({ onCta, cls = '' }) => onCta
   ? <button type="button" className={'tk-btn ' + cls} onClick={onCta}>{T().cta} <span aria-hidden="true">→</span></button>
   : <a className={'tk-btn ' + cls} href={lp('/contact')}>{T().cta} <span aria-hidden="true">→</span></a>;
 const Mail = ({ cls = '' }) => <a className={'tk-mail ' + cls} href={'mailto:' + MAIL}>{MAIL}</a>;
-const Trust = () => <div className="tk-trust">{T().trust.map((t) => <span key={t}>{t}</span>)}</div>;
+const Trust = ({ items }) => <div className="tk-trust">{(items || T().trust).map((t) => <span key={t}>{t}</span>)}</div>;
+/* AI view of the homepage (2026-11-25): no Salesforce wording */
+const AI_TRUST = () => [tx('Since 2010', 'Sinds 2010'), tx('300+ projects', '300+ projecten'), tx('System-independent', 'Systeemonafhankelijk')];
 const Photo = ({ size, ring = 'coral' }) => <span className={'tk-photo tk-photo--' + ring} style={{ width: size, height: size }}><img src={PHOTO} alt="Frank Timmer" /></span>;
 
 /* ---------- A · Frank's desk ---------- */
@@ -68,9 +70,11 @@ export function TalkDesk({ onCta }) {
 }
 
 /* ---------- B · Chat with Frank ---------- */
-export function TalkChat({ onCta, tone = 'dark', chat = '' }) {
+export function TalkChat({ onCta, tone = 'dark', chat = '', ai = false }) {
   const [ref, inV] = useIn(); const t = T(); const ask = chat === 'ask';
-  const msgs = [tx('Hi, I’m Frank 👋', 'Hoi, ik ben Frank 👋'), tx('Ready to smarten up your business?', 'Klaar om je bedrijf slimmer te maken?'), tx('In 30 minutes you’ll know what Salesforce can do for you.', 'In 30 minuten weet je wat Salesforce voor je kan doen.')];
+  const msgs = [tx('Hi, I’m Frank 👋', 'Hoi, ik ben Frank 👋'), tx('Ready to smarten up your business?', 'Klaar om je bedrijf slimmer te maken?'),
+    ai ? tx('In 30 minutes you’ll know where AI can save your team time.', 'In 30 minuten weet je waar AI je team tijd kan besparen.')
+       : tx('In 30 minutes you’ll know what Salesforce can do for you.', 'In 30 minuten weet je wat Salesforce voor je kan doen.')];
   const [shown, setShown] = useState(0);
   useEffect(() => {
     if (!inV) return;
@@ -84,7 +88,7 @@ export function TalkChat({ onCta, tone = 'dark', chat = '' }) {
         <div className="tk-col">
           <div className="eyebrow tk-r" style={{ '--i': 0 }}>{t.eyebrow}</div>
           <div className="tk-r" style={{ '--i': 1 }}><Title big /></div>
-          <div className="tk-r" style={{ '--i': 2 }}><Trust /></div>
+          <div className="tk-r" style={{ '--i': 2 }}><Trust items={ai ? AI_TRUST() : undefined} /></div>
         </div>
         <div className="tk-chat-wrap tk-r" style={{ '--i': 1 }}><div className="tk-chat">
           <div className="tk-chat-head"><Photo size={52} /><div><b>Frank Timmer</b><span><i className="tk-dot" />{t.role} · Intigris</span></div></div>
