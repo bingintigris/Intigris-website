@@ -390,11 +390,6 @@ function AiLadder() {
             <div className="hx-ladder-left">
               <Head eyebrow={tx('HOW WE AI-IFY YOUR BUSINESS', 'ZO AI-IFYEN WE JE BEDRIJF')} a={tx('One partner for', 'Eén partner voor')} b={tx('the whole AI journey.', 'de hele AI-reis.')}
                 lede={tx('AI-ify is our approach to bringing AI into your business, one step at a time. Start where you are.', 'AI-ify is onze aanpak om AI stap voor stap in je bedrijf te brengen. Begin waar je staat.')} />
-              <a className="hx-entry" href={lp('/ai-readiness-scan')}>
-                <span className="hx-entry-n hx-mono">00</span>
-                <span><b>{tx('Not sure where you stand? AI Readiness Scan', 'Weet je niet waar je staat? AI Readiness Scan')}</b><small>{tx('An honest check of whether you’re ready to AI-ify, with a written report in about two working days.', 'Een eerlijke check of je klaar bent om te AI-ifyen, met een rapport binnen zo’n twee werkdagen.')}</small></span>
-                <Arrow />
-              </a>
               <div className="hx-rail" role="tablist" aria-label={tx('The four AI-ify steps', 'De vier AI-ify-stappen')}>
                 <span className="hx-rail-line" aria-hidden="true"><i /></span>
                 {R.map((x, i) => (
@@ -809,16 +804,202 @@ const AI_FAQ = () => [
 ];
 
 /* ==================================================================== */
+/*  Ladder variants (Bing 2026-11-25): more feedback while scrolling,     */
+/*  cards that pop up, less scroll length. Preview with ?ladder=a|b|c.    */
+/*    A · Card stack     pinned; each step card lands on top of the last  */
+/*    B · Progress path  pinned; thick glowing line fills, nodes pop,     */
+/*                       cards bounce up below them                       */
+/*    C · Timeline       no pinning; centre line draws, cards pop in      */
+/*                       alternately left and right                       */
+/* ==================================================================== */
+const LADDER_LOOKS = ['current', 'a', 'b', 'c'];
+const LADDER_NAMES = { current: 'Current', a: 'A · Card stack', b: 'B · Progress path', c: 'C · Timeline' };
+function useLadderLook() {
+  const [look, set] = useState('current');
+  const [preview, setPreview] = useState(false);
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get('ladder');
+    if (q && LADDER_LOOKS.includes(q)) { set(q); setPreview(true); }
+  }, []);
+  const setLook = (k) => {
+    set(k);
+    const u = new URL(window.location.href); u.searchParams.set('ladder', k); window.history.replaceState(null, '', u);
+    setTimeout(() => window.ScrollTrigger && window.ScrollTrigger.refresh(), 400);
+  };
+  return [look, setLook, preview];
+}
+function LadderBar({ look, setLook }) {
+  return (
+    <div className="hx-lookbar" role="group" aria-label="Ladder preview">
+      <span className="hx-mono">{tx('How we AI-ify', 'Zo AI-ifyen we')}</span>
+      {LADDER_LOOKS.map((k) => <button key={k} type="button" className={k === look ? 'on' : ''} onClick={() => setLook(k)}>{LADDER_NAMES[k]}</button>)}
+    </div>
+  );
+}
+const LadderHead = ({ center }) => (
+  <Head center={center} eyebrow={tx('HOW WE AI-IFY YOUR BUSINESS', 'ZO AI-IFYEN WE JE BEDRIJF')} a={tx('One partner for', 'Eén partner voor')} b={tx('the whole AI journey.', 'de hele AI-reis.')}
+    lede={tx('AI-ify is our approach to bringing AI into your business, one step at a time. Start where you are.', 'AI-ify is onze aanpak om AI stap voor stap in je bedrijf te brengen. Begin waar je staat.')} />
+);
+/* the four steps as a plain stack (phones, and reduced motion for A/B) */
+const LadderMobile = ({ R }) => (
+  <div className="container-wide hx-ladder-mobile">
+    {R.map((x) => (
+      <div key={x.k} className="hx-mstep"><span className="hx-mono">{x.n} · {x.sub}</span><h3>{x.t}.</h3><p>{x.d}</p><ul>{x.li.map((l) => <li key={l}>{l}</li>)}</ul></div>
+    ))}
+  </div>
+);
+/* one dark step card: live scene on top, text below */
+const StepCard = ({ r, className = '', scene = true }) => (
+  <div className={'hx-step-card ' + className}>
+    <div className="hx-step-card-visual">{scene ? <RungScene k={r.k} /> : <span className="hx-step-card-ico"><Icon k={r.k} /></span>}</div>
+    <div className="hx-step-card-text">
+      <span className="hx-mono hx-stage-n">{tx('STEP', 'STAP')} {r.n} · {r.sub}</span>
+      <h3>{r.t}.</h3>
+      <p>{r.d}</p>
+      <ul>{r.li.map((l) => <li key={l}>{l}</li>)}</ul>
+      <button type="button" className="hx-textlink" onClick={() => scrollToId(r.href)}>{tx('Read more', 'Lees meer')} <Arrow /></button>
+    </div>
+  </div>
+);
+
+/* ---------- A · Card stack ---------- */
+function LadderStack() {
+  const R = RUNGS();
+  const ref = useRef(null);
+  const [act, setAct] = useState(0);
+  useGsap(ref, ({ gsap }) => {
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 900px)', () => {
+      const root = ref.current;
+      const cards = gsap.utils.toArray(root.querySelectorAll('.hx-ls-stack .hx-step-card'));
+      gsap.set(cards.slice(1), { yPercent: 118, rotate: (i) => (i % 2 ? -5 : 5), scale: .94 });
+      const tl = gsap.timeline({ defaults: { ease: 'power2.out', duration: 1 }, scrollTrigger: {
+        trigger: root.querySelector('.hx-ls-track'), start: 'top top', end: 'bottom bottom', scrub: .6,
+        onUpdate: (s) => { root.style.setProperty('--p', s.progress.toFixed(3)); const i = Math.min(3, Math.round(s.progress * 3)); setAct((a) => (a === i ? a : i)); } } });
+      cards.slice(1).forEach((c, i) => {
+        tl.to(c, { yPercent: 0, rotate: 0, scale: 1 }, i);
+        tl.to(cards.slice(0, i + 1), { scale: (j) => 1 - .05 * (i + 1 - j), yPercent: (j) => -4 * (i + 1 - j), filter: 'brightness(.7)' }, i);
+      });
+    });
+  });
+  return (
+    <section id="ai-ify" className="hx-sheet hx-light hx-ladder hx-ls" ref={ref}>
+      <div className="hx-ls-track">
+        <div className="hx-ladder-sticky">
+          <div className="container-wide hx-ls-grid">
+            <div>
+              <LadderHead />
+              <div className="hx-ls-count" aria-hidden="true"><b key={act}>0{act + 1}</b><span>/ 04</span></div>
+              <div className="hx-ls-list">
+                {R.map((x, i) => (
+                  <div key={x.k} className={'hx-ls-item' + (i === act ? ' on' : '') + (i < act ? ' past' : '')}>
+                    <span className="hx-mono">{x.n}</span><b>{x.t}</b><small>{x.sub}</small><i />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="hx-ls-stack">{R.map((r, i) => <StepCard key={r.k} r={r} className={i === act ? 'cur' : ''} />)}</div>
+          </div>
+        </div>
+      </div>
+      <LadderMobile R={R} />
+    </section>
+  );
+}
+
+/* ---------- B · Progress path ---------- */
+function LadderPath() {
+  const R = RUNGS();
+  const ref = useRef(null);
+  const [act, setAct] = useState(0);
+  const [armed, setArmed] = useState(false);
+  useGsap(ref, ({ gsap, ScrollTrigger }) => {
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 900px)', () => {
+      setArmed(true);
+      const root = ref.current;
+      ScrollTrigger.create({ trigger: root.querySelector('.hx-pp-track'), start: 'top top', end: 'bottom bottom',
+        onUpdate: (s) => { const p = Math.min(1, s.progress * 1.12); root.style.setProperty('--p', p.toFixed(3)); const i = Math.min(3, Math.floor(p * 3 + .001)); setAct((a) => (a === i ? a : i)); } });
+      return () => setArmed(false);
+    });
+  });
+  return (
+    <section id="ai-ify" className={'hx-sheet hx-light hx-ladder hx-pp' + (armed ? ' armed' : '')} ref={ref}>
+      <div className="hx-pp-track">
+        <div className="hx-ladder-sticky">
+          <div className="container-wide hx-pp-inner">
+            <LadderHead center />
+            <div className="hx-pp-rail" aria-hidden="true">
+              <span className="hx-pp-line"><i /></span>
+              <span className="hx-pp-head" />
+              {R.map((x, i) => <span key={x.k} className={'hx-pp-node' + (i <= act ? ' on' : '') + (i === act ? ' cur' : '')} style={{ left: (12.5 + 25 * i) + '%' }}><Icon k={x.k} /></span>)}
+            </div>
+            <div className="hx-pp-cards">
+              {R.map((r, i) => (
+                <div key={r.k} className={'hx-pp-card' + (i <= act ? ' on' : '') + (i === act ? ' cur' : '')}>
+                  <span className="hx-mono hx-stage-n">{r.n} · {r.sub}</span>
+                  <h3>{r.t}.</h3>
+                  <p>{r.d}</p>
+                  <ul>{r.li.map((l) => <li key={l}>{l}</li>)}</ul>
+                  <button type="button" className="hx-textlink" onClick={() => scrollToId(r.href)}>{tx('Read more', 'Lees meer')} <Arrow /></button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <LadderMobile R={R} />
+    </section>
+  );
+}
+
+/* ---------- C · Timeline ---------- */
+function LadderTimeline() {
+  const R = RUNGS();
+  const ref = useRef(null);
+  const [armed, setArmed] = useState(false);
+  useGsap(ref, ({ gsap, ScrollTrigger }) => {
+    setArmed(true);
+    const root = ref.current;
+    gsap.fromTo(root.querySelector('.hx-tl-line i'), { scaleY: 0 }, { scaleY: 1, ease: 'none',
+      scrollTrigger: { trigger: root.querySelector('.hx-tl-list'), start: 'top 62%', end: 'bottom 62%', scrub: .4,
+        onUpdate: (s) => root.style.setProperty('--p', s.progress.toFixed(3)) } });
+    root.querySelectorAll('.hx-tl-row').forEach((row) => {
+      ScrollTrigger.create({ trigger: row, start: 'top 72%', onEnter: () => row.classList.add('in'), onLeaveBack: () => row.classList.remove('in') });
+      ScrollTrigger.create({ trigger: row, start: 'top 62%', end: 'bottom 62%', toggleClass: 'cur' });
+    });
+  });
+  return (
+    <section id="ai-ify" className={'hx-sheet hx-light hx-tl' + (armed ? ' armed' : '')} ref={ref}>
+      <div className="container-wide">
+        <LadderHead center />
+        <div className="hx-tl-list">
+          <span className="hx-tl-line" aria-hidden="true"><i /><b /></span>
+          {R.map((r, i) => (
+            <div key={r.k} className={'hx-tl-row' + (i % 2 ? ' rev' : '')}>
+              <div className="hx-tl-side"><span className="hx-tl-num">{r.n}</span><b>{r.t}</b><small>{r.sub}</small></div>
+              <span className="hx-tl-dot" aria-hidden="true"><Icon k={r.k} /></span>
+              <StepCard r={r} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ==================================================================== */
 /*  The AI home (sections below the hero)                                */
 /* ==================================================================== */
 function SiteAIHome({ onCta, onMode }) {
   const ref = useRef(null);
+  const [ladder, setLadder, ladderPreview] = useLadderLook();
   /* every section heading: words rise out of a mask (shared with the Salesforce home) */
   useHeadingReveal(ref, '.hx-split');
   return (
     <div className="hx-root" ref={ref}>
       {/* Bing 2026-11-25: 'How we AI-ify' first (orange hero → light section), the AI gap second */}
-      <AiLadder />
+      {ladder === 'a' ? <LadderStack key="a" /> : ladder === 'b' ? <LadderPath key="b" /> : ladder === 'c' ? <LadderTimeline key="c" /> : <AiLadder key="current" />}
       <AiGap />
       <AiWorkshops onCta={onCta} />
       <AiMethod onCta={onCta} />
@@ -829,6 +1010,7 @@ function SiteAIHome({ onCta, onMode }) {
         <V3FaqChat head={{ eyebrow: tx('QUESTIONS WE GET', 'VRAGEN DIE WE KRIJGEN'), a: tx('Before you', 'Voordat je'), b: tx('book the call.', 'het gesprek plant.') }} items={AI_FAQ()} onCta={onCta} />
       </div>
       <TalkChatAsk onCta={onCta} ai />
+      {ladderPreview && <LadderBar look={ladder} setLook={setLadder} />}
       <CkStyles />
       <V3Styles />
       <TkStyles />
@@ -837,9 +1019,101 @@ function SiteAIHome({ onCta, onMode }) {
 }
 
 /* the styles ship with the hero (always rendered in the AI view) */
-function HxStyles() { return <style dangerouslySetInnerHTML={{ __html: HX_CSS + LOOK_CSS }} />; }
+function HxStyles() { return <style dangerouslySetInnerHTML={{ __html: HX_CSS + LOOK_CSS + LADDER_CSS }} />; }
 
 export { SiteAIHome, AiHero, AI_FAQ };
+
+const LADDER_CSS = `
+/* ===== shared: dark step card (scene + text) ===== */
+.hx-step-card { border-radius: 28px; background: var(--hx-night); color: #fcf7eb; overflow: hidden; box-shadow: 0 40px 90px -40px rgba(14,8,4,.65); }
+.hx-step-card-visual { position: relative; height: clamp(150px, 20vh, 200px); background: radial-gradient(80% 120% at 70% 0%, rgba(255,95,54,.25), transparent 60%), #140c06; border-bottom: 1px solid var(--hx-line); display: grid; place-items: center; }
+.hx-step-card-ico { width: 64px; height: 64px; border-radius: 18px; display: grid; place-items: center; color: var(--hx-coral); background: rgba(255,95,54,.12); } .hx-step-card-ico svg { width: 32px; height: 32px; }
+.hx-step-card-text { padding: 24px 28px 26px; }
+.hx-step-card h3 { margin: 8px 0 8px; font-size: clamp(36px, 3.6vw, 54px); font-weight: 500; letter-spacing: -.045em; line-height: 1; color: #fcf7eb; }
+.hx-step-card p { margin: 0 0 14px; font-size: 16px; line-height: 1.55; color: rgba(252,247,235,.78); }
+.hx-step-card ul { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 7px; }
+.hx-step-card li { position: relative; padding-left: 22px; font-size: 14.5px; } .hx-step-card li::before { content: '→'; position: absolute; left: 0; color: var(--hx-coral); }
+
+/* ===== A · card stack ===== */
+.hx-ls-track { height: 300vh; position: relative; }
+.hx-ls-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 5vw, 80px); align-items: center; width: 100%; }
+.hx-ls .hx-head { margin-bottom: 20px; } .hx-ls .hx-h2 { font-size: clamp(36px, 4.2vw, 64px); } .hx-ls .hx-lede { font-size: 17px; }
+.hx-ls-count { display: flex; align-items: baseline; gap: 10px; margin: 8px 0 18px; }
+.hx-ls-count b { font-size: clamp(64px, 7vw, 104px); font-weight: 500; letter-spacing: -.06em; line-height: 1; color: var(--hx-coral); animation: hxCount .5s cubic-bezier(.34,1.56,.64,1); }
+.hx-ls-count span { font-size: 22px; color: var(--hx-muted); }
+@keyframes hxCount { from { transform: translateY(40%); opacity: 0; } }
+.hx-ls-list { display: grid; gap: 6px; }
+.hx-ls-item { position: relative; display: grid; grid-template-columns: 34px 100px 1fr; align-items: baseline; gap: 10px; padding: 12px 14px; border-radius: 14px; color: rgba(42,23,8,.4); overflow: hidden; transition: color .3s, background .3s; }
+.hx-ls-item b { font-size: 21px; font-weight: 500; letter-spacing: -.02em; } .hx-ls-item small { font-size: 14px; }
+.hx-ls-item i { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--hx-coral); transform: scaleX(0); transform-origin: left; transition: transform .5s cubic-bezier(.22,.61,.36,1); }
+.hx-ls-item.past { color: rgba(42,23,8,.7); } .hx-ls-item.past i { transform: scaleX(1); opacity: .35; }
+.hx-ls-item.on { color: var(--hx-ink); background: #fff; box-shadow: 0 16px 40px -28px rgba(42,23,8,.5); } .hx-ls-item.on i { transform: scaleX(1); } .hx-ls-item.on .hx-mono { color: var(--hx-coral); }
+.hx-ls-stack { position: relative; height: min(560px, 74vh); }
+.hx-ls-stack .hx-step-card { position: absolute; inset: 0; transform-origin: 50% 0; will-change: transform; }
+.hx-ls-stack .hx-step-card.cur { box-shadow: 0 50px 100px -40px rgba(14,8,4,.7), 0 0 0 1px rgba(255,95,54,.35); }
+
+/* ===== B · progress path ===== */
+.hx-pp-track { height: 260vh; position: relative; }
+.hx-pp-inner { width: 100%; }
+.hx-pp .hx-head { margin-bottom: clamp(20px, 3vh, 36px); } .hx-pp .hx-h2 { font-size: clamp(34px, 4vw, 60px); } .hx-pp .hx-lede { font-size: 17px; }
+.hx-pp-rail { position: relative; height: 64px; margin: 0 0 clamp(16px, 2.5vh, 28px); }
+.hx-pp-line { position: absolute; left: 12.5%; right: 12.5%; top: 50%; height: 6px; margin-top: -3px; border-radius: 6px; background: rgba(42,23,8,.1); overflow: hidden; }
+.hx-pp-line i { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(90deg, #ffb199, var(--hx-coral)); transform-origin: left; transform: scaleX(var(--p, 0)); box-shadow: 0 0 18px rgba(255,95,54,.6); }
+.hx-pp-head { position: absolute; top: 50%; left: calc(12.5% + var(--p, 0) * 75%); width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: #fff; border: 4px solid var(--hx-coral); box-shadow: 0 0 0 8px rgba(255,95,54,.18), 0 0 24px rgba(255,95,54,.8); z-index: 2; }
+.hx-pp-node { position: absolute; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 18px; display: grid; place-items: center; background: #fff; color: rgba(42,23,8,.35); border: 1px solid rgba(42,23,8,.1); z-index: 1; transition: background .3s, color .3s, transform .3s, box-shadow .3s; }
+.hx-pp-node svg { width: 26px; height: 26px; }
+.hx-pp-node.on { background: var(--hx-coral); color: #2a1300; border-color: transparent; animation: hxPop .6s cubic-bezier(.34,1.56,.64,1); }
+.hx-pp-node.cur { box-shadow: 0 0 0 10px rgba(255,95,54,.18), 0 18px 40px -12px rgba(255,95,54,.8); transform: scale(1.12); }
+@keyframes hxPop { 0% { transform: scale(.6); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+.hx-pp-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.hx-pp-card { padding: 22px 22px 22px; border-radius: 24px; background: #fff; border: 1px solid rgba(42,23,8,.08); transition: opacity .5s, transform .6s cubic-bezier(.34,1.56,.64,1), background .4s, color .4s, box-shadow .4s; }
+.hx-pp-card h3 { margin: 6px 0 8px; font-size: 30px; font-weight: 500; letter-spacing: -.035em; color: inherit; }
+.hx-pp-card p { margin: 0 0 12px; font-size: 14.5px; line-height: 1.5; color: var(--hx-muted); }
+.hx-pp-card ul { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 6px; } .hx-pp-card li { position: relative; padding-left: 20px; font-size: 13.5px; } .hx-pp-card li::before { content: '→'; position: absolute; left: 0; color: var(--hx-coral); }
+.hx-pp.armed .hx-pp-card { opacity: .28; transform: translateY(46px) scale(.94); }
+.hx-pp.armed .hx-pp-card.on { opacity: 1; transform: none; }
+.hx-pp.armed .hx-pp-card.cur { background: var(--hx-night); color: #fcf7eb; transform: translateY(-12px); box-shadow: 0 40px 80px -30px rgba(14,8,4,.6), 0 0 0 1px rgba(255,95,54,.4); }
+.hx-pp-card.cur p { color: rgba(252,247,235,.78); }
+
+/* ===== C · timeline ===== */
+.hx-tl-list { position: relative; display: grid; gap: clamp(40px, 7vh, 80px); padding: 20px 0 10px; }
+.hx-tl-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; margin-left: -1.5px; border-radius: 3px; background: rgba(42,23,8,.1); }
+.hx-tl-line i { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, #ffb199, var(--hx-coral)); transform-origin: top; box-shadow: 0 0 14px rgba(255,95,54,.55); }
+.hx-tl-line b { position: absolute; left: 50%; top: calc(var(--p, 0) * 100%); width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: #fff; border: 4px solid var(--hx-coral); box-shadow: 0 0 0 8px rgba(255,95,54,.16), 0 0 22px rgba(255,95,54,.8); }
+.hx-tl-row { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr); align-items: center; }
+.hx-tl-row .hx-tl-side { grid-column: 1; text-align: right; padding-right: 8px; } .hx-tl-row .hx-step-card { grid-column: 3; grid-row: 1; }
+.hx-tl-row.rev .hx-tl-side { grid-column: 3; text-align: left; padding: 0 0 0 8px; } .hx-tl-row.rev .hx-step-card { grid-column: 1; }
+.hx-tl-row .hx-tl-dot { grid-column: 2; grid-row: 1; justify-self: center; position: relative; z-index: 1; width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; background: #fff; color: rgba(42,23,8,.35); border: 1px solid rgba(42,23,8,.1); transition: background .3s, color .3s, transform .4s; }
+.hx-tl-dot svg { width: 26px; height: 26px; }
+.hx-tl-row.in .hx-tl-dot { background: var(--hx-coral); color: #2a1300; border-color: transparent; animation: hxPop .6s cubic-bezier(.34,1.56,.64,1); }
+.hx-tl-row.cur .hx-tl-dot { box-shadow: 0 0 0 10px rgba(255,95,54,.18), 0 18px 40px -12px rgba(255,95,54,.8); transform: scale(1.12); }
+.hx-tl-num { display: block; font-size: clamp(72px, 9vw, 140px); font-weight: 500; letter-spacing: -.06em; line-height: .9; color: transparent; -webkit-text-stroke: 1.5px rgba(42,23,8,.25); transition: color .5s, -webkit-text-stroke-color .5s; }
+.hx-tl-side b { display: block; margin-top: 6px; font-size: clamp(30px, 3vw, 44px); font-weight: 500; letter-spacing: -.035em; color: var(--hx-ink); }
+.hx-tl-side small { font-size: 15px; color: var(--hx-muted); }
+.hx-tl-row.cur .hx-tl-num { color: var(--hx-coral); -webkit-text-stroke-color: var(--hx-coral); }
+.hx-tl.armed .hx-tl-row .hx-step-card, .hx-tl.armed .hx-tl-row .hx-tl-side { opacity: 0; transform: translateY(60px) scale(.92) rotate(var(--r, 2deg)); transition: opacity .6s ease, transform .8s cubic-bezier(.34,1.56,.64,1); }
+.hx-tl.armed .hx-tl-row.rev .hx-step-card { --r: -2deg; }
+.hx-tl.armed .hx-tl-row .hx-tl-side { transform: translateY(30px); transition-delay: .08s; }
+.hx-tl.armed .hx-tl-row.in .hx-step-card, .hx-tl.armed .hx-tl-row.in .hx-tl-side { opacity: 1; transform: none; }
+
+/* phones: A and B fall back to the stacked list; C becomes one column */
+@media (max-width: 899px) {
+  .hx-ls-track, .hx-pp-track { height: auto; }
+  .hx-ls .hx-ladder-sticky, .hx-pp .hx-ladder-sticky { display: none; }
+  .hx-ls, .hx-pp { padding: clamp(80px, 12vw, 120px) 0; }
+  .hx-tl-line { left: 28px; }
+  .hx-tl-row, .hx-tl-row.rev { grid-template-columns: 56px minmax(0, 1fr); gap: 16px; align-items: start; }
+  .hx-tl-row .hx-tl-dot, .hx-tl-row.rev .hx-tl-dot { grid-column: 1; grid-row: 1 / span 2; justify-self: start; }
+  .hx-tl-row .hx-tl-side, .hx-tl-row.rev .hx-tl-side { grid-column: 2; grid-row: 1; text-align: left; padding: 0; }
+  .hx-tl-row .hx-step-card, .hx-tl-row.rev .hx-step-card { grid-column: 2; grid-row: 2; }
+  .hx-tl-num { font-size: 64px; }
+}
+@media (min-width: 900px) { .hx-ls .hx-ladder-mobile, .hx-pp .hx-ladder-mobile { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .hx-ls-track, .hx-pp-track { height: auto; } .hx-ls .hx-ladder-sticky, .hx-pp .hx-ladder-sticky { display: none; }
+  .hx-ls .hx-ladder-mobile, .hx-pp .hx-ladder-mobile { display: grid; gap: 12px; } .hx-ls, .hx-pp { padding: 100px 0; }
+}
+`;
 
 const LOOK_CSS = `
 /* ===== Look C "coral + paper" (chosen by Bing 2026-11-25) ===== */
@@ -1050,7 +1324,7 @@ const HX_CSS = `
 
 /* ===================== 2 · LADDER ===================== */
 .hx-ladder { padding: 0; }
-.hx-ladder-track { height: 420vh; position: relative; }
+.hx-ladder-track { height: 300vh; position: relative; }
 .hx-ladder-sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; }
 .hx-ladder-grid { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: clamp(32px, 5vw, 80px); align-items: center; width: 100%; }
 .hx-ladder .hx-head { margin-bottom: 24px; }
