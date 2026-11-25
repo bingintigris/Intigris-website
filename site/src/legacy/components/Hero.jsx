@@ -119,7 +119,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
   useHeroDepth(heroRef);
   return (
     <>
-    <section ref={heroRef} className={arrive ? 'hero-arriving' : undefined} style={{
+    <section ref={heroRef} className={'sf-hero' + (arrive ? ' hero-arriving' : '')} style={{
       position: 'relative',
       overflow: 'hidden',
       background: dark
@@ -165,16 +165,18 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           {/* Bing 2026-11-25: no eyebrow; headline anchored at the same height as the AI hero
               (clamp(150px, 30vh, 330px) from the top), so the selector sits on the same level in both views */}
           <div className="hero-depth-text" style={{ alignSelf: 'start', marginTop: 'calc(clamp(150px, 30vh, 330px) - clamp(120px, 15vh, 180px))' }}>
-            <h1 className="display-stack" style={{ color: 'var(--intigris-off-white)' }}>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>{tx('Smarten up', 'Maak je')}</span>
-              <span style={{ display: 'block', whiteSpace: 'nowrap' }}>
+            {/* same size as the AI hero headline (Bing 2026-11-25: slightly smaller); each line sits in a mask
+                so it can rise in / slide out when switching views, like the AI hero */}
+            <h1 className="display-stack" style={{ color: 'var(--intigris-off-white)', fontSize: 'clamp(44px, 7.4vw, 116px)' }}>
+              <span className="hero-line-mask"><span className="hero-line" style={{ display: 'block', whiteSpace: 'nowrap' }}>{tx('Smarten up', 'Maak je')}</span></span>
+              <span className="hero-line-mask"><span className="hero-line" style={{ display: 'block', whiteSpace: 'nowrap' }}>
                 {tx('your ', '')}
                 <RotatingWord words={HERO_INDUSTRIES} idx={idx} color={dark ? 'var(--intigris-coral)' : 'var(--intigris-dark-brown)'} />
-              </span>
+              </span></span>
             </h1>
             <div style={{ marginTop: 'clamp(28px, 4vh, 40px)' }}>
               <div className="mode-toggle" data-mode={mode} role="tablist" aria-label={tx('Choose solutions view', 'Kies weergave')}>
-                <span className={'mode-thumb' + (arrive ? ' arrive' : '')} data-mode={mode} aria-hidden />
+                <span className="mode-thumb" data-mode={mode} aria-hidden />
                 <button
                   type="button" role="tab" aria-selected={mode === 'ai'}
                   className={'mode-opt' + (mode === 'ai' ? ' is-active' : '')}
@@ -250,8 +252,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 6px 18px -6px rgba(0,120,180,0.65);
         }
         /* arriving from the AI view: the thumb slides over instead of jumping */
-        .mode-thumb.arrive[data-mode="salesforce"] { animation: modeThumbIn 420ms cubic-bezier(0.22,0.61,0.36,1); }
-        @keyframes modeThumbIn { from { transform: translateX(0); background: #fcf7eb; } to { transform: translateX(100%); } }
+        /* the thumb slides inside the old hero before the views swap (apps/index.jsx switchMode) */
         .mode-opt {
           position: relative; z-index: 1;
           border: 0; background: transparent; cursor: pointer;
@@ -267,12 +268,25 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
         .mode-toggle[data-mode="salesforce"] .mode-opt.is-active { color: #fff; }
         .mode-opt:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 999px; }
         /* content fades in when arriving from the AI view (opacity only: the scroll-depth effect owns transform) */
-        .hero-arriving .hero-depth-text, .hero-arriving .hero-depth-stats { animation: heroArrive 520ms cubic-bezier(0.22,0.61,0.36,1) both; }
-        .hero-arriving .hero-depth-stats { animation-delay: 120ms; }
-        .hero-arriving .hero-depth-photo { animation: heroArrivePhoto 700ms ease-out both; }
-        @keyframes heroArrive { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes heroArrivePhoto { from { opacity: 0; } }
-        @media (prefers-reduced-motion: reduce) { .mode-thumb.arrive, .hero-arriving .hero-depth-text, .hero-arriving .hero-depth-stats, .hero-arriving .hero-depth-photo { animation: none; } }
+        /* Switching views (Bing 2026-11-25): the same choreography as the AI hero.
+           In: headline lines rise out of their masks, stats card follows, photo settles in.
+           Out (.is-leaving, set by switchMode): lines slide up, card + photo fade. */
+        .hero-line-mask { display: block; width: max-content; max-width: none; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; } /* as wide as the text: long words may run past the column */
+        .hero-arriving .hero-line { animation: heroLineIn 1s cubic-bezier(0.215,0.61,0.355,1) both; }
+        .hero-arriving .hero-line-mask + .hero-line-mask .hero-line { animation-delay: 120ms; }
+        .hero-arriving .hero-depth-stats > * { animation: heroCardIn 1s cubic-bezier(0.215,0.61,0.355,1) 250ms both !important; }
+        .hero-arriving .hero-depth-photo { animation: heroPhotoIn 1.2s ease-out both; }
+        @keyframes heroLineIn { from { transform: translateY(110%); } to { transform: none; } }
+        @keyframes heroCardIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+        @keyframes heroPhotoIn { from { opacity: 0; transform: scale(1.08); } }
+        .sf-hero.is-leaving .hero-line { animation: heroLineOut 300ms cubic-bezier(0.55,0.06,0.68,0.19) both !important; }
+        .sf-hero.is-leaving .hero-line-mask + .hero-line-mask .hero-line { animation-delay: 40ms !important; }
+        .sf-hero.is-leaving .hero-depth-stats > * { animation: heroCardOut 260ms ease-in both !important; }
+        .sf-hero.is-leaving .hero-depth-photo { animation: heroPhotoOut 300ms ease-in both !important; }
+        @keyframes heroLineOut { from { transform: none; } to { transform: translateY(-110%); } }
+        @keyframes heroCardOut { to { opacity: 0; transform: translateY(14px) scale(0.98); } }
+        @keyframes heroPhotoOut { to { opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .hero-arriving .hero-line, .hero-arriving .hero-depth-stats > *, .hero-arriving .hero-depth-photo { animation: none !important; } }
         @media (max-width: 460px) {
           .mode-opt { padding: 12px 16px; font-size: 13.5px; }
         }

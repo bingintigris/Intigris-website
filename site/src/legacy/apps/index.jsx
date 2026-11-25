@@ -35,7 +35,27 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
       const [mode, setMode] = useState('ai');
       useEffect(() => { if (new URLSearchParams(win.location.search).get('mode') === 'salesforce') setMode('salesforce'); }, []);
       /* flipping the selector: remember when, so the new hero's selector slides instead of jumping (Bing 2026-11-25) */
-      const switchMode = (m) => { if (m === mode) return; win.__modeSwitchAt = Date.now(); setMode(m); };
+      /* Switching views (Bing 2026-11-25): 1) the selector thumb slides to the other side right away,
+         2) the current hero plays its 'leaving' animation (.is-leaving), 3) after 300 ms the views swap
+         and the new hero plays its entrance (headline lines rise, card/console follow). */
+      const switchMode = (m) => {
+        if (m === mode) return;
+        const reduce = win.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const tog = doc.querySelector('.hx-mode, .mode-toggle');
+        if (tog) {
+          tog.setAttribute('data-mode', m);
+          tog.querySelectorAll('[data-mode]').forEach((el) => el.setAttribute('data-mode', m));
+          tog.querySelectorAll('button').forEach((b, i) => {
+            const on = (i === 0) === (m === 'ai');
+            b.classList.toggle(b.classList.contains('mode-opt') ? 'is-active' : 'on', on);
+            b.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+        }
+        const hero = doc.querySelector('.hx-hero, .sf-hero');
+        const go = () => { win.__modeSwitchAt = Date.now(); setMode(m); };
+        if (hero && !reduce && hero.getBoundingClientRect().bottom > 0) { hero.classList.add('is-leaving'); setTimeout(go, 300); }
+        else go();
+      };
       useEffect(() => { doc.documentElement.setAttribute('lang', lang); if (win.gsap) win.gsap.registerPlugin(...['ScrollTrigger', 'SplitText', 'DrawSVGPlugin', 'MorphSVGPlugin', 'MotionPathPlugin', 'Flip', 'ScrambleTextPlugin'].map(n => win[n]).filter(Boolean)); }, []);
 
       // Set window.__lang SYNCHRONOUSLY so the same render's tx() reads the new value.

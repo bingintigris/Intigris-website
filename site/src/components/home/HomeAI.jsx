@@ -239,10 +239,9 @@ function AiHero({ mode, onMode, onCta }) {
   useGsap(ref, ({ gsap }) => {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
     tl.from('.hx-h1 .hx-line', { yPercent: 110, duration: 1, stagger: .12 })
-      .from('.hx-hero-lede, .hx-hero-ctas', { y: 22, opacity: 0, duration: .8, stagger: .08 }, '-=.6')
+      .from('.hx-hero-lede', { y: 22, opacity: 0, duration: .8 }, '-=.6')
       .from('.hx-console', { y: 40, opacity: 0, rotateX: 12, duration: 1.1 }, '-=.9')
-      .from('.hx-agent', { scale: 0, opacity: 0, duration: .7, stagger: .06, ease: 'back.out(2)' }, '-=.9')
-      .from('.hx-hero-stats > div', { y: 16, opacity: 0, duration: .6, stagger: .08 }, '-=.6');
+      .from('.hx-agent', { scale: 0, opacity: 0, duration: .7, stagger: .06, ease: 'back.out(2)' }, '-=.9');
     gsap.to('.hx-hero-inner', { yPercent: -12, opacity: .35, ease: 'none', scrollTrigger: { trigger: ref.current, start: 'top top', end: 'bottom top', scrub: .5 } });
   });
   return (
@@ -261,26 +260,16 @@ function AiHero({ mode, onMode, onCta }) {
           </h1>
           {/* glossy selector, same look as on the Salesforce hero (Hero.jsx .mode-toggle) */}
           <div className="hx-mode" role="tablist" aria-label={tx('Choose solutions view', 'Kies weergave')} data-mode={mode}>
-            <span className={'hx-mode-thumb' + (arrive ? ' arrive' : '')} aria-hidden="true" />
+            <span className="hx-mode-thumb" aria-hidden="true" />
             <button type="button" role="tab" aria-selected={mode === 'ai'} className={mode === 'ai' ? 'on' : ''} onClick={() => onMode && onMode('ai')}>{tx('AI solutions', 'AI-oplossingen')}</button>
             <button type="button" role="tab" aria-selected={mode === 'salesforce'} className={mode === 'salesforce' ? 'on' : ''} onClick={() => onMode && onMode('salesforce')}>{tx('Salesforce solutions', 'Salesforce-oplossingen')}</button>
           </div>
           <p className="hx-hero-lede">{tx('From “we do something with ChatGPT” to processes where AI agents save time every day. With a proven method, and a team that actually builds it.',
             'Van “we doen iets met ChatGPT” naar processen waarin AI-agents elke dag tijd besparen. Met een bewezen methode, en een team dat het ook echt bouwt.')}</p>
-          <div className="hx-hero-ctas">
-            <button type="button" className="hx-btn hx-btn--glow" onClick={onCta}>{tx('Plan a call', 'Plan een gesprek')} <Arrow /></button>
-            <button type="button" className="hx-btn hx-btn--ghost" onClick={() => scrollToId('ai-ify')}>{tx('Explore AI-ify', 'Ontdek AI-ify')} <span aria-hidden="true">↓</span></button>
-          </div>
         </div>
         <div className="hx-hero-side">
           <AgentConsole />
-          {/* Bing 2026-11-25: keep 15+ years; 300+ projects and 4.5★ are Salesforce credentials and stay
-              on the Salesforce hero. AI facts from the Agentris proposition instead. */}
-          <div className="hx-hero-stats">
-            <div><b>15+</b><span>{tx('years of complex implementations', 'jaar complexe implementaties')}</span></div>
-            <div><b>8</b><span>{tx('steps in our AI-ify method', 'stappen in onze AI-ify-methode')}</span></div>
-            <div><b>4–6</b><span>{tx('weeks from idea to a working pilot', 'weken van idee naar werkende pilot')}</span></div>
-          </div>
+          {/* stats cards and the two buttons removed (Bing 2026-11-25) */}
         </div>
       </div>
       <HxStyles />
@@ -869,8 +858,8 @@ const LOOK_CSS = `
 .hx-hero[data-look="c"] { align-items: flex-start; padding-top: clamp(150px, 30vh, 330px); }
 .hx-hero[data-look="c"] .hx-hero-inner { align-items: start; }
 .hx-hero[data-look="c"] .hx-hero-copy { gap: 0; }
-.hx-hero[data-look="c"] .hx-h1 { font-size: clamp(48px, 8.4vw, 132px); line-height: .98; letter-spacing: -0.028em; }
-.hx-hero[data-look="c"] .hx-mask { margin-bottom: -.08em; }
+.hx-hero[data-look="c"] .hx-h1 { font-size: clamp(44px, 7.4vw, 116px); line-height: .98; letter-spacing: -0.028em; }
+.hx-hero[data-look="c"] .hx-mask { margin-bottom: -.08em; width: max-content; }
 .hx-hero[data-look="c"] .hx-mode { margin-top: clamp(28px, 4vh, 40px); }
 .hx-hero[data-look="c"] .hx-hero-lede { margin-top: 28px; }
 .hx-hero[data-look="c"] .hx-hero-ctas { margin-top: 22px; }
@@ -912,7 +901,12 @@ const LOOK_CSS = `
   transition: transform 420ms cubic-bezier(.22,.61,.36,1), background 420ms var(--ease-out), box-shadow 420ms var(--ease-out); }
 .hx-hero[data-look="c"] .hx-mode-thumb::after { content: ''; position: absolute; left: 8%; right: 8%; top: 2px; height: 45%; border-radius: 999px; background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,0)); }
 .hx-hero[data-look="c"] .hx-mode[data-mode="salesforce"] .hx-mode-thumb { transform: translateX(100%); background: linear-gradient(180deg, #4cc3f0 0%, #00A1E0 55%, #0088c0 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 6px 18px -6px rgba(0,120,180,.65); }
-.hx-hero[data-look="c"] .hx-mode-thumb.arrive { animation: hxThumbIn 420ms cubic-bezier(.22,.61,.36,1); }
+/* leaving (selector clicked): headline slides up out of its mask, console + intro + agents fade (apps/index.jsx) */
+.hx-hero.is-leaving .hx-line { transform: translateY(-110%) !important; transition: transform 300ms cubic-bezier(.55,.06,.68,.19); }
+.hx-hero.is-leaving .hx-line + .hx-line, .hx-hero.is-leaving .hx-mask + .hx-mask .hx-line { transition-delay: 40ms; }
+.hx-hero.is-leaving .hx-console, .hx-hero.is-leaving .hx-hero-lede { opacity: 0 !important; transform: translateY(14px) scale(.98) !important; transition: opacity 260ms ease-in, transform 260ms ease-in; }
+.hx-hero.is-leaving .hx-agent { opacity: 0; transform: scale(.4); transition: opacity 240ms ease-in, transform 240ms ease-in; animation: none; }
+.hx-hero.is-leaving .hx-canvas { opacity: 0; transition: opacity 300ms ease-in; }
 @keyframes hxThumbIn { from { transform: translateX(100%); background: #00A1E0; } to { transform: translateX(0); } }
 @media (max-width: 899px) { .hx-agent { display: none; } }
 @media (prefers-reduced-motion: reduce) { .hx-agent, .hx-hero[data-look="c"] .hx-mode-thumb.arrive { animation: none !important; } }
