@@ -28,10 +28,10 @@ export const START_ITEMS = () => [
     price: tx('Quickstart · €7,000 fixed', 'Quickstart · €7.000 vaste prijs'), href: '/quickstarts/service-cloud',
   },
   {
-    id: 'field', product: 'Field Service', sub: '+ FieldBuddy', role: tx('I plan field engineers', 'Ik plan monteurs'),
+    id: 'field', product: 'Field Service', role: tx('I plan field engineers', 'Ik plan monteurs'),
     problem: tx('Planning on a whiteboard, work orders on paper, invoices weeks later.', 'Planning op een whiteboard, werkbonnen op papier, facturen weken later.'),
     outcome: tx('Smart scheduling and the whole job on the engineer’s phone.', 'Slim plannen en de hele klus op de telefoon van de monteur.'),
-    includes: [tx('Scheduling & routes', 'Planning & routes'), tx('Mobile work orders (FieldBuddy)', 'Mobiele werkbonnen (FieldBuddy)'), tx('Parts & installed base', 'Onderdelen & installaties')],
+    includes: [tx('Scheduling & routes', 'Planning & routes'), tx('Mobile work orders', 'Mobiele werkbonnen'), tx('Parts & installed base', 'Onderdelen & installaties')],
     price: tx('Quickstart · €13,000 fixed', 'Quickstart · €13.000 vaste prijs'), href: '/quickstarts/field-service',
   },
   {
@@ -70,7 +70,7 @@ export function StartHead({ dark }) {
 const Arrow = () => <span aria-hidden="true">→</span>;
 
 /* ---------- mini Salesforce screens (variant B) ---------- */
-function MiniScreen({ id }) {
+export function MiniScreen({ id }) {
   const row = (a, b, c, tone) => (
     <div className="wts-row" key={a}><b>{a}</b><span>{b}</span><i className={'wts-chip wts-chip--' + (tone || 'n')}>{c}</i></div>
   );
@@ -78,11 +78,11 @@ function MiniScreen({ id }) {
     sales: [row('Havenwerk BV', tx('12 heat pumps', '12 warmtepompen'), '€ 48k', 'g'), row('Duinzicht Zorg', tx('Demo done', 'Demo gehad'), '€ 18k'), row('Polderbouw', tx('Quote sent', 'Offerte verstuurd'), '€ 31k', 'c')],
     service: [row('#00418', tx('Pump makes noise', 'Pomp maakt geluid'), tx('2h left', 'nog 2u'), 'c'), row('#00417', tx('Invoice question', 'Vraag over factuur'), tx('Solved', 'Opgelost'), 'g'), row('#00415', tx('Maintenance date', 'Onderhoudsdatum'), tx('New', 'Nieuw'))],
     field: [row('08:30', 'Havenwerk BV · Zaandam', tx('On route', 'Onderweg'), 'c'), row('11:00', 'Polderbouw · Purmerend', tx('Planned', 'Gepland')), row('14:15', 'Duinzicht · Haarlem', tx('Parts ready', 'Onderdelen klaar'), 'g')],
-    agentforce: null, data: null, slack: null,
+    agentforce: null, data: null, slack: null, experience: null,
   }[id];
   return (
     <div className="wts-screen" aria-hidden="true">
-      <div className="wts-screen-bar"><span className="wts-dots"><i /><i /><i /></span>{id === 'slack' ? 'Slack · #havenwerk-deal' : 'Salesforce · ' + ({ sales: 'Opportunities', service: 'Service Console', field: tx('Dispatch', 'Planning'), agentforce: 'Agentforce', data: 'Data 360' }[id])}</div>
+      <div className="wts-screen-bar"><span className="wts-dots"><i /><i /><i /></span>{id === 'slack' ? 'Slack · #havenwerk-deal' : 'Salesforce · ' + ({ sales: 'Opportunities', service: 'Service Console', field: tx('Dispatch', 'Planning'), agentforce: 'Agentforce', data: 'Data 360', experience: tx('Customer portal', 'Klantportaal') }[id])}</div>
       <div className="wts-screen-body">
         {body && body}
         {id === 'agentforce' && (
@@ -97,6 +97,17 @@ function MiniScreen({ id }) {
             <div className="wts-avatar">NJ</div>
             <div><b>Noor Jansen</b><span>Havenwerk BV</span></div>
             <div className="wts-sources">{['ERP', 'Web', 'Service', 'Mail'].map((s) => <i key={s}>{s}</i>)}</div>
+          </div>
+        )}
+        {id === 'experience' && (
+          <div className="wts-portal">
+            <div className="wts-portal-hi">{tx('Welcome back, Noor', 'Welkom terug, Noor')} · Havenwerk BV</div>
+            <div className="wts-portal-tiles">
+              <div><b>4</b><span>{tx('My installations', 'Mijn installaties')}</span></div>
+              <div><b>1</b><span>{tx('Open invoice', 'Openstaande factuur')}</span></div>
+              <div><b>2</b><span>{tx('Documents', 'Documenten')}</span></div>
+            </div>
+            <div className="wts-portal-cta">{tx('Plan maintenance →', 'Onderhoud plannen →')}</div>
           </div>
         )}
         {id === 'slack' && (
@@ -310,6 +321,14 @@ const WTS_CSS = `
 .wts-profile b { display: block; } .wts-profile span { font-size: 13px; color: #666; }
 .wts-sources { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; }
 .wts-sources i { font-style: normal; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 8px; background: #eef4ff; color: #0176d3; }
+
+.wts-portal { display: flex; flex-direction: column; gap: 10px; }
+.wts-portal-hi { font-size: 14px; font-weight: 600; color: #032d60; }
+.wts-portal-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.wts-portal-tiles div { background: #fff; border-radius: 10px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.05); animation: wtsIn .45s both; }
+.wts-portal-tiles b { display: block; font-size: 22px; color: #0176d3; }
+.wts-portal-tiles span { font-size: 12px; color: #555; }
+.wts-portal-cta { align-self: flex-start; font-size: 13px; font-weight: 600; padding: 9px 14px; border-radius: 99px; background: #0176d3; color: #fff; }
 
 /* C · bento */
 .wts-bento { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(250px, auto); gap: 16px; }

@@ -30,15 +30,15 @@ import { SiteCookieConsent } from '../components/CookieConsent.jsx';
     ];
 
     const QUOTES = [
-      { photo: 'https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/652e51a1abee3e6c038c0a5d_CarlijndHaanIntigris.png',
+      { photo: '/assets/team/carlijn-de-haan.jpg',
         name: 'Carlijn de Haan', role: 'COO',
         qEn: 'At Intigris, I feel really happy when we help a customer make their business better. It’s also great to see how smart my teammates are in finding answers to what the customer needs.',
         qNl: 'Bij Intigris word ik echt blij als we een klant helpen zijn business te verbeteren. Het is ook geweldig om te zien hoe slim mijn teamgenoten zijn in het vinden van antwoorden op wat de klant nodig heeft.' },
-      { photo: 'https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/652f962d1fcddfc32c905eff_RonnyBlom.jpg',
+      { photo: '/assets/team/ronny-blom.jpg',
         name: 'Ronny Blom', role: 'Salesforce Consultant',
         qEn: 'What really set Intigris apart was their commitment to personal growth and development. I was given the opportunity to chart my own path within the Salesforce landscape, despite my lack of previous experience.',
         qNl: 'Wat Intigris echt onderscheidde, was hun toewijding aan persoonlijke groei en ontwikkeling. Ik kreeg de kans om mijn eigen pad binnen het Salesforce-landschap uit te stippelen, ondanks mijn gebrek aan eerdere ervaring.' },
-      { photo: 'https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/64b8decbcef32c7425b744a0_T03CWD3A3-U01TCHH4SJE-81b89c25229a-512.jpeg',
+      { photo: '/assets/team/elzinus-van-der-kleij.jpg',
         name: 'Elzinus van der Kleij', role: 'Salesforce Consultant',
         qEn: 'The moment I realized I had a free hand in being as supportive as I can for our clients, and being able to communicate with colleagues in a flat hierarchy, this feeling of autonomy and responsibility makes me want to grow.',
         qNl: 'Het moment waarop ik besefte dat ik de vrije hand had om onze klanten zo goed mogelijk te ondersteunen, en te communiceren met collega’s in een platte hiërarchie, dat gevoel van autonomie en verantwoordelijkheid maakt dat ik wil groeien.' },

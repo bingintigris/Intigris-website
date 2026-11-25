@@ -129,7 +129,13 @@ const GA4_ID = win.GA4_MEASUREMENT_ID || '';
 /* ============================== UI component ============================== */
 function SiteCookieConsent() {
   const { useState, useEffect } = React;
-  const [state, setState] = useState(() => win.IntigrisConsent.get());
+  // Start as "unknown" (undefined) on the server AND on the first client render, so the
+  // pre-rendered HTML never contains the banner. The saved choice is read only after
+  // hydration. (Reading it during render left a dead, unclickable banner for returning
+  // visitors: the server HTML had the banner, the client rendered nothing, and React
+  // kept the server copy without attaching its click handlers.)
+  const [state, setState] = useState(undefined);
+  useEffect(() => { setState(win.IntigrisConsent.get()); }, []);
   const [panel, setPanel] = useState(false);       // preferences panel open
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);

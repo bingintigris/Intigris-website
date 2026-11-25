@@ -1,4 +1,5 @@
 /* Converted from components/CloudKitV3.jsx (classic Babel global) by scripts/convert-legacy.mjs */
+import { scrollShift } from '../../lib/scrollShift.js';
 import React from 'react';
 import { doc, win } from '../../lib/env.js';
 import { getLang, tx } from '../../lib/i18n.js';
@@ -525,63 +526,123 @@ function LhTile({ it }) {
   );
 }
 
-function V3LogoHub({ head, center, items }) {
+/* lineFx (Bing 2026-11-24, smoother connector lines): 'pop' (original: line snaps in after the
+   tool lands), 'grow' (line draws out from Salesforce while the tool flies in; they meet),
+   'trace' (tools land, then each line draws slowly and a light dot travels to the tool),
+   'flow' (lines fade in softly, then calm dashes keep flowing towards Salesforce) */
+function V3LogoHub({ head, center, items, lineFx = 'pop' }) {
   const ref = v3Ref(null);
   const [active, setActive] = v3State(0);
   const [paused, setPaused] = v3State(false);
-  const [landed, setLanded] = v3State(V3_REDUCE || !win.gsap);
+  /* 'flow' look (Bing 2026-11-24): all lines glow softly together; only the hovered tool's line
+     turns bright orange, so no automatic walking highlight there */
+  const glow = lineFx === 'flow';
+  const [hov, setHov] = v3State(-1);
+  const [landed, setLanded] = v3State(V3_REDUCE);
   /* Once everything has landed, the highlight walks from tool to tool. */
-  v3Effect(() => { if (!landed || paused || V3_REDUCE) return; const t = setInterval(() => setActive(a => (a + 1) % items.length), 2600); return () => clearInterval(t); }, [landed, paused, items.length]);
+  v3Effect(() => { if (!landed || paused || V3_REDUCE || glow) return; const t = setInterval(() => setActive(a => (a + 1) % items.length), 2600); return () => clearInterval(t); }, [landed, paused, items.length]);
   const n = items.length, W = 1000, H = 820;
   const pts = items.map((_, i) => { const a = (-90 + (360 / n) * i) * Math.PI / 180; return [50 + 37 * Math.cos(a), 50 + 41 * Math.sin(a)]; });
   v3Effect(() => {
-    if (!win.gsap || V3_REDUCE) return;
-    const gsap = win.gsap;
-    const mm = gsap.matchMedia();
+    if (V3_REDUCE) return;
+    let mm, alive = true;
+    /* the page's own GSAP (CDN, synced with Lenis) when present, else the npm copy (design review) */
+    const load = win.gsap && win.ScrollTrigger ? Promise.resolve([win.gsap, win.ScrollTrigger])
+      : Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([a, b]) => { a.gsap.registerPlugin(b.ScrollTrigger); return [a.gsap, b.ScrollTrigger]; });
+    load.then(([gsap, ST]) => {
+    if (!alive || !ref.current) return;
+    mm = gsap.matchMedia();
+    mm.add('(max-width: 999px)', () => setLanded(true));
     mm.add('(min-width: 1000px)', () => {
       const root = ref.current;
       const stage = root.querySelector('.lh-stage');
-      const nodes = root.querySelectorAll('.lh-node');
+      const nodes = root.querySelectorAll('.lh-pos--n');
       const lines = root.querySelectorAll('.lh-line');
-      const tl = gsap.timeline({ scrollTrigger: { trigger: root.querySelector('.lh-grid'), start: 'center center', end: '+=110%', scrub: 0.8, pin: true,
+      /* Pin and animation are separate (Bing 2026-11-24): the grid pins when it is centred,
+         but the fly-in already starts when the section enters the screen from below, so
+         the visitor sees movement before the section fills the screen. */
+      const grid = root.querySelector('.lh-grid');
+      const pinST = ST.create({ trigger: grid, start: 'center center', end: '+=80%', pin: true });
+      /* Play once (Bing 2026-11-24): after the visitor has scrolled past, finish the animation,
+         remove the pin (so scrolling back up is shorter and nothing replays) and shift the scroll
+         position by the removed pin length so the view does not jump. */
+      let settled = false;
+      const settle = () => {
+        if (settled) return; settled = true;
+        const d = pinST.end - pinST.start;
+        const st = tl.scrollTrigger; if (st) st.kill(false, true); tl.kill(); pinST.kill();
+        /* Hard end state, so no scrub tween can pull the tools back to their start position. */
+        /* explicit end values, NOT clearProps: GSAP turned the CSS 'translate: -50% -50%' centring into its
+           own transform; clearing it and letting GSAP re-render later doubled the centring (logos half a
+           tile off their lines when scrolling back up, Bing 2026-11-24) */
+        gsap.set([root.querySelector('.lh-pos--c'), ...nodes], { x: 0, y: 0, scale: 1, opacity: 1 });
+        gsap.set(lines, { strokeDashoffset: 0, opacity: 1 });
+        gsap.set(root.querySelectorAll('.lh-dot'), { opacity: 0 });
+        scrollShift(win.scrollY - d);
+        setLanded(true);
+        ST.refresh();
+      };
+      const tl = gsap.timeline({ scrollTrigger: { trigger: root, start: 'top 85%', end: () => pinST.end, scrub: 1, invalidateOnRefresh: true,
         onUpdate: st => setLanded(st.progress > 0.92) } });
-      tl.fromTo(root.querySelector('.lh-center'), { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.6)' }, 0);
+      /* settle only once the section is completely off screen: the visitor never sees the switch */
+      ST.create({ start: () => pinST.end, end: 'max', onUpdate: () => { if (!settled && root.getBoundingClientRect().bottom < 0) requestAnimationFrame(settle); } });
+      tl.fromTo(root.querySelector('.lh-pos--c'), { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.6)' }, 0);
       nodes.forEach((el, i) => {
         /* Start further out along the node's own spoke: straight outside-in. */
         const dx = () => (pts[i][0] - 50) / 100 * stage.offsetWidth * 1.15;
         const dy = () => (pts[i][1] - 50) / 100 * stage.offsetHeight * 1.15;
         const t0 = 0.15 + i * 0.07;
-        tl.fromTo(el, { x: dx, y: dy, opacity: 0, scale: 0.85 }, { x: 0, y: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'power3.out' }, t0)
-          .fromTo(lines[i], { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.35, ease: 'none' }, t0 + 0.7);
+        tl.fromTo(el, { x: dx, y: dy, opacity: 0, scale: 0.85 }, { x: 0, y: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'power3.out' }, t0);
+        if (lineFx === 'grow') tl.fromTo(lines[i], { strokeDashoffset: 1, opacity: 0 }, { strokeDashoffset: 0, opacity: 1, duration: 0.9, ease: 'power3.out' }, t0);
+        else if (lineFx === 'trace') {
+          const dot = root.querySelectorAll('.lh-dot')[i];
+          const tt = 0.55 + n * 0.07 + i * 0.06;
+          tl.fromTo(lines[i], { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.7, ease: 'sine.inOut' }, tt)
+            .fromTo(dot, { attr: { cx: W / 2, cy: H / 2 }, opacity: 0 }, { attr: { cx: pts[i][0] / 100 * W, cy: pts[i][1] / 100 * H }, opacity: 1, duration: 0.7, ease: 'sine.inOut' }, tt)
+            .to(dot, { opacity: 0, duration: 0.2 }, tt + 0.7);
+        }
+        else if (lineFx === 'flow') tl.fromTo(lines[i], { opacity: 0, strokeDashoffset: 0 }, { opacity: 1, duration: 0.8, ease: 'sine.inOut' }, t0 + 0.3);
+        else tl.fromTo(lines[i], { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.35, ease: 'none' }, t0 + 0.7);
       });
-      tl.to({}, { duration: 0.25 });
+      tl.to({}, { duration: 0.5 }); // a calm still moment before the pin lets go
       return () => setLanded(true);
     });
-    return () => mm.revert();
+    });
+    return () => { alive = false; mm && mm.revert(); };
   }, []);
   const a = items[active];
-  const pick = i => () => { setActive(i); setPaused(true); };
+  const pick = i => () => { setActive(i); setPaused(true); setHov(i); };
+  const lit = i => glow ? i === hov : i === active;
   return (
-    <section className="ck-section ck-section--dark lh" ref={ref}>
+    <section className={'ck-section ck-section--dark lh lh--' + lineFx + (landed ? ' lh--landed' : '')} ref={ref}>
       <div className="container-wide">
         <div className="lh-grid">
           <div className="lh-text">
             <CkHead {...head} />
             <div className="lh-caption" key={active} aria-live="polite"><small>{a.k}</small><b>{a.n}</b><span>{a.d}</span></div>
           </div>
-          <div className="lh-stage" onMouseLeave={() => setPaused(false)}>
+          <div className="lh-stage" onMouseLeave={() => { setPaused(false); setHov(-1); }}>
             <svg className="lh-lines" viewBox={'0 0 ' + W + ' ' + H} aria-hidden>
-              {pts.map(([x, y], i) => <line key={i} x1={W / 2} y1={H / 2} x2={x / 100 * W} y2={y / 100 * H} pathLength="1" className={'lh-line' + (i === active ? ' on' : '')} />)}
+              {glow && pts.map(([x, y], i) => <line key={'h' + i} x1={W / 2} y1={H / 2} x2={x / 100 * W} y2={y / 100 * H} className={'lh-halo' + (lit(i) ? ' on' : '')} />)}
+              {pts.map(([x, y], i) => <line key={i} x1={W / 2} y1={H / 2} x2={x / 100 * W} y2={y / 100 * H} pathLength="1" className={'lh-line' + (lit(i) ? ' on' : '')} />)}
+              {lineFx === 'trace' && pts.map((_, i) => <circle key={'d' + i} className="lh-dot" r="7" cx={W / 2} cy={H / 2} opacity="0" />)}
             </svg>
-            <div className="lh-center">
-              <img src={LH_DIR + 'salesforce.svg'} alt="Salesforce" />
-              {center && <span>{center}</span>}
+            {/* .lh-pos = invisible zero-size anchor point that GSAP moves; the visible element inside
+                is centred on it by CSS. GSAP and CSS never touch the same element, so the centring can't
+                be doubled or lost (logos/cloud drifting off the lines, Bing 2026-11-24) */}
+            <div className="lh-pos lh-pos--c">
+              <div className="lh-center">
+                <img src={LH_DIR + 'salesforce.svg'} alt="Salesforce" />
+                {center && <span>{center}</span>}
+              </div>
             </div>
             {items.map((it, i) => (
-              <button key={i} type="button" className={'lh-node' + (i === active ? ' on' : '')} style={{ left: pts[i][0] + '%', top: pts[i][1] + '%' }}
-                onMouseEnter={pick(i)} onFocus={pick(i)} onClick={pick(i)} aria-pressed={i === active} aria-label={it.n}>
-                <LhTile it={it} />
-              </button>
+              <span key={i} className="lh-pos lh-pos--n" style={{ left: pts[i][0] + '%', top: pts[i][1] + '%' }}>
+                <button type="button" className={'lh-node' + (lit(i) ? ' on' : '')}
+                  onMouseEnter={pick(i)} onFocus={pick(i)} onClick={pick(i)} aria-pressed={i === active} aria-label={it.n}>
+                  <LhTile it={it} />
+                </button>
+              </span>
             ))}
           </div>
         </div>
@@ -590,18 +651,33 @@ function V3LogoHub({ head, center, items }) {
         </div>
       </div>
       <style dangerouslySetInnerHTML={{ __html: `
-        .lh { overflow-x: clip; }
+        .lh { overflow: clip; } /* tools flying in stay inside the dark section (never over the section above) */
         .lh-grid { display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
         .lh-text .ck-head { margin-bottom: 28px; }
         .lh-stage { position: relative; width: 100%; max-width: min(760px, calc((100vh - 140px) * 1.2195)); margin: 0 auto; aspect-ratio: 1000 / 820; }
         .lh-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
         .lh-line { stroke: rgba(252,247,235,.28); stroke-width: 2; stroke-dasharray: 1 1; stroke-dashoffset: 0; transition: stroke 300ms, stroke-width 300ms; }
         .lh-line.on { stroke: var(--intigris-coral); stroke-width: 4; }
-        .lh-center { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
+        .lh-dot { fill: #fff; filter: drop-shadow(0 0 6px rgba(255,92,57,.9)); }
+        /* glow (Bing 2026-11-24): every line one light orange, softly glowing up and down together;
+           the hovered tool's line turns bright orange. No CSS filter on the SVG lines: Chrome can
+           paint filtered SVG elements at a stale position after the section moves (lines drawn
+           off the logos); the glow is a second, wide, soft line (.lh-halo) behind each line. */
+        .lh--flow .lh-line { stroke: #ffb595; stroke-width: 2.5; }
+        .lh-halo { stroke: #ff9a72; stroke-width: 12; stroke-linecap: round; fill: none; opacity: 0; }
+        .lh--flow.lh--landed .lh-line { animation: lhGlow 3.2s ease-in-out infinite; }
+        .lh--flow.lh--landed .lh-halo { animation: lhHalo 3.2s ease-in-out infinite; }
+        .lh--flow .lh-line.on { stroke: var(--intigris-coral); stroke-width: 4; animation: none; opacity: 1; }
+        .lh--flow .lh-halo.on { stroke: var(--intigris-coral); animation: none; opacity: .4; }
+        @keyframes lhGlow { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+        @keyframes lhHalo { 0%, 100% { opacity: 0; } 50% { opacity: .22; } }
+        @media (prefers-reduced-motion: reduce) { .lh--flow .lh-line, .lh-halo { animation: none !important; } .lh--flow .lh-line { opacity: .8; } }
+        .lh-pos { position: absolute; width: 0; height: 0; } .lh-pos--c { left: 50%; top: 50%; z-index: 2; } .lh-pos--n { z-index: 3; }
+        .lh-center { position: absolute; left: 0; top: 0; translate: -50% -50%; width: max-content; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
         .lh-center::before { content: ''; position: absolute; left: 50%; top: 42%; width: 150%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,161,224,.28), rgba(0,161,224,0)); z-index: -1; }
-        .lh-center img { width: clamp(120px, 12vw, 172px); height: auto; filter: drop-shadow(0 18px 30px rgba(0,0,0,.4)); }
+        .lh-center img { width: clamp(120px, 12vw, 172px); max-width: none; height: auto; filter: drop-shadow(0 18px 30px rgba(0,0,0,.4)); }
         .lh-center span { font-size: 14px; font-weight: 500; letter-spacing: .02em; padding: 6px 14px; border-radius: 999px; background: #3a2108; border: 1px solid rgba(252,247,235,.22); color: var(--intigris-off-white); white-space: nowrap; }
-        .lh-node { position: absolute; translate: -50% -50%; appearance: none; font: inherit; cursor: pointer; z-index: 3; display: grid; place-items: center; min-width: 136px; height: 60px; padding: 8px 16px; border-radius: 16px; border: 0; background: #fff; box-shadow: 0 14px 30px -14px rgba(0,0,0,.6), 0 0 0 0 var(--intigris-coral); transition: box-shadow 300ms, scale 300ms; }
+        .lh-node { position: absolute; left: 0; top: 0; translate: -50% -50%; appearance: none; font: inherit; cursor: pointer; z-index: 3; display: grid; place-items: center; min-width: 136px; height: 60px; padding: 8px 16px; border-radius: 16px; border: 0; background: #fff; box-shadow: 0 14px 30px -14px rgba(0,0,0,.6), 0 0 0 0 var(--intigris-coral); transition: box-shadow 300ms, scale 300ms; }
         .lh-node.on { box-shadow: 0 14px 30px -14px rgba(0,0,0,.6), 0 0 0 4px var(--intigris-coral); scale: 1.06; }
         .lh-tile-logos { display: flex; align-items: center; gap: 10px; }
         .lh-tile-logos img { height: 26px; width: auto; max-width: 116px; object-fit: contain; display: block; }

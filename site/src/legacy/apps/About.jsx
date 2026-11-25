@@ -142,7 +142,7 @@ import { SiteContactSheet } from '../components/ContactSheet.jsx';
           <section style={{ background: 'var(--intigris-chocolate)', color: 'var(--intigris-off-white)', paddingTop: 'clamp(64px, 8vw, 104px)', paddingBottom: 'clamp(64px, 8vw, 104px)' }}>
             <div className="container-wide ab-split" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(32px, 5vw, 72px)', alignItems: 'center' }}>
               <div style={{ borderRadius: 24, overflow: 'hidden', border: '1px solid rgba(252,247,235,0.2)', aspectRatio: '4/5', background: 'rgba(252,247,235,0.06)' }}>
-                <img src="https://cdn.prod.website-files.com/643138b157e24b0daaae2bf6/652f9f7de2434b632b972bfe_HansNieuwenhuisIntigris.jpg" alt={tx('Hans Nieuwenhuis, founder of Intigris', 'Hans Nieuwenhuis, oprichter van Intigris')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src="/assets/team/hans-nieuwenhuis.jpg" alt={tx('Hans Nieuwenhuis, founder of Intigris', 'Hans Nieuwenhuis, oprichter van Intigris')} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
               <div>
                 <div className="eyebrow" style={{ color: 'rgba(252,247,235,0.7)' }}>{tx('OUR STORY', 'ONS VERHAAL')}</div>

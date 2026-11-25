@@ -1,11 +1,16 @@
 /* Converted from components/HomeSalesforce.jsx (classic Babel global) by scripts/convert-legacy.mjs */
 import { tx } from '../../lib/i18n.js';
-import { CK_STORIES, CkStyles, CkTalk } from './CloudKit.jsx';
+import { CK_STORIES, CkStyles } from './CloudKit.jsx';
+import { TalkChatAsk, TkStyles } from '../../components/home/TalkVariants.jsx';
 import React from 'react';
 import { Island } from './Island.jsx';
 import { V3LogoHub, V3Styles } from './CloudKitV3.jsx';
 import { StorySpotlight } from './StorySpotlight.jsx';
 import { StartRolesCard, WtsStyles } from '../../components/home/WhereToStart.jsx';
+import { CloudsChaos, CpStyles } from '../../components/home/CloudsPick.jsx';
+import { WsStyles } from '../../components/home/WhyStack.jsx';
+import { WhySettleBento, WsoStyles } from '../../components/home/WhySettle.jsx';
+import { StoriesGalleryIndustry, SvStyles } from '../../components/home/StoriesVariants.jsx';
 /* ==================================================================== */
 /*  HOMEPAGE · SALESFORCE SOLUTIONS view (index.html, mode = salesforce)   */
 /*  Built section by section with Bing (plan 2026-11-09):                  */
@@ -34,30 +39,44 @@ function SiteSalesforceHome({ onCta }) {
   return (
     <React.Fragment>
       {/* 2 · Proof strip: TODO (variant round) */}
-      {/* 3 · The platform: concept B "Mission Control" (chosen 2026-11-11), island in islands/src/islands/PlatformMission.tsx */}
-      <Island name="platformMission" />
-      {/* 4 · Where do you start: variant D (roles + product card, light), chosen 2026-11-17 */}
-      <StartRolesCard />
-
-      {/* 5 · Integrations (approved on the Sales Cloud page) */}
-      <V3LogoHub center="Salesforce" head={{ eyebrow: tx('INTEGRATIONS', 'KOPPELINGEN'), a: tx('Connected to', 'Gekoppeld aan'), b: tx('everything you use.', 'alles wat je gebruikt.'),
+      {/* 2 · What we implement: concept A "Chaos to order" (chosen by Bing 2026-11-23), replaces the
+             "A day at Havenwerk BV" platform island (islands/src/islands/PlatformMission.tsx, kept as inspiration) */}
+      <CloudsChaos />
+      {/* Bing 2026-11-24: no "Salesforce" label under the logo; lines fade in softly + data flow (round intlines, C) */}
+      {/* 3 · Integrations (approved on the Sales Cloud page); moved up below 'What we implement' by Bing 2026-11-24 */}
+      <div className="hsf-int">
+      <V3LogoHub lineFx="flow" head={{ eyebrow: tx('INTEGRATIONS', 'KOPPELINGEN'), a: tx('Connected to', 'Gekoppeld aan'), b: tx('everything you use.', 'alles wat je gebruikt.'),
         lede: tx('Salesforce gets stronger when it talks to the rest of your business. These are connections we build and maintain. Hover over a tool to see what it does.', 'Salesforce wordt sterker als het praat met de rest van je bedrijf. Dit zijn koppelingen die wij bouwen en onderhouden. Ga met je muis over een tool om te zien wat het doet.') }}
         items={HSF_INTEGRATIONS()} />
+      </div>
+
+      {/* 4 · Why Intigris: "We breathe Salesforce." scroll line along five reasons (chosen by Bing 2026-11-24);
+             replaces "Where do you start?" (StartRolesCard, overlapped with section 2) */}
+      {/* Bing 2026-11-24: plays once, then settles into the bento overview (round 4, B) */}
+      <WhySettleBento />
 
       {/* 6 · How we work: TODO (variant round) */}
 
-      {/* 7 · Customer stories (approved) */}
-      <StorySpotlight variant="pills" head={{ eyebrow: tx('CUSTOMER SUCCESS STORIES', 'KLANTSUCCESVERHALEN'), a: tx('Teams that run on it.', 'Teams die erop draaien.'), b: '',
-        lede: tx('What we built, in their own words. Pick a company or let it play.', 'Wat we bouwden, in hun eigen woorden. Kies een bedrijf of laat het vanzelf lopen.') }}
-        stories={[S.wetransfer, S.evbox, S.ridder]} />
+      {/* 7 · Customer stories: horizontal gallery with industry pills (C2, chosen by Bing 2026-11-24);
+             replaces the StorySpotlight tabs (WeTransfer / EVBox / De Ridder). De Ridder is left out
+             because its story is about FieldBuddy (Bing's rule). Starts on "All". */}
+      {/* Bing 2026-11-24: after scrolling through, it glides back to the first story as a carousel (Bing switched C → A) */}
+      <StoriesGalleryIndustry after="carousel" />
 
       {/* 8 · Why Intigris: TODO (variant round) */}
 
       {/* 9 · Talk to a person (approved) */}
-      <CkTalk onCta={onCta} line={tx('30 minutes, and you know what Salesforce can do for you.', 'In 30 minuten weet je wat Salesforce voor jou kan doen.')} />
+      {/* Closing section (Bing 2026-11-24): 'Chat with Frank' on cream, 'Ask Frank' look (round talkcream, 6);
+          replaces the Frank 'Let's talk' strip AND the shared 'Ready to smarten up your business?' CTA */}
+      <TalkChatAsk onCta={onCta} />
       <CkStyles />
       <V3Styles />
       <WtsStyles />
+      <CpStyles />
+      <WsStyles />
+      <WsoStyles />
+      <TkStyles />
+      <SvStyles />
     </React.Fragment>
   );
 }

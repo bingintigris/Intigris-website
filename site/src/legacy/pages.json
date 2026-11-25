@@ -29,7 +29,7 @@
     "description": "Salesforce Sales Cloud implemented by Intigris: all your customers and deals in one place, connected to Exact, AFAS, NetSuite and more. Start with a Quickstart from €7,000 or a full implementation.",
     "robots": "",
     "head": "",
-    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js\"></script>"
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js\"></script>"
   },
   "FieldService-v3": {
     "route": "/quickstarts/field-service",
@@ -37,7 +37,7 @@
     "description": "Salesforce Field Service implemented by Intigris: planning, engineers and work orders in one system. Fewer kilometres, fewer second visits, invoices the same day. Quickstart from €13,000.",
     "robots": "noindex",
     "head": "",
-    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js\"></script>\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js\"></script>"
+    "body": "<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js\"></script>\n<script src=\"https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js\"></script>"
   },
   "ServiceCloud": {
     "route": "/quickstarts/service-cloud",

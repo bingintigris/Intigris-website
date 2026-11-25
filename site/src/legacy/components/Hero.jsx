@@ -1,6 +1,7 @@
 /* Converted from components/Hero.jsx (classic Babel global) by scripts/convert-legacy.mjs */
 import React from 'react';
 import { getLang, tx } from '../../lib/i18n.js';
+import { TrustedVelocity, TvStyles } from '../../components/home/TrustedVariants.jsx';
 // Hero.jsx, Bold stacked headline + warm editorial composition right.
 // Exposes: window.SiteHero
 
@@ -69,6 +70,35 @@ function RotatingWord({ words, idx, color = 'var(--intigris-coral)' }) {
 }
 
 /* ---------- Cinematic: full-bleed coral hero, transparent overlay header ---------- */
+/* ---------- Hero depth on scroll (chosen by Bing 2026-11-24, effect 2) ----------
+   While the hero scrolls away, the team photo moves slower and zooms in a little,
+   and the headline and the numbers card drift up at different speeds.
+   GSAP + ScrollTrigger from npm (client only), scrubbed over the hero's height,
+   reverted on unmount, skipped for prefers-reduced-motion. */
+function useHeroDepth(ref) {
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let ctx, alive = true;
+    // Prefer the page's own GSAP (window.gsap, loaded from the CDN and synced with Lenis
+    // smooth scrolling, like the Integrations hub); fall back to the npm copy elsewhere.
+    const load = window.gsap && window.ScrollTrigger
+      ? Promise.resolve([{ gsap: window.gsap }, { ScrollTrigger: window.ScrollTrigger }])
+      : Promise.all([import('gsap'), import('gsap/ScrollTrigger')]);
+    load.then(([{ gsap }, { ScrollTrigger }]) => {
+      if (!alive || !ref.current) return;
+      gsap.registerPlugin(ScrollTrigger);
+      ctx = gsap.context(() => {
+        const st = { trigger: ref.current, start: 'top top', end: 'bottom top', scrub: 0.6, invalidateOnRefresh: true };
+        gsap.fromTo('.hero-depth-photo', { scale: 1, yPercent: 0 }, { scale: 1.14, yPercent: 14, ease: 'none', scrollTrigger: st });
+        gsap.to('.hero-depth-text', { yPercent: -18, ease: 'none', scrollTrigger: st });
+        gsap.to('.hero-depth-stats', { yPercent: -70, ease: 'none', scrollTrigger: st });
+      }, ref);
+      ScrollTrigger.refresh();
+    });
+    return () => { alive = false; ctx && ctx.revert(); };
+  }, []);
+}
+
 function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'coral', mode = 'ai', onMode }) {
   const dark = mood === 'dark';
   const services = [
@@ -77,9 +107,11 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
     { n: '03', label: tx('Service Cloud', 'Service Cloud') },
     { n: '04', label: tx('Integrations', 'Integraties') },
   ];
+  const heroRef = React.useRef(null);
+  useHeroDepth(heroRef);
   return (
     <>
-    <section style={{
+    <section ref={heroRef} style={{
       position: 'relative',
       overflow: 'hidden',
       background: dark
@@ -90,7 +122,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
       isolation: 'isolate',
     }}>
       {/* Photo layer, warm silhouette emerging from the right */}
-      <div aria-hidden style={{
+      <div aria-hidden className="hero-depth-photo" style={{
         position: 'absolute', inset: 0, zIndex: 0,
         backgroundImage: 'url("/assets/hero-team.jpg")',
         backgroundSize: 'cover',
@@ -122,7 +154,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           alignItems: 'end',
           flex: 1,
         }}>
-          <div style={{ alignSelf: 'center' }}>
+          <div className="hero-depth-text" style={{ alignSelf: 'center' }}>
             <div className="eyebrow" style={{ marginBottom: 24, color: dark ? 'var(--intigris-off-white)' : 'var(--intigris-dark-brown)' }}>
               {tx('Salesforce Implementation Partner', 'Salesforce Implementation Partner')}
             </div>
@@ -155,7 +187,7 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           </div>
 
           {/* Right, glassy credentials cell, bottom-aligned */}
-          <div style={{ justifySelf: 'end', paddingBottom: 8, width: '100%', maxWidth: 420 }}>
+          <div className="hero-depth-stats" style={{ justifySelf: 'end', paddingBottom: 8, width: '100%', maxWidth: 420 }}>
             <HeroStats tx={tx} glass />
           </div>
         </div>
@@ -202,8 +234,8 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
         }
         .mode-thumb[data-mode="salesforce"] {
           transform: translateX(100%);
-          background: var(--intigris-soft-blue);
-          box-shadow: 0 4px 14px rgba(154,184,226,0.5);
+          background: #00A1E0; /* Salesforce logo blue (Bing 2026-11-24) */
+          box-shadow: 0 4px 14px rgba(0,161,224,0.45);
         }
         .mode-opt {
           position: relative; z-index: 1;
@@ -570,53 +602,17 @@ function HeroStats({ tx, glass = false }) {
   );
 }
 
-/* ---------- Tiny logo-strip marquee that lives inside the hero ---------- */
+/* ---------- "Trusted by" logo strip that lives inside the hero ----------
+   Since 2026-11-24 (Bing picked design A): the speed marquee from
+   components/home/TrustedVariants.jsx. It runs on its own, speeds up and
+   leans while the page scrolls, and reverses when scrolling up. Grey logos,
+   colour on hover. The old simple CSS marquee is in git history. */
 function ProofMarquee() {
-  const LOGOS = [
-    { src: "/assets/logos/warmgarant.png",              alt: 'Warmgarant',              h: 38 },
-    { src: "/assets/logos/feenstra.png",                alt: 'Feenstra',                h: 36 },
-    { src: "/assets/logos/direct-healthcare-group.png", alt: 'Direct Healthcare Group', h: 44 },
-    { src: "/assets/logos/customs-support-group.png",   alt: 'Customs Support Group',   h: 46 },
-    { src: "/assets/logos/wetransfer.svg",              alt: 'WeTransfer',              h: 30 },
-    { src: "/assets/logos/cyclovriend.svg",             alt: 'Cyclovriend',             h: 40 },
-    { src: "/assets/logos/bouwgroep-schrijver.svg",     alt: 'Bouwgroep Schrijver',     h: 40 },
-  ];
   return (
-    <div style={{
-      paddingTop: 22, paddingBottom: 28,
-      background: 'var(--intigris-off-white)',
-      position: 'relative',
-    }}>
-      <div className="container-wide" style={{
-        display: 'flex', justifyContent: 'flex-start',
-        marginBottom: 14,
-      }}>
-        <div className="eyebrow" style={{
-          fontSize: 11,
-          color: 'var(--fg-muted)',
-        }}>
-          {tx('TRUSTED BY', 'VERTROUWD DOOR')}
-        </div>
-      </div>
-      <div className="marquee">
-        <div className="marquee-track" style={{ alignItems: 'center', gap: 72 }}>
-          {[...LOGOS, ...LOGOS].map((logo, i) => (
-            <img
-              key={i}
-              src={logo.src}
-              alt={logo.alt}
-              style={{
-                height: logo.h,
-                width: 'auto',
-                display: 'block',
-                flexShrink: 0,
-                objectFit: 'contain',
-              }}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
+    <>
+      <TrustedVelocity hero />
+      <TvStyles />
+    </>
   );
 }
 
