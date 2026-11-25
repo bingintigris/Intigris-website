@@ -24,7 +24,14 @@ export function useHeadingReveal(ref, selector = 'h2') {
       ctx = gsap.context(() => {
         root.querySelectorAll(selector).forEach((h) => {
           const s = SplitText.create(h, { type: 'words', mask: 'words' });
-          gsap.from(s.words, { yPercent: 110, duration: 0.9, stagger: 0.05, ease: 'power3.out', scrollTrigger: { trigger: h, start: 'top 85%' } });
+          /* Bing 2026-11-25: descenders (y, g) were clipped by the masks on tight
+             headline line heights. Give each mask room below the baseline, cancelled
+             by a negative margin so the layout doesn't move... */
+          (s.masks || []).forEach((m) => { m.style.paddingBottom = '0.18em'; m.style.marginBottom = '-0.18em'; });
+          gsap.from(s.words, { yPercent: 120, duration: 0.9, stagger: 0.05, ease: 'power3.out',
+            scrollTrigger: { trigger: h, start: 'top 85%' },
+            /* ...and once the title is in, remove the split entirely: plain text, nothing can be cut off */
+            onComplete: () => s.revert() });
         });
       }, root);
       /* sections with pinned/sticky parts change the page height: re-measure once */
