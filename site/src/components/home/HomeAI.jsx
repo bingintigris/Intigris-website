@@ -21,6 +21,20 @@ import { V3FaqChat, V3Styles } from '../../legacy/components/CloudKitV3.jsx';
 import { CkStyles } from '../../legacy/components/CloudKit.jsx';
 import { TalkChatAsk, TkStyles } from './TalkVariants.jsx';
 import { useHeadingReveal } from '../../lib/headingReveal.js';
+import { TrustedVelocity, TvStyles } from './TrustedVariants.jsx';
+
+/* ---------- Hero looks (Bing 2026-11-25: dark felt too far from the coral Salesforce hero) ----------
+   dark = v2 (current) · a = same as Salesforce (coral + team photo + glass)
+   b = sunset (coral top fading into deep brown) · c = coral + paper cards.
+   Preview with ?look=a|b|c; the small bar at the bottom switches between them. */
+const LOOKS = ['dark', 'a', 'b', 'c'];
+const LOOK_NAMES = { dark: 'Current (dark)', a: 'A · Same as Salesforce', b: 'B · Sunset', c: 'C · Coral + paper' };
+const PALETTES = {
+  dark: { line: [154, 184, 226, .22], hot: [255, 95, 54, .55], dot: 'rgba(252,247,235,.55)', dotHot: 'rgba(255,95,54,.95)' },
+  a: { line: [252, 247, 235, .3], hot: [64, 35, 1, .5], dot: 'rgba(252,247,235,.7)', dotHot: 'rgba(64,35,1,.85)' },
+  b: { line: [252, 247, 235, .26], hot: [255, 214, 196, .65], dot: 'rgba(252,247,235,.6)', dotHot: 'rgba(255,214,196,.95)' },
+  c: { line: [64, 35, 1, .26], hot: [252, 247, 235, .75], dot: 'rgba(64,35,1,.45)', dotHot: 'rgba(252,247,235,.95)' },
+};
 
 const isBrowser = typeof window !== 'undefined';
 const reduced = () => isBrowser && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -92,8 +106,9 @@ const Head = ({ eyebrow, a, b, lede, center }) => (
 /* ==================================================================== */
 /*  0 · HERO (AI view only): neural canvas, scramble word, agent console  */
 /* ==================================================================== */
-function NeuralCanvas() {
+function NeuralCanvas({ palette = PALETTES.dark }) {
   const ref = useRef(null);
+  const pal = useRef(palette); pal.current = palette;
   useEffect(() => {
     const c = ref.current; if (!c) return;
     const host = c.parentElement;
@@ -121,13 +136,14 @@ function NeuralCanvas() {
           const b = pts[j], d = Math.hypot(a.x - b.x, a.y - b.y);
           if (d < 130) {
             const near = Math.hypot(mouse.x - a.x, mouse.y - a.y) < 200;
-            ctx.strokeStyle = near ? `rgba(255,95,54,${(1 - d / 130) * .55})` : `rgba(154,184,226,${(1 - d / 130) * .22})`;
+            const P = pal.current, c2 = near ? P.hot : P.line;
+            ctx.strokeStyle = `rgba(${c2[0]},${c2[1]},${c2[2]},${(1 - d / 130) * c2[3]})`;
             ctx.lineWidth = near ? 1 : .7; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
           }
         }
       }
       for (const p of pts) {
-        ctx.fillStyle = p.hot ? 'rgba(255,95,54,.95)' : 'rgba(252,247,235,.55)';
+        ctx.fillStyle = p.hot ? pal.current.dotHot : pal.current.dot;
         ctx.beginPath(); ctx.arc(p.x, p.y, p.hot ? p.r + .8 : p.r, 0, Math.PI * 2); ctx.fill();
       }
     };
@@ -212,8 +228,26 @@ function AgentConsole() {
   );
 }
 
+function LookBar({ look, setLook }) {
+  return (
+    <div className="hx-lookbar" role="group" aria-label="Hero look preview">
+      <span className="hx-mono">Hero look</span>
+      {LOOKS.map((k) => <button key={k} type="button" className={k === look ? 'on' : ''} onClick={() => setLook(k)}>{LOOK_NAMES[k]}</button>)}
+    </div>
+  );
+}
 function AiHero({ mode, onMode, onCta }) {
   const ref = useRef(null);
+  const [look, setLookState] = useState('dark');
+  const [preview, setPreview] = useState(false);
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get('look');
+    if (q && LOOKS.includes(q)) { setLookState(q); setPreview(true); }
+  }, []);
+  const setLook = (k) => {
+    setLookState(k);
+    const u = new URL(window.location.href); u.searchParams.set('look', k); window.history.replaceState(null, '', u);
+  };
   const words = tx('Business|Processes|Team|Workflows|Back office', 'Business|Processen|Team|Workflows|Backoffice').split('|');
   useGsap(ref, ({ gsap }) => {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
@@ -227,8 +261,10 @@ function AiHero({ mode, onMode, onCta }) {
   });
   const chips = ['Claude', 'ChatGPT', 'n8n', 'Copilot', 'CRM', 'ERP', 'MCP', 'Gemini'];
   return (
-    <section className="hx-hero" ref={ref}>
-      <NeuralCanvas />
+    <>
+    <section className="hx-hero" data-look={look} ref={ref}>
+      {look === 'a' && <div className="hx-photo" aria-hidden="true" />}
+      <NeuralCanvas palette={PALETTES[look]} />
       <div className="hx-aurora" aria-hidden="true"><i /><i /><i /></div>
       <div className="hx-grid-bg" aria-hidden="true" />
       {chips.map((c, i) => <span key={c} className={'hx-chip hx-chip--' + i} aria-hidden="true">{c}</span>)}
@@ -263,6 +299,10 @@ function AiHero({ mode, onMode, onCta }) {
       <div className="hx-scrollcue" aria-hidden="true"><i /></div>
       <HxStyles />
     </section>
+    {/* A and C: the same 'trusted by' logo strip as under the Salesforce hero */}
+    {(look === 'a' || look === 'c') && <div className="hx-trust-wrap"><TrustedVelocity hero /><TvStyles /></div>}
+    {preview && <LookBar look={look} setLook={setLook} />}
+    </>
   );
 }
 
@@ -825,9 +865,76 @@ function SiteAIHome({ onCta, onMode }) {
 }
 
 /* the styles ship with the hero (always rendered in the AI view) */
-function HxStyles() { return <style dangerouslySetInnerHTML={{ __html: HX_CSS }} />; }
+function HxStyles() { return <style dangerouslySetInnerHTML={{ __html: HX_CSS + LOOK_CSS }} />; }
 
 export { SiteAIHome, AiHero, AI_FAQ };
+
+const LOOK_CSS = `
+/* ===== shared by looks a/b/c: Salesforce-hero size, selector and buttons ===== */
+.hx-hero[data-look]:not([data-look="dark"]) { min-height: min(92vh, 860px); padding: clamp(120px, 15vh, 170px) 0 clamp(60px, 8vh, 100px); }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-h1 { color: var(--intigris-off-white); }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-scramble-live { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: var(--intigris-dark-brown); }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-eyebrow { color: var(--intigris-dark-brown); }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-eyebrow > i { background: var(--intigris-dark-brown); box-shadow: none; }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-hero-lede { color: rgba(252,247,235,.94); }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-mode { background: var(--intigris-off-white); border: 1px solid rgba(64,35,1,.12); box-shadow: 0 6px 20px rgba(64,35,1,.14); backdrop-filter: none; }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-mode button { color: var(--intigris-dark-brown); font-size: 15px; padding: 13px clamp(18px, 3vw, 32px); }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-mode button.on { color: var(--intigris-off-white); }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-mode-thumb { background: var(--intigris-coral); box-shadow: 0 4px 14px rgba(214,67,27,.35); transition: transform 300ms cubic-bezier(.22,.61,.36,1), background-color 300ms; }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-mode[data-mode="salesforce"] .hx-mode-thumb { background: #00A1E0; }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-btn--glow { background: var(--intigris-off-white); color: var(--intigris-dark-brown); box-shadow: 0 14px 34px -14px rgba(64,35,1,.5); }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-btn--glow:hover { background: #fff; box-shadow: 0 18px 40px -14px rgba(64,35,1,.6); }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-btn--ghost { background: rgba(252,247,235,.12); border-color: rgba(252,247,235,.5); }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-chip { color: var(--intigris-off-white); background: rgba(252,247,235,.14); border-color: rgba(252,247,235,.32); }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-grid-bg { background-image: linear-gradient(rgba(252,247,235,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(252,247,235,.08) 1px, transparent 1px); }
+.hx-hero[data-look]:not([data-look="dark"]) .hx-scrollcue { display: none; }
+/* the logo strip sits between the hero and the first sheet, like on the Salesforce view */
+.hx-trust-wrap + .hx-root > .hx-sheet:first-child { margin-top: 0; }
+
+/* ===== A · same as Salesforce: coral gradient + team photo + glass ===== */
+.hx-hero[data-look="a"], .hx-hero[data-look="c"] { background: linear-gradient(90deg, #ff9166 0%, var(--intigris-coral) 44%, var(--intigris-coral-700) 80%, #9e300d 100%); border-radius: 0 0 clamp(24px, 4vw, 56px) clamp(24px, 4vw, 56px); }
+.hx-hero[data-look="a"] .hx-aurora, .hx-hero[data-look="c"] .hx-aurora { display: none; }
+.hx-photo { position: absolute; inset: 0; z-index: 0; background: url("/assets/hero-team.jpg") center right / cover; mix-blend-mode: multiply; opacity: .45; -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%); mask-image: linear-gradient(90deg, transparent 0%, transparent 30%, #000 72%); }
+.hx-hero[data-look="a"] .hx-console { background: rgba(252,247,235,.14); border-color: rgba(252,247,235,.38); box-shadow: 0 20px 44px -18px rgba(64,35,1,.5), inset 0 1px 0 rgba(252,247,235,.25); backdrop-filter: blur(16px); }
+.hx-hero[data-look="a"] .hx-console::after { background: conic-gradient(from var(--hx-angle, 0deg), transparent 0 70%, rgba(252,247,235,.9) 82%, transparent 92%); }
+.hx-hero[data-look="a"] .hx-console-top, .hx-hero[data-look="a"] .hx-console-foot { border-color: rgba(252,247,235,.2); color: rgba(252,247,235,.85); }
+.hx-hero[data-look="a"] .hx-live { color: var(--intigris-off-white); } .hx-hero[data-look="a"] .hx-live i { background: var(--intigris-off-white); box-shadow: 0 0 10px #fff; }
+.hx-hero[data-look="a"] .hx-cl-ico { background: rgba(252,247,235,.18); color: var(--intigris-off-white); }
+.hx-hero[data-look="a"] .hx-cl--done .hx-cl-ico { background: var(--intigris-off-white); color: var(--intigris-coral-700); }
+.hx-hero[data-look="a"] .hx-cl small { color: rgba(252,247,235,.8); }
+.hx-hero[data-look="a"] .hx-spin { border-color: rgba(252,247,235,.35); border-top-color: var(--intigris-off-white); }
+.hx-hero[data-look="a"] .hx-cl-bar { background: rgba(252,247,235,.2); } .hx-hero[data-look="a"] .hx-cl-bar i { background: var(--intigris-off-white); }
+.hx-hero[data-look="a"] .hx-hero-stats > div { background: rgba(252,247,235,.14); border-color: rgba(252,247,235,.38); backdrop-filter: blur(16px); }
+.hx-hero[data-look="a"] .hx-hero-stats b small { color: var(--intigris-off-white); }
+.hx-hero[data-look="a"] .hx-hero-stats span { color: rgba(252,247,235,.85); }
+
+/* ===== B · sunset: Salesforce coral at the top, fading into the dark AI sections ===== */
+.hx-hero[data-look="b"] { background: radial-gradient(60% 50% at 85% 20%, rgba(255,145,102,.55), transparent 70%), linear-gradient(180deg, #ff7a4d 0%, var(--intigris-coral) 26%, #d9461c 46%, #8a2d08 66%, #3a1704 86%, var(--hx-night) 100%); }
+.hx-hero[data-look="b"] .hx-aurora i:nth-child(1) { background: radial-gradient(circle, rgba(255,190,160,.45), transparent 65%); }
+.hx-hero[data-look="b"] .hx-aurora i:nth-child(2) { background: radial-gradient(circle, rgba(255,95,54,.4), transparent 65%); }
+.hx-hero[data-look="b"] .hx-grid-bg { -webkit-mask-image: linear-gradient(180deg, transparent, #000 40%, #000 70%, transparent); mask-image: linear-gradient(180deg, transparent, #000 40%, #000 70%, transparent); }
+
+/* ===== C · coral + paper: no photo, light 'paper' console and stats ===== */
+.hx-hero[data-look="c"] .hx-console { background: var(--intigris-off-white); border-color: rgba(64,35,1,.08); box-shadow: 0 40px 80px -30px rgba(64,35,1,.55); backdrop-filter: none; }
+.hx-hero[data-look="c"] .hx-console::after { background: conic-gradient(from var(--hx-angle, 0deg), transparent 0 70%, rgba(255,95,54,.9) 82%, transparent 92%); }
+.hx-hero[data-look="c"] .hx-console-top, .hx-hero[data-look="c"] .hx-console-foot { border-color: rgba(64,35,1,.08); color: rgba(64,35,1,.55); }
+.hx-hero[data-look="c"] .hx-dots i { background: rgba(64,35,1,.15); }
+.hx-hero[data-look="c"] .hx-live { color: #3f8a55; } .hx-hero[data-look="c"] .hx-live i { background: #3f8a55; box-shadow: none; }
+.hx-hero[data-look="c"] .hx-cl b { color: var(--intigris-dark-brown); }
+.hx-hero[data-look="c"] .hx-cl small { color: rgba(64,35,1,.6); }
+.hx-hero[data-look="c"] .hx-cl-ico { background: rgba(64,35,1,.06); color: rgba(64,35,1,.5); }
+.hx-hero[data-look="c"] .hx-cl--done .hx-cl-ico { background: rgba(76,105,58,.14); color: #4c693a; }
+.hx-hero[data-look="c"] .hx-cl-bar { background: rgba(64,35,1,.08); }
+.hx-hero[data-look="c"] .hx-hero-stats > div { background: var(--intigris-off-white); border-color: transparent; box-shadow: 0 20px 40px -24px rgba(64,35,1,.5); backdrop-filter: none; }
+.hx-hero[data-look="c"] .hx-hero-stats b { color: var(--intigris-dark-brown); } .hx-hero[data-look="c"] .hx-hero-stats b small { color: var(--intigris-coral); }
+.hx-hero[data-look="c"] .hx-hero-stats span { color: rgba(64,35,1,.65); }
+
+/* preview bar (only with ?look=...) */
+.hx-lookbar { position: fixed; z-index: 60; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; padding: 6px; border-radius: 999px; background: rgba(20,12,6,.88); color: #fcf7eb; backdrop-filter: blur(12px); box-shadow: 0 16px 40px -12px rgba(0,0,0,.6); max-width: calc(100vw - 24px); overflow-x: auto; }
+.hx-lookbar .hx-mono { padding: 0 10px; color: rgba(252,247,235,.6); white-space: nowrap; }
+.hx-lookbar button { border: 0; background: none; color: #fcf7eb; font: inherit; font-size: 13.5px; padding: 9px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
+.hx-lookbar button.on { background: var(--intigris-coral); color: #2a1300; }
+`;
 
 const HX_CSS = `
 .hx-hero, .hx-root {
