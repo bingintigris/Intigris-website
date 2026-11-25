@@ -235,7 +235,7 @@ const AgentGlyph = () => (
 function AiHero({ mode, onMode, onCta }) {
   const ref = useRef(null);
   const [arrive] = useState(() => justSwitched());
-  const words = tx('Business|Processes|Team|Workflows', 'Business|Processen|Team|Workflows') /* 'Back office' dropped 2026-11-25: too wide at the Salesforce headline size */.split('|');
+  const words = tx('Team|Processes|Workflows|Business', 'Team|Processen|Workflows|Business') /* Bing 2026-11-25: 'AI-ify your team, processes, workflows…'; 'Back office' dropped (too wide) */.split('|');
   useGsap(ref, ({ gsap }) => {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
     tl.from('.hx-h1 .hx-line', { yPercent: 110, duration: 1, stagger: .12 })
@@ -255,7 +255,7 @@ function AiHero({ mode, onMode, onCta }) {
       <div className="container-wide hx-hero-inner">
         <div className="hx-hero-copy">
           <h1 className="hx-h1">
-            <span className="hx-mask"><span className="hx-line">{tx('Smarten up', 'Maak je')}</span></span>
+            <span className="hx-mask"><span className="hx-line">{tx('AI-ify', 'AI-ify je')}</span></span>
             <span className="hx-mask"><span className="hx-line">{tx('your ', '')}<Scramble words={words} /></span></span>
           </h1>
           {/* glossy selector, same look as on the Salesforce hero (Hero.jsx .mode-toggle) */}
