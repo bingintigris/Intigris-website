@@ -162,10 +162,9 @@ function HeroCinematic({ onCta, onSecondary, idx, HERO_INDUSTRIES, tx, mood = 'c
           alignItems: 'end',
           flex: 1,
         }}>
-          <div className="hero-depth-text" style={{ alignSelf: 'center' }}>
-            <div className="eyebrow" style={{ marginBottom: 24, color: dark ? 'var(--intigris-off-white)' : 'var(--intigris-dark-brown)' }}>
-              {mode === 'ai' ? tx('AI consultancy & implementation', 'AI-advies & implementatie') : tx('Salesforce Implementation Partner', 'Salesforce Implementation Partner')}
-            </div>
+          {/* Bing 2026-11-25: no eyebrow; headline anchored at the same height as the AI hero
+              (clamp(150px, 30vh, 330px) from the top), so the selector sits on the same level in both views */}
+          <div className="hero-depth-text" style={{ alignSelf: 'start', marginTop: 'calc(clamp(150px, 30vh, 330px) - clamp(120px, 15vh, 180px))' }}>
             <h1 className="display-stack" style={{ color: 'var(--intigris-off-white)' }}>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>{tx('Smarten up', 'Maak je')}</span>
               <span style={{ display: 'block', whiteSpace: 'nowrap' }}>

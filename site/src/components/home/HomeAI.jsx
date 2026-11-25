@@ -223,7 +223,7 @@ function AgentConsole() {
 }
 
 /* simple floating agents (Bing 2026-11-25: replaces the tool labels, no text) */
-const AGENT_SPOTS = [[4, 18, 1], [41, 11, .8], [94, 16, .9], [3, 74, .85], [47, 84, .75], [30, 92, .7], [93, 82, 1.05], [55, 15, .7]];
+const AGENT_SPOTS = [[4, 18, 1], [41, 11, .8], [94, 16, .9], [3, 74, .85], [56, 70, .75], [93, 82, 1.05], [55, 15, .7]];
 const AgentGlyph = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M12 3.2v3" /><circle cx="12" cy="2.6" r=".9" fill="currentColor" stroke="none" />
@@ -235,11 +235,10 @@ const AgentGlyph = () => (
 function AiHero({ mode, onMode, onCta }) {
   const ref = useRef(null);
   const [arrive] = useState(() => justSwitched());
-  const words = tx('Business|Processes|Team|Workflows|Back office', 'Business|Processen|Team|Workflows|Backoffice').split('|');
+  const words = tx('Business|Processes|Team|Workflows', 'Business|Processen|Team|Workflows') /* 'Back office' dropped 2026-11-25: too wide at the Salesforce headline size */.split('|');
   useGsap(ref, ({ gsap }) => {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    tl.from('.hx-hero .hx-eyebrow', { y: 16, opacity: 0, duration: .6 })
-      .from('.hx-h1 .hx-line', { yPercent: 110, duration: 1, stagger: .12 }, '-=.3')
+    tl.from('.hx-h1 .hx-line', { yPercent: 110, duration: 1, stagger: .12 })
       .from('.hx-hero-lede, .hx-hero-ctas', { y: 22, opacity: 0, duration: .8, stagger: .08 }, '-=.6')
       .from('.hx-console', { y: 40, opacity: 0, rotateX: 12, duration: 1.1 }, '-=.9')
       .from('.hx-agent', { scale: 0, opacity: 0, duration: .7, stagger: .06, ease: 'back.out(2)' }, '-=.9')
@@ -256,19 +255,18 @@ function AiHero({ mode, onMode, onCta }) {
       ))}
       <div className="container-wide hx-hero-inner">
         <div className="hx-hero-copy">
-          <span className="hx-eyebrow hx-eyebrow--live"><i />{tx('AI consultancy & implementation', 'AI-advies & implementatie')}</span>
           <h1 className="hx-h1">
             <span className="hx-mask"><span className="hx-line">{tx('Smarten up', 'Maak je')}</span></span>
             <span className="hx-mask"><span className="hx-line">{tx('your ', '')}<Scramble words={words} /></span></span>
           </h1>
-          <p className="hx-hero-lede">{tx('From “we do something with ChatGPT” to processes where AI agents save time every day. With a proven method, and a team that actually builds it.',
-            'Van “we doen iets met ChatGPT” naar processen waarin AI-agents elke dag tijd besparen. Met een bewezen methode, en een team dat het ook echt bouwt.')}</p>
           {/* glossy selector, same look as on the Salesforce hero (Hero.jsx .mode-toggle) */}
           <div className="hx-mode" role="tablist" aria-label={tx('Choose solutions view', 'Kies weergave')} data-mode={mode}>
             <span className={'hx-mode-thumb' + (arrive ? ' arrive' : '')} aria-hidden="true" />
             <button type="button" role="tab" aria-selected={mode === 'ai'} className={mode === 'ai' ? 'on' : ''} onClick={() => onMode && onMode('ai')}>{tx('AI solutions', 'AI-oplossingen')}</button>
             <button type="button" role="tab" aria-selected={mode === 'salesforce'} className={mode === 'salesforce' ? 'on' : ''} onClick={() => onMode && onMode('salesforce')}>{tx('Salesforce solutions', 'Salesforce-oplossingen')}</button>
           </div>
+          <p className="hx-hero-lede">{tx('From “we do something with ChatGPT” to processes where AI agents save time every day. With a proven method, and a team that actually builds it.',
+            'Van “we doen iets met ChatGPT” naar processen waarin AI-agents elke dag tijd besparen. Met een bewezen methode, en een team dat het ook echt bouwt.')}</p>
           <div className="hx-hero-ctas">
             <button type="button" className="hx-btn hx-btn--glow" onClick={onCta}>{tx('Plan a call', 'Plan een gesprek')} <Arrow /></button>
             <button type="button" className="hx-btn hx-btn--ghost" onClick={() => scrollToId('ai-ify')}>{tx('Explore AI-ify', 'Ontdek AI-ify')} <span aria-hidden="true">↓</span></button>
@@ -865,6 +863,19 @@ const LOOK_CSS = `
 .hx-hero[data-look="c"] .hx-btn--glow:hover { background: #fff; box-shadow: 0 18px 40px -14px rgba(64,35,1,.6); }
 .hx-hero[data-look="c"] .hx-btn--ghost { background: rgba(252,247,235,.12); border-color: rgba(252,247,235,.5); }
 .hx-hero[data-look="c"] .hx-grid-bg { background-image: linear-gradient(rgba(252,247,235,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(252,247,235,.08) 1px, transparent 1px); }
+
+/* Same anchor as the Salesforce hero (Bing 2026-11-25: the selector must sit at the same height on both):
+   headline starts at --hero-y0 from the top, same size as .display-stack, selector right below it. */
+.hx-hero[data-look="c"] { align-items: flex-start; padding-top: clamp(150px, 30vh, 330px); }
+.hx-hero[data-look="c"] .hx-hero-inner { align-items: start; }
+.hx-hero[data-look="c"] .hx-hero-copy { gap: 0; }
+.hx-hero[data-look="c"] .hx-h1 { font-size: clamp(48px, 8.4vw, 132px); line-height: .98; letter-spacing: -0.028em; }
+.hx-hero[data-look="c"] .hx-mask { margin-bottom: -.08em; }
+.hx-hero[data-look="c"] .hx-mode { margin-top: clamp(28px, 4vh, 40px); }
+.hx-hero[data-look="c"] .hx-hero-lede { margin-top: 28px; }
+.hx-hero[data-look="c"] .hx-hero-ctas { margin-top: 22px; }
+.hx-hero[data-look="c"] .hx-hero-side { align-self: center; }
+.hx-hero[data-look="c"] .hx-hero-inner { grid-template-columns: minmax(0, 1fr) min(340px, 28vw); }
 
 /* paper console + stats */
 .hx-hero[data-look="c"] .hx-console { background: var(--intigris-off-white); border-color: rgba(64,35,1,.08); box-shadow: 0 40px 80px -30px rgba(64,35,1,.55); backdrop-filter: none; }
